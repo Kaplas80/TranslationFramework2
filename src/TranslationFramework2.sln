@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TF.IO", "TF.IO\TF.IO.csproj", "{4F0D7226-FA20-4FE3-A523-336702654E02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TF.GUI", "TF.GUI\TF.GUI.csproj", "{C72CE807-AFE4-4928-8703-35147CDB9DA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TF.Core", "TF.Core\TF.Core.csproj", "{14BB172A-B3D4-4237-82AB-8FEF4E9AB8CD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{B4EF83D1-7D6F-449E-8FC3-46AE381039D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.Yakuza0", "Plugins\TFGame.Yakuza0\TFGame.Yakuza0.csproj", "{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F0D7226-FA20-4FE3-A523-336702654E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F0D7226-FA20-4FE3-A523-336702654E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F0D7226-FA20-4FE3-A523-336702654E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0D7226-FA20-4FE3-A523-336702654E02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C72CE807-AFE4-4928-8703-35147CDB9DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C72CE807-AFE4-4928-8703-35147CDB9DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C72CE807-AFE4-4928-8703-35147CDB9DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C72CE807-AFE4-4928-8703-35147CDB9DA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14BB172A-B3D4-4237-82AB-8FEF4E9AB8CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14BB172A-B3D4-4237-82AB-8FEF4E9AB8CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14BB172A-B3D4-4237-82AB-8FEF4E9AB8CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14BB172A-B3D4-4237-82AB-8FEF4E9AB8CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BFE27A60-5A4A-4AAD-818F-F973D991AA9C} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}
+	EndGlobalSection
+EndGlobal
