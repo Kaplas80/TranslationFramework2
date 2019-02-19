@@ -39,11 +39,12 @@ namespace TFGame.Yakuza0.Core
             return result;
         }
 
-        /*public override byte[] GetBytes(string s)
+        public override byte[] GetBytes(string s)
         {
             var str = s.Replace("\\n", "\n").Replace("\\r", "\r");
-            return base.GetBytes(str);
-        }*/
+
+            return GetBytes(str.ToCharArray(), 0, str.Length);
+        }
 
         public override int GetCharCount(byte[] bytes, int index, int count)
         {
@@ -85,12 +86,11 @@ namespace TFGame.Yakuza0.Core
             return utf8Encoding.GetMaxCharCount(byteCount);
         }
 
-        /*public override string GetString(byte[] bytes, int index, int count)
+        public override string GetString(byte[] bytes, int index, int count)
         {
-            var str = base.GetString(bytes, index, count);
-
+            var str = new string(GetChars(bytes, index, count));
             str = str.Replace("\n", "\\n").Replace("\r", "\\r");
             return str;
-        }*/
+        }
     }
 }
