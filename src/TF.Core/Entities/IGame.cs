@@ -10,7 +10,7 @@ namespace TF.Core.Entities
         Image Icon { get; }
         int Version { get; }
 
-        GameFileContainer[] Containers { get; }
+        GameFileContainer[] GetContainers(string path);
 
         TranslationFile GetFile(string path, string changesFolder);
         void ExtractFile(string inputFile, string outputPath);

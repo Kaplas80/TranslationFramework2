@@ -18,13 +18,10 @@ namespace YakuzaCommon
         public virtual Image Icon { get; }
         public virtual int Version { get; }
 
-        public virtual GameFileContainer[] Containers
+        public virtual GameFileContainer[] GetContainers(string path)
         {
-            get
-            {
-                var result = new List<GameFileContainer>();
-                return result.ToArray();
-            }
+            var result = new List<GameFileContainer>();
+            return result.ToArray();
         }
 
         public TranslationFile GetFile(string path, string changesFolder)

@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\GameFileContainerSearch.cs" />
     <Compile Include="Entities\GameFileSearch.cs" />
     <Compile Include="Entities\GameFileContainer.cs" />
     <Compile Include="Entities\IGame.cs" />

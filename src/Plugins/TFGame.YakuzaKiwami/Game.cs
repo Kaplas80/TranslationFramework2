@@ -16,44 +16,41 @@ namespace TFGame.YakuzaKiwami
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-Icon-750908330
         public override int Version => 1;
 
-        public override GameFileContainer[] Containers
+        public override GameFileContainer[] GetContainers(string path)
         {
-            get
+            var result = new List<GameFileContainer>();
+
+            var cmnSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "cmn.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = true
+                };
+
+            var ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "*.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = true
+                };
+
+            var auth_w64_containers = new GameFileContainerSearch
             {
-                var result = new List<GameFileContainer>();
+                RelativePath = @"data\auth_w64_e",
+                TypeSearch = ContainerType.CompressedFile,
+                RecursiveSearch = false,
+                SearchPattern = "*.par"
+            };
+            auth_w64_containers.FileSearches.Add(cmnSearch);
+            auth_w64_containers.FileSearches.Add(ddsSearch);
 
-                var cmnSearch =
-                    new GameFileSearch
-                    {
-                        RelativePath = ".",
-                        SearchPattern = "cmn.bin",
-                        IsWildcard = true,
-                        RecursiveSearch = true
-                    };
-
-                var ddsSearch =
-                    new GameFileSearch
-                    {
-                        RelativePath = ".",
-                        SearchPattern = "*.dds",
-                        IsWildcard = true,
-                        RecursiveSearch = true
-                    };
-
-                var hact = new GameFileContainer
-                    { Path = "data\\hact.par", Type = ContainerType.CompressedFile };
-                hact.FileSearches.Add(cmnSearch);
-                hact.FileSearches.Add(ddsSearch);
-                //result.Add(hact);
-
-                var fontpar = new GameFileContainer
-                    { Path = "data\\fontpar\\font.par", Type = ContainerType.CompressedFile };
-                fontpar.FileSearches.Add(ddsSearch);
-                result.Add(fontpar);
-
-                result.Sort();
-                return result.ToArray();
-            }
+            result.AddRange(auth_w64_containers.GetContainers(path));
+            result.Sort();
+            return result.ToArray();
         }
     }
 }

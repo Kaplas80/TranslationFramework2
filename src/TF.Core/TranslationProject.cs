@@ -41,7 +41,8 @@ namespace TF.Core
 
         public void ReadTranslationFiles(BackgroundWorker worker)
         {
-            foreach (var container in Game.Containers)
+            var containers = Game.GetContainers(InstallationPath);
+            foreach (var container in containers)
             {
                 var translationContainer = new TranslationFileContainer(container.Path, container.Type);
 
