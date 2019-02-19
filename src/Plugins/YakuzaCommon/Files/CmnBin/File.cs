@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using TF.Core.Entities;
 using TF.IO;
-using TFGame.Yakuza0.Core;
-using TFGame.Yakuza0.Files.CmnBin;
-using TFGame.Yakuza0.Views;
+using YakuzaCommon.Core;
+using YakuzaCommon.Files.CmnBin;
 using WeifenLuo.WinFormsUI.Docking;
+using YakuzaCommon.Views;
 
-namespace TFGame.Yakuza0.Files
+namespace YakuzaCommon.Files
 {
     class CmnBinFile : TranslationFile
     {

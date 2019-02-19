@@ -1,4 +1,4 @@
-﻿namespace TFGame.Yakuza0.Views
+﻿namespace YakuzaCommon.Views
 {
     partial class CmnBinView
     {

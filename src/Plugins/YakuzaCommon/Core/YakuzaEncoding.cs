@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace TFGame.Yakuza0.Core
+namespace YakuzaCommon.Core
 {
     class YakuzaEncoding : Encoding
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using TF.IO;
 
-namespace TFGame.Yakuza0.Core
+namespace YakuzaCommon.Core
 {
     class SllzCompressor
     {

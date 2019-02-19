@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using TFGame.Yakuza0.Annotations;
+using YakuzaCommon.Annotations;
 
-namespace TFGame.Yakuza0.Files.CmnBin
+namespace YakuzaCommon.Files.CmnBin
 {
     internal abstract class Subtitle : INotifyPropertyChanged
     {

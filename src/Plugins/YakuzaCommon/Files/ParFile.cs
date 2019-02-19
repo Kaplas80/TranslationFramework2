@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TF.IO;
-using TFGame.Yakuza0.Core;
+using YakuzaCommon.Core;
 
-namespace TFGame.Yakuza0.Files
+namespace YakuzaCommon.Files
 {
     public partial class ParFile
     {
