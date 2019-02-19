@@ -51,15 +51,18 @@
   <ItemGroup>
     <Compile Include="Core\SllzCompressor.cs" />
     <Compile Include="Core\YakuzaEncoding.cs" />
+    <Compile Include="Files\AiPopup\File.cs" />
     <Compile Include="Files\CmnBin\File.cs" />
     <Compile Include="Files\CmnBin\Subtitle.cs" />
-    <Compile Include="Files\CmnBin\View.cs">
+    <Compile Include="Files\ParFile.cs" />
+    <Compile Include="Files\SimpleSubtitle\File.cs" />
+    <Compile Include="Files\SimpleSubtitle\Subtitle.cs" />
+    <Compile Include="Files\SimpleSubtitle\View.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Files\CmnBin\View.Designer.cs">
+    <Compile Include="Files\SimpleSubtitle\View.Designer.cs">
       <DependentUpon>View.cs</DependentUpon>
     </Compile>
-    <Compile Include="Files\ParFile.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,7 +78,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Files\CmnBin\View.resx">
+    <EmbeddedResource Include="Files\SimpleSubtitle\View.resx">
       <DependentUpon>View.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

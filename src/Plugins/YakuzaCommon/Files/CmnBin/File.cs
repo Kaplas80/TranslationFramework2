@@ -1,40 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using TF.Core.Entities;
 using TF.IO;
-using YakuzaCommon.Core;
-using YakuzaCommon.Files.CmnBin;
-using WeifenLuo.WinFormsUI.Docking;
-using YakuzaCommon.Views;
+using YakuzaCommon.Files.SimpleSubtitle;
 
-namespace YakuzaCommon.Files
+namespace YakuzaCommon.Files.CmnBin
 {
-    class CmnBinFile : TranslationFile
+    internal class CmnBinFile : SimpleSubtitleFile
     {
         private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-        private readonly YakuzaEncoding Encoding = new YakuzaEncoding();
-
-        private IList<Subtitle> _subtitles;
-
         public CmnBinFile(string path, string changesFolder) : base(path, changesFolder)
         {
-            this.Type = FileType.TextFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
-        {
-            var view = new CmnBinView(theme);
-
-            _subtitles = GetSubtitles();
-            view.LoadSubtitles(_subtitles);
-            view.Show(panel, DockState.Document);
-        }
-
-        private IList<Subtitle> GetSubtitles()
+        protected override IList<Subtitle> GetSubtitles()
         {
             if (File.Exists(ChangesFile))
             {
@@ -63,9 +42,9 @@ namespace YakuzaCommon.Files
             return result;
         }
 
-        private IList<Subtitle> ReadLongSubtitles(ExtendedBinaryReader input)
+        private IList<CmnSubtitle> ReadLongSubtitles(ExtendedBinaryReader input)
         {
-            var result = new List<Subtitle>();
+            var result = new List<CmnSubtitle>();
 
             input.ReadBytes(40);
 
@@ -89,9 +68,9 @@ namespace YakuzaCommon.Files
             return result;
         }
 
-        private IList<Subtitle> ReadShortSubtitles(ExtendedBinaryReader input)
+        private IList<CmnSubtitle> ReadShortSubtitles(ExtendedBinaryReader input)
         {
-            var result = new List<Subtitle>();
+            var result = new List<CmnSubtitle>();
 
             input.ReadBytes(266);
 
@@ -116,7 +95,7 @@ namespace YakuzaCommon.Files
             return result;
         }
 
-        private Subtitle ReadLongSubtitle(ExtendedBinaryReader input)
+        private CmnSubtitle ReadLongSubtitle(ExtendedBinaryReader input)
         {
             var subtitle = new LongSubtitle { Offset = input.Position };
 
@@ -130,13 +109,7 @@ namespace YakuzaCommon.Files
             return subtitle;
         }
 
-        private void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            HasChanges = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
-            OnFileChanged();
-        }
-
-        private Subtitle ReadShortSubtitle(ExtendedBinaryReader input)
+        private CmnSubtitle ReadShortSubtitle(ExtendedBinaryReader input)
         {
             var subtitle = new ShortSubtitle { Offset = input.Position };
 
@@ -181,7 +154,7 @@ namespace YakuzaCommon.Files
 
                 for (var i = 0; i < subtitleCount; i++)
                 {
-                    Subtitle sub;
+                    CmnSubtitle sub;
                     var type = input.ReadInt32();
                     if (type == 0)
                     {
@@ -219,10 +192,13 @@ namespace YakuzaCommon.Files
                 foreach (var subtitle in subtitles)
                 {
                     output.Seek(subtitle.Offset, SeekOrigin.Begin);
-                    for (var i = 0; i < subtitle.MaxLength; i++)
+
+                    var sub = subtitle as CmnSubtitle;
+                    for (var i = 0; i < sub.MaxLength; i++)
                     {
                         output.Write((byte) 0);
                     }
+
                     output.Seek(subtitle.Offset, SeekOrigin.Begin);
                     output.WriteString(subtitle.Translation);
                 }

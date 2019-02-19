@@ -20,7 +20,7 @@ namespace TFGame.YakuzaKiwami
         {
             var result = new List<GameFileContainer>();
 
-            var cmnSearch =
+           /* var cmnSearch =
                 new GameFileSearch
                 {
                     RelativePath = ".",
@@ -49,6 +49,24 @@ namespace TFGame.YakuzaKiwami
             auth_w64_containers.FileSearches.Add(ddsSearch);
 
             result.AddRange(auth_w64_containers.GetContainers(path));
+            */
+            var aiPopupSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "ai_popup.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false
+                };
+
+            var wdr_par_c_common = new GameFileContainer
+            {
+                Path = @"data\wdr_par_c\common.par", Type = ContainerType.CompressedFile
+            };
+            wdr_par_c_common.FileSearches.Add(aiPopupSearch);
+
+            result.Add(wdr_par_c_common);
+
             result.Sort();
             return result.ToArray();
         }

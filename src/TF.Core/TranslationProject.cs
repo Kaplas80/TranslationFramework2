@@ -195,7 +195,7 @@ namespace TF.Core
 
         public void Export(IList<TranslationFileContainer> containers, bool useCompression, BackgroundWorker worker)
         {
-            Directory.Delete(TempFolder);
+            Directory.Delete(TempFolder, true);
             Directory.CreateDirectory(TempFolder);
 
             foreach (var container in containers)
@@ -232,15 +232,17 @@ namespace TF.Core
                     // 2. Crear los ficheros traducidos en esa carpeta temporal
                     foreach (var translationFile in container.Files)
                     {
-                        translationFile.Rebuild(Path.Combine(dest, container.Path));
+                        translationFile.Rebuild(dest);
                     }
 
                     // 3. Empaquetar
                     worker.ReportProgress(0, "Empaquetando fichero...");
                     Game.RepackFile(dest, outputFile, useCompression);
-                    
+
                     // 4. Eliminar la carpeta temporal
+#if !DEBUG
                     Directory.Delete(dest, true);
+#endif
                 }
             }
         }

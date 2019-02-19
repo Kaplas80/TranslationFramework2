@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TF.Core.Entities;
 using YakuzaCommon.Files;
+using YakuzaCommon.Files.CmnBin;
 
 namespace YakuzaCommon
 {
@@ -34,6 +35,10 @@ namespace YakuzaCommon
             if (fileName.EndsWith("cmn.bin"))
             {
                 result = new CmnBinFile(path, changesFolder);
+            }
+            else if (fileName.EndsWith("ai_popup.bin"))
+            {
+                result = new Files.AiPopup.File(path, changesFolder);
             }
             else
             {

@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using YakuzaCommon.Files;
-using YakuzaCommon.Files.CmnBin;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace YakuzaCommon.Views
+namespace YakuzaCommon.Files.SimpleSubtitle
 {
-    public partial class CmnBinView : DockContent
+    public partial class SimpleSubtitleView : DockContent
     {
         private IList<Subtitle> _subtitles;
 
-        protected CmnBinView()
+        protected SimpleSubtitleView()
         {
             InitializeComponent();
         }
 
-        public CmnBinView(ThemeBase theme) : this()
+        public SimpleSubtitleView(ThemeBase theme) : this()
         {
             dockPanel1.Theme = theme;
 
