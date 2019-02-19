@@ -1,22 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using TF.Core;
 using TF.Core.Entities;
-using TF.Core.Files.DDS;
-using TFGame.Yakuza0.Files;
 
 namespace TFGame.Yakuza0
 {
-    public class Game : IGame
+    public class Game : YakuzaCommon.Game
     {
-        public string Id => "193b8191-39e2-4ad7-b0bf-9cb413bb910f";
-        public string Name => "Yakuza 0";
-        public string Description => "";
-        public Image Icon => Resources.Icon;
-        public int Version => 1;
+        public override string Id => "193b8191-39e2-4ad7-b0bf-9cb413bb910f";
+        public override string Name => "Yakuza 0";
+        public override string Description => "Versión PC Steam sin DENUVO (lanzada el XX-XX-XXXX)";
+        public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-0-Icon-750908182
+        public override int Version => 1;
 
-        public GameFileContainer[] Containers 
+        public override GameFileContainer[] Containers 
         {
             get
             {
@@ -648,60 +644,6 @@ namespace TFGame.Yakuza0
 
                 result.Sort();
                 return result.ToArray();
-            }
-        }
-
-        public TranslationFile GetFile(string path, string changesFolder)
-        {
-            TranslationFile result;
-
-            var fileName = Path.GetFileName(path);
-            var extension = Path.GetExtension(path);
-
-            if (fileName.EndsWith("cmn.bin"))
-            {
-                result = new CmnBinFile(path, changesFolder);
-            }
-            else
-            {
-                switch (extension)
-                {
-                    case ".dds":
-                    {
-                        result = new TF.Core.Files.DDS.DDSFile(path, changesFolder);
-                        break;
-                    }
-
-                    default:
-                    {
-                        result = new TranslationFile(path, changesFolder);
-                        break;
-                    }
-                }
-            }
-            
-
-            return result;
-        }
-
-        public void ExtractFile(string inputFile, string outputPath)
-        {
-            var extension = Path.GetExtension(inputFile);
-
-            if (extension == ".par")
-            {
-                var parFile = new ParFile(inputFile);
-                parFile.Extract(outputPath);
-            }
-        }
-
-        public void RepackFile(string inputPath, string outputFile, bool compress)
-        {
-            var extension = Path.GetExtension(outputFile);
-
-            if (extension == ".par")
-            {
-                ParFile.Repack(inputPath, outputFile, compress);
             }
         }
     }

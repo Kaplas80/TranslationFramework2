@@ -8,11 +8,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TFGame.Yakuza0.Files;
-using TFGame.Yakuza0.Files.CmnBin;
+using YakuzaCommon.Files;
+using YakuzaCommon.Files.CmnBin;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace TFGame.Yakuza0.Views
+namespace YakuzaCommon.Views
 {
     public partial class CmnBinView : DockContent
     {
