@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using TF.Core;
 using TF.Core.Entities;
+using TF.Core.Files.DDS;
 using TFGame.Yakuza0.Files;
 
 namespace TFGame.Yakuza0
@@ -30,12 +31,22 @@ namespace TFGame.Yakuza0
                         RecursiveSearch = true
                     };
 
+                var ddsSearch =
+                    new GameFileSearch
+                    {
+                        RelativePath = ".",
+                        SearchPattern = "*.dds",
+                        IsWildcard = true,
+                        RecursiveSearch = true
+                    };
+
                 var auth_w64_e = new GameFileContainer
                     {Path = "data\\auth_w64_e\\a01_010.par", Type = ContainerType.CompressedFile};
                 auth_w64_e.FileSearches.Add(cmnSearch);
+                auth_w64_e.FileSearches.Add(ddsSearch);
                 result.Add(auth_w64_e);
 
-                auth_w64_e = new GameFileContainer
+                /*auth_w64_e = new GameFileContainer
                     {Path = "data\\auth_w64_e\\a01_020.par", Type = ContainerType.CompressedFile};
                 auth_w64_e.FileSearches.Add(cmnSearch);
                 result.Add(auth_w64_e);
@@ -633,7 +644,7 @@ namespace TFGame.Yakuza0
                 var hact = new GameFileContainer
                     { Path = "data\\hact.par", Type = ContainerType.CompressedFile };
                 hact.FileSearches.Add(cmnSearch);
-                result.Add(hact);
+                result.Add(hact);*/
 
                 result.Sort();
                 return result.ToArray();
@@ -655,11 +666,11 @@ namespace TFGame.Yakuza0
             {
                 switch (extension)
                 {
-                    /*case ".dds":
+                    case ".dds":
                     {
-                        result = new GameImageFile {Name = Path.GetFileName(file), Path = file};
+                        result = new TF.Core.Files.DDS.DDSFile(path, changesFolder);
                         break;
-                    }*/
+                    }
 
                     default:
                     {
