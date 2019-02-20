@@ -45,6 +45,7 @@ namespace TFGame.YakuzaKiwami
                 RecursiveSearch = false,
                 SearchPattern = "*.par"
             };
+            auth_w64_containers.Exclusions.Add("inst_auth.par");
             auth_w64_containers.FileSearches.Add(cmnSearch);
             //auth_w64_containers.FileSearches.Add(ddsSearch);
 

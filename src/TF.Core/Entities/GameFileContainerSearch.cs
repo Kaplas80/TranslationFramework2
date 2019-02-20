@@ -11,11 +11,13 @@ namespace TF.Core.Entities
         public string SearchPattern { get; set; }
         public bool RecursiveSearch { get; set; }
         public ContainerType TypeSearch { get; set; }
-        public IList<GameFileSearch> FileSearches { get; set; }
+        public IList<GameFileSearch> FileSearches { get; }
+        public IList<string> Exclusions { get; }
 
         public GameFileContainerSearch()
         {
             FileSearches = new List<GameFileSearch>();
+            Exclusions = new List<string>();
         }
 
         public IList<GameFileContainer> GetContainers(string path)
@@ -34,7 +36,24 @@ namespace TF.Core.Entities
                     RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
             }
 
-            return searchResult.Select(f => new GameFileContainer {Path = PathHelper.GetRelativePath(path, f), Type = TypeSearch, FileSearches = FileSearches}).ToList();
+            var result = new List<GameFileContainer>();
+            foreach (var f in searchResult)
+            {
+                var excluded = Exclusions.Any(exclusion => f.Contains(exclusion));
+
+                if (excluded) continue;
+
+                var container = new GameFileContainer
+                {
+                    Path = PathHelper.GetRelativePath(path, f),
+                    Type = TypeSearch,
+                    FileSearches = FileSearches
+                };
+
+                result.Add(container);
+            }
+
+            return result;
         }
     }
 }

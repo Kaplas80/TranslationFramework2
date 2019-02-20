@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace TF.Core.Entities
 {
@@ -9,6 +10,12 @@ namespace TF.Core.Entities
         public string SearchPattern { get; set; }
         public bool IsWildcard { get; set; }
         public bool RecursiveSearch { get; set; }
+        public IList<string> Exclusions { get; }
+
+        public GameFileSearch()
+        {
+            Exclusions = new List<string>();
+        }
 
         public string[] GetFiles(string path)
         {
@@ -20,11 +27,19 @@ namespace TF.Core.Entities
                 var files = Directory.GetFiles(fullPath, SearchPattern,
                     RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-                result.AddRange(files);
+                foreach (var file in files)
+                {
+                    var excluded = Exclusions.Any(x => file.Contains(x));
+                    if (!excluded)
+                    {
+                        result.Add(file);
+                    }
+                }
             }
             else
             {
-                if (File.Exists(Path.Combine(fullPath, SearchPattern)))
+                var excluded = Exclusions.Any(x => fullPath.Contains(x));
+                if (!excluded && File.Exists(Path.Combine(fullPath, SearchPattern)))
                 {
                     result.Add(Path.Combine(fullPath, SearchPattern));
                 }
