@@ -12,6 +12,7 @@ namespace TF.GUI.Forms
 
         public event DoWorkEventHandler DoWork;
 
+        public bool Cancelled;
         protected WorkingForm()
         {
             InitializeComponent();
@@ -21,6 +22,8 @@ namespace TF.GUI.Forms
 
             _worker.RunWorkerCompleted += (sender, args) =>
             {
+                Cancelled = args.Cancelled;
+
                 if (_autoClose)
                 {
                     Close();
@@ -51,6 +54,7 @@ namespace TF.GUI.Forms
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _worker.CancelAsync();
+            
             btnCancel.Enabled = false;
         }
 

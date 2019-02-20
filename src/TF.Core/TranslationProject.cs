@@ -44,6 +44,12 @@ namespace TF.Core
             var containers = Game.GetContainers(InstallationPath);
             foreach (var container in containers)
             {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new Exception("Cancelado por el usuario");
+                }
+
                 var translationContainer = new TranslationFileContainer(container.Path, container.Type);
 
                 var extractionContainerPath = Path.Combine(ContainersFolder, translationContainer.Id);
@@ -200,6 +206,12 @@ namespace TF.Core
 
             foreach (var container in containers)
             {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new Exception("Cancelado por el usuario");
+                }
+
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
                 if (container.Type == ContainerType.Folder)

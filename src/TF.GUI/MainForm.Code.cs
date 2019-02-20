@@ -61,7 +61,7 @@ namespace TF.GUI
                 Directory.CreateDirectory(workFolder);
             }
 
-            _project = new TranslationProject(game, gameFolder, workFolder);
+            var project = new TranslationProject(game, gameFolder, workFolder);
 
             var workForm = new WorkingForm(dockTheme, "Nueva traducción");
             
@@ -69,13 +69,26 @@ namespace TF.GUI
             {
                 var worker = sender as BackgroundWorker;
 
-                _project.ReadTranslationFiles(worker);
-
-                worker.ReportProgress(-1, "FINALIZADO");
+                try
+                {
+                    project.ReadTranslationFiles(worker);
+                    worker.ReportProgress(-1, "FINALIZADO");
+                }
+                catch (Exception)
+                {
+                    args.Cancel = true;
+                }
             };
             
             workForm.ShowDialog(this);
-            
+
+            if (workForm.Cancelled)
+            {
+                return;
+            }
+
+            _project = project;
+
             _explorer.LoadTree(_project.FileContainers);
 
             _currentFile = null;
@@ -145,11 +158,18 @@ namespace TF.GUI
                 {
                     var worker = sender as BackgroundWorker;
 
-                    _project.Export(selectedContainers, compress, worker);
+                    try
+                    {
+                        _project.Export(selectedContainers, compress, worker);
 
-                    worker.ReportProgress(-1, "FINALIZADO");
-                    worker.ReportProgress(-1, string.Empty);
-                    worker.ReportProgress(-1, $"Los ficheros exportados están en {_project.ExportFolder}");
+                        worker.ReportProgress(-1, "FINALIZADO");
+                        worker.ReportProgress(-1, string.Empty);
+                        worker.ReportProgress(-1, $"Los ficheros exportados están en {_project.ExportFolder}");
+                    }
+                    catch (Exception)
+                    {
+                        args.Cancel = true;
+                    }
                 };
 
                 workForm.ShowDialog(this);
