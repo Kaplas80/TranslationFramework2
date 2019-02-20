@@ -31,7 +31,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
         
         protected void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            HasChanges = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
+            NeedSaving = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
             OnFileChanged();
         }
     }

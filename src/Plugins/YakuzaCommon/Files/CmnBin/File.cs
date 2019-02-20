@@ -15,7 +15,7 @@ namespace YakuzaCommon.Files.CmnBin
 
         protected override IList<SimpleSubtitle.Subtitle> GetSubtitles()
         {
-            if (System.IO.File.Exists(ChangesFile))
+            if (HasChanges)
             {
                 return LoadChanges(ChangesFile);
             }
@@ -140,7 +140,7 @@ namespace YakuzaCommon.Files.CmnBin
                 }
             }
 
-            HasChanges = false;
+            NeedSaving = false;
             OnFileChanged();
         }
 

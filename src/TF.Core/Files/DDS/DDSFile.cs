@@ -51,7 +51,7 @@ namespace TF.Core.Files.DDS
 
         private ScratchImage GetImage()
         {
-            var source = File.Exists(ChangesFile) ? ChangesFile : Path;
+            var source = HasChanges ? ChangesFile : Path;
             var dds = DirectXTexNet.TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
 
             return dds;

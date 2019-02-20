@@ -112,15 +112,15 @@ namespace TF.GUI
 
         private void SelectedFileChanged()
         {
-            mniFileSave.Enabled = _currentFile.HasChanges;
-            tsbSaveFile.Enabled = _currentFile.HasChanges;
+            mniFileSave.Enabled = _currentFile.NeedSaving;
+            tsbSaveFile.Enabled = _currentFile.NeedSaving;
         }
 
         private bool CloseAllDocuments()
         {
             if (_currentFile != null)
             {
-                if (_currentFile.HasChanges)
+                if (_currentFile.NeedSaving)
                 {
                     var result = MessageBox.Show("Hay cambios pendientes en el fichero.\n¿Quieres guardarlos?",
                         "Guardar cambios", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);

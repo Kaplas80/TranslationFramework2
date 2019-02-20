@@ -40,6 +40,7 @@
             this.gbOptions = new System.Windows.Forms.GroupBox();
             this.chkCompress = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnOnlyModified = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.gbExportItems.SuspendLayout();
             this.gbOptions.SuspendLayout();
@@ -84,6 +85,7 @@
             this.gbExportItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbExportItems.Controls.Add(this.btnOnlyModified);
             this.gbExportItems.Controls.Add(this.btnInvertSelection);
             this.gbExportItems.Controls.Add(this.btnSelectNone);
             this.gbExportItems.Controls.Add(this.btnSelectAll);
@@ -98,9 +100,9 @@
             // btnInvertSelection
             // 
             this.btnInvertSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnInvertSelection.Location = new System.Drawing.Point(313, 345);
+            this.btnInvertSelection.Location = new System.Drawing.Point(210, 345);
             this.btnInvertSelection.Name = "btnInvertSelection";
-            this.btnInvertSelection.Size = new System.Drawing.Size(150, 23);
+            this.btnInvertSelection.Size = new System.Drawing.Size(96, 23);
             this.btnInvertSelection.TabIndex = 5;
             this.btnInvertSelection.Text = "Invertir selección";
             this.btnInvertSelection.UseVisualStyleBackColor = true;
@@ -109,9 +111,9 @@
             // btnSelectNone
             // 
             this.btnSelectNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSelectNone.Location = new System.Drawing.Point(160, 345);
+            this.btnSelectNone.Location = new System.Drawing.Point(108, 345);
             this.btnSelectNone.Name = "btnSelectNone";
-            this.btnSelectNone.Size = new System.Drawing.Size(150, 23);
+            this.btnSelectNone.Size = new System.Drawing.Size(96, 23);
             this.btnSelectNone.TabIndex = 4;
             this.btnSelectNone.Text = "Nada";
             this.btnSelectNone.UseVisualStyleBackColor = true;
@@ -122,7 +124,7 @@
             this.btnSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSelectAll.Location = new System.Drawing.Point(6, 345);
             this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(150, 23);
+            this.btnSelectAll.Size = new System.Drawing.Size(96, 23);
             this.btnSelectAll.TabIndex = 3;
             this.btnSelectAll.Text = "Todo";
             this.btnSelectAll.UseVisualStyleBackColor = true;
@@ -168,6 +170,17 @@
         "ro los ficheros ocuparán más espacio.");
             this.chkCompress.UseVisualStyleBackColor = true;
             // 
+            // btnOnlyModified
+            // 
+            this.btnOnlyModified.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnOnlyModified.Location = new System.Drawing.Point(312, 345);
+            this.btnOnlyModified.Name = "btnOnlyModified";
+            this.btnOnlyModified.Size = new System.Drawing.Size(96, 23);
+            this.btnOnlyModified.TabIndex = 6;
+            this.btnOnlyModified.Text = "Solo modificados";
+            this.btnOnlyModified.UseVisualStyleBackColor = true;
+            this.btnOnlyModified.Click += new System.EventHandler(this.btnOnlyModified_Click);
+            // 
             // ExportProjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -203,5 +216,6 @@
         private System.Windows.Forms.Button btnInvertSelection;
         private System.Windows.Forms.Button btnSelectNone;
         private System.Windows.Forms.Button btnSelectAll;
+        private System.Windows.Forms.Button btnOnlyModified;
     }
 }

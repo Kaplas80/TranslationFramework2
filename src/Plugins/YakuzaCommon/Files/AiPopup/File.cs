@@ -15,7 +15,7 @@ namespace YakuzaCommon.Files.AiPopup
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (System.IO.File.Exists(ChangesFile))
+            if (HasChanges)
             {
                 return LoadChanges(ChangesFile);
             }
@@ -69,7 +69,7 @@ namespace YakuzaCommon.Files.AiPopup
                 }
             }
 
-            HasChanges = false;
+            NeedSaving = false;
             OnFileChanged();
         }
 

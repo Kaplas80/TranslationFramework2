@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using TF.Core.Entities;
 using WeifenLuo.WinFormsUI.Docking;
@@ -41,7 +42,7 @@ namespace TF.GUI.Forms
             lbItems.Items.Clear();
             foreach (var container in containers)
             {
-                lbItems.Items.Add(container, true);
+                lbItems.Items.Add(container, container.Files.Any(x => x.HasChanges));
             }
         }
 
@@ -92,6 +93,15 @@ namespace TF.GUI.Forms
             }
 
             btnOK.Enabled = false;
+        }
+
+        private void btnOnlyModified_Click(object sender, EventArgs e)
+        {
+            for (var i = 0; i < lbItems.Items.Count; i++)
+            {
+                var isChecked = ((TranslationFileContainer) lbItems.Items[i]).Files.Any(x => x.HasChanges);
+                lbItems.SetItemChecked(i, isChecked);
+            }
         }
     }
 }

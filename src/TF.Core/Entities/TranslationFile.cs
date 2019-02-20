@@ -28,8 +28,10 @@ namespace TF.Core.Entities
         public string RelativePath { get; set; }
         public string Name { get; set; }
         public FileType Type { get; set; }
-        public bool HasChanges { get; set; }
+        public bool NeedSaving { get; set; }
+
         protected string ChangesFile { get; private set; }
+        public bool HasChanges => File.Exists(ChangesFile);
 
         public TranslationFile(string path, string changesFolder)
         {
@@ -39,7 +41,7 @@ namespace TF.Core.Entities
             Name = System.IO.Path.GetFileName(path);
             Type = FileType.Unknown;
 
-            HasChanges = false;
+            NeedSaving = false;
         }
 
         public virtual void Open(DockPanel panel, ThemeBase theme)
@@ -56,17 +58,17 @@ namespace TF.Core.Entities
             var dir = System.IO.Path.GetDirectoryName(outputFile);
             Directory.CreateDirectory(dir);
 
-            File.Copy(File.Exists(ChangesFile) ? ChangesFile : Path, outputFile);
+            File.Copy(HasChanges ? ChangesFile : Path, outputFile);
         }
 
         public virtual void Restore()
         {
-            if (File.Exists(ChangesFile))
+            if (HasChanges)
             {
                 File.Delete(ChangesFile);
             }
 
-            HasChanges = false;
+            NeedSaving = false;
             OnFileChanged();
         }
 
