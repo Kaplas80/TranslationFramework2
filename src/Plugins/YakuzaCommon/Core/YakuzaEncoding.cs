@@ -16,7 +16,7 @@ namespace YakuzaCommon.Core
             {
                 result = utf8Encoding.GetEncoder().GetByteCount(chars, index, count, true);
             }
-            catch (Exception e)
+            catch (EncoderFallbackException)
             {
                 result = isoEncoding.GetEncoder().GetByteCount(chars, index, count, true);
             }
@@ -31,7 +31,7 @@ namespace YakuzaCommon.Core
             {
                 result = utf8Encoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
             }
-            catch (Exception e)
+            catch (EncoderFallbackException)
             {
                 result = isoEncoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
             }
@@ -53,7 +53,7 @@ namespace YakuzaCommon.Core
             {
                 result = utf8Encoding.GetDecoder().GetCharCount(bytes, index, count, true);
             }
-            catch (Exception e)
+            catch (DecoderFallbackException)
             {
                 result = isoEncoding.GetDecoder().GetCharCount(bytes, index, count, true);
             }
@@ -68,7 +68,7 @@ namespace YakuzaCommon.Core
             {
                 result = utf8Encoding.GetDecoder().GetChars(bytes, byteIndex, byteCount, chars, charIndex, true);
             }
-            catch (Exception e)
+            catch (DecoderFallbackException)
             {
                 result = isoEncoding.GetDecoder().GetChars(bytes, byteIndex, byteCount, chars, charIndex, true);
             }
