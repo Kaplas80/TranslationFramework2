@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TF.Core.Entities;
 using YakuzaCommon.Files;
-using YakuzaCommon.Files.CmnBin;
 
 namespace YakuzaCommon
 {
@@ -34,7 +29,7 @@ namespace YakuzaCommon
 
             if (fileName.EndsWith("cmn.bin"))
             {
-                result = new CmnBinFile(path, changesFolder);
+                result = new Files.CmnBin.File(path, changesFolder);
             }
             else if (fileName.EndsWith("ai_popup.bin"))
             {

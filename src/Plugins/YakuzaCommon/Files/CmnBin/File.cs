@@ -5,22 +5,22 @@ using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.CmnBin
 {
-    internal class CmnBinFile : SimpleSubtitleFile
+    internal class File : SimpleSubtitle.File
     {
         private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-        public CmnBinFile(string path, string changesFolder) : base(path, changesFolder)
+        public File(string path, string changesFolder) : base(path, changesFolder)
         {
         }
 
-        protected override IList<Subtitle> GetSubtitles()
+        protected override IList<SimpleSubtitle.Subtitle> GetSubtitles()
         {
-            if (File.Exists(ChangesFile))
+            if (System.IO.File.Exists(ChangesFile))
             {
                 return LoadChanges(ChangesFile);
             }
 
-            var result = new List<Subtitle>();
+            var result = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
@@ -42,9 +42,9 @@ namespace YakuzaCommon.Files.CmnBin
             return result;
         }
 
-        private IList<CmnSubtitle> ReadLongSubtitles(ExtendedBinaryReader input)
+        private IList<Subtitle> ReadLongSubtitles(ExtendedBinaryReader input)
         {
-            var result = new List<CmnSubtitle>();
+            var result = new List<Subtitle>();
 
             input.ReadBytes(40);
 
@@ -68,9 +68,9 @@ namespace YakuzaCommon.Files.CmnBin
             return result;
         }
 
-        private IList<CmnSubtitle> ReadShortSubtitles(ExtendedBinaryReader input)
+        private IList<Subtitle> ReadShortSubtitles(ExtendedBinaryReader input)
         {
-            var result = new List<CmnSubtitle>();
+            var result = new List<Subtitle>();
 
             input.ReadBytes(266);
 
@@ -95,7 +95,7 @@ namespace YakuzaCommon.Files.CmnBin
             return result;
         }
 
-        private CmnSubtitle ReadLongSubtitle(ExtendedBinaryReader input)
+        private Subtitle ReadLongSubtitle(ExtendedBinaryReader input)
         {
             var subtitle = new LongSubtitle { Offset = input.Position };
 
@@ -109,7 +109,7 @@ namespace YakuzaCommon.Files.CmnBin
             return subtitle;
         }
 
-        private CmnSubtitle ReadShortSubtitle(ExtendedBinaryReader input)
+        private Subtitle ReadShortSubtitle(ExtendedBinaryReader input)
         {
             var subtitle = new ShortSubtitle { Offset = input.Position };
 
@@ -144,17 +144,17 @@ namespace YakuzaCommon.Files.CmnBin
             OnFileChanged();
         }
 
-        private IList<Subtitle> LoadChanges(string file)
+        private IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
         {
             using (var fs = new FileStream(file, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
             {
-                var result = new List<Subtitle>();
+                var result = new List<SimpleSubtitle.Subtitle>();
                 var subtitleCount = input.ReadInt32();
 
                 for (var i = 0; i < subtitleCount; i++)
                 {
-                    CmnSubtitle sub;
+                    Subtitle sub;
                     var type = input.ReadInt32();
                     if (type == 0)
                     {
@@ -182,7 +182,7 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
-            File.Copy(Path, outputPath);
+            System.IO.File.Copy(Path, outputPath);
 
             var subtitles = GetSubtitles();
 
@@ -193,7 +193,7 @@ namespace YakuzaCommon.Files.CmnBin
                 {
                     output.Seek(subtitle.Offset, SeekOrigin.Begin);
 
-                    var sub = subtitle as CmnSubtitle;
+                    var sub = subtitle as Subtitle;
                     for (var i = 0; i < sub.MaxLength; i++)
                     {
                         output.Write((byte) 0);

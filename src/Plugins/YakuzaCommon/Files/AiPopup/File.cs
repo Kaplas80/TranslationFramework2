@@ -5,7 +5,7 @@ using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.AiPopup
 {
-    internal class File : SimpleSubtitleFile
+    internal class File : SimpleSubtitle.File
     {
         private int FIRST_OFFSET = 0x1AC;
 

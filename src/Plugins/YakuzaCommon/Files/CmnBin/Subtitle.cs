@@ -1,16 +1,16 @@
 ﻿namespace YakuzaCommon.Files.CmnBin
 {
-    internal abstract class CmnSubtitle : SimpleSubtitle.Subtitle
+    internal abstract class Subtitle : SimpleSubtitle.Subtitle
     {
         public abstract int MaxLength { get; }
     }
 
-    internal class LongSubtitle : CmnSubtitle
+    internal class LongSubtitle : Subtitle
     {
         public override int MaxLength => 256;
     }
 
-    internal class ShortSubtitle : CmnSubtitle
+    internal class ShortSubtitle : Subtitle
     {
         public override int MaxLength => 128;
     }

@@ -6,16 +6,16 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace YakuzaCommon.Files.SimpleSubtitle
 {
-    public partial class SimpleSubtitleView : DockContent
+    public partial class View : DockContent
     {
         private IList<Subtitle> _subtitles;
 
-        protected SimpleSubtitleView()
+        protected View()
         {
             InitializeComponent();
         }
 
-        public SimpleSubtitleView(ThemeBase theme) : this()
+        public View(ThemeBase theme) : this()
         {
             dockPanel1.Theme = theme;
 

@@ -1,6 +1,6 @@
 ﻿namespace YakuzaCommon.Files.SimpleSubtitle
 {
-    partial class SimpleSubtitleView
+    partial class View
     {
         /// <summary>
         /// Required designer variable.
@@ -65,7 +65,7 @@
             this.Controls.Add(this.SubtitleGridView);
             this.Controls.Add(this.dockPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "SimpleSubtitleView";
+            this.Name = "View";
             this.Text = "CmnBinView";
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SubtitleGridView)).EndInit();
