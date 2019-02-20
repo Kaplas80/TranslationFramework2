@@ -31,6 +31,14 @@ namespace TF.Core.Entities
             Files.Add(file);
         }
 
+        public void Restore()
+        {
+            foreach (var file in Files)
+            {
+                file.Restore();
+            }
+        }
+
         public override string ToString()
         {
             return Path;

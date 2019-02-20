@@ -20,7 +20,7 @@ namespace TF.GUI
         {
             _explorer = new ExplorerForm();
             _explorer.FileChanged += ExplorerOnFileChanged;
-
+            _explorer.RestoreItem += ExplorerOnRestoreItem;
             tsExtender.DefaultRenderer = _toolStripProfessionalRenderer;
             
             dockPanel.Theme = dockTheme;
@@ -45,6 +45,41 @@ namespace TF.GUI
             }
         }
 
+        private void ExplorerOnRestoreItem(object selectedNode)
+        {
+            if (selectedNode is TranslationFileContainer container)
+            {
+                var result =
+                    MessageBox.Show(
+                        "Esto restaurará los ficheros originales de este contenedor. Esta operación no se puede deshacer.\n¿Quieres continuar?",
+                        "Restaurar ficheros", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    container.Restore();
+                    RefreshView();
+                }
+
+                return;
+            }
+
+            if (selectedNode is TranslationFile file)
+            {
+                var result =
+                    MessageBox.Show(
+                        "Esto restaurará el fichero original. Esta operación no se puede deshacer.\n¿Quieres continuar?",
+                        "Restaurar ficheros", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    file.Restore();
+                    RefreshView();
+                }
+
+                return;
+            }
+        }
+
         private bool ExplorerOnFileChanged(TranslationFile selectedFile)
         {
             if (CloseAllDocuments())
@@ -61,6 +96,18 @@ namespace TF.GUI
             }
 
             return true;
+        }
+
+        private void RefreshView()
+        {
+            if (CloseAllDocuments())
+            {
+                if (_currentFile != null)
+                {
+                    _currentFile.Open(dockPanel, dockTheme);
+                    _currentFile.FileChanged += SelectedFileChanged;
+                }
+            }
         }
 
         private void SelectedFileChanged()

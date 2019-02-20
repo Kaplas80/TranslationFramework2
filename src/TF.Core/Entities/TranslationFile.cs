@@ -59,6 +59,17 @@ namespace TF.Core.Entities
             File.Copy(File.Exists(ChangesFile) ? ChangesFile : Path, outputFile);
         }
 
+        public virtual void Restore()
+        {
+            if (File.Exists(ChangesFile))
+            {
+                File.Delete(ChangesFile);
+            }
+
+            HasChanges = false;
+            OnFileChanged();
+        }
+
         public event FileChangedEventHandler FileChanged;
         public delegate void FileChangedEventHandler();
 

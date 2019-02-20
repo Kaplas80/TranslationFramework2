@@ -32,6 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExplorerForm));
             this.explorerImageList = new System.Windows.Forms.ImageList(this.components);
             this.tvGameFiles = new System.Windows.Forms.TreeView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mniRestoreItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // explorerImageList
@@ -50,6 +53,20 @@
             this.tvGameFiles.ImageList = this.explorerImageList;
             this.tvGameFiles.Name = "tvGameFiles";
             this.tvGameFiles.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvGameFiles_BeforeSelect);
+            this.tvGameFiles.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvGameFiles_NodeMouseClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniRestoreItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
+            // 
+            // mniRestoreItem
+            // 
+            this.mniRestoreItem.Name = "mniRestoreItem";
+            resources.ApplyResources(this.mniRestoreItem, "mniRestoreItem");
+            this.mniRestoreItem.Click += new System.EventHandler(this.mniRestoreItem_Click);
             // 
             // ExplorerForm
             // 
@@ -61,6 +78,7 @@
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)));
             this.Name = "ExplorerForm";
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -68,5 +86,7 @@
         #endregion
         private System.Windows.Forms.ImageList explorerImageList;
         private System.Windows.Forms.TreeView tvGameFiles;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem mniRestoreItem;
     }
 }

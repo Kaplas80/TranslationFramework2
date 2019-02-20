@@ -34,8 +34,12 @@ namespace TF.GUI.Forms
         }
         
         public delegate bool FileChangedHandler(TranslationFile selectedFile);
+        public delegate void RestoreItemHandler(object selectedNode);
 
         public event FileChangedHandler FileChanged;
+        public event RestoreItemHandler RestoreItem;
+
+        private TreeNode _restoreSelectedNode;
 
         public ExplorerForm()
         {
@@ -97,6 +101,25 @@ namespace TF.GUI.Forms
                 var result = OnFileChanged(item);
                 e.Cancel = result;
             }
+        }
+
+        private void tvGameFiles_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                _restoreSelectedNode = e.Node;
+                contextMenuStrip1.Show(tvGameFiles, e.Location);
+            }
+        }
+
+        private void mniRestoreItem_Click(object sender, System.EventArgs e)
+        {
+            OnRestoreItem(_restoreSelectedNode.Tag);
+        }
+
+        protected virtual void OnRestoreItem(object selectedNode)
+        {
+            RestoreItem?.Invoke(selectedNode);
         }
     }
 }
