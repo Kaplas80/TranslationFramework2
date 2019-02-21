@@ -7,11 +7,11 @@
 
     internal class LongSubtitle : Subtitle
     {
-        public override int MaxLength => 256;
+        public override int MaxLength => 256; //0x0100
     }
 
     internal class ShortSubtitle : Subtitle
     {
-        public override int MaxLength => 128;
+        public override int MaxLength => 128; //0x80
     }
 }

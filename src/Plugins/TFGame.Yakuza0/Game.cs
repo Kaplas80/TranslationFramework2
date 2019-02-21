@@ -42,7 +42,7 @@ namespace TFGame.Yakuza0
                 SearchPattern = "*.par"
             };
             auth_w64_containers.FileSearches.Add(cmnSearch);
-            auth_w64_containers.FileSearches.Add(ddsSearch);
+            //auth_w64_containers.FileSearches.Add(ddsSearch);
 
             result.AddRange(auth_w64_containers.GetContainers(path));
             result.Sort();

@@ -7,7 +7,7 @@ namespace YakuzaCommon.Files.CmnBin
 {
     internal class File : SimpleSubtitle.File
     {
-        private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+        private static readonly byte[] SearchPattern = { 0x83, 0x41, 0x83, 0x6A, 0x83, 0x81, 0x81, 0x5B, 0x83, 0x56, 0x83, 0x87, 0x83, 0x93 };
 
         public File(string path, string changesFolder) : base(path, changesFolder)
         {
@@ -29,6 +29,8 @@ namespace YakuzaCommon.Files.CmnBin
 
                 while (currentIndex != -1)
                 {
+                    input.ReadBytes(16); //0x10
+
                     var type = input.ReadUInt64();
 
                     var subtitles = type == 0 ? ReadLongSubtitles(input) : ReadShortSubtitles(input);
@@ -46,17 +48,17 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var result = new List<Subtitle>();
 
-            input.ReadBytes(40);
+            input.ReadBytes(40); //0x28
 
             var numJapaneseSubs = input.ReadInt32();
             var numEnglishSubs = input.ReadInt32();
             var totalSubs = numJapaneseSubs + numEnglishSubs;
 
-            input.ReadBytes(16);
+            input.ReadBytes(16); //0x10
 
             for (var i = 0; i < totalSubs; i++)
             {
-                input.ReadBytes(16);
+                input.ReadBytes(16); //0x10
 
                 var subtitle = ReadLongSubtitle(input);
                 if (subtitle.Text.Length > 0)
@@ -72,17 +74,17 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var result = new List<Subtitle>();
 
-            input.ReadBytes(266);
+            input.ReadBytes(266); //0x010A
 
             for (var subGroup = 0; subGroup < 2; subGroup++)
             {
                 var numSubs = input.ReadInt32();
-                input.ReadBytes(12);
-                input.ReadBytes(16);
+                input.ReadBytes(12); //0x0C
+                input.ReadBytes(16); //0x10
 
                 for (var i = 0; i < numSubs; i++)
                 {
-                    input.ReadBytes(16);
+                    input.ReadBytes(16); //0x10
 
                     var subtitle = ReadShortSubtitle(input);
                     if (subtitle.Text.Length > 0)
