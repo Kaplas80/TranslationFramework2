@@ -47,9 +47,9 @@ namespace TFGame.YakuzaKiwami
             };
             auth_w64_containers.Exclusions.Add("inst_auth.par");
             auth_w64_containers.FileSearches.Add(cmnSearch);
-            //auth_w64_containers.FileSearches.Add(ddsSearch);
+            auth_w64_containers.FileSearches.Add(ddsSearch);
 
-            result.AddRange(auth_w64_containers.GetContainers(path));
+            //result.AddRange(auth_w64_containers.GetContainers(path));
             
             var aiPopupSearch =
                 new GameFileSearch
@@ -60,11 +60,21 @@ namespace TFGame.YakuzaKiwami
                     RecursiveSearch = false
                 };
 
+            var armsRepairSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "arms_repair.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false
+                };
+
             var wdr_par_c_common = new GameFileContainer
             {
                 Path = @"data\wdr_par_c\common.par", Type = ContainerType.CompressedFile
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
+            wdr_par_c_common.FileSearches.Add(armsRepairSearch);
 
             result.Add(wdr_par_c_common);
 
@@ -73,3 +83,4 @@ namespace TFGame.YakuzaKiwami
         }
     }
 }
+

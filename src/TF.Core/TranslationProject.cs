@@ -76,9 +76,9 @@ namespace TF.Core
 
                                 translationContainer.AddFile(translationFile);
                             }
-
-                            worker.ReportProgress(0, $"{translationContainer.Files.Count} ficheros encontrados y añadidos");
                         }
+
+                        worker.ReportProgress(0, $"{translationContainer.Files.Count} ficheros encontrados y añadidos");
                     }
                     else
                     {

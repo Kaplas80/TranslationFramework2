@@ -35,6 +35,10 @@ namespace YakuzaCommon
             {
                 result = new Files.AiPopup.File(path, changesFolder);
             }
+            else if (fileName.EndsWith("arms_repair.bin"))
+            {
+                result = new Files.SimpleSubtitle.File(path, changesFolder);
+            }
             else
             {
                 switch (extension)

@@ -193,7 +193,7 @@ namespace YakuzaCommon.Files.CmnBin
             OnFileChanged();
         }
 
-        private IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
+        private new IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
         {
             using (var fs = new FileStream(file, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
