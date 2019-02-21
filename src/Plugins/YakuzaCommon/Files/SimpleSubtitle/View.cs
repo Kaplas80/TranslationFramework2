@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -8,6 +9,22 @@ namespace YakuzaCommon.Files.SimpleSubtitle
 {
     public partial class View : DockContent
     {
+        // Con esta clase evito que la flecha izquierda cambie de celda al editar
+        private class TFDataGridView : DataGridView
+        {
+            [SecurityPermission(
+                SecurityAction.LinkDemand, Flags =
+                    SecurityPermissionFlag.UnmanagedCode)]
+            protected override bool ProcessDataGridViewKey(KeyEventArgs e)
+            {
+                if (e.KeyCode == Keys.Left)
+                {
+                    return true;
+                }
+                return base.ProcessDataGridViewKey(e);
+            }
+        }
+
         private IList<Subtitle> _subtitles;
 
         protected View()
@@ -34,7 +51,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
                 DataPropertyName = "Offset",
                 Name = "colOffset",
                 HeaderText = "Offset",
-                DefaultCellStyle = new DataGridViewCellStyle { Format = "X8" },
+                DefaultCellStyle = new DataGridViewCellStyle { Format = "X8", BackColor = Color.LightGray},
                 ReadOnly = true
             };
             SubtitleGridView.Columns.Add(column);
@@ -45,6 +62,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
                 Name = "colOriginal",
                 HeaderText = "Original",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                DefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.LightGray },
                 ReadOnly = true
             };
             SubtitleGridView.Columns.Add(column);
@@ -122,6 +140,19 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             }
 
             e.Handled = true;
+        }
+
+        private void SubtitleGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            SubtitleGridView.BeginEdit(false);
+        }
+
+        private void SubtitleGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control.GetType() == typeof(DataGridViewTextBoxEditingControl))
+            {
+                SendKeys.Send("{RIGHT}");
+            }
         }
     }
 }

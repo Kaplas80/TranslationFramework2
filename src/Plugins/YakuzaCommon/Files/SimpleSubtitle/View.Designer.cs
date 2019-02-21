@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.SubtitleGridView = new System.Windows.Forms.DataGridView();
+            this.SubtitleGridView = new TFDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SubtitleGridView)).BeginInit();
             this.SuspendLayout();
@@ -55,9 +55,11 @@
             this.SubtitleGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.SubtitleGridView.Size = new System.Drawing.Size(1066, 450);
             this.SubtitleGridView.TabIndex = 1;
+            this.SubtitleGridView.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.SubtitleGridView_CellMouseDoubleClick);
             this.SubtitleGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.SubtitleGridView_CellPainting);
+            this.SubtitleGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.SubtitleGridView_EditingControlShowing);
             // 
-            // CmnBinView
+            // View
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
