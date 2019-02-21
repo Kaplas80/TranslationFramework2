@@ -7,7 +7,7 @@ namespace YakuzaCommon.Files.CmnBin
 {
     internal class File : SimpleSubtitle.File
     {
-        private static readonly byte[] SearchPattern = { 0x83, 0x41, 0x83, 0x6A, 0x83, 0x81, 0x81, 0x5B, 0x83, 0x56, 0x83, 0x87, 0x83, 0x93 };
+        private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B };
 
         public File(string path, string changesFolder) : base(path, changesFolder)
         {
@@ -29,7 +29,7 @@ namespace YakuzaCommon.Files.CmnBin
 
                 while (currentIndex != -1)
                 {
-                    input.ReadBytes(16); //0x10
+                    input.ReadBytes(12); //0x0C
 
                     var type = input.ReadUInt64();
 
