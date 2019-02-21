@@ -79,5 +79,10 @@ namespace TF.Core.Entities
         {
             FileChanged?.Invoke();
         }
+
+        public virtual bool Search(string searchString)
+        {
+            return false;
+        }
     }
 }

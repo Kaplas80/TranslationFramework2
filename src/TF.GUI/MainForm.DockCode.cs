@@ -15,12 +15,17 @@ namespace TF.GUI
         private readonly ToolStripRenderer _toolStripProfessionalRenderer = new ToolStripProfessionalRenderer();
         
         private ExplorerForm _explorer;
+        private SearchResultsForm _searchResults;
 
         private void ConfigureDock()
         {
             _explorer = new ExplorerForm();
             _explorer.FileChanged += ExplorerOnFileChanged;
             _explorer.RestoreItem += ExplorerOnRestoreItem;
+
+            _searchResults = new SearchResultsForm();
+            _searchResults.FileChanged += ExplorerOnFileChanged;
+
             tsExtender.DefaultRenderer = _toolStripProfessionalRenderer;
             
             dockPanel.Theme = dockTheme;
@@ -38,11 +43,45 @@ namespace TF.GUI
                 {
                     _explorer.Show(dockPanel, DockState.DockLeft);
                 }
+
+                if (_searchResults.DockPanel == null)
+                {
+                    _searchResults.Show(dockPanel, DockState.DockBottomAutoHide);
+                }
             }
             else
             {
                 _explorer.Show(dockPanel, DockState.DockLeft);
+                _searchResults.Show(dockPanel, DockState.DockBottomAutoHide);
             }
+        }
+
+        private bool ExplorerOnFileChanged(TranslationFile selectedFile)
+        {
+            if (CloseAllDocuments())
+            {
+                _currentFile = selectedFile;
+
+                if (_currentFile != null)
+                {
+                    _currentFile.Open(dockPanel, dockTheme);
+                    _currentFile.FileChanged += SelectedFileChanged;
+                }
+
+                mniEditSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+                mniEditSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+                tsbSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+                tsbSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+
+                return false;
+            }
+
+            mniEditSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+            mniEditSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+            tsbSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+            tsbSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
+
+            return true;
         }
 
         private void ExplorerOnRestoreItem(object selectedNode)
@@ -80,24 +119,6 @@ namespace TF.GUI
             }
         }
 
-        private bool ExplorerOnFileChanged(TranslationFile selectedFile)
-        {
-            if (CloseAllDocuments())
-            {
-                _currentFile = selectedFile;
-
-                if (_currentFile != null)
-                {
-                    _currentFile.Open(dockPanel, dockTheme);
-                    _currentFile.FileChanged += SelectedFileChanged;
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-
         private void RefreshView()
         {
             if (CloseAllDocuments())
@@ -112,8 +133,8 @@ namespace TF.GUI
 
         private void SelectedFileChanged()
         {
-            mniFileSave.Enabled = _currentFile.NeedSaving;
-            tsbSaveFile.Enabled = _currentFile.NeedSaving;
+            mniFileSave.Enabled = _currentFile != null && _currentFile.NeedSaving;
+            tsbSaveFile.Enabled = _currentFile != null && _currentFile.NeedSaving;
         }
 
         private bool CloseAllDocuments()
@@ -159,6 +180,11 @@ namespace TF.GUI
             if (persistString == typeof(ExplorerForm).ToString())
             {
                 return _explorer;
+            }
+
+            if (persistString == typeof(SearchResultsForm).ToString())
+            {
+                return _searchResults;
             }
 
             return null;

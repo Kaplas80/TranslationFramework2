@@ -68,5 +68,10 @@ namespace TF.GUI
         {
             ExportProject();
         }
+
+        private void SearchInFiles_Click(object sender, EventArgs e)
+        {
+            SearchInFiles();
+        }
     }
 }

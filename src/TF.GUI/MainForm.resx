@@ -132,7 +132,7 @@
     <value>Ctrl+N</value>
   </data>
   <data name="mniFileNew.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mniFileNew.Text" xml:space="preserve">
     <value>&amp;Nuevo</value>
@@ -144,13 +144,13 @@
     <value>Ctrl+O</value>
   </data>
   <data name="mniFileOpen.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mniFileOpen.Text" xml:space="preserve">
     <value>&amp;Abrir</value>
   </data>
   <data name="toolStripSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>153, 6</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="mniFileSave.Enabled" type="System.Boolean, mscorlib">
@@ -163,37 +163,34 @@
     <value>Ctrl+S</value>
   </data>
   <data name="mniFileSave.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mniFileSave.Text" xml:space="preserve">
     <value>&amp;Guardar</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>153, 6</value>
   </data>
   <data name="mniFileExport.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="mniFileExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mniFileExport.Text" xml:space="preserve">
     <value>Exportar...</value>
   </data>
   <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>153, 6</value>
   </data>
   <data name="mniFileExit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mniFileExit.Text" xml:space="preserve">
     <value>&amp;Salir</value>
   </data>
-  <data name="mniEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>49, 20</value>
-  </data>
-  <data name="mniEdit.Text" xml:space="preserve">
-    <value>&amp;Editar</value>
+  <data name="mniEditSearch.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="mniEditSearch.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+F</value>
@@ -203,6 +200,9 @@
   </data>
   <data name="mniEditSearch.Text" xml:space="preserve">
     <value>&amp;Buscar</value>
+  </data>
+  <data name="mniEditSearchAndReplace.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="mniEditSearchAndReplace.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+H</value>
@@ -216,6 +216,9 @@
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>255, 6</value>
   </data>
+  <data name="mniEditSearchInFiles.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="mniEditSearchInFiles.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+Mayús.+F</value>
   </data>
@@ -224,6 +227,12 @@
   </data>
   <data name="mniEditSearchInFiles.Text" xml:space="preserve">
     <value>B&amp;uscar en archivos</value>
+  </data>
+  <data name="mniEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 20</value>
+  </data>
+  <data name="mniEdit.Text" xml:space="preserve">
+    <value>&amp;Editar</value>
   </data>
   <data name="mniTools.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 20</value>
@@ -333,6 +342,9 @@
   <data name="tsbExportProject.Text" xml:space="preserve">
     <value>&amp;Exportar</value>
   </data>
+  <data name="tsbSearch.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="tsbSearch.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
@@ -345,6 +357,9 @@
   <data name="tsbSearch.ToolTipText" xml:space="preserve">
     <value>&amp;Buscar</value>
   </data>
+  <data name="tsbSearchAndReplace.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="tsbSearchAndReplace.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
@@ -353,6 +368,9 @@
   </data>
   <data name="tsbSearchAndReplace.Text" xml:space="preserve">
     <value>Buscar y &amp;reemplazar</value>
+  </data>
+  <data name="tsbSearchInFiles.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="tsbSearchInFiles.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>

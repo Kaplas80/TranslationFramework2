@@ -258,5 +258,34 @@ namespace TF.Core
                 }
             }
         }
+
+        public IList<Tuple<TranslationFileContainer, TranslationFile>> SearchInFiles(string searchString, BackgroundWorker worker)
+        {
+            var result = new List<Tuple<TranslationFileContainer, TranslationFile>>();
+
+            foreach (var container in FileContainers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new Exception("Cancelado por el usuario");
+                }
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+
+                foreach (var file in container.Files)
+                {
+                    var found = file.Search(searchString);
+
+                    if (found)
+                    {
+                        result.Add(new Tuple<TranslationFileContainer, TranslationFile>(container, file));
+                    }
+                }
+
+            }
+
+            return result;
+        }
     }
 }

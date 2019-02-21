@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using TF.Core.Entities;
+using TF.Core.Helpers;
 using WeifenLuo.WinFormsUI.Docking;
 using YakuzaCommon.Core;
 
@@ -33,6 +34,17 @@ namespace YakuzaCommon.Files.SimpleSubtitle
         {
             NeedSaving = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
             OnFileChanged();
+        }
+
+        public override bool Search(string searchString)
+        {
+            var bytes = System.IO.File.ReadAllBytes(HasChanges ? ChangesFile : Path);
+
+            var pattern = Encoding.GetBytes(searchString);
+
+            var index = SearchHelper.SearchPattern(bytes, pattern, 0);
+
+            return index != -1;
         }
     }
 }

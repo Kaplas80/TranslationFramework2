@@ -144,15 +144,15 @@
             // 
             // mniEditSearch
             // 
+            resources.ApplyResources(this.mniEditSearch, "mniEditSearch");
             this.mniEditSearch.Image = global::TF.GUI.Icons.search;
             this.mniEditSearch.Name = "mniEditSearch";
-            resources.ApplyResources(this.mniEditSearch, "mniEditSearch");
             // 
             // mniEditSearchAndReplace
             // 
+            resources.ApplyResources(this.mniEditSearchAndReplace, "mniEditSearchAndReplace");
             this.mniEditSearchAndReplace.Image = global::TF.GUI.Icons.replace;
             this.mniEditSearchAndReplace.Name = "mniEditSearchAndReplace";
-            resources.ApplyResources(this.mniEditSearchAndReplace, "mniEditSearchAndReplace");
             // 
             // toolStripSeparator3
             // 
@@ -161,9 +161,10 @@
             // 
             // mniEditSearchInFiles
             // 
+            resources.ApplyResources(this.mniEditSearchInFiles, "mniEditSearchInFiles");
             this.mniEditSearchInFiles.Image = global::TF.GUI.Icons.searchfiles;
             this.mniEditSearchInFiles.Name = "mniEditSearchInFiles";
-            resources.ApplyResources(this.mniEditSearchInFiles, "mniEditSearchInFiles");
+            this.mniEditSearchInFiles.Click += new System.EventHandler(this.SearchInFiles_Click);
             // 
             // mniTools
             // 
@@ -266,23 +267,24 @@
             // tsbSearch
             // 
             this.tsbSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbSearch.Image = global::TF.GUI.Icons.search;
             resources.ApplyResources(this.tsbSearch, "tsbSearch");
+            this.tsbSearch.Image = global::TF.GUI.Icons.search;
             this.tsbSearch.Name = "tsbSearch";
             // 
             // tsbSearchAndReplace
             // 
             this.tsbSearchAndReplace.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbSearchAndReplace.Image = global::TF.GUI.Icons.replace;
             resources.ApplyResources(this.tsbSearchAndReplace, "tsbSearchAndReplace");
+            this.tsbSearchAndReplace.Image = global::TF.GUI.Icons.replace;
             this.tsbSearchAndReplace.Name = "tsbSearchAndReplace";
             // 
             // tsbSearchInFiles
             // 
             this.tsbSearchInFiles.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbSearchInFiles.Image = global::TF.GUI.Icons.searchfiles;
             resources.ApplyResources(this.tsbSearchInFiles, "tsbSearchInFiles");
+            this.tsbSearchInFiles.Image = global::TF.GUI.Icons.searchfiles;
             this.tsbSearchInFiles.Name = "tsbSearchInFiles";
+            this.tsbSearchInFiles.Click += new System.EventHandler(this.SearchInFiles_Click);
             // 
             // tsExtender
             // 
@@ -295,7 +297,6 @@
             resources.ApplyResources(this.dockPanel, "dockPanel");
             this.dockPanel.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
             this.dockPanel.Name = "dockPanel";
-            this.dockPanel.ShowAutoHideContentOnHover = false;
             this.dockPanel.Theme = null;
             // 
             // LoadFileDialog

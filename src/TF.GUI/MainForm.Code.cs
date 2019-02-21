@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
@@ -6,6 +7,7 @@ using TF.Core;
 using TF.Core.Entities;
 using TF.GUI.Forms;
 using TF.GUI.Properties;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.GUI
 {
@@ -98,6 +100,8 @@ namespace TF.GUI
             Text = $"Translation Framework 2.0 - {_project.Game.Name} - {_project.WorkPath}";
             tsbExportProject.Enabled = true;
             mniFileExport.Enabled = true;
+            tsbSearchInFiles.Enabled = true;
+            mniEditSearchInFiles.Enabled = true;
         }
 
         private void LoadTranslation()
@@ -111,9 +115,10 @@ namespace TF.GUI
                     return;
                 }
 
+                TranslationProject project;
                 try
                 {
-                    _project = TranslationProject.Load(LoadFileDialog.FileName, _pluginManager);
+                    project = TranslationProject.Load(LoadFileDialog.FileName, _pluginManager);
                 }
                 catch (Exception e)
                 {
@@ -121,6 +126,7 @@ namespace TF.GUI
                     return;
                 }
 
+                _project = project;
                 _explorer.LoadTree(_project.FileContainers);
 
                 _currentFile = null;
@@ -128,6 +134,8 @@ namespace TF.GUI
                 Text = $"Translation Framework 2.0 - {_project.Game.Name} - {_project.WorkPath}";
                 tsbExportProject.Enabled = true;
                 mniFileExport.Enabled = true;
+                tsbSearchInFiles.Enabled = true;
+                mniEditSearchInFiles.Enabled = true;
             }
         }
 
@@ -173,6 +181,53 @@ namespace TF.GUI
                 };
 
                 workForm.ShowDialog(this);
+            }
+        }
+
+        private void SearchInFiles()
+        {
+            if (_project != null)
+            {
+                var form = new SearchInFilesForm(dockTheme);
+
+                var formResult = form.ShowDialog(this);
+
+                if (formResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                var searchString = form.SearchString;
+                var workForm = new WorkingForm(dockTheme, "Buscar en ficheros", true);
+                IList<Tuple<TranslationFileContainer, TranslationFile>> filesFound = null;
+                workForm.DoWork += (sender, args) =>
+                {
+                    var worker = sender as BackgroundWorker;
+
+                    try
+                    {
+                        filesFound = _project.SearchInFiles(searchString, worker);
+
+                        worker.ReportProgress(-1, "FINALIZADO");
+                    }
+                    catch (Exception)
+                    {
+                        args.Cancel = true;
+                    }
+                };
+
+                workForm.ShowDialog(this);
+
+                if (workForm.Cancelled)
+                {
+                    return;
+                }
+
+                _searchResults.LoadItems(searchString, filesFound);
+                if (_searchResults.VisibleState == DockState.DockBottomAutoHide)
+                {
+                    dockPanel.ActiveAutoHideContent = _searchResults;
+                }
             }
         }
     }

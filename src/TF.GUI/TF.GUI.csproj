@@ -53,6 +53,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\SearchInFilesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SearchInFilesForm.Designer.cs">
+      <DependentUpon>SearchInFilesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SearchResultsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SearchResultsForm.Designer.cs">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ExplorerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +108,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\SearchInFilesForm.resx">
+      <DependentUpon>SearchInFilesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SearchResultsForm.resx">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ExplorerForm.resx">
       <DependentUpon>ExplorerForm.cs</DependentUpon>
     </EmbeddedResource>
