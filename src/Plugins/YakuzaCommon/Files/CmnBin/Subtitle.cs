@@ -1,8 +1,15 @@
 ﻿namespace YakuzaCommon.Files.CmnBin
 {
+    internal enum SubtitleLanguage
+    {
+        English,
+        Japanese
+    }
+
     internal abstract class Subtitle : SimpleSubtitle.Subtitle
     {
         public abstract int MaxLength { get; }
+        public SubtitleLanguage Language { get; set; }
     }
 
     internal class LongSubtitle : Subtitle

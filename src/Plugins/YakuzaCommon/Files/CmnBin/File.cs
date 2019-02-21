@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.CmnBin
 {
@@ -20,7 +20,7 @@ namespace YakuzaCommon.Files.CmnBin
                 return LoadChanges(ChangesFile);
             }
 
-            var result = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
@@ -35,11 +35,32 @@ namespace YakuzaCommon.Files.CmnBin
 
                     var subtitles = type == 0 ? ReadLongSubtitles(input) : ReadShortSubtitles(input);
 
-                    result.AddRange(subtitles);
+                    temp.AddRange(subtitles);
 
                     currentIndex = input.FindPattern(SearchPattern);
                 }
             }
+
+            var englishSubtitles = new List<Subtitle>();
+            var japaneseSubtitles = new List<Subtitle>();
+            foreach (var subtitle in temp)
+            {
+                switch (subtitle.Language)
+                {
+                    case SubtitleLanguage.English:
+                        englishSubtitles.Add(subtitle);
+                        break;
+                    case SubtitleLanguage.Japanese:
+                        japaneseSubtitles.Add(subtitle);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            var result = new List<SimpleSubtitle.Subtitle>();
+            result.AddRange(englishSubtitles);
+            result.AddRange(japaneseSubtitles);
 
             return result;
         }
@@ -52,15 +73,27 @@ namespace YakuzaCommon.Files.CmnBin
 
             var numJapaneseSubs = input.ReadInt32();
             var numEnglishSubs = input.ReadInt32();
-            var totalSubs = numJapaneseSubs + numEnglishSubs;
 
             input.ReadBytes(16); //0x10
 
-            for (var i = 0; i < totalSubs; i++)
+            for (var i = 0; i < numJapaneseSubs; i++)
             {
                 input.ReadBytes(16); //0x10
 
                 var subtitle = ReadLongSubtitle(input);
+                subtitle.Language = SubtitleLanguage.Japanese;
+                if (subtitle.Text.Length > 0)
+                {
+                    result.Add(subtitle);
+                }
+            }
+
+            for (var i = 0; i < numEnglishSubs; i++)
+            {
+                input.ReadBytes(16); //0x10
+
+                var subtitle = ReadLongSubtitle(input);
+                subtitle.Language = SubtitleLanguage.English;
                 if (subtitle.Text.Length > 0)
                 {
                     result.Add(subtitle);
@@ -76,21 +109,35 @@ namespace YakuzaCommon.Files.CmnBin
 
             input.ReadBytes(266); //0x010A
 
-            for (var subGroup = 0; subGroup < 2; subGroup++)
+            var numSubs = input.ReadInt32();
+            input.ReadBytes(12); //0x0C
+            input.ReadBytes(16); //0x10
+
+            for (var i = 0; i < numSubs; i++)
             {
-                var numSubs = input.ReadInt32();
-                input.ReadBytes(12); //0x0C
                 input.ReadBytes(16); //0x10
 
-                for (var i = 0; i < numSubs; i++)
+                var subtitle = ReadShortSubtitle(input);
+                subtitle.Language = SubtitleLanguage.Japanese;
+                if (subtitle.Text.Length > 0)
                 {
-                    input.ReadBytes(16); //0x10
+                    result.Add(subtitle);
+                }
+            }
 
-                    var subtitle = ReadShortSubtitle(input);
-                    if (subtitle.Text.Length > 0)
-                    {
-                        result.Add(subtitle);
-                    }
+            numSubs = input.ReadInt32();
+            input.ReadBytes(12); //0x0C
+            input.ReadBytes(16); //0x10
+
+            for (var i = 0; i < numSubs; i++)
+            {
+                input.ReadBytes(16); //0x10
+
+                var subtitle = ReadShortSubtitle(input);
+                subtitle.Language = SubtitleLanguage.English;
+                if (subtitle.Text.Length > 0)
+                {
+                    result.Add(subtitle);
                 }
             }
 
