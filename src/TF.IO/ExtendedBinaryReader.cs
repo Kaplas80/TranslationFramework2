@@ -140,60 +140,63 @@ namespace TF.IO
         public string ReadString(Encoding encoding, char endChar = '\0')
         {
             var pos = Position;
-            var endPos = pos;
 
             var found = false;
             var sb = new StringBuilder();
             while (!found)
             {
-                var str = ReadString(256, encoding);
-                var position = str.IndexOf(endChar);
-
-                if (position >= 0)
+                var str = ReadString(256, encoding, endChar);
+                sb.Append(str);
+                if (str.Length < 256)
                 {
-                    str = str.Substring(0, position);
-                    sb.Append(str);
-
-                    //endPos += position;
-                    endPos += encoding.GetByteCount(str);
                     found = true;
                 }
-                else
-                {
-                    sb.Append(str);
-                    endPos += 256;
-                }
             }
-
-            Seek(endPos + encoding.GetByteCount(endChar.ToString()), SeekOrigin.Begin);
 
             return sb.ToString();
         }
 
-        public string ReadString(int length, bool trimEnd = false, char endChar = '\0')
+        public string ReadString(int maxLength, Encoding encoding, char endChar = '\0')
         {
-            return ReadString(length, Encoding, trimEnd, endChar);
-        }
+            var startPos = Position;
+            var endCharStr = endChar.ToString();
+            var endCharLength = encoding.GetByteCount(endCharStr);
 
-        public string ReadString(int length, Encoding encoding, bool trimEnd = false, char endChar = '\0')
-        {
-            var pos = Position;
+            var limit = maxLength * encoding.GetMaxByteCount(1);
 
-            var buffer = ReadBytes(length);
+            var buffer = ReadBytes(limit);
 
-            var str = encoding.GetString(buffer, 0, buffer.Length);
+            var endBytes = encoding.GetBytes(new char[] {endChar}, 0, 1);
 
-            if (trimEnd)
+            var found = false;
+            var i = 0;
+            var read = new byte[endCharLength];
+            while (!found & i < buffer.Length )
             {
-                var position = str.IndexOf(endChar);
-                if (position >= 0)
-                {
-                    str = str.Substring(0, position);
-                    Seek(pos + encoding.GetByteCount(str) + encoding.GetByteCount(endChar.ToString()), SeekOrigin.Begin);
-                }
+                Array.Copy(buffer, i, read, 0, endCharLength);
+
+                found = endBytes.SequenceEqual(read);
+
+                i += endCharLength;
             }
 
-            return str;
+            if (!found)
+            {
+                var str = encoding.GetString(buffer, 0, buffer.Length);
+                Seek(startPos + limit, SeekOrigin.Begin);
+                return str;
+            }
+            else
+            {
+                var str = encoding.GetString(buffer, 0, i - endCharLength);
+                Seek(startPos + i, SeekOrigin.Begin);
+                return str;
+            }
+        }
+
+        public string ReadString(int maxLength)
+        {
+            return ReadString(maxLength, Encoding);
         }
 
         public override string ReadString()
@@ -341,6 +344,60 @@ namespace TF.IO
             }
 
             return (int) singleChar[0];
+        }
+
+        private static unsafe int SearchPattern(byte[] searchArray, byte[] pattern, int startIndex = 0)
+        {
+            // https://gist.github.com/mjs3339/0772431281093f1bca1fce2f2eca527d
+            var patternLength = pattern.Length;
+            if (pattern == null)
+            {
+                throw new Exception("Pattern has not been set.");
+            }
+
+            if (patternLength > searchArray.Length)
+            {
+                throw new Exception("Search Pattern length exceeds search array length.");
+            }
+
+            var jumpTable = new int[256];
+            for (var i = 0; i < 256; i++)
+            {
+                jumpTable[i] = patternLength;
+            }
+
+            for (var i = 0; i < patternLength - 1; i++)
+            {
+                jumpTable[pattern[i]] = patternLength - i - 1;
+            }
+
+            var index = startIndex;
+            var limit = searchArray.Length - patternLength;
+            var patternLengthMinusOne = patternLength - 1;
+            fixed (byte* pointerToByteArray = searchArray)
+            {
+                var pointerToByteArrayStartingIndex = pointerToByteArray + startIndex;
+                fixed (byte* pointerToPattern = pattern)
+                {
+                    while (index <= limit)
+                    {
+                        var j = patternLengthMinusOne;
+                        while (j >= 0 && pointerToPattern[j] == pointerToByteArrayStartingIndex[index + j])
+                        {
+                            j--;
+                        }
+
+                        if (j < 0)
+                        {
+                            return index;
+                        }
+
+                        index += Math.Max(jumpTable[pointerToByteArrayStartingIndex[index + j]] - patternLength + 1 + j, 1);
+                    }
+                }
+            }
+
+            return -1;
         }
     }
 }

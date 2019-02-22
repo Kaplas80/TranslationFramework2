@@ -148,7 +148,7 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var subtitle = new LongSubtitle { Offset = input.Position };
 
-            subtitle.Text = input.ReadString(subtitle.MaxLength, true);
+            subtitle.Text = input.ReadString(subtitle.MaxLength);
             subtitle.Loaded = subtitle.Text;
             subtitle.Translation = subtitle.Text;
 
@@ -162,7 +162,7 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var subtitle = new ShortSubtitle { Offset = input.Position };
 
-            subtitle.Text = input.ReadString(subtitle.MaxLength, true);
+            subtitle.Text = input.ReadString(subtitle.MaxLength);
             subtitle.Loaded = subtitle.Text;
             subtitle.Translation = subtitle.Text;
             subtitle.PropertyChanged += SubtitlePropertyChanged;
@@ -231,7 +231,7 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
-            System.IO.File.Copy(Path, outputPath);
+            System.IO.File.Copy(Path, outputPath, true);
 
             var subtitles = GetSubtitles();
 
