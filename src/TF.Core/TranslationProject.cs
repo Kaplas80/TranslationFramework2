@@ -66,7 +66,7 @@ namespace TF.Core
                         Game.ExtractFile(containerPath, extractionContainerPath);
                         foreach (var fileSearch in container.FileSearches)
                         {
-                            worker.ReportProgress(0, $"Buscando {container.Path}\\{fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
+                            worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                             var foundFiles = fileSearch.GetFiles(extractionContainerPath);
 
                             foreach (var f in foundFiles)
@@ -102,7 +102,7 @@ namespace TF.Core
                 {
                     foreach (var fileSearch in container.FileSearches)
                     {
-                        worker.ReportProgress(0, $"Buscando {container.Path}\\{fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
+                        worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                         var foundFiles = fileSearch.GetFiles(containerPath);
 
                         foreach (var f in foundFiles)

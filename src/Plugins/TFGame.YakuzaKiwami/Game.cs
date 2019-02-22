@@ -88,28 +88,8 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = "shop",
-                    SearchPattern = "present.bin",
-                    IsWildcard = false,
-                    RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
-                };
-
-            var common_sendSearch =
-                new GameFileSearch
-                {
-                    RelativePath = "shop",
-                    SearchPattern = "send.bin",
-                    IsWildcard = false,
-                    RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
-                };
-
-            var common_throwSearch =
-                new GameFileSearch
-                {
-                    RelativePath = "shop",
-                    SearchPattern = "throw.bin",
-                    IsWildcard = false,
+                    SearchPattern = "present.bin;send.bin;throw.bin",
+                    IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
                 };
@@ -132,8 +112,6 @@ namespace TFGame.YakuzaKiwami
             wdr_par_c_common.FileSearches.Add(common_armsRepairSearch);
             wdr_par_c_common.FileSearches.Add(common_blacksmithSearch);
             wdr_par_c_common.FileSearches.Add(common_presentSearch);
-            wdr_par_c_common.FileSearches.Add(common_sendSearch);
-            wdr_par_c_common.FileSearches.Add(common_throwSearch);
             wdr_par_c_common.FileSearches.Add(common_saleSearch);
 
             result.Add(wdr_par_c_common);
@@ -153,27 +131,7 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = "shop",
-                    SearchPattern = "restaurant????.bin",
-                    IsWildcard = true,
-                    RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Restaurant.File)
-                };
-
-            var wdr_exShopSearch =
-                new GameFileSearch
-                {
-                    RelativePath = "shop",
-                    SearchPattern = "ex_shop????.bin",
-                    IsWildcard = true,
-                    RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Restaurant.File)
-                };
-
-            var wdr_shopSearch =
-                new GameFileSearch
-                {
-                    RelativePath = "shop",
-                    SearchPattern = "shop????.bin",
+                    SearchPattern = "restaurant????.bin;ex_shop????.bin;shop????.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaCommon.Files.Restaurant.File)
@@ -187,8 +145,6 @@ namespace TFGame.YakuzaKiwami
 
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
-            wdr_par.FileSearches.Add(wdr_exShopSearch);
-            wdr_par.FileSearches.Add(wdr_shopSearch);
 
             result.Add(wdr_par);
 

@@ -26,15 +26,20 @@ namespace TF.Core.Entities
             var fullPath = Path.Combine(path, RelativePath);
             if (IsWildcard)
             {
-                var files = Directory.GetFiles(fullPath, SearchPattern,
-                    RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                var split = SearchPattern.Split(';');
 
-                foreach (var file in files)
+                foreach (var s in split)
                 {
-                    var excluded = Exclusions.Any(x => file.Contains(x));
-                    if (!excluded)
+                    var files = Directory.GetFiles(fullPath, s,
+                        RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+
+                    foreach (var file in files)
                     {
-                        result.Add(file);
+                        var excluded = Exclusions.Any(x => file.Contains(x));
+                        if (!excluded)
+                        {
+                            result.Add(file);
+                        }
                     }
                 }
             }
