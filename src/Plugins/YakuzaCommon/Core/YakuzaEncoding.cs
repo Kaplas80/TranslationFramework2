@@ -5,20 +5,19 @@ namespace YakuzaCommon.Core
 {
     class YakuzaEncoding : Encoding
     {
-        private readonly Encoding isoEncoding = GetEncoding("ISO-8859-1");
-        private readonly Encoding utf8Encoding = GetEncoding("UTF-8", EncoderFallback.ExceptionFallback,
-            DecoderFallback.ExceptionFallback);
+        private readonly Encoding isoEncoding = GetEncoding("ISO-8859-1", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback);
+        private readonly Encoding utf8Encoding = GetEncoding("UTF-8", EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
 
         public override int GetByteCount(char[] chars, int index, int count)
         {
             int result;
             try
             {
-                result = utf8Encoding.GetEncoder().GetByteCount(chars, index, count, true);
+                result = isoEncoding.GetEncoder().GetByteCount(chars, index, count, true);
             }
             catch (EncoderFallbackException)
             {
-                result = isoEncoding.GetEncoder().GetByteCount(chars, index, count, true);
+                result = utf8Encoding.GetEncoder().GetByteCount(chars, index, count, true);
             }
 
             return result;
@@ -29,11 +28,11 @@ namespace YakuzaCommon.Core
             int result;
             try
             {
-                result = utf8Encoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
+                result = isoEncoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
             }
             catch (EncoderFallbackException)
             {
-                result = isoEncoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
+                result = utf8Encoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
             }
 
             return result;
