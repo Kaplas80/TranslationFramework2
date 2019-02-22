@@ -48,6 +48,14 @@ namespace YakuzaCommon
             {
                 result = new Files.Blacksmith.File(path, changesFolder);
             }
+            else if (fileName.EndsWith("present.bin") || fileName.EndsWith("send.bin") || fileName.EndsWith("throw.bin"))
+            {
+                result = new Files.PresentSendThrow.File(path, changesFolder);
+            }
+            else if (Regex.IsMatch(fileName, @"sale[\d]{4}\.bin"))
+            {
+                result = new Files.Sale.File(path, changesFolder);
+            }
             else
             {
                 switch (extension)

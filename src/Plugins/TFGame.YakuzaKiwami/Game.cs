@@ -60,20 +60,12 @@ namespace TFGame.YakuzaKiwami
                     RecursiveSearch = false
                 };
 
-            var armsRepairSearch =
+            var shopSearch =
                 new GameFileSearch
                 {
                     RelativePath = "shop",
-                    SearchPattern = "arms_repair.bin",
-                    IsWildcard = false,
-                    RecursiveSearch = false
-                };
-            var blacksmithSearch =
-                new GameFileSearch
-                {
-                    RelativePath = "shop",
-                    SearchPattern = "blacksmith.bin",
-                    IsWildcard = false,
+                    SearchPattern = "*.bin",
+                    IsWildcard = true,
                     RecursiveSearch = false
                 };
 
@@ -82,8 +74,8 @@ namespace TFGame.YakuzaKiwami
                 Path = @"data\wdr_par_c\common.par", Type = ContainerType.CompressedFile
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
-            wdr_par_c_common.FileSearches.Add(armsRepairSearch);
-            wdr_par_c_common.FileSearches.Add(blacksmithSearch);
+            wdr_par_c_common.FileSearches.Add(shopSearch);
+            
             result.Add(wdr_par_c_common);
 
             var barSearch =

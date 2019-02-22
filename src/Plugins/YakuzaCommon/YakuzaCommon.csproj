@@ -57,6 +57,8 @@
     <Compile Include="Files\CmnBin\File.cs" />
     <Compile Include="Files\CmnBin\Subtitle.cs" />
     <Compile Include="Files\ParFile.cs" />
+    <Compile Include="Files\PresentSendThrow\File.cs" />
+    <Compile Include="Files\Sale\File.cs" />
     <Compile Include="Files\SimpleSubtitle\File.cs" />
     <Compile Include="Files\SimpleSubtitle\Subtitle.cs" />
     <Compile Include="Files\SimpleSubtitle\View.cs">
