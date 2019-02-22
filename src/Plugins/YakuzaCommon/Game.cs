@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using TF.Core.Entities;
 using YakuzaCommon.Files;
 
@@ -38,6 +39,10 @@ namespace YakuzaCommon
             else if (fileName.EndsWith("arms_repair.bin"))
             {
                 result = new Files.SimpleSubtitle.File(path, changesFolder);
+            }
+            else if (Regex.IsMatch(fileName, @"bar[\d]{4}\.bin"))
+            {
+                result = new Files.Bar.File(path, changesFolder);
             }
             else
             {

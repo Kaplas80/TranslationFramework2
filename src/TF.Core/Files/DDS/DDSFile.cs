@@ -38,7 +38,7 @@ namespace TF.Core.Files.DDS
 
         private void FormOnNewImageLoaded(string filename)
         {
-            File.Copy(filename, ChangesFile);
+            File.Copy(filename, ChangesFile, true);
 
             UpdateFormImage();
         }

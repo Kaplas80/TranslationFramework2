@@ -174,7 +174,7 @@ namespace TF.GUI
                         worker.ReportProgress(-1, string.Empty);
                         worker.ReportProgress(-1, $"Los ficheros exportados están en {_project.ExportFolder}");
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         args.Cancel = true;
                     }

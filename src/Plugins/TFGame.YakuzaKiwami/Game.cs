@@ -49,7 +49,7 @@ namespace TFGame.YakuzaKiwami
             auth_w64_containers.FileSearches.Add(cmnSearch);
             auth_w64_containers.FileSearches.Add(ddsSearch);
 
-            //result.AddRange(auth_w64_containers.GetContainers(path));
+            result.AddRange(auth_w64_containers.GetContainers(path));
             
             var aiPopupSearch =
                 new GameFileSearch
@@ -75,8 +75,23 @@ namespace TFGame.YakuzaKiwami
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
             wdr_par_c_common.FileSearches.Add(armsRepairSearch);
-
             result.Add(wdr_par_c_common);
+
+            var barSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "bar????.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false
+                };
+            var wdr_par = new GameFileContainer
+            {
+                Path = @"data\wdr_par_c\wdr.par",
+                Type = ContainerType.CompressedFile
+            };
+            wdr_par.FileSearches.Add(barSearch);
+            result.Add(wdr_par);
 
             result.Sort();
             return result.ToArray();

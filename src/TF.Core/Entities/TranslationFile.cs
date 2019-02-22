@@ -58,7 +58,7 @@ namespace TF.Core.Entities
             var dir = System.IO.Path.GetDirectoryName(outputFile);
             Directory.CreateDirectory(dir);
 
-            File.Copy(HasChanges ? ChangesFile : Path, outputFile);
+            File.Copy(HasChanges ? ChangesFile : Path, outputFile, true);
         }
 
         public virtual void Restore()
