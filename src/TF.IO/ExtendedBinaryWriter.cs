@@ -48,6 +48,11 @@ namespace TF.IO
             return BaseStream.Seek(offset, origin);
         }
 
+        public void Skip(int byteCount)
+        {
+            Seek(byteCount, SeekOrigin.Current);
+        }
+
         public long Length => BaseStream.Length;
 
         #endregion
