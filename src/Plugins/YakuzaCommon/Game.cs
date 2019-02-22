@@ -56,6 +56,10 @@ namespace YakuzaCommon
             {
                 result = new Files.Sale.File(path, changesFolder);
             }
+            else if (Regex.IsMatch(fileName, @"(restaurant|ex_shop|shop)[\d]{4}\.bin"))
+            {
+                result = new Files.Restaurant.File(path, changesFolder);
+            }
             else
             {
                 switch (extension)

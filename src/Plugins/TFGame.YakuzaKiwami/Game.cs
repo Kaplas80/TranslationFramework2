@@ -78,20 +78,12 @@ namespace TFGame.YakuzaKiwami
             
             result.Add(wdr_par_c_common);
 
-            var barSearch =
-                new GameFileSearch
-                {
-                    RelativePath = "shop",
-                    SearchPattern = "bar????.bin",
-                    IsWildcard = true,
-                    RecursiveSearch = false
-                };
             var wdr_par = new GameFileContainer
             {
                 Path = @"data\wdr_par_c\wdr.par",
                 Type = ContainerType.CompressedFile
             };
-            wdr_par.FileSearches.Add(barSearch);
+            wdr_par.FileSearches.Add(shopSearch);
             result.Add(wdr_par);
 
             result.Sort();
