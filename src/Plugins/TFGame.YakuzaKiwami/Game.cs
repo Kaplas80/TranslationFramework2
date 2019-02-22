@@ -53,7 +53,26 @@ namespace TFGame.YakuzaKiwami
             auth_w64_containers.FileSearches.Add(ddsSearch);
 
             //result.AddRange(auth_w64_containers.GetContainers(path));
-            
+
+            var empbSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "encounter_pupup_message.*",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Epmb.File)
+                };
+
+            var bootpar = new GameFileContainer
+            {
+                Path = @"data\bootpar\boot.par",
+                Type = ContainerType.CompressedFile
+            };
+            bootpar.FileSearches.Add(empbSearch);
+
+            result.Add(bootpar);
+
             var aiPopupSearch =
                 new GameFileSearch
                 {
@@ -115,7 +134,6 @@ namespace TFGame.YakuzaKiwami
             wdr_par_c_common.FileSearches.Add(common_saleSearch);
 
             result.Add(wdr_par_c_common);
-
 
             var wdr_barSearch =
                 new GameFileSearch
