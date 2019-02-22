@@ -3,7 +3,7 @@ using System.Text;
 
 namespace YakuzaCommon.Core
 {
-    class YakuzaEncoding : Encoding
+    public class YakuzaEncoding : Encoding
     {
         private readonly Encoding isoEncoding = GetEncoding("ISO-8859-1", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback);
         private readonly Encoding utf8Encoding = GetEncoding("UTF-8", EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);

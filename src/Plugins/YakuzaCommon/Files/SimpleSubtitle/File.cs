@@ -10,7 +10,7 @@ using YakuzaCommon.Core;
 
 namespace YakuzaCommon.Files.SimpleSubtitle
 {
-    internal class File : TranslationFile
+    public class File : TranslationFile
     {
         protected virtual int HEADER_SIZE => 0;
 

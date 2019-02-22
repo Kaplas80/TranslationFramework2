@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using TF.Core.Entities;
 using TF.Core.Helpers;
@@ -71,7 +72,18 @@ namespace TF.Core
                             foreach (var f in foundFiles)
                             {
                                 var relativePath = PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
-                                var translationFile = Game.GetFile(f, this.ChangesFolder) ?? new TranslationFile(f, this.ChangesFolder);
+                                var type = fileSearch.FileType;
+
+                                TranslationFile translationFile;
+                                try
+                                {
+                                    translationFile = (TranslationFile)Activator.CreateInstance(type, f, this.ChangesFolder);
+                                }
+                                catch (Exception e)
+                                {
+                                    translationFile = new TranslationFile(f, this.ChangesFolder);
+                                }
+
                                 translationFile.RelativePath = relativePath;
 
                                 translationContainer.AddFile(translationFile);
@@ -102,7 +114,18 @@ namespace TF.Core
                             Directory.CreateDirectory(destPath);
                             File.Copy(f, Path.Combine(extractionContainerPath, relativePath));
 
-                            var translationFile = Game.GetFile(destinationFileName, this.ChangesFolder) ?? new TranslationFile(destinationFileName, this.ChangesFolder);
+                            var type = fileSearch.FileType;
+
+                            TranslationFile translationFile;
+                            try
+                            {
+                                translationFile = (TranslationFile)Activator.CreateInstance(type, destinationFileName, this.ChangesFolder);
+                            }
+                            catch (Exception e)
+                            {
+                                translationFile = new TranslationFile(destinationFileName, this.ChangesFolder);
+                            }
+
                             translationFile.RelativePath = relativePath;
 
                             translationContainer.AddFile(translationFile);
@@ -138,6 +161,7 @@ namespace TF.Core
                         output.WriteString(file.Path);
                         output.WriteString(file.RelativePath);
                         output.WriteString(file.Name);
+                        output.WriteString(file.GetType().FullName);
                     }
                 }
             }
@@ -145,6 +169,8 @@ namespace TF.Core
 
         public static TranslationProject Load(string path, PluginManager pluginManager)
         {
+            var types = new Dictionary<string, Type>();
+
             using (var fs = new FileStream(path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8))
             {
@@ -184,8 +210,19 @@ namespace TF.Core
                         var filePath = input.ReadString();
                         var fileRelativePath = input.ReadString();
                         var fileName = input.ReadString();
-                        
-                        var file = game.GetFile(filePath, result.ChangesFolder);
+                        var typeString = input.ReadString();
+
+                        var type = GetType(typeString, types);
+                        TranslationFile file;
+                        try
+                        {
+                            file = (TranslationFile)Activator.CreateInstance(type, filePath, result.ChangesFolder);
+                        }
+                        catch (Exception e)
+                        {
+                            file = new TranslationFile(filePath, result.ChangesFolder);
+                        }
+
                         file.Id = fileId;
                         file.Name = fileName;
                         file.RelativePath = fileRelativePath;
@@ -197,6 +234,34 @@ namespace TF.Core
 
                 return result;
             }
+        }
+
+        private static Type GetType(string typeName, Dictionary<string, Type> types)
+        {
+            if (types.ContainsKey(typeName))
+            {
+                return types[typeName];
+            }
+
+            var type = Type.GetType(typeName);
+
+            if (type != null)
+            {
+                types.Add(typeName, type);
+                return type;
+            }
+
+            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = a.GetType(typeName);
+                if (type != null)
+                {
+                    types.Add(typeName, type);
+                    return type;
+                }
+            }
+
+            return null;
         }
 
         public void Export(IList<TranslationFileContainer> containers, bool useCompression, BackgroundWorker worker)

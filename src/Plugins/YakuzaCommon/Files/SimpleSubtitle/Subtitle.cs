@@ -4,7 +4,7 @@ using YakuzaCommon.Annotations;
 
 namespace YakuzaCommon.Files.SimpleSubtitle
 {
-    internal class Subtitle : INotifyPropertyChanged
+    public class Subtitle : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

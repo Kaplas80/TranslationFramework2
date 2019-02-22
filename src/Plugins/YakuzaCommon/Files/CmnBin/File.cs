@@ -5,7 +5,7 @@ using TF.IO;
 
 namespace YakuzaCommon.Files.CmnBin
 {
-    internal class File : SimpleSubtitle.File
+    public class File : SimpleSubtitle.File
     {
         private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B };
 

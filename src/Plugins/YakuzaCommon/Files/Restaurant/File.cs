@@ -6,7 +6,7 @@ using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Restaurant
 {
-    internal class File : SimpleSubtitle.File
+    public class File : SimpleSubtitle.File
     {
         public File(string path, string changesFolder) : base(path, changesFolder)
         {

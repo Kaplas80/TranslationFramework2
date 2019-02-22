@@ -12,7 +12,6 @@ namespace TF.Core.Entities
 
         GameFileContainer[] GetContainers(string path);
 
-        TranslationFile GetFile(string path, string changesFolder);
         void ExtractFile(string inputFile, string outputPath);
         void RepackFile(string inputPath, string outputFile, bool compress);
     }

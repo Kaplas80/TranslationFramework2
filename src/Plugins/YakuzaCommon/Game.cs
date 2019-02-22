@@ -21,67 +21,6 @@ namespace YakuzaCommon
             return result.ToArray();
         }
 
-        public TranslationFile GetFile(string path, string changesFolder)
-        {
-            TranslationFile result;
-
-            var fileName = Path.GetFileName(path);
-            var extension = Path.GetExtension(path);
-
-            if (fileName.EndsWith("cmn.bin"))
-            {
-                result = new Files.CmnBin.File(path, changesFolder);
-            }
-            else if (fileName.EndsWith("ai_popup.bin"))
-            {
-                result = new Files.AiPopup.File(path, changesFolder);
-            }
-            else if (fileName.EndsWith("arms_repair.bin"))
-            {
-                result = new Files.SimpleSubtitle.File(path, changesFolder);
-            }
-            else if (Regex.IsMatch(fileName, @"bar[\d]{4}\.bin"))
-            {
-                result = new Files.Bar.File(path, changesFolder);
-            }
-            else if (fileName.EndsWith("blacksmith.bin"))
-            {
-                result = new Files.Blacksmith.File(path, changesFolder);
-            }
-            else if (fileName.EndsWith("present.bin") || fileName.EndsWith("send.bin") || fileName.EndsWith("throw.bin"))
-            {
-                result = new Files.PresentSendThrow.File(path, changesFolder);
-            }
-            else if (Regex.IsMatch(fileName, @"sale[\d]{4}\.bin"))
-            {
-                result = new Files.Sale.File(path, changesFolder);
-            }
-            else if (Regex.IsMatch(fileName, @"(restaurant|ex_shop|shop)[\d]{4}\.bin"))
-            {
-                result = new Files.Restaurant.File(path, changesFolder);
-            }
-            else
-            {
-                switch (extension)
-                {
-                    case ".dds":
-                        {
-                            result = new TF.Core.Files.DDS.DDSFile(path, changesFolder);
-                            break;
-                        }
-
-                    default:
-                        {
-                            result = new TranslationFile(path, changesFolder);
-                            break;
-                        }
-                }
-            }
-
-
-            return result;
-        }
-
         public void ExtractFile(string inputFile, string outputPath)
         {
             var extension = Path.GetExtension(inputFile);

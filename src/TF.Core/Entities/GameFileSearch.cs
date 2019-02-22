@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -11,6 +12,7 @@ namespace TF.Core.Entities
         public bool IsWildcard { get; set; }
         public bool RecursiveSearch { get; set; }
         public IList<string> Exclusions { get; }
+        public Type FileType { get; set; }
 
         public GameFileSearch()
         {

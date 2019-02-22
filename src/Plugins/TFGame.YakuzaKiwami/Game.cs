@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TF.Core.Entities;
+using TF.Core.Files.DDS;
 
 namespace TFGame.YakuzaKiwami
 {
@@ -26,7 +27,8 @@ namespace TFGame.YakuzaKiwami
                     RelativePath = ".",
                     SearchPattern = "cmn.bin",
                     IsWildcard = true,
-                    RecursiveSearch = true
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.CmnBin.File)
                 };
 
             var ddsSearch =
@@ -35,7 +37,8 @@ namespace TFGame.YakuzaKiwami
                     RelativePath = ".",
                     SearchPattern = "*.dds",
                     IsWildcard = true,
-                    RecursiveSearch = true
+                    RecursiveSearch = true,
+                    FileType = typeof(DDSFile)
                 };
 
             var auth_w64_containers = new GameFileContainerSearch
@@ -57,16 +60,68 @@ namespace TFGame.YakuzaKiwami
                     RelativePath = ".",
                     SearchPattern = "ai_popup.bin",
                     IsWildcard = false,
-                    RecursiveSearch = false
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.AiPopup.File)
                 };
 
-            var shopSearch =
+            var common_armsRepairSearch =
                 new GameFileSearch
                 {
                     RelativePath = "shop",
-                    SearchPattern = "*.bin",
+                    SearchPattern = "arms_repair.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.SimpleSubtitle.File)
+                };
+
+            var common_blacksmithSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "blacksmith.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Blacksmith.File)
+                };
+
+            var common_presentSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "present.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
+                };
+
+            var common_sendSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "send.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
+                };
+
+            var common_throwSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "throw.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
+                };
+
+            var common_saleSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "sale????.bin",
                     IsWildcard = true,
-                    RecursiveSearch = false
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Sale.File)
                 };
 
             var wdr_par_c_common = new GameFileContainer
@@ -74,16 +129,67 @@ namespace TFGame.YakuzaKiwami
                 Path = @"data\wdr_par_c\common.par", Type = ContainerType.CompressedFile
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
-            wdr_par_c_common.FileSearches.Add(shopSearch);
-            
+            wdr_par_c_common.FileSearches.Add(common_armsRepairSearch);
+            wdr_par_c_common.FileSearches.Add(common_blacksmithSearch);
+            wdr_par_c_common.FileSearches.Add(common_presentSearch);
+            wdr_par_c_common.FileSearches.Add(common_sendSearch);
+            wdr_par_c_common.FileSearches.Add(common_throwSearch);
+            wdr_par_c_common.FileSearches.Add(common_saleSearch);
+
             result.Add(wdr_par_c_common);
+
+
+            var wdr_barSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "bar????.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Bar.File)
+                };
+
+            var wdr_restaurantSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "restaurant????.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Restaurant.File)
+                };
+
+            var wdr_exShopSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "ex_shop????.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Restaurant.File)
+                };
+
+            var wdr_shopSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "shop????.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Restaurant.File)
+                };
 
             var wdr_par = new GameFileContainer
             {
                 Path = @"data\wdr_par_c\wdr.par",
                 Type = ContainerType.CompressedFile
             };
-            wdr_par.FileSearches.Add(shopSearch);
+
+            wdr_par.FileSearches.Add(wdr_barSearch);
+            wdr_par.FileSearches.Add(wdr_restaurantSearch);
+            wdr_par.FileSearches.Add(wdr_exShopSearch);
+            wdr_par.FileSearches.Add(wdr_shopSearch);
+
             result.Add(wdr_par);
 
             result.Sort();
