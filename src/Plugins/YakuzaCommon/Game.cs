@@ -44,6 +44,10 @@ namespace YakuzaCommon
             {
                 result = new Files.Bar.File(path, changesFolder);
             }
+            else if (fileName.EndsWith("blacksmith.bin"))
+            {
+                result = new Files.Blacksmith.File(path, changesFolder);
+            }
             else
             {
                 switch (extension)

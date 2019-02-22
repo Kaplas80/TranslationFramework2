@@ -49,7 +49,7 @@ namespace TFGame.YakuzaKiwami
             auth_w64_containers.FileSearches.Add(cmnSearch);
             auth_w64_containers.FileSearches.Add(ddsSearch);
 
-            result.AddRange(auth_w64_containers.GetContainers(path));
+            //result.AddRange(auth_w64_containers.GetContainers(path));
             
             var aiPopupSearch =
                 new GameFileSearch
@@ -68,6 +68,14 @@ namespace TFGame.YakuzaKiwami
                     IsWildcard = false,
                     RecursiveSearch = false
                 };
+            var blacksmithSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "shop",
+                    SearchPattern = "blacksmith.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false
+                };
 
             var wdr_par_c_common = new GameFileContainer
             {
@@ -75,6 +83,7 @@ namespace TFGame.YakuzaKiwami
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
             wdr_par_c_common.FileSearches.Add(armsRepairSearch);
+            wdr_par_c_common.FileSearches.Add(blacksmithSearch);
             result.Add(wdr_par_c_common);
 
             var barSearch =

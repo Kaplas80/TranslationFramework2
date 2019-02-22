@@ -53,7 +53,7 @@
     <Compile Include="Core\YakuzaEncoding.cs" />
     <Compile Include="Files\AiPopup\File.cs" />
     <Compile Include="Files\Bar\File.cs" />
-    <Compile Include="Files\Bar\SubtitleGroup.cs" />
+    <Compile Include="Files\Blacksmith\File.cs" />
     <Compile Include="Files\CmnBin\File.cs" />
     <Compile Include="Files\CmnBin\Subtitle.cs" />
     <Compile Include="Files\ParFile.cs" />
