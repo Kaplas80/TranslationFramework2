@@ -57,6 +57,7 @@
     <Compile Include="Files\CmnBin\File.cs" />
     <Compile Include="Files\CmnBin\Subtitle.cs" />
     <Compile Include="Files\Epmb\File.cs" />
+    <Compile Include="Files\Imb\File.cs" />
     <Compile Include="Files\ParFile.cs" />
     <Compile Include="Files\PresentSendThrow\File.cs" />
     <Compile Include="Files\Restaurant\File.cs" />

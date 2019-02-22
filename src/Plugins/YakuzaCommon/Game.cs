@@ -25,7 +25,7 @@ namespace YakuzaCommon
         {
             var extension = Path.GetExtension(inputFile);
 
-            if (extension == ".par")
+            if (extension.StartsWith(".par"))
             {
                 var parFile = new ParFile(inputFile);
                 parFile.Extract(outputPath);
@@ -36,7 +36,7 @@ namespace YakuzaCommon
         {
             var extension = Path.GetExtension(outputFile);
 
-            if (extension == ".par")
+            if (extension.StartsWith(".par"))
             {
                 ParFile.Repack(inputPath, outputFile, compress);
             }
