@@ -18,10 +18,8 @@ namespace TFGame.YakuzaKiwami
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-Icon-750908330
         public override int Version => 1;
 
-        public override GameFileContainer[] GetContainers(string path)
+        private IList<GameFileContainer> GetAuth(string path)
         {
-            var result = new List<GameFileContainer>();
-
             var cmnSearch =
                 new GameFileSearch
                 {
@@ -53,8 +51,11 @@ namespace TFGame.YakuzaKiwami
             auth_w64_containers.FileSearches.Add(cmnSearch);
             auth_w64_containers.FileSearches.Add(ddsSearch);
 
-            //result.AddRange(auth_w64_containers.GetContainers(path));
+            return auth_w64_containers.GetContainers(path);
+        }
 
+        private GameFileContainer GetBootpar()
+        {
             var empbSearch =
                 new GameFileSearch
                 {
@@ -82,16 +83,17 @@ namespace TFGame.YakuzaKiwami
             };
             bootpar.FileSearches.Add(empbSearch);
             bootpar.FileSearches.Add(mailSearch);
-            bootpar.FileSearches.Add(ddsSearch);
 
-            //result.Add(bootpar);
+            return bootpar;
+        }
 
+        private IList<GameFileContainer> GetMappar(string path)
+        {
             var imbSearch =
                 new GameFileSearch
                 {
                     RelativePath = ".",
                     SearchPattern = "*.imb",
-                        //"uid0419000a.imb;uid0419000b.imb;uid0419000c.imb;uid0419000d.imb;uid0419000e.imb;uid04190010.imb;uid04190011.imb;uid04190012.imb;uid04190013.imb;uid04190014.imb;uid04190015.imb;uid04190016.imb;uid04190017.imb;uid04190018.imb;uid04190019.imb;uid0419001a.imb;uid0419001b.imb;uid0419001c.imb;uid0419001d.imb;uid0419001e.imb;uid0419001f.imb;uid04190029.imb;uid0419002a.imb;uid0419002b.imb;uid0419002c.imb;uid0419002d.imb;uid0419002e.imb;uid0419002f.imb;uid04190034.imb;uid04190035.imb;uid04190036.imb;uid04190037.imb;uid04190038.imb;uid043314ad.imb;uid043314ee.imb;uid043314ef.imb;uid043314f0.imb;uid043314f1.imb;uid043315d1.imb;uid04331c1c.imb;uid04331c1d.imb;uid04331c1e.imb;uid04331c1f.imb;uid04331c20.imb;uid04440233.imb;uid04440234.imb;uid04440235.imb;uid04440236.imb;uid04440237.imb;uid04440238.imb;uid04440239.imb;uid0444023b.imb;uid0444023d.imb;uid0444023e.imb;uid0444023f.imb;uid04440240.imb;uid04440241.imb;uid04440242.imb;uid04440244.imb;uid04440248.imb;uid0444024a.imb;uid0444024c.imb;uid0444024d.imb;uid0444024e.imb;uid0444024f.imb;uid04440250.imb;uid04440252.imb;uid04440254.imb;uid04440255.imb;uid04440284.imb;uid044402c7.imb;uid044402c8.imb;uid044402c9.imb;uid044402ca.imb;uid044402cb.imb;uid044402cc.imb;uid044402cd.imb;uid044402cf.imb;uid044402d0.imb;uid044402d1.imb;uid044402d2.imb;uid044402d3.imb;uid044402d4.imb;uid044402d5.imb;uid044402d6.imb;uid044402d7.imb;uid044402d8.imb;uid044402d9.imb;uid044402da.imb;uid044402db.imb;uid044402dc.imb;uid044402de.imb;uid044402df.imb;uid044402e0.imb;uid044402e1.imb;uid044402e2.imb;uid044402e3.imb;uid044402e4.imb;uid044402e5.imb;uid044402e6.imb;uid044402e7.imb;uid044402e8.imb;uid044402e9.imb;uid044402ea.imb;uid044402eb.imb",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaCommon.Files.Imb.File)
@@ -106,8 +108,11 @@ namespace TFGame.YakuzaKiwami
             };
             map_par_containers.FileSearches.Add(imbSearch);
 
-            result.AddRange(map_par_containers.GetContainers(path));
+            return map_par_containers.GetContainers(path);
+        }
 
+        private GameFileContainer GetSoundpar()
+        {
             var mfpSearch =
                 new GameFileSearch
                 {
@@ -125,8 +130,11 @@ namespace TFGame.YakuzaKiwami
             };
             soundpar.FileSearches.Add(mfpSearch);
 
-            result.Add(soundpar);
+            return soundpar;
+        }
 
+        private GameFileContainer GetWdrCommon()
+        {
             var aiPopupSearch =
                 new GameFileSearch
                 {
@@ -179,7 +187,8 @@ namespace TFGame.YakuzaKiwami
 
             var wdr_par_c_common = new GameFileContainer
             {
-                Path = @"data\wdr_par_c\common.par", Type = ContainerType.CompressedFile
+                Path = @"data\wdr_par_c\common.par",
+                Type = ContainerType.CompressedFile
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
             wdr_par_c_common.FileSearches.Add(common_armsRepairSearch);
@@ -187,8 +196,11 @@ namespace TFGame.YakuzaKiwami
             wdr_par_c_common.FileSearches.Add(common_presentSearch);
             wdr_par_c_common.FileSearches.Add(common_saleSearch);
 
-            //result.Add(wdr_par_c_common);
+            return wdr_par_c_common;
+        }
 
+        private GameFileContainer GetWdr()
+        {
             var wdr_barSearch =
                 new GameFileSearch
                 {
@@ -218,7 +230,42 @@ namespace TFGame.YakuzaKiwami
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
 
-            //result.Add(wdr_par);
+            return wdr_par;
+        }
+
+        private GameFileContainer GetReactorpar()
+        {
+            var nameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "name_?.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Name.File)
+                };
+
+            var reactor = new GameFileContainer
+            {
+                Path = @"data\reactorpar\reactor_w64.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            reactor.FileSearches.Add(nameSearch);
+            return reactor;
+        }
+
+        public override GameFileContainer[] GetContainers(string path)
+        {
+            var result = new List<GameFileContainer>();
+
+            //result.AddRange(GetAuth(path));
+            //result.Add(GetBootpar());
+            //result.AddRange(GetMappar(path));
+            result.Add(GetReactorpar());
+            //result.Add(GetSoundpar());
+            //result.Add(GetWdrCommon());
+            //result.Add(GetWdr());
 
             result.Sort();
             return result.ToArray();

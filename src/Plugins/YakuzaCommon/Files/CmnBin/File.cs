@@ -235,7 +235,7 @@ namespace YakuzaCommon.Files.CmnBin
             var subtitles = GetSubtitles();
 
             using (var fs = new FileStream(outputPath, FileMode.Open))
-            using (var output = new ExtendedBinaryWriter(fs, FileEncoding))
+            using (var output = new ExtendedBinaryWriter(fs, FileEncoding, Endianness.BigEndian))
             {
                 foreach (var subtitle in subtitles)
                 {

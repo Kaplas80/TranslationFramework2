@@ -59,6 +59,7 @@
     <Compile Include="Files\Imb\File.cs" />
     <Compile Include="Files\Mail\File.cs" />
     <Compile Include="Files\Mfpb\File.cs" />
+    <Compile Include="Files\Name\File.cs" />
     <Compile Include="Files\ParFile.cs" />
     <Compile Include="Files\PresentSendThrow\File.cs" />
     <Compile Include="Files\Restaurant\File.cs" />
@@ -93,5 +94,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
