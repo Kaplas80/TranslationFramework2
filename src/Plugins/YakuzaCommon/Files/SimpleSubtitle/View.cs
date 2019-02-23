@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
@@ -153,6 +155,25 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             {
                 SendKeys.Send("{RIGHT}");
             }
+        }
+
+        public void DisplaySubtitle(int index)
+        {
+            if (index == -1)
+            {
+                return;
+            }
+
+            SubtitleGridView.ClearSelection();
+            SubtitleGridView.Rows[index].Cells["colTranslation"].Selected = true;
+            SubtitleGridView.FirstDisplayedScrollingRowIndex = index;
+        }
+
+        public Tuple<int,Subtitle> GetSelectedSubtitle()
+        {
+            var rowIndex = SubtitleGridView.SelectedCells[0].RowIndex;
+            var subtitles = (IList<Subtitle>) SubtitleGridView.DataSource;
+            return new Tuple<int, Subtitle>(rowIndex, subtitles[rowIndex]);
         }
     }
 }

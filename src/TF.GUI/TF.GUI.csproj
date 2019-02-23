@@ -53,6 +53,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\SearchTextForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SearchTextForm.Designer.cs">
+      <DependentUpon>SearchTextForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SearchInFilesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,6 +114,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\SearchTextForm.resx">
+      <DependentUpon>SearchTextForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SearchInFilesForm.resx">
       <DependentUpon>SearchInFilesForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -164,7 +173,6 @@
     <None Include="images\searchfiles.png" />
     <None Include="images\search.png" />
     <None Include="images\save.png" />
-    <None Include="images\replace.png" />
     <None Include="images\new.png" />
     <None Include="images\openfolder.png" />
   </ItemGroup>

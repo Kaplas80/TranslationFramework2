@@ -74,5 +74,40 @@ namespace TF.GUI
         {
             SearchInFiles();
         }
+
+        private void SearchText_Click(object sender, EventArgs e)
+        {
+            SearchText();
+        }
+
+        private void MainForm_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.F3)
+            {
+                if (e.Shift)
+                {
+                    SearchText(-1);
+                }
+                else
+                {
+                    SearchText(1);
+                }
+            }
+        }
+
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F3)
+            {
+                if (e.Shift)
+                {
+                    SearchText(-1);
+                }
+                else
+                {
+                    SearchText(1);
+                }
+            }
+        }
     }
 }

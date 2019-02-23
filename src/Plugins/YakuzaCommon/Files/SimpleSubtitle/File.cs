@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,6 @@ using TF.Core.Entities;
 using TF.Core.Helpers;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
-using YakuzaCommon.Core;
 
 namespace YakuzaCommon.Files.SimpleSubtitle
 {
@@ -17,6 +17,8 @@ namespace YakuzaCommon.Files.SimpleSubtitle
 
         protected IList<Subtitle> _subtitles;
 
+        private View _view;
+
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
@@ -24,11 +26,11 @@ namespace YakuzaCommon.Files.SimpleSubtitle
 
         public override void Open(DockPanel panel, ThemeBase theme)
         {
-            var view = new View(theme);
+            _view = new View(theme);
 
             _subtitles = GetSubtitles();
-            view.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
-            view.Show(panel, DockState.Document);
+            _view.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
+            _view.Show(panel, DockState.Document);
         }
 
         protected virtual IList<Subtitle> GetSubtitles()
@@ -181,6 +183,58 @@ namespace YakuzaCommon.Files.SimpleSubtitle
                     }
                 }
             }
+        }
+
+        public override bool SearchText(string searchString, int direction)
+        {
+            if (_subtitles == null || _subtitles.Count == 0)
+            {
+                return false;
+            }
+
+            int i;
+            int rowIndex;
+            if (direction == 0)
+            {
+                i = 1;
+                rowIndex = 1;
+            }
+            else
+            {
+                var (item1, item2) = _view.GetSelectedSubtitle();
+                i = _subtitles.IndexOf(item2) + direction;
+                rowIndex = item1 + direction;
+            }
+
+            var step = direction < 0 ? -1 : 1;
+
+            var result = -1;
+            while (i >= 0  && i < _subtitles.Count)
+            {
+                var subtitle = _subtitles[i];
+                var original = subtitle.Text;
+                var translation = subtitle.Translation;
+
+                if (!string.IsNullOrEmpty(original))
+                {
+                    if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
+                    {
+                        result = rowIndex;
+                        break;
+                    }
+
+                    rowIndex += step;
+                }
+
+                i+=step;
+            }
+
+            if (result != -1)
+            {
+                _view.DisplaySubtitle(rowIndex);
+            }
+
+            return result != -1;
         }
     }
 }

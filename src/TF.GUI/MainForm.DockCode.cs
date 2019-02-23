@@ -69,17 +69,13 @@ namespace TF.GUI
                 }
 
                 mniEditSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
-                mniEditSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
                 tsbSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
-                tsbSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
 
                 return false;
             }
 
             mniEditSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
-            mniEditSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
             tsbSearch.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
-            tsbSearchAndReplace.Enabled = _currentFile != null && _currentFile.Type == FileType.TextFile;
 
             return true;
         }

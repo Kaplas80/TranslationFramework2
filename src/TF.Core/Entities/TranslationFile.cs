@@ -89,5 +89,10 @@ namespace TF.Core.Entities
         {
             return false;
         }
+
+        public virtual bool SearchText(string searchString, int direction)
+        {
+            return false;
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace TF.GUI
     {
         private TranslationProject _project;
         private TranslationFile _currentFile = null;
+        private string _currentSearch = string.Empty;
 
         private void SaveSettings()
         {
@@ -227,6 +228,48 @@ namespace TF.GUI
                 if (_searchResults.VisibleState == DockState.DockBottomAutoHide)
                 {
                     dockPanel.ActiveAutoHideContent = _searchResults;
+                }
+            }
+        }
+
+        private void SearchText()
+        {
+            if (_project != null && _currentFile != null && _currentFile.Type == FileType.TextFile)
+            {
+                var form = new SearchTextForm(dockTheme);
+
+                var formResult = form.ShowDialog(this);
+
+                if (formResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                _currentSearch = form.SearchString;
+
+                var textFound = _currentFile.SearchText(_currentSearch, 0);
+
+                if (!textFound)
+                {
+                    MessageBox.Show("No se han encontrado coincidencias.", "Buscar", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
+                }
+            }
+        }
+
+        private void SearchText(int direction)
+        {
+            if (_project != null && _currentFile != null && _currentFile.Type == FileType.TextFile)
+            {
+                if (!string.IsNullOrEmpty(_currentSearch))
+                {
+                    var textFound = _currentFile.SearchText(_currentSearch, direction);
+
+                    if (!textFound)
+                    {
+                        MessageBox.Show("No se han encontrado coincidencias.", "Buscar", MessageBoxButtons.OK,
+                            MessageBoxIcon.Exclamation);
+                    }
                 }
             }
         }
