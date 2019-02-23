@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Text;
 
 namespace TF.Core.Entities
 {
@@ -9,6 +10,7 @@ namespace TF.Core.Entities
         string Description { get; }
         Image Icon { get; }
         int Version { get; }
+        Encoding FileEncoding { get; }
 
         GameFileContainer[] GetContainers(string path);
 

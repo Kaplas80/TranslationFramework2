@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using TF.Core.Entities;
 
 namespace TFGame.Yakuza0
@@ -11,40 +12,42 @@ namespace TFGame.Yakuza0
         public override string Description => "Versión PC Steam sin DENUVO (lanzada el XX-XX-XXXX)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-0-Icon-750908182
         public override int Version => 1;
+        public override Encoding FileEncoding => new YakuzaEncoding();
 
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
 
-            var cmnSearch =
+            var empbSearch =
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "cmn.bin",
+                    SearchPattern = "encounter_pupup_message.*",
                     IsWildcard = true,
-                    RecursiveSearch = true
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Epmb.File)
                 };
 
-            var ddsSearch =
+            var mailSearch =
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "*.dds",
+                    SearchPattern = "mail.*",
                     IsWildcard = true,
-                    RecursiveSearch = true
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Mail.File)
                 };
 
-            var auth_w64_containers = new GameFileContainerSearch
+            var bootpar = new GameFileContainer
             {
-                RelativePath = @"data\auth_w64_e",
-                TypeSearch = ContainerType.CompressedFile,
-                RecursiveSearch = false,
-                SearchPattern = "*.par"
+                Path = @"data\bootpar\boot.par",
+                Type = ContainerType.CompressedFile
             };
-            auth_w64_containers.FileSearches.Add(cmnSearch);
-            //auth_w64_containers.FileSearches.Add(ddsSearch);
+            bootpar.FileSearches.Add(empbSearch);
+            bootpar.FileSearches.Add(mailSearch);
 
-            result.AddRange(auth_w64_containers.GetContainers(path));
+            result.Add(bootpar);
+
             result.Sort();
             return result.ToArray();
         }

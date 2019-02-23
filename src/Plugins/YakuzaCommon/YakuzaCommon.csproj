@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\SllzCompressor.cs" />
-    <Compile Include="Core\YakuzaEncoding.cs" />
     <Compile Include="Files\AiPopup\File.cs" />
     <Compile Include="Files\Bar\File.cs" />
     <Compile Include="Files\Blacksmith\File.cs" />
@@ -58,6 +57,7 @@
     <Compile Include="Files\CmnBin\Subtitle.cs" />
     <Compile Include="Files\Epmb\File.cs" />
     <Compile Include="Files\Imb\File.cs" />
+    <Compile Include="Files\Mail\File.cs" />
     <Compile Include="Files\ParFile.cs" />
     <Compile Include="Files\PresentSendThrow\File.cs" />
     <Compile Include="Files\Restaurant\File.cs" />

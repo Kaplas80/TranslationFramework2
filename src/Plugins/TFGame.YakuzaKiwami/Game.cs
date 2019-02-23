@@ -11,6 +11,7 @@ namespace TFGame.YakuzaKiwami
 {
     public class Game : YakuzaCommon.Game
     {
+        
         public override string Id => "7f8efe16-87fd-4f5a-a837-cacf3dde2852";
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Versión PC Steam sin DENUVO (lanzada el 19/02/2019)";
@@ -64,12 +65,24 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaCommon.Files.Epmb.File)
                 };
 
+            var mailSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "mail.*",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Mail.File)
+                };
+
             var bootpar = new GameFileContainer
             {
                 Path = @"data\bootpar\boot.par",
                 Type = ContainerType.CompressedFile
             };
             bootpar.FileSearches.Add(empbSearch);
+            bootpar.FileSearches.Add(mailSearch);
+            bootpar.FileSearches.Add(ddsSearch);
 
             result.Add(bootpar);
 

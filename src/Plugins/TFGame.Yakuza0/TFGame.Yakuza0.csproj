@@ -56,6 +56,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="YakuzaEncoding.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">

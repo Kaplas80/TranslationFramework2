@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Text;
 using TF.IO;
 using YakuzaCommon.Files.SimpleSubtitle;
 
@@ -9,7 +9,7 @@ namespace YakuzaCommon.Files.Imb
 {
     public class File : SimpleSubtitle.File
     {
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
@@ -23,9 +23,9 @@ namespace YakuzaCommon.Files.Imb
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
-                input.Seek(32, SeekOrigin.Current);
+                input.Skip(32);
                 var titlePointer = input.ReadInt32();
                 var descriptionPointer = input.ReadInt32();
 
@@ -61,9 +61,9 @@ namespace YakuzaCommon.Files.Imb
             var subtitles = GetSubtitles();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fsInput, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fsInput, FileEncoding, Endianness.BigEndian))
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fsOutput, Encoding, Endianness.BigEndian))
+            using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding, Endianness.BigEndian))
             {
                 output.Write(input.ReadBytes(32));
                 var titlePointer = input.ReadInt32();

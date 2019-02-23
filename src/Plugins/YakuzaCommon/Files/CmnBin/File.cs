@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using TF.IO;
 
 namespace YakuzaCommon.Files.CmnBin
@@ -9,7 +10,7 @@ namespace YakuzaCommon.Files.CmnBin
     {
         private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B };
 
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
@@ -23,7 +24,7 @@ namespace YakuzaCommon.Files.CmnBin
             var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
                 var currentIndex = input.FindPattern(SearchPattern);
 
@@ -69,16 +70,16 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var result = new List<Subtitle>();
 
-            input.ReadBytes(40); //0x28
+            input.Skip(40); //0x28
 
             var numJapaneseSubs = input.ReadInt32();
             var numEnglishSubs = input.ReadInt32();
 
-            input.ReadBytes(16); //0x10
+            input.Skip(16); //0x10
 
             for (var i = 0; i < numJapaneseSubs; i++)
             {
-                input.ReadBytes(16); //0x10
+                input.Skip(16); //0x10
 
                 var subtitle = ReadLongSubtitle(input);
                 subtitle.Language = SubtitleLanguage.Japanese;
@@ -90,7 +91,7 @@ namespace YakuzaCommon.Files.CmnBin
 
             for (var i = 0; i < numEnglishSubs; i++)
             {
-                input.ReadBytes(16); //0x10
+                input.Skip(16); //0x10
 
                 var subtitle = ReadLongSubtitle(input);
                 subtitle.Language = SubtitleLanguage.English;
@@ -107,15 +108,14 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var result = new List<Subtitle>();
 
-            input.ReadBytes(266); //0x010A
+            input.Skip(266); //0x010A
 
             var numSubs = input.ReadInt32();
-            input.ReadBytes(12); //0x0C
-            input.ReadBytes(16); //0x10
+            input.Skip(28); 
 
             for (var i = 0; i < numSubs; i++)
             {
-                input.ReadBytes(16); //0x10
+                input.Skip(16); //0x10
 
                 var subtitle = ReadShortSubtitle(input);
                 subtitle.Language = SubtitleLanguage.Japanese;
@@ -126,12 +126,11 @@ namespace YakuzaCommon.Files.CmnBin
             }
 
             numSubs = input.ReadInt32();
-            input.ReadBytes(12); //0x0C
-            input.ReadBytes(16); //0x10
+            input.Skip(28); //0x0C
 
             for (var i = 0; i < numSubs; i++)
             {
-                input.ReadBytes(16); //0x10
+                input.Skip(16); //0x10
 
                 var subtitle = ReadShortSubtitle(input);
                 subtitle.Language = SubtitleLanguage.English;
@@ -236,7 +235,7 @@ namespace YakuzaCommon.Files.CmnBin
             var subtitles = GetSubtitles();
 
             using (var fs = new FileStream(outputPath, FileMode.Open))
-            using (var output = new ExtendedBinaryWriter(fs, Encoding))
+            using (var output = new ExtendedBinaryWriter(fs, FileEncoding))
             {
                 foreach (var subtitle in subtitles)
                 {

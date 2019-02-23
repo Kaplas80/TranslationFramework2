@@ -15,7 +15,7 @@ namespace TF.Core.Files.DDS
     {
         private DDSView _view;
 
-        public DDSFile(string path, string changesFolder) : base(path, changesFolder)
+        public DDSFile(string path, string changesFolder) : base(path, changesFolder, null)
         {
             this.Type = FileType.ImageFile;
         }

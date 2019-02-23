@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.Core.Entities
@@ -33,13 +34,17 @@ namespace TF.Core.Entities
         protected string ChangesFile { get; private set; }
         public bool HasChanges => File.Exists(ChangesFile);
 
-        public TranslationFile(string path, string changesFolder)
+        protected readonly Encoding FileEncoding;
+
+        public TranslationFile(string path, string changesFolder, Encoding encoding = null)
         {
             _changesFolder = changesFolder;
             Id = Guid.NewGuid().ToString();
             Path = path;
             Name = System.IO.Path.GetFileName(path);
             Type = FileType.Unknown;
+
+            FileEncoding = encoding;
 
             NeedSaving = false;
         }

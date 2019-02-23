@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Text;
 using TF.Core.Entities;
 using YakuzaCommon.Files;
 
@@ -14,6 +14,8 @@ namespace YakuzaCommon
         public virtual string Description { get; }
         public virtual Image Icon { get; }
         public virtual int Version { get; }
+
+        public virtual Encoding FileEncoding => Encoding.UTF8;
 
         public virtual GameFileContainer[] GetContainers(string path)
         {

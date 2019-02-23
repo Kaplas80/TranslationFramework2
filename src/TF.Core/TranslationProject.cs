@@ -77,6 +77,10 @@ namespace TF.Core
                                 TranslationFile translationFile;
                                 try
                                 {
+                                    translationFile = (TranslationFile)Activator.CreateInstance(type, f, this.ChangesFolder, Game.FileEncoding);
+                                }
+                                catch (MissingMethodException e)
+                                {
                                     translationFile = (TranslationFile)Activator.CreateInstance(type, f, this.ChangesFolder);
                                 }
                                 catch (Exception e)
@@ -118,6 +122,10 @@ namespace TF.Core
 
                             TranslationFile translationFile;
                             try
+                            {
+                                translationFile = (TranslationFile)Activator.CreateInstance(type, destinationFileName, this.ChangesFolder, Game.FileEncoding);
+                            }
+                            catch (MissingMethodException e)
                             {
                                 translationFile = (TranslationFile)Activator.CreateInstance(type, destinationFileName, this.ChangesFolder);
                             }
@@ -215,6 +223,10 @@ namespace TF.Core
                         var type = GetType(typeString, types);
                         TranslationFile file;
                         try
+                        {
+                            file = (TranslationFile)Activator.CreateInstance(type, filePath, result.ChangesFolder, result.Game.FileEncoding);
+                        }
+                        catch (MissingMethodException e)
                         {
                             file = (TranslationFile)Activator.CreateInstance(type, filePath, result.ChangesFolder);
                         }

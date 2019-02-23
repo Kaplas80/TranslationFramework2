@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TF.IO;
 using YakuzaCommon.Files.SimpleSubtitle;
 
@@ -8,7 +9,7 @@ namespace YakuzaCommon.Files.Blacksmith
 {
     public class File : SimpleSubtitle.File
     {
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
@@ -22,10 +23,10 @@ namespace YakuzaCommon.Files.Blacksmith
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
                 var limit = input.ReadInt32();
-                input.Seek(4, SeekOrigin.Current);
+                input.Skip(4);
 
                 while (input.Position < limit)
                 {
@@ -62,9 +63,9 @@ namespace YakuzaCommon.Files.Blacksmith
             var subtitles = GetSubtitles();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fsInput, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fsInput, FileEncoding, Endianness.BigEndian))
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fsOutput, Encoding, Endianness.BigEndian))
+            using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding, Endianness.BigEndian))
             {
                 var limit = input.ReadInt32();
                 output.Write(limit);

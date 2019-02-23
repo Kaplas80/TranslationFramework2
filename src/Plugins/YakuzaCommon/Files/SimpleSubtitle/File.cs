@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TF.Core.Entities;
 using TF.Core.Helpers;
 using TF.IO;
@@ -14,13 +15,11 @@ namespace YakuzaCommon.Files.SimpleSubtitle
     {
         protected virtual int HEADER_SIZE => 0;
 
-        protected readonly YakuzaEncoding Encoding = new YakuzaEncoding();
-
         protected IList<Subtitle> _subtitles;
 
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
-            this.Type = FileType.TextFile;
+            Type = FileType.TextFile;
         }
 
         public override void Open(DockPanel panel, ThemeBase theme)
@@ -42,7 +41,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
                 input.Seek(HEADER_SIZE, SeekOrigin.Begin);
 
@@ -82,7 +81,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
         {
             var bytes = System.IO.File.ReadAllBytes(HasChanges ? ChangesFile : Path);
 
-            var pattern = Encoding.GetBytes(searchString);
+            var pattern = FileEncoding.GetBytes(searchString);
 
             var index = SearchHelper.SearchPattern(bytes, pattern, 0);
 
@@ -145,7 +144,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             if (HEADER_SIZE > 0)
             {
                 using (var fs = new FileStream(Path, FileMode.Open))
-                using (var input = new ExtendedBinaryReader(fs, Encoding))
+                using (var input = new ExtendedBinaryReader(fs, FileEncoding))
                 {
                     header = input.ReadBytes(HEADER_SIZE);
                 }
@@ -154,7 +153,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             var subtitles = GetSubtitles();
 
             using (var fs = new FileStream(outputPath, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, Encoding, Endianness.BigEndian))
+            using (var output = new ExtendedBinaryWriter(fs, FileEncoding, Endianness.BigEndian))
             {
                 if (HEADER_SIZE > 0)
                 {

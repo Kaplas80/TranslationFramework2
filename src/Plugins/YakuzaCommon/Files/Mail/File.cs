@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Text;
 using TF.IO;
 using YakuzaCommon.Files.SimpleSubtitle;
 
@@ -9,7 +9,7 @@ namespace YakuzaCommon.Files.Mail
 {
     public class File : SimpleSubtitle.File
     {
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
@@ -24,7 +24,7 @@ namespace YakuzaCommon.Files.Mail
 
             var used = new Dictionary<int, bool>();
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
                 input.Skip(4);
                 var count = input.ReadInt32();
@@ -120,9 +120,9 @@ namespace YakuzaCommon.Files.Mail
             var used = new Dictionary<int, int>();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fsInput, Encoding, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fsInput, FileEncoding, Endianness.BigEndian))
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fsOutput, Encoding, Endianness.BigEndian))
+            using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding, Endianness.BigEndian))
             {
                 output.Write(input.ReadBytes(4));
                 var count = input.ReadInt32();
