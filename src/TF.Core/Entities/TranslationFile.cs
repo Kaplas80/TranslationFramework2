@@ -34,6 +34,8 @@ namespace TF.Core.Entities
         protected string ChangesFile { get; private set; }
         public bool HasChanges => File.Exists(ChangesFile);
 
+        public virtual int SubtitleCount => 0;
+
         protected readonly Encoding FileEncoding;
 
         public TranslationFile(string path, string changesFolder, Encoding encoding = null)

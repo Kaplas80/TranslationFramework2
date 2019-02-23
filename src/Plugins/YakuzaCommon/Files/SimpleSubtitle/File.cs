@@ -19,6 +19,15 @@ namespace YakuzaCommon.Files.SimpleSubtitle
 
         private View _view;
 
+        public override int SubtitleCount
+        {
+            get
+            {
+                var subtitles = GetSubtitles();
+                return subtitles.Count;
+            }
+        }
+
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
             Type = FileType.TextFile;

@@ -242,11 +242,8 @@ namespace YakuzaCommon.Files.CmnBin
                     output.Seek(subtitle.Offset, SeekOrigin.Begin);
 
                     var sub = subtitle as Subtitle;
-                    for (var i = 0; i < sub.MaxLength; i++)
-                    {
-                        output.Write((byte) 0);
-                    }
-
+                    var zeros = new byte[sub.MaxLength];
+                    output.Write(zeros);
                     output.Seek(subtitle.Offset, SeekOrigin.Begin);
                     output.WriteString(subtitle.Translation);
                 }

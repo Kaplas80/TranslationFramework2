@@ -29,8 +29,15 @@ namespace YakuzaCommon.Files.Imb
                 var titlePointer = input.ReadInt32();
                 var descriptionPointer = input.ReadInt32();
 
-                result.Add(ReadSubtitle(input, titlePointer));
-                result.Add(ReadSubtitle(input, descriptionPointer));
+                if (titlePointer > 0)
+                {
+                    result.Add(ReadSubtitle(input, titlePointer));
+                }
+
+                if (descriptionPointer > 0)
+                {
+                    result.Add(ReadSubtitle(input, descriptionPointer));
+                }
             }
 
             return result;
@@ -39,16 +46,13 @@ namespace YakuzaCommon.Files.Imb
         private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
         {
             var result = new Subtitle { Offset = offset };
-            if (offset > 0)
-            {
-                var pos = input.Position;
-                input.Seek(offset, SeekOrigin.Begin);
-                result.Text = input.ReadString();
-                result.Loaded = result.Text;
-                result.Translation = result.Text;
-                result.PropertyChanged += SubtitlePropertyChanged;
-                input.Seek(pos, SeekOrigin.Begin);
-            }
+            var pos = input.Position;
+            input.Seek(offset, SeekOrigin.Begin);
+            result.Text = input.ReadString();
+            result.Loaded = result.Text;
+            result.Translation = result.Text;
+            result.PropertyChanged += SubtitlePropertyChanged;
+            input.Seek(pos, SeekOrigin.Begin);
 
             return result;
         }

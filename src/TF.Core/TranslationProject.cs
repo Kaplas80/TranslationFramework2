@@ -90,7 +90,18 @@ namespace TF.Core
 
                                 translationFile.RelativePath = relativePath;
 
-                                translationContainer.AddFile(translationFile);
+                                if (translationFile.Type == FileType.TextFile)
+                                {
+                                    if (translationFile.SubtitleCount > 0)
+                                    {
+                                        translationContainer.AddFile(translationFile);
+                                    }
+                                }
+                                else
+                                {
+                                    translationContainer.AddFile(translationFile);
+                                }
+                                
                             }
                         }
 
@@ -136,14 +147,27 @@ namespace TF.Core
 
                             translationFile.RelativePath = relativePath;
 
-                            translationContainer.AddFile(translationFile);
+                            if (translationFile.Type == FileType.TextFile)
+                            {
+                                if (translationFile.SubtitleCount > 0)
+                                {
+                                    translationContainer.AddFile(translationFile);
+                                }
+                            }
+                            else
+                            {
+                                translationContainer.AddFile(translationFile);
+                            }
                         }
 
                         worker.ReportProgress(0, $"{translationContainer.Files.Count} ficheros encontrados y añadidos");
                     }
                 }
 
-                FileContainers.Add(translationContainer);
+                if (translationContainer.Files.Count > 0)
+                {
+                    FileContainers.Add(translationContainer);
+                }
             }
         }
 
