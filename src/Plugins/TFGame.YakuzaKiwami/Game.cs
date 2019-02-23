@@ -255,6 +255,27 @@ namespace TFGame.YakuzaKiwami
             return reactor;
         }
 
+        private GameFileContainer GetStage()
+        {
+            var streetNameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "street_name_?.dat",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.StreetName.File)
+                };
+
+            var stage = new GameFileContainer
+            {
+                Path = @"data\stage\w64\flag_data",
+                Type = ContainerType.Folder
+            };
+
+            stage.FileSearches.Add(streetNameSearch);
+            return stage;
+        }
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
@@ -262,8 +283,9 @@ namespace TFGame.YakuzaKiwami
             //result.AddRange(GetAuth(path));
             //result.Add(GetBootpar());
             //result.AddRange(GetMappar(path));
-            result.Add(GetReactorpar());
+            //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
+            result.Add(GetStage());
             //result.Add(GetWdrCommon());
             //result.Add(GetWdr());
 

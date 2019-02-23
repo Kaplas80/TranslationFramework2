@@ -302,8 +302,7 @@ namespace TF.Core
 
         public void Export(IList<TranslationFileContainer> containers, bool useCompression, BackgroundWorker worker)
         {
-            Directory.Delete(TempFolder, true);
-            Directory.CreateDirectory(TempFolder);
+            PathHelper.DeleteDirectory(TempFolder);
 
             foreach (var container in containers)
             {

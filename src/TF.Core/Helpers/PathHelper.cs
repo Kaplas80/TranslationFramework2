@@ -58,5 +58,19 @@ namespace TF.Core.Helpers
                 File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
             }
         }
+
+        public static void DeleteDirectory(string path)
+        {
+            foreach (var directory in Directory.GetDirectories(path))
+            {
+                var dirName = Path.GetFileName(directory);
+                Directory.Delete(dirName, true);
+            }
+
+            foreach (var file in Directory.GetFiles(path))
+            {
+                File.Delete(file);
+            }
+        }
     }
 }
