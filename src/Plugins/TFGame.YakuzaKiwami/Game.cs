@@ -16,7 +16,8 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Versión PC Steam sin DENUVO (lanzada el 19/02/2019)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-Icon-750908330
-        public override int Version => 3;
+        public override int Version => 1;
+        public override System.Text.Encoding FileEncoding => new Encoding();
 
         private IList<GameFileContainer> GetAuth(string path)
         {
@@ -76,6 +77,16 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaCommon.Files.Mail.File)
                 };
 
+            var stringTblSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "string_tbl.bin_?",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.StringTbl.File)
+                };
+
             var bootpar = new GameFileContainer
             {
                 Path = @"data\bootpar\boot.par",
@@ -83,7 +94,7 @@ namespace TFGame.YakuzaKiwami
             };
             bootpar.FileSearches.Add(empbSearch);
             bootpar.FileSearches.Add(mailSearch);
-
+            bootpar.FileSearches.Add(stringTblSearch);
             return bootpar;
         }
 
@@ -282,12 +293,12 @@ namespace TFGame.YakuzaKiwami
             var result = new List<GameFileContainer>();
 
             //result.AddRange(GetAuth(path));
-            //result.Add(GetBootpar());
+            result.Add(GetBootpar());
             //result.AddRange(GetMappar(path));
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
-            result.Add(GetStage());
-            result.Add(GetWdrCommon());
+            //result.Add(GetStage());
+            //result.Add(GetWdrCommon());
             //result.Add(GetWdr());
 
             result.Sort();

@@ -73,6 +73,7 @@
       <DependentUpon>View.cs</DependentUpon>
     </Compile>
     <Compile Include="Files\StreetName\File.cs" />
+    <Compile Include="Files\StringTbl\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

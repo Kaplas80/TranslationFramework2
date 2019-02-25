@@ -144,24 +144,18 @@ namespace TF.IO
 
         public string ReadString(Encoding encoding, char endChar = '\0')
         {
-            var pos = Position;
-
             var found = false;
             var sb = new StringBuilder();
             while (!found)
             {
-                var str = ReadString(256, encoding, endChar);
+                var str = ReadString(256, encoding, out found, endChar);
                 sb.Append(str);
-                if (str.Length < 256)
-                {
-                    found = true;
-                }
             }
 
             return sb.ToString();
         }
 
-        public string ReadString(int maxLength, Encoding encoding, char endChar = '\0')
+        private string ReadString(int maxLength, Encoding encoding, out bool finished, char endChar = '\0')
         {
             var startPos = Position;
             var endCharStr = endChar.ToString();
@@ -171,12 +165,12 @@ namespace TF.IO
 
             var buffer = ReadBytes(limit);
 
-            var endBytes = encoding.GetBytes(new char[] {endChar}, 0, 1);
+            var endBytes = encoding.GetBytes(new char[] { endChar }, 0, 1);
 
             var found = false;
             var i = 0;
             var read = new byte[endCharLength];
-            while (!found & i < buffer.Length )
+            while (!found & i < buffer.Length)
             {
                 Array.Copy(buffer, i, read, 0, endCharLength);
 
@@ -184,6 +178,8 @@ namespace TF.IO
 
                 i += endCharLength;
             }
+
+            finished = found;
 
             if (!found)
             {
@@ -197,6 +193,11 @@ namespace TF.IO
                 Seek(startPos + i, SeekOrigin.Begin);
                 return str;
             }
+        }
+
+        public string ReadString(int maxLength, Encoding encoding, char endChar = '\0')
+        {
+            return ReadString(maxLength, encoding, out _, endChar);
         }
 
         public string ReadString(int maxLength)

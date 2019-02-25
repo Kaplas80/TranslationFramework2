@@ -13,7 +13,7 @@ namespace TFGame.Yakuza0
         public override string Description => "Versión PC Steam sin DENUVO (lanzada el XX-XX-XXXX)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-0-Icon-750908182
         public override int Version => 1;
-        public override Encoding FileEncoding => new YakuzaEncoding();
+        public override System.Text.Encoding FileEncoding => new Encoding();
 
         private IList<GameFileContainer> GetAuth(string path)
         {

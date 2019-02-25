@@ -3,10 +3,10 @@ using System.Text;
 
 namespace TFGame.Yakuza0
 {
-    public class YakuzaEncoding : Encoding
+    public class Encoding : System.Text.Encoding
     {
-        private readonly Encoding isoEncoding = GetEncoding("ISO-8859-1", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback);
-        private readonly Encoding utf8Encoding = GetEncoding("UTF-8", EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
+        private readonly System.Text.Encoding isoEncoding = GetEncoding("ISO-8859-1", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback);
+        private readonly System.Text.Encoding utf8Encoding = GetEncoding("UTF-8", EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
 
         public override int GetByteCount(char[] chars, int index, int count)
         {
