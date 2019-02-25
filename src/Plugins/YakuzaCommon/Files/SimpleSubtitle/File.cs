@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TF.Core.Entities;
+using TF.Core.Exceptions;
 using TF.Core.Helpers;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
@@ -46,7 +47,15 @@ namespace YakuzaCommon.Files.SimpleSubtitle
         {
             if (HasChanges)
             {
-                return LoadChanges(ChangesFile);
+                try
+                {
+                    var loadedSubs = LoadChanges(ChangesFile);
+                    return loadedSubs;
+                }
+                catch (ChangesFileVersionMismatchException e)
+                {
+                    System.IO.File.Delete(ChangesFile);
+                }
             }
 
             var result = new List<Subtitle>();
@@ -104,6 +113,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             using (var fs = new FileStream(ChangesFile, FileMode.Create))
             using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
             {
+                output.Write(ChangesFileVersion);
                 output.Write(_subtitles.Count);
                 foreach (var subtitle in _subtitles)
                 {
@@ -124,6 +134,13 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             using (var fs = new FileStream(file, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
             {
+                var version = input.ReadInt32();
+
+                if (version != ChangesFileVersion)
+                {
+                    throw new ChangesFileVersionMismatchException();
+                }
+
                 var result = new List<Subtitle>();
                 var subtitleCount = input.ReadInt32();
 

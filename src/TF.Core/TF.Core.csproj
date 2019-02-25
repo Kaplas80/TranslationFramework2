@@ -62,6 +62,8 @@
     <Compile Include="Entities\IGame.cs" />
     <Compile Include="Entities\TranslationFile.cs" />
     <Compile Include="Entities\TranslationFileContainer.cs" />
+    <Compile Include="Exceptions\ChangesFileVersionMismatchException.cs" />
+    <Compile Include="Exceptions\UserCancelException.cs" />
     <Compile Include="Files\DDS\DDSFile.cs" />
     <Compile Include="Files\DDS\DDSView.cs">
       <SubType>Form</SubType>

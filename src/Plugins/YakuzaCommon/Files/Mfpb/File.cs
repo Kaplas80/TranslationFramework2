@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using TF.Core.Exceptions;
 using TF.IO;
 using YakuzaCommon.Files.SimpleSubtitle;
 
@@ -18,7 +19,15 @@ namespace YakuzaCommon.Files.Mfpb
         {
             if (HasChanges)
             {
-                return LoadChanges(ChangesFile);
+                try
+                {
+                    var loadedSubs = LoadChanges(ChangesFile);
+                    return loadedSubs;
+                }
+                catch (ChangesFileVersionMismatchException e)
+                {
+                    System.IO.File.Delete(ChangesFile);
+                }
             }
 
             var result = new List<Subtitle>();

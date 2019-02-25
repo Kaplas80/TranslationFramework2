@@ -16,7 +16,7 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Versión PC Steam sin DENUVO (lanzada el 19/02/2019)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-Icon-750908330
-        public override int Version => 1;
+        public override int Version => 3;
 
         private IList<GameFileContainer> GetAuth(string path)
         {
@@ -276,6 +276,7 @@ namespace TFGame.YakuzaKiwami
             stage.FileSearches.Add(streetNameSearch);
             return stage;
         }
+
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
@@ -286,7 +287,7 @@ namespace TFGame.YakuzaKiwami
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
             result.Add(GetStage());
-            //result.Add(GetWdrCommon());
+            result.Add(GetWdrCommon());
             //result.Add(GetWdr());
 
             result.Sort();

@@ -32,6 +32,8 @@ namespace TF.Core.Entities
         public bool NeedSaving { get; set; }
 
         protected string ChangesFile { get; private set; }
+        protected virtual int ChangesFileVersion => 1;
+
         public bool HasChanges => File.Exists(ChangesFile);
 
         public virtual int SubtitleCount => 0;

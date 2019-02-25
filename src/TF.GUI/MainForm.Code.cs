@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using TF.Core;
 using TF.Core.Entities;
+using TF.Core.Exceptions;
 using TF.GUI.Forms;
 using TF.GUI.Properties;
 using WeifenLuo.WinFormsUI.Docking;
@@ -77,9 +78,13 @@ namespace TF.GUI
                     project.ReadTranslationFiles(worker);
                     worker.ReportProgress(-1, "FINALIZADO");
                 }
-                catch (Exception)
+                catch (UserCancelException e)
                 {
                     args.Cancel = true;
+                }
+                catch (Exception e)
+                {
+                    worker.ReportProgress(0, $"ERROR: {e.Message}");
                 }
             };
             
@@ -116,14 +121,33 @@ namespace TF.GUI
                     return;
                 }
 
-                TranslationProject project;
-                try
+                var workForm = new WorkingForm(dockTheme, "Cargar traducción", true);
+
+                TranslationProject project = null;
+
+                workForm.DoWork += (sender, args) =>
                 {
-                    project = TranslationProject.Load(LoadFileDialog.FileName, _pluginManager);
-                }
-                catch (Exception e)
+                    var worker = sender as BackgroundWorker;
+
+                    try
+                    {
+                        project = TranslationProject.Load(LoadFileDialog.FileName, _pluginManager, worker);
+                    }
+                    catch (UserCancelException e)
+                    {
+                        args.Cancel = true;
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                };
+
+                workForm.ShowDialog(this);
+
+                if (workForm.Cancelled)
                 {
-                    MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -131,6 +155,8 @@ namespace TF.GUI
                 _explorer.LoadTree(_project.FileContainers);
 
                 _currentFile = null;
+
+                _project.Save();
 
                 Text = $"Translation Framework 2.0 - {_project.Game.Name} - {_project.WorkPath}";
                 tsbExportProject.Enabled = true;
@@ -175,9 +201,13 @@ namespace TF.GUI
                         worker.ReportProgress(-1, string.Empty);
                         worker.ReportProgress(-1, $"Los ficheros exportados están en {_project.ExportFolder}");
                     }
-                    catch (Exception e)
+                    catch (UserCancelException e)
                     {
                         args.Cancel = true;
+                    }
+                    catch (Exception e)
+                    {
+                        worker.ReportProgress(0, $"ERROR: {e.Message}");
                     }
                 };
 
@@ -211,9 +241,13 @@ namespace TF.GUI
 
                         worker.ReportProgress(-1, "FINALIZADO");
                     }
-                    catch (Exception)
+                    catch (UserCancelException e)
                     {
                         args.Cancel = true;
+                    }
+                    catch (Exception e)
+                    {
+                        worker.ReportProgress(0, $"ERROR: {e.Message}");
                     }
                 };
 

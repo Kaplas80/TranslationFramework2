@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using TF.Core.Entities;
+using TF.Core.Exceptions;
 using TF.Core.Helpers;
 using TF.IO;
 
@@ -42,133 +44,7 @@ namespace TF.Core
 
         public void ReadTranslationFiles(BackgroundWorker worker)
         {
-            var containers = Game.GetContainers(InstallationPath);
-            foreach (var container in containers)
-            {
-                if (worker.CancellationPending)
-                {
-                    worker.ReportProgress(0, "CANCELADO");
-                    throw new Exception("Cancelado por el usuario");
-                }
-
-                var translationContainer = new TranslationFileContainer(container.Path, container.Type);
-
-                var extractionContainerPath = Path.Combine(ContainersFolder, translationContainer.Id);
-                Directory.CreateDirectory(extractionContainerPath);
-
-                var containerPath = Path.Combine(InstallationPath, container.Path);
-
-                worker.ReportProgress(0, $"Procesando {container.Path}...");
-                if (container.Type == ContainerType.CompressedFile)
-                {
-                    if (File.Exists(containerPath))
-                    {
-                        Game.ExtractFile(containerPath, extractionContainerPath);
-                        foreach (var fileSearch in container.FileSearches)
-                        {
-                            worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
-                            var foundFiles = fileSearch.GetFiles(extractionContainerPath);
-
-                            foreach (var f in foundFiles)
-                            {
-                                var relativePath = PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
-                                var type = fileSearch.FileType;
-
-                                TranslationFile translationFile;
-                                try
-                                {
-                                    translationFile = (TranslationFile)Activator.CreateInstance(type, f, this.ChangesFolder, Game.FileEncoding);
-                                }
-                                catch (MissingMethodException e)
-                                {
-                                    translationFile = (TranslationFile)Activator.CreateInstance(type, f, this.ChangesFolder);
-                                }
-                                catch (Exception e)
-                                {
-                                    translationFile = new TranslationFile(f, this.ChangesFolder);
-                                }
-
-                                translationFile.RelativePath = relativePath;
-
-                                if (translationFile.Type == FileType.TextFile)
-                                {
-                                    if (translationFile.SubtitleCount > 0)
-                                    {
-                                        translationContainer.AddFile(translationFile);
-                                    }
-                                }
-                                else
-                                {
-                                    translationContainer.AddFile(translationFile);
-                                }
-                                
-                            }
-                        }
-
-                        worker.ReportProgress(0, $"{translationContainer.Files.Count} ficheros encontrados y añadidos");
-                    }
-                    else
-                    {
-                        worker.ReportProgress(0, $"ERROR: No existe el fichero comprimido {containerPath}");
-                        continue;
-                    }
-                }
-                else
-                {
-                    foreach (var fileSearch in container.FileSearches)
-                    {
-                        worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
-                        var foundFiles = fileSearch.GetFiles(containerPath);
-
-                        foreach (var f in foundFiles)
-                        {
-                            var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
-
-                            var destinationFileName = Path.Combine(extractionContainerPath, relativePath);
-                            var destPath = Path.GetDirectoryName(destinationFileName);
-                            Directory.CreateDirectory(destPath);
-                            File.Copy(f, Path.Combine(extractionContainerPath, relativePath));
-
-                            var type = fileSearch.FileType;
-
-                            TranslationFile translationFile;
-                            try
-                            {
-                                translationFile = (TranslationFile)Activator.CreateInstance(type, destinationFileName, this.ChangesFolder, Game.FileEncoding);
-                            }
-                            catch (MissingMethodException e)
-                            {
-                                translationFile = (TranslationFile)Activator.CreateInstance(type, destinationFileName, this.ChangesFolder);
-                            }
-                            catch (Exception e)
-                            {
-                                translationFile = new TranslationFile(destinationFileName, this.ChangesFolder);
-                            }
-
-                            translationFile.RelativePath = relativePath;
-
-                            if (translationFile.Type == FileType.TextFile)
-                            {
-                                if (translationFile.SubtitleCount > 0)
-                                {
-                                    translationContainer.AddFile(translationFile);
-                                }
-                            }
-                            else
-                            {
-                                translationContainer.AddFile(translationFile);
-                            }
-                        }
-
-                        worker.ReportProgress(0, $"{translationContainer.Files.Count} ficheros encontrados y añadidos");
-                    }
-                }
-
-                if (translationContainer.Files.Count > 0)
-                {
-                    FileContainers.Add(translationContainer);
-                }
-            }
+            UpdateTranslationFiles(this, worker);
         }
 
         public void Save()
@@ -199,9 +75,11 @@ namespace TF.Core
             }
         }
 
-        public static TranslationProject Load(string path, PluginManager pluginManager)
+        public static TranslationProject Load(string path, PluginManager pluginManager, BackgroundWorker worker)
         {
             var types = new Dictionary<string, Type>();
+
+            var searchNewFiles = false;
 
             using (var fs = new FileStream(path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8))
@@ -213,9 +91,14 @@ namespace TF.Core
                 result.Game = game ?? throw new Exception("No existe un plugin para cargar este fichero.");
 
                 var pluginVersion = input.ReadInt32();
-                if (pluginVersion != game.Version)
+                if (pluginVersion > game.Version)
                 {
                     throw new Exception("No coincide la versión del plugin instalado con la versión del que creó esta traducción.");
+                }
+
+                if (pluginVersion < game.Version)
+                {
+                    searchNewFiles = true;
                 }
 
                 var installPath = input.ReadString();
@@ -268,6 +151,11 @@ namespace TF.Core
                     result.FileContainers.Add(container);
                 }
 
+                if (searchNewFiles)
+                {
+                    UpdateTranslationFiles(result, worker);
+                }
+
                 return result;
             }
         }
@@ -309,7 +197,7 @@ namespace TF.Core
                 if (worker.CancellationPending)
                 {
                     worker.ReportProgress(0, "CANCELADO");
-                    throw new Exception("Cancelado por el usuario");
+                    throw new UserCancelException();
                 }
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
@@ -368,7 +256,7 @@ namespace TF.Core
                 if (worker.CancellationPending)
                 {
                     worker.ReportProgress(0, "CANCELADO");
-                    throw new Exception("Cancelado por el usuario");
+                    throw new UserCancelException();
                 }
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
@@ -386,6 +274,171 @@ namespace TF.Core
             }
 
             return result;
+        }
+
+        private static void UpdateTranslationFiles(TranslationProject project, BackgroundWorker worker)
+        {
+            var containers = project.Game.GetContainers(project.InstallationPath);
+            foreach (var container in containers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                var translationContainer =
+                    project.FileContainers.FirstOrDefault(x => x.Path == container.Path && x.Type == container.Type);
+
+                var addNewContainer = false;
+                var addedFiles = 0;
+
+                if (translationContainer == null)
+                {
+                    translationContainer = new TranslationFileContainer(container.Path, container.Type);
+                    addNewContainer = true;
+                }
+
+                var extractionContainerPath = Path.Combine(project.ContainersFolder, translationContainer.Id);
+                Directory.CreateDirectory(extractionContainerPath);
+
+                var containerPath = Path.Combine(project.InstallationPath, container.Path);
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+                if (container.Type == ContainerType.CompressedFile)
+                {
+                    if (File.Exists(containerPath))
+                    {
+                        if (addNewContainer)
+                        {
+                            project.Game.ExtractFile(containerPath, extractionContainerPath);
+                        }
+
+                        foreach (var fileSearch in container.FileSearches)
+                        {
+                            worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
+                            var foundFiles = fileSearch.GetFiles(extractionContainerPath);
+
+                            foreach (var f in foundFiles)
+                            {
+                                var relativePath = PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
+                                var type = fileSearch.FileType;
+
+                                var translationFile = translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
+
+                                if (translationFile == null)
+                                {
+                                    try
+                                    {
+                                        translationFile = (TranslationFile) Activator.CreateInstance(type, f,
+                                            project.ChangesFolder, project.Game.FileEncoding);
+                                    }
+                                    catch (MissingMethodException e)
+                                    {
+                                        translationFile =
+                                            (TranslationFile) Activator.CreateInstance(type, f, project.ChangesFolder);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        translationFile = new TranslationFile(f, project.ChangesFolder);
+                                    }
+
+                                    translationFile.RelativePath = relativePath;
+
+                                    if (translationFile.Type == FileType.TextFile)
+                                    {
+                                        if (translationFile.SubtitleCount > 0)
+                                        {
+                                            translationContainer.AddFile(translationFile);
+                                            addedFiles++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        translationContainer.AddFile(translationFile);
+                                        addedFiles++;
+                                    }
+                                }
+                            }
+                        }
+
+                        worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");
+                    }
+                    else
+                    {
+                        worker.ReportProgress(0, $"ERROR: No existe el fichero comprimido {containerPath}");
+                        continue;
+                    }
+                }
+                else
+                {
+                    foreach (var fileSearch in container.FileSearches)
+                    {
+                        worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
+                        var foundFiles = fileSearch.GetFiles(containerPath);
+
+                        foreach (var f in foundFiles)
+                        {
+                            var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
+
+                            var destinationFileName = Path.Combine(extractionContainerPath, relativePath);
+                            var destPath = Path.GetDirectoryName(destinationFileName);
+                            Directory.CreateDirectory(destPath);
+
+                            if (!File.Exists(destinationFileName))
+                            {
+                                File.Copy(f, destinationFileName);
+                            }
+
+                            var type = fileSearch.FileType;
+
+                            var translationFile = translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
+
+                            if (translationFile == null)
+                            {
+                                try
+                                {
+                                    translationFile = (TranslationFile) Activator.CreateInstance(type,
+                                        destinationFileName, project.ChangesFolder, project.Game.FileEncoding);
+                                }
+                                catch (MissingMethodException e)
+                                {
+                                    translationFile =
+                                        (TranslationFile) Activator.CreateInstance(type, destinationFileName,
+                                            project.ChangesFolder);
+                                }
+                                catch (Exception e)
+                                {
+                                    translationFile = new TranslationFile(destinationFileName, project.ChangesFolder);
+                                }
+
+                                translationFile.RelativePath = relativePath;
+
+                                if (translationFile.Type == FileType.TextFile)
+                                {
+                                    if (translationFile.SubtitleCount > 0)
+                                    {
+                                        translationContainer.AddFile(translationFile);
+                                        addedFiles++;
+                                    }
+                                }
+                                else
+                                {
+                                    translationContainer.AddFile(translationFile);
+                                    addedFiles++;
+                                }
+                            }
+                        }
+
+                        worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");
+                    }
+                }
+
+                if (addNewContainer && translationContainer.Files.Count > 0)
+                {
+                    project.FileContainers.Add(translationContainer);
+                }
+            }
         }
     }
 }

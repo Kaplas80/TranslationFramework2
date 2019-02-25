@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using TF.Core.Exceptions;
 using TF.IO;
 
 namespace YakuzaCommon.Files.CmnBin
@@ -18,7 +19,15 @@ namespace YakuzaCommon.Files.CmnBin
         {
             if (HasChanges)
             {
-                return LoadChanges(ChangesFile);
+                try
+                {
+                    var loadedSubs = LoadChanges(ChangesFile);
+                    return loadedSubs;
+                }
+                catch (ChangesFileVersionMismatchException e)
+                {
+                    System.IO.File.Delete(ChangesFile);
+                }
             }
 
             var temp = new List<Subtitle>();
@@ -175,6 +184,7 @@ namespace YakuzaCommon.Files.CmnBin
             using (var fs = new FileStream(ChangesFile, FileMode.Create))
             using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
             {
+                output.Write(ChangesFileVersion);
                 output.Write(_subtitles.Count);
                 foreach (var subtitle in _subtitles)
                 {
@@ -197,6 +207,13 @@ namespace YakuzaCommon.Files.CmnBin
             using (var fs = new FileStream(file, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
             {
+                var version = input.ReadInt32();
+
+                if (version != ChangesFileVersion)
+                {
+                    throw new ChangesFileVersionMismatchException();
+                }
+
                 var result = new List<SimpleSubtitle.Subtitle>();
                 var subtitleCount = input.ReadInt32();
 
