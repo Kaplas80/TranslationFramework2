@@ -232,6 +232,15 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaCommon.Files.Restaurant.File)
                 };
 
+            var wdr_pacSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "pac",
+                    SearchPattern = "pac_*.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                };
+
             var wdr_par = new GameFileContainer
             {
                 Path = @"data\wdr_par_c\wdr.par",
@@ -240,6 +249,7 @@ namespace TFGame.YakuzaKiwami
 
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
+            //wdr_par.FileSearches.Add(wdr_pacSearch);
 
             return wdr_par;
         }
@@ -299,7 +309,7 @@ namespace TFGame.YakuzaKiwami
             //result.Add(GetSoundpar());
             //result.Add(GetStage());
             //result.Add(GetWdrCommon());
-            //result.Add(GetWdr());
+            result.Add(GetWdr());
 
             result.Sort();
             return result.ToArray();

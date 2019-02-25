@@ -34,16 +34,42 @@ namespace YakuzaCommon.Files
                 var newOutputPath = Path.Combine(outputPath, $"{Path.GetFileName(file)}.unpack");
                 parFile.Extract(newOutputPath);
             }
+
+            var pacFolder = Path.Combine(outputPath, "pac");
+            if (Directory.Exists(pacFolder))
+            {
+                var newPacFiles = Directory.GetFiles(pacFolder, "pac_*.bin", SearchOption.TopDirectoryOnly);
+                foreach (var file in newPacFiles)
+                {
+                    var pacFile = new PacFile(file);
+                    var newOutputPath = Path.Combine(pacFolder, $"{Path.GetFileName(file)}.unpack");
+                    pacFile.Extract(newOutputPath);
+                }
+            }
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
-            var unpackedFolders = Directory.GetDirectories(inputFolder, "*.unpack", SearchOption.TopDirectoryOnly);
-            foreach (var folder in unpackedFolders)
+            var unpackedParFolders = Directory.GetDirectories(inputFolder, "*.par.unpack", SearchOption.TopDirectoryOnly);
+            foreach (var folder in unpackedParFolders)
             {
                 var tempFile = folder.Substring(0, folder.Length - 7);
                 Repack(folder, tempFile, useCompression);
             }
+
+            var pacFolder = Path.Combine(inputFolder, "pac");
+            if (Directory.Exists(pacFolder))
+            {
+                var unpackedPacFolders =
+                    Directory.GetDirectories(pacFolder, "pac_*.bin.unpack", SearchOption.TopDirectoryOnly);
+
+                foreach (var folder in unpackedPacFolders)
+                {
+                    var tempFile = folder.Substring(0, folder.Length - 7);
+                    PacFile.Repack(folder, tempFile, useCompression);
+                }
+            }
+
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);

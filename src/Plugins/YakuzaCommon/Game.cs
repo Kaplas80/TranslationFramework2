@@ -25,6 +25,7 @@ namespace YakuzaCommon
 
         public void ExtractFile(string inputFile, string outputPath)
         {
+            var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
             if (extension.StartsWith(".par"))
@@ -32,15 +33,25 @@ namespace YakuzaCommon
                 var parFile = new ParFile(inputFile);
                 parFile.Extract(outputPath);
             }
+            else if (fileName.StartsWith("pac_"))
+            {
+                var pacFile = new PacFile(inputFile);
+                pacFile.Extract(outputPath);
+            }
         }
 
         public void RepackFile(string inputPath, string outputFile, bool compress)
         {
+            var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
             if (extension.StartsWith(".par"))
             {
                 ParFile.Repack(inputPath, outputFile, compress);
+            }
+            else if (fileName.StartsWith("pac_"))
+            {
+                PacFile.Repack(inputPath, outputFile, compress);
             }
         }
     }
