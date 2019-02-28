@@ -233,7 +233,10 @@ namespace TF.Core
                     worker.ReportProgress(0, "Generando ficheros traducidos...");
                     foreach (var translationFile in container.Files)
                     {
-                        translationFile.Rebuild(dest);
+                        if (translationFile.HasChanges)
+                        {
+                            translationFile.Rebuild(dest);
+                        }
                     }
 
                     // 3. Empaquetar
