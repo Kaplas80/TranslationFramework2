@@ -2,12 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Be.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace YakuzaCommon.Files.SimpleSubtitle
+namespace YakuzaCommon.Files.Msg
 {
     public partial class View : DockContent
     {
@@ -89,6 +92,27 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             if (e.Value == null)
             {
                 return;
+            }
+
+            if (e.ColumnIndex == 0)
+            {
+                var subtitle = _subtitles[e.RowIndex];
+
+                if (subtitle.Properties != null)
+                {
+                    if (!subtitle.Properties.ToByteArray().SequenceEqual(subtitle.TranslationProperties.ToByteArray()))
+                    {
+                        e.CellStyle.BackColor = Color.Red;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = SubtitleGridView.Columns[0].DefaultCellStyle.BackColor;
+                    }
+                }
+                else
+                {
+                    e.CellStyle.BackColor = SubtitleGridView.Columns[0].DefaultCellStyle.BackColor;
+                }
             }
 
             if (e.ColumnIndex == 2)
@@ -185,6 +209,34 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             var rowIndex = SubtitleGridView.SelectedCells[0].RowIndex;
             var subtitles = (IList<Subtitle>) SubtitleGridView.DataSource;
             return new Tuple<int, Subtitle>(rowIndex, subtitles[rowIndex]);
+        }
+
+        private void SubtitleGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (SubtitleGridView.SelectedCells.Count == 1)
+            {
+                var subtitle =
+                    ((List<Subtitle>) SubtitleGridView.DataSource)[SubtitleGridView.SelectedCells[0].RowIndex];
+
+                if (subtitle.Properties != null)
+                {
+                    var byteProvider = new DynamicByteProvider(subtitle.Properties.ToByteArray());
+                    hexBox1.ByteProvider = byteProvider;
+
+                    var byteProvider2 = new DynamicByteProvider(subtitle.TranslationProperties.ToByteArray());
+                    hexBox2.ByteProvider = byteProvider2;
+                }
+                else
+                {
+                    hexBox1.ByteProvider = null;
+                    hexBox2.ByteProvider = null;
+                }
+            }
+            else
+            {
+                hexBox1.ByteProvider = null;
+                hexBox2.ByteProvider = null;
+            }
         }
     }
 }

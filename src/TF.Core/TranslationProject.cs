@@ -230,6 +230,7 @@ namespace TF.Core
                     PathHelper.CloneDirectory(source, dest);
 
                     // 2. Crear los ficheros traducidos en esa carpeta temporal
+                    worker.ReportProgress(0, "Generando ficheros traducidos...");
                     foreach (var translationFile in container.Files)
                     {
                         translationFile.Rebuild(dest);

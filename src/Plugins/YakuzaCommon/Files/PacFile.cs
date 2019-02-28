@@ -6,19 +6,16 @@ namespace YakuzaCommon.Files
 {
     public class PacFile
     {
-        private string _path;
-
-        public PacFile(string path)
+        private PacFile()
         {
-            _path = path;
         }
 
-        public void Extract(string outputPath)
+        public static void Extract(string inputPath, string outputFolder)
         {
-            Directory.CreateDirectory(outputPath);
-            var logFile = System.IO.Path.Combine(outputPath, "Extract_Data.tf");
+            Directory.CreateDirectory(outputFolder);
+            var logFile = System.IO.Path.Combine(outputFolder, "Extract_Data.tf");
 
-            using (var fs = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8, Endianness.BigEndian))
             using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Create), Encoding.UTF8, Endianness.BigEndian))
             {
@@ -37,21 +34,30 @@ namespace YakuzaCommon.Files
                     var offsetMsg = input.ReadInt32();
                     var offsetRemainder = input.ReadInt32();
 
+                    log.Write(offsetMsg == 0 ? 0 : 1);
+                    log.Write(offsetRemainder == 0 ? 0 : 1);
+
                     var sizeMsg = input.ReadInt16();
                     var sizeRemainder = input.ReadInt16();
 
-                    input.Seek(offsetMsg, SeekOrigin.Begin);
-                    var msg = input.ReadBytes(sizeMsg);
+                    if (offsetMsg > 0)
+                    {
+                        input.Seek(offsetMsg, SeekOrigin.Begin);
+                        var msg = input.ReadBytes(sizeMsg);
 
-                    var msgFile = Path.Combine(outputPath, $"{i:0000}.msg");
-                    File.WriteAllBytes(msgFile, msg);
+                        var msgFile = Path.Combine(outputFolder, $"{i:0000}.msg");
+                        File.WriteAllBytes(msgFile, msg);
+                    }
 
-                    log.Write((int) sizeRemainder);
+                    if (offsetRemainder > 0)
+                    {
+                        log.Write((int) sizeRemainder);
 
-                    input.Seek(offsetRemainder, SeekOrigin.Begin);
-                    var remainder = input.ReadBytes(sizeMsg);
+                        input.Seek(offsetRemainder, SeekOrigin.Begin);
+                        var remainder = input.ReadBytes(sizeRemainder);
 
-                    log.Write(remainder);
+                        log.Write(remainder);
+                    }
                 }
             }
         }
@@ -80,21 +86,52 @@ namespace YakuzaCommon.Files
                     var unknown = log.ReadInt32();
                     output.Write(unknown);
 
-                    var msgFile = Path.Combine(inputFolder, $"{i:0000}.msg");
-                    var msg = File.ReadAllBytes(msgFile);
-                    var sizeRemainder = log.ReadInt32();
-                    var remainder = log.ReadBytes(sizeRemainder);
+                    var hasMsg = log.ReadInt32() != 0;
+                    var hasRemainder = log.ReadInt32() != 0;
 
-                    output.Write(outputOffset);
-                    output.Write(outputOffset + msg.Length);
-                    output.Write((short) msg.Length);
-                    output.Write((short) sizeRemainder);
+                    if (hasMsg)
+                    {
+                        var msgFile = Path.Combine(inputFolder, $"{i:0000}.msg");
+                        var msg = File.ReadAllBytes(msgFile);
 
-                    output.Seek(outputOffset, SeekOrigin.Begin);
-                    output.Write(msg);
-                    output.Write(remainder);
+                        output.Write(outputOffset);
 
-                    outputOffset = (int) output.Position;
+                        var returnPos = output.Position;
+                        output.Seek(outputOffset, SeekOrigin.Begin);
+                        output.Write(msg);
+                        outputOffset = (int)output.Position;
+                        output.Seek(returnPos + 4, SeekOrigin.Begin);
+                        output.Write((short) msg.Length);
+                        output.Seek(-6, SeekOrigin.Current);
+                    }
+                    else
+                    {
+                        output.Write(0);
+                        output.Skip(4);
+                        output.Write((short)0);
+                        output.Seek(-6, SeekOrigin.Current);
+                    }
+
+                    if (hasRemainder)
+                    {
+                        var sizeRemainder = log.ReadInt32();
+                        var remainder = log.ReadBytes(sizeRemainder);
+
+                        output.Write(outputOffset);
+
+                        var returnPos = output.Position;
+                        output.Seek(outputOffset, SeekOrigin.Begin);
+                        output.Write(remainder);
+                        outputOffset = (int)output.Position;
+                        output.Seek(returnPos + 2, SeekOrigin.Begin);
+                        output.Write((short)sizeRemainder);
+                    }
+                    else
+                    {
+                        output.Write(0);
+                        output.Skip(2);
+                        output.Write((short)0);
+                    }
                 }
             }
         }

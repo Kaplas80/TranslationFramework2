@@ -82,6 +82,7 @@ namespace TF.GUI.Forms
             if (FileChanged != null)
             {
                 var cancel = FileChanged.Invoke(selectedFile);
+                tvGameFiles.Focus();
                 return cancel;
             }
 

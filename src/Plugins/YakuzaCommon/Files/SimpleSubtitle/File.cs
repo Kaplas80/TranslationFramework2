@@ -18,7 +18,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
 
         protected IList<Subtitle> _subtitles;
 
-        private View _view;
+        protected View _view;
 
         public override int SubtitleCount
         {
@@ -91,7 +91,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             return result;
         }
         
-        protected void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             NeedSaving = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
             OnFileChanged();
@@ -129,7 +129,7 @@ namespace YakuzaCommon.Files.SimpleSubtitle
             OnFileChanged();
         }
 
-        protected IList<Subtitle> LoadChanges(string file)
+        protected virtual IList<Subtitle> LoadChanges(string file)
         {
             using (var fs = new FileStream(file, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))

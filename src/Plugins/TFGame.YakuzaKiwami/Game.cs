@@ -21,6 +21,8 @@ namespace TFGame.YakuzaKiwami
 
         private IList<GameFileContainer> GetAuth(string path)
         {
+            var result = new List<GameFileContainer>();
+
             var cmnSearch =
                 new GameFileSearch
                 {
@@ -52,7 +54,22 @@ namespace TFGame.YakuzaKiwami
             auth_w64_containers.FileSearches.Add(cmnSearch);
             auth_w64_containers.FileSearches.Add(ddsSearch);
 
-            return auth_w64_containers.GetContainers(path);
+            result.AddRange(auth_w64_containers.GetContainers(path));
+
+            auth_w64_containers = new GameFileContainerSearch
+            {
+                RelativePath = @"data\auth_w64_j",
+                TypeSearch = ContainerType.CompressedFile,
+                RecursiveSearch = false,
+                SearchPattern = "*.par"
+            };
+            auth_w64_containers.Exclusions.Add("inst_auth.par");
+            auth_w64_containers.FileSearches.Add(cmnSearch);
+            auth_w64_containers.FileSearches.Add(ddsSearch);
+
+            result.AddRange(auth_w64_containers.GetContainers(path));
+
+            return result;
         }
 
         private GameFileContainer GetBootpar()
@@ -100,6 +117,8 @@ namespace TFGame.YakuzaKiwami
 
         private IList<GameFileContainer> GetMappar(string path)
         {
+            var result = new List<GameFileContainer>();
+
             var imbSearch =
                 new GameFileSearch
                 {
@@ -119,7 +138,20 @@ namespace TFGame.YakuzaKiwami
             };
             map_par_containers.FileSearches.Add(imbSearch);
 
-            return map_par_containers.GetContainers(path);
+            result.AddRange(map_par_containers.GetContainers(path));
+
+            map_par_containers = new GameFileContainerSearch
+            {
+                RelativePath = @"data\map_par_j",
+                TypeSearch = ContainerType.CompressedFile,
+                RecursiveSearch = false,
+                SearchPattern = "st_kamuro.par;st_kawara_street.par"
+            };
+            map_par_containers.FileSearches.Add(imbSearch);
+
+            result.AddRange(map_par_containers.GetContainers(path));
+
+            return result;
         }
 
         private GameFileContainer GetSoundpar()
@@ -144,8 +176,10 @@ namespace TFGame.YakuzaKiwami
             return soundpar;
         }
 
-        private GameFileContainer GetWdrCommon()
+        private IList<GameFileContainer> GetWdrCommon()
         {
+            var result = new List<GameFileContainer>();
+
             var aiPopupSearch =
                 new GameFileSearch
                 {
@@ -207,11 +241,28 @@ namespace TFGame.YakuzaKiwami
             wdr_par_c_common.FileSearches.Add(common_presentSearch);
             wdr_par_c_common.FileSearches.Add(common_saleSearch);
 
-            return wdr_par_c_common;
+            result.Add(wdr_par_c_common);
+
+            wdr_par_c_common = new GameFileContainer
+            {
+                Path = @"data\wdr_par_j\common.par",
+                Type = ContainerType.CompressedFile
+            };
+            wdr_par_c_common.FileSearches.Add(aiPopupSearch);
+            wdr_par_c_common.FileSearches.Add(common_armsRepairSearch);
+            wdr_par_c_common.FileSearches.Add(common_blacksmithSearch);
+            wdr_par_c_common.FileSearches.Add(common_presentSearch);
+            wdr_par_c_common.FileSearches.Add(common_saleSearch);
+
+            result.Add(wdr_par_c_common);
+
+            return result;
         }
 
-        private GameFileContainer GetWdr()
+        private IList<GameFileContainer> GetWdr()
         {
+            var result = new List<GameFileContainer>();
+
             var wdr_barSearch =
                 new GameFileSearch
                 {
@@ -232,13 +283,14 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaCommon.Files.Restaurant.File)
                 };
 
-            var wdr_pacSearch =
+            var wdr_msgSearch =
                 new GameFileSearch
                 {
-                    RelativePath = "pac",
-                    SearchPattern = "pac_*.bin",
+                    RelativePath = ".",
+                    SearchPattern = "*.msg",
                     IsWildcard = true,
-                    RecursiveSearch = false,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Msg.File)
                 };
 
             var wdr_par = new GameFileContainer
@@ -249,9 +301,23 @@ namespace TFGame.YakuzaKiwami
 
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
-            //wdr_par.FileSearches.Add(wdr_pacSearch);
+            wdr_par.FileSearches.Add(wdr_msgSearch);
 
-            return wdr_par;
+            result.Add(wdr_par);
+
+            wdr_par = new GameFileContainer
+            {
+                Path = @"data\wdr_par_j\wdr.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            wdr_par.FileSearches.Add(wdr_barSearch);
+            wdr_par.FileSearches.Add(wdr_restaurantSearch);
+            wdr_par.FileSearches.Add(wdr_msgSearch);
+
+            result.Add(wdr_par);
+
+            return result;
         }
 
         private GameFileContainer GetReactorpar()
@@ -308,8 +374,8 @@ namespace TFGame.YakuzaKiwami
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
             //result.Add(GetStage());
-            //result.Add(GetWdrCommon());
-            result.Add(GetWdr());
+            //result.AddRange(GetWdrCommon());
+            result.AddRange(GetWdr());
 
             result.Sort();
             return result.ToArray();

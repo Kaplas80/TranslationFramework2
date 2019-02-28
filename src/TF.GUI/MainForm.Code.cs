@@ -82,9 +82,9 @@ namespace TF.GUI
                 {
                     args.Cancel = true;
                 }
-                catch (Exception e)
+                //catch (Exception e)
                 {
-                    worker.ReportProgress(0, $"ERROR: {e.Message}");
+                    //worker.ReportProgress(0, $"ERROR: {e.StackTrace}");
                 }
             };
             
@@ -205,10 +205,12 @@ namespace TF.GUI
                     {
                         args.Cancel = true;
                     }
+#if !DEBUG
                     catch (Exception e)
                     {
                         worker.ReportProgress(0, $"ERROR: {e.Message}");
                     }
+#endif
                 };
 
                 workForm.ShowDialog(this);

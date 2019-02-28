@@ -50,6 +50,7 @@
             // tvGameFiles
             // 
             resources.ApplyResources(this.tvGameFiles, "tvGameFiles");
+            this.tvGameFiles.HideSelection = false;
             this.tvGameFiles.ImageList = this.explorerImageList;
             this.tvGameFiles.Name = "tvGameFiles";
             this.tvGameFiles.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvGameFiles_BeforeSelect);

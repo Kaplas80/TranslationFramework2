@@ -9,41 +9,37 @@ namespace YakuzaCommon.Files
 {
     public partial class ParFile
     {
-        private string _path;
-
-        public ParFile(string path)
+        private ParFile()
         {
-            _path = path;
         }
 
-        public void Extract(string outputPath)
+        public static void Extract(string inputPath, string outputFolder)
         {
-            Directory.CreateDirectory(outputPath);
+            Directory.CreateDirectory(outputFolder);
 
-            ReadInfo();
+            var parFile = new ParFile();
+            parFile.ReadInfo(inputPath);
 
-            if (Root != null)
+            if (parFile.Root != null)
             {
-                Dump(outputPath);
+                parFile.Dump(inputPath, outputFolder);
             }
 
-            var newParFiles = Directory.GetFiles(outputPath, "*.par", SearchOption.TopDirectoryOnly);
+            var newParFiles = Directory.GetFiles(outputFolder, "*.par", SearchOption.TopDirectoryOnly);
             foreach (var file in newParFiles)
             {
-                var parFile = new ParFile(file);
-                var newOutputPath = Path.Combine(outputPath, $"{Path.GetFileName(file)}.unpack");
-                parFile.Extract(newOutputPath);
+                var newOutputPath = Path.Combine(outputFolder, $"{Path.GetFileName(file)}.unpack");
+                Extract(file, newOutputPath);
             }
 
-            var pacFolder = Path.Combine(outputPath, "pac");
+            var pacFolder = Path.Combine(outputFolder, "pac");
             if (Directory.Exists(pacFolder))
             {
                 var newPacFiles = Directory.GetFiles(pacFolder, "pac_*.bin", SearchOption.TopDirectoryOnly);
                 foreach (var file in newPacFiles)
                 {
-                    var pacFile = new PacFile(file);
                     var newOutputPath = Path.Combine(pacFolder, $"{Path.GetFileName(file)}.unpack");
-                    pacFile.Extract(newOutputPath);
+                    PacFile.Extract(file, newOutputPath);
                 }
             }
         }
@@ -144,9 +140,9 @@ namespace YakuzaCommon.Files
             }
         }
 
-        private void ReadInfo()
+        private void ReadInfo(string inputPath)
         {
-            using (var fs = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8, Endianness.BigEndian))
             {
                 Magic = input.ReadUInt32();
@@ -242,9 +238,9 @@ namespace YakuzaCommon.Files
             return f;
         }
 
-        private void Dump(string outputFolder)
+        private void Dump(string inputPath, string outputFolder)
         {
-            using (var fs = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8, Endianness.BigEndian))
             {
                 var logFile = System.IO.Path.Combine(outputFolder, "Extract_Data.tf");

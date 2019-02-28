@@ -30,13 +30,7 @@ namespace YakuzaCommon
 
             if (extension.StartsWith(".par"))
             {
-                var parFile = new ParFile(inputFile);
-                parFile.Extract(outputPath);
-            }
-            else if (fileName.StartsWith("pac_"))
-            {
-                var pacFile = new PacFile(inputFile);
-                pacFile.Extract(outputPath);
+                ParFile.Extract(inputFile, outputPath);
             }
         }
 
@@ -48,10 +42,6 @@ namespace YakuzaCommon
             if (extension.StartsWith(".par"))
             {
                 ParFile.Repack(inputPath, outputFile, compress);
-            }
-            else if (fileName.StartsWith("pac_"))
-            {
-                PacFile.Repack(inputPath, outputFile, compress);
             }
         }
     }

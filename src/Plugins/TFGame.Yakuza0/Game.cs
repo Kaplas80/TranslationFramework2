@@ -73,6 +73,16 @@ namespace TFGame.Yakuza0
                     FileType = typeof(YakuzaCommon.Files.Mail.File)
                 };
 
+            var stringTblSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "string_tbl.bin_?",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.StringTbl.File)
+                };
+
             var bootpar = new GameFileContainer
             {
                 Path = @"data\bootpar\boot.par",
@@ -80,7 +90,7 @@ namespace TFGame.Yakuza0
             };
             bootpar.FileSearches.Add(empbSearch);
             bootpar.FileSearches.Add(mailSearch);
-
+            bootpar.FileSearches.Add(stringTblSearch);
             return bootpar;
         }
 
@@ -196,6 +206,50 @@ namespace TFGame.Yakuza0
             return wdr_par_c_common;
         }
 
+        private GameFileContainer GetReactorpar()
+        {
+            var nameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "name_?.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Name.File)
+                };
+
+            var reactor = new GameFileContainer
+            {
+                Path = @"data\reactorpar\reactor_w64.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            reactor.FileSearches.Add(nameSearch);
+            return reactor;
+        }
+
+        private GameFileContainer GetStage()
+        {
+            var streetNameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "street_name_?.dat",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.StreetName.File)
+                };
+
+            var stage = new GameFileContainer
+            {
+                Path = @"data\stage\w64\flag_data",
+                Type = ContainerType.Folder
+            };
+
+            stage.FileSearches.Add(streetNameSearch);
+            return stage;
+        }
+
         private GameFileContainer GetWdr()
         {
             var wdr_barSearch =
@@ -228,6 +282,34 @@ namespace TFGame.Yakuza0
                     FileType = typeof(Files.Snitch.File)
                 };
 
+            var wdr_msgSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "*.msg",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Msg.File),
+                    Exclusions =
+                    {
+                        "pac_STID_ST_BOSS.bin", "pac_STID_ST_CRUISE.bin", "pac_STID_ST_EVENT.bin",
+                        "pac_STID_ST_JUMU03.bin",
+                        "pac_STID_ST_KENNSETSU.bin", "pac_STID_ST_KIRYU_APART.bin", "pac_STID_ST_KOUSOKU_CHASE.bin",
+                        "pac_STID_ST_K_BAR.bin", "pac_STID_ST_K_BOWL.bin", "pac_STID_ST_K_CATFIGHT.bin",
+                        "pac_STID_ST_K_CHUKA.bin", "pac_STID_ST_K_CLUBSEGA_01.bin", "pac_STID_ST_K_DEBORAH.bin",
+                        "pac_STID_ST_K_GOUMONN.bin", "pac_STID_ST_K_KAZAMAGUMI.bin", "pac_STID_ST_K_RAMEN.bin",
+                        "pac_STID_ST_K_RYOUTEI.bin", "pac_STID_ST_K_SAGAWA.bin", "pac_STID_ST_K_SNACK.bin",
+                        "pac_STID_ST_K_SNACK_NAMASE.bin", "pac_STID_ST_K_SUGITA.bin", "pac_STID_ST_K_SUSHI.bin",
+                        "pac_STID_ST_K_TEREKURA.bin", "pac_STID_ST_K_YAKINIKU.bin", "pac_STID_ST_K_YAMIISHA.bin",
+                        "pac_STID_ST_LOVEHOTEL02.bin", "pac_STID_ST_O_BUKI.bin", "pac_STID_ST_O_CLUBSEGA.bin",
+                        "pac_STID_ST_O_DOURAKU.bin", "pac_STID_ST_O_DUBORAYA.bin", "pac_STID_ST_O_GANKO.bin",
+                        "pac_STID_ST_O_KAMIAN.bin", "pac_STID_ST_O_KIJIN.bin", "pac_STID_ST_O_ODYSSEY.bin",
+                        "pac_STID_ST_O_RENTAL.bin", "pac_STID_ST_O_SOUKO.bin", "pac_STID_ST_O_STIJL.bin",
+                        "pac_STID_ST_O_TEREKURA.bin", "pac_STID_ST_PARKING.bin", "pac_STID_ST_RINGER.bin",
+                        "pac_STID_ST_SANCHU.bin", "pac_STID_ST_TOGYU.bin", "pac_STID_ST_TSUBAKI.bin",
+                    }
+                };
+
             var wdr_par = new GameFileContainer
             {
                 Path = @"data\wdr_par_c\wdr.par",
@@ -237,30 +319,9 @@ namespace TFGame.Yakuza0
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
             wdr_par.FileSearches.Add(snitchSearch);
+            wdr_par.FileSearches.Add(wdr_msgSearch);
 
             return wdr_par;
-        }
-
-        private GameFileContainer GetReactorpar()
-        {
-            var nameSearch =
-                new GameFileSearch
-                {
-                    RelativePath = ".",
-                    SearchPattern = "name_?.bin",
-                    IsWildcard = true,
-                    RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Name.File)
-                };
-
-            var reactor = new GameFileContainer
-            {
-                Path = @"data\reactorpar\reactor_w64.par",
-                Type = ContainerType.CompressedFile
-            };
-
-            reactor.FileSearches.Add(nameSearch);
-            return reactor;
         }
 
         public override GameFileContainer[] GetContainers(string path)
@@ -268,10 +329,11 @@ namespace TFGame.Yakuza0
             var result = new List<GameFileContainer>();
 
             //result.AddRange(GetAuth(path));
-            //result.Add(GetBootpar());
+            result.Add(GetBootpar());
             //result.AddRange(GetMappar(path));
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
+            //result.Add(GetStage());
             //result.Add(GetWdrCommon());
             result.Add(GetWdr());
 
