@@ -28,34 +28,38 @@ namespace TF.Core.Entities
 
             var result = new List<GameFileContainer>();
 
-            foreach (var s in split)
+            if (Directory.Exists(fullPath))
             {
-                string[] searchResult;
-                if (TypeSearch == ContainerType.Folder)
+                foreach (var s in split)
                 {
-                    searchResult = Directory.GetDirectories(fullPath, s,
-                        RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-                }
-                else
-                {
-                    searchResult = Directory.GetFiles(fullPath, s,
-                        RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-                }
 
-                foreach (var f in searchResult)
-                {
-                    var excluded = Exclusions.Any(exclusion => f.Contains(exclusion));
-
-                    if (excluded) continue;
-
-                    var container = new GameFileContainer
+                    string[] searchResult;
+                    if (TypeSearch == ContainerType.Folder)
                     {
-                        Path = PathHelper.GetRelativePath(path, f).Substring(2),
-                        Type = TypeSearch,
-                        FileSearches = FileSearches
-                    };
+                        searchResult = Directory.GetDirectories(fullPath, s,
+                            RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                    }
+                    else
+                    {
+                        searchResult = Directory.GetFiles(fullPath, s,
+                            RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                    }
 
-                    result.Add(container);
+                    foreach (var f in searchResult)
+                    {
+                        var excluded = Exclusions.Any(exclusion => f.Contains(exclusion));
+
+                        if (excluded) continue;
+
+                        var container = new GameFileContainer
+                        {
+                            Path = PathHelper.GetRelativePath(path, f).Substring(2),
+                            Type = TypeSearch,
+                            FileSearches = FileSearches
+                        };
+
+                        result.Add(container);
+                    }
                 }
             }
 

@@ -33,6 +33,7 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.gbExportItems = new System.Windows.Forms.GroupBox();
+            this.btnOnlyModified = new System.Windows.Forms.Button();
             this.btnInvertSelection = new System.Windows.Forms.Button();
             this.btnSelectNone = new System.Windows.Forms.Button();
             this.btnSelectAll = new System.Windows.Forms.Button();
@@ -40,7 +41,8 @@
             this.gbOptions = new System.Windows.Forms.GroupBox();
             this.chkCompress = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnOnlyModified = new System.Windows.Forms.Button();
+            this.chkForceRebuild = new System.Windows.Forms.CheckBox();
+            this.chkSaveTempFiles = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.gbExportItems.SuspendLayout();
             this.gbOptions.SuspendLayout();
@@ -97,6 +99,17 @@
             this.gbExportItems.TabStop = false;
             this.gbExportItems.Text = "Elementos a exportar";
             // 
+            // btnOnlyModified
+            // 
+            this.btnOnlyModified.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnOnlyModified.Location = new System.Drawing.Point(312, 345);
+            this.btnOnlyModified.Name = "btnOnlyModified";
+            this.btnOnlyModified.Size = new System.Drawing.Size(96, 23);
+            this.btnOnlyModified.TabIndex = 6;
+            this.btnOnlyModified.Text = "Solo modificados";
+            this.btnOnlyModified.UseVisualStyleBackColor = true;
+            this.btnOnlyModified.Click += new System.EventHandler(this.btnOnlyModified_Click);
+            // 
             // btnInvertSelection
             // 
             this.btnInvertSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -149,6 +162,8 @@
             // 
             this.gbOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbOptions.Controls.Add(this.chkSaveTempFiles);
+            this.gbOptions.Controls.Add(this.chkForceRebuild);
             this.gbOptions.Controls.Add(this.chkCompress);
             this.gbOptions.Location = new System.Drawing.Point(488, 12);
             this.gbOptions.Name = "gbOptions";
@@ -170,16 +185,29 @@
         "ro los ficheros ocuparán más espacio.");
             this.chkCompress.UseVisualStyleBackColor = true;
             // 
-            // btnOnlyModified
+            // chkForceRebuild
             // 
-            this.btnOnlyModified.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnOnlyModified.Location = new System.Drawing.Point(312, 345);
-            this.btnOnlyModified.Name = "btnOnlyModified";
-            this.btnOnlyModified.Size = new System.Drawing.Size(96, 23);
-            this.btnOnlyModified.TabIndex = 6;
-            this.btnOnlyModified.Text = "Solo modificados";
-            this.btnOnlyModified.UseVisualStyleBackColor = true;
-            this.btnOnlyModified.Click += new System.EventHandler(this.btnOnlyModified_Click);
+            this.chkForceRebuild.AutoSize = true;
+            this.chkForceRebuild.Location = new System.Drawing.Point(6, 42);
+            this.chkForceRebuild.Name = "chkForceRebuild";
+            this.chkForceRebuild.Size = new System.Drawing.Size(99, 17);
+            this.chkForceRebuild.TabIndex = 1;
+            this.chkForceRebuild.Text = "Forzar creación";
+            this.toolTip1.SetToolTip(this.chkForceRebuild, "[DEBUG] Selecciona esta opción si quieres que la aplicación genere los ficheros d" +
+        "e traducción aunque no tengan cambios respecto al original.");
+            this.chkForceRebuild.UseVisualStyleBackColor = true;
+            // 
+            // chkSaveTempFiles
+            // 
+            this.chkSaveTempFiles.AutoSize = true;
+            this.chkSaveTempFiles.Location = new System.Drawing.Point(6, 65);
+            this.chkSaveTempFiles.Name = "chkSaveTempFiles";
+            this.chkSaveTempFiles.Size = new System.Drawing.Size(158, 17);
+            this.chkSaveTempFiles.TabIndex = 2;
+            this.chkSaveTempFiles.Text = "Guardar ficheros temporales";
+            this.toolTip1.SetToolTip(this.chkSaveTempFiles, "[DEBUG] Selecciona esta opción si quieres mantener los ficheros temporales genera" +
+        "dos.");
+            this.chkSaveTempFiles.UseVisualStyleBackColor = true;
             // 
             // ExportProjectForm
             // 
@@ -217,5 +245,7 @@
         private System.Windows.Forms.Button btnSelectNone;
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.Button btnOnlyModified;
+        private System.Windows.Forms.CheckBox chkForceRebuild;
+        private System.Windows.Forms.CheckBox chkSaveTempFiles;
     }
 }

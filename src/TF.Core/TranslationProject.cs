@@ -8,6 +8,7 @@ using System.Text;
 using TF.Core.Entities;
 using TF.Core.Exceptions;
 using TF.Core.Helpers;
+using TF.Core.POCO;
 using TF.IO;
 
 namespace TF.Core
@@ -188,7 +189,7 @@ namespace TF.Core
             return null;
         }
 
-        public void Export(IList<TranslationFileContainer> containers, bool useCompression, BackgroundWorker worker)
+        public void Export(IList<TranslationFileContainer> containers, ExportOptions options, BackgroundWorker worker)
         {
             PathHelper.DeleteDirectory(TempFolder);
 
@@ -212,7 +213,18 @@ namespace TF.Core
 
                     foreach (var translationFile in container.Files)
                     {
-                        translationFile.Rebuild(outputFolder);
+                        if (translationFile.HasChanges || options.ForceRebuild)
+                        {
+                            translationFile.Rebuild(outputFolder);
+                        }
+                        else
+                        {
+                            var outputFile = Path.Combine(outputFolder, translationFile.RelativePath);
+                            var dir = Path.GetDirectoryName(outputFile);
+                            Directory.CreateDirectory(dir);
+
+                            File.Copy(translationFile.Path, outputFile, true);
+                        }
                     }
                 }
                 else
@@ -233,7 +245,7 @@ namespace TF.Core
                     worker.ReportProgress(0, "Generando ficheros traducidos...");
                     foreach (var translationFile in container.Files)
                     {
-                        if (translationFile.HasChanges)
+                        if (translationFile.HasChanges || options.ForceRebuild)
                         {
                             translationFile.Rebuild(dest);
                         }
@@ -241,12 +253,13 @@ namespace TF.Core
 
                     // 3. Empaquetar
                     worker.ReportProgress(0, "Empaquetando fichero...");
-                    Game.RepackFile(dest, outputFile, useCompression);
+                    Game.RepackFile(dest, outputFile, options.UseCompression);
 
                     // 4. Eliminar la carpeta temporal
-#if !DEBUG
-                    Directory.Delete(dest, true);
-#endif
+                    if (!options.SaveTempFiles)
+                    {
+                        Directory.Delete(dest, true);
+                    }
                 }
             }
         }

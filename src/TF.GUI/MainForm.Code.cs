@@ -82,10 +82,12 @@ namespace TF.GUI
                 {
                     args.Cancel = true;
                 }
-                //catch (Exception e)
+#if !DEBUG
+                catch (Exception e)
                 {
-                    //worker.ReportProgress(0, $"ERROR: {e.StackTrace}");
+                    worker.ReportProgress(0, $"ERROR: {e.StackTrace}");
                 }
+#endif
             };
             
             workForm.ShowDialog(this);
@@ -185,7 +187,7 @@ namespace TF.GUI
                 }
 
                 var selectedContainers = form.SelectedContainers;
-                var compress = form.Compression;
+                var options = form.Options;
 
                 var workForm = new WorkingForm(dockTheme, "Exportar traducción");
 
@@ -195,7 +197,7 @@ namespace TF.GUI
 
                     try
                     {
-                        _project.Export(selectedContainers, compress, worker);
+                        _project.Export(selectedContainers, options, worker);
 
                         worker.ReportProgress(-1, "FINALIZADO");
                         worker.ReportProgress(-1, string.Empty);

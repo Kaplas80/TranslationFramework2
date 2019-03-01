@@ -63,8 +63,7 @@ namespace TF.Core.Helpers
         {
             foreach (var directory in Directory.GetDirectories(path))
             {
-                var dirName = Path.GetFileName(directory);
-                Directory.Delete(dirName, true);
+                Directory.Delete(directory, true);
             }
 
             foreach (var file in Directory.GetFiles(path))

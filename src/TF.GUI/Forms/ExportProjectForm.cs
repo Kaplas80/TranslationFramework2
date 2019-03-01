@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using TF.Core.Entities;
+using TF.Core.POCO;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.GUI.Forms
@@ -27,7 +28,19 @@ namespace TF.GUI.Forms
             }
         }
 
-        public bool Compression => chkCompress.Checked;
+        public ExportOptions Options
+        {
+            get
+            {
+                var result = new ExportOptions
+                {
+                    UseCompression = chkCompress.Checked,
+                    ForceRebuild = chkForceRebuild.Checked,
+                    SaveTempFiles = chkSaveTempFiles.Checked
+                };
+                return result;
+            }
+        }
 
         protected ExportProjectForm()
         {

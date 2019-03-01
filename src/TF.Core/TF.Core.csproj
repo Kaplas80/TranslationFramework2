@@ -75,6 +75,7 @@
     <Compile Include="Helpers\SearchHelper.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="PluginManager.cs" />
+    <Compile Include="POCO\ExportOptions.cs" />
     <Compile Include="TranslationProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

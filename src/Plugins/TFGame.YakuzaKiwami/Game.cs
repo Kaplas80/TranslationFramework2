@@ -368,13 +368,13 @@ namespace TFGame.YakuzaKiwami
         {
             var result = new List<GameFileContainer>();
 
-            //result.AddRange(GetAuth(path));
+            result.AddRange(GetAuth(path));
             result.Add(GetBootpar());
-            //result.AddRange(GetMappar(path));
-            //result.Add(GetReactorpar());
-            //result.Add(GetSoundpar());
-            //result.Add(GetStage());
-            //result.AddRange(GetWdrCommon());
+            result.AddRange(GetMappar(path));
+            result.Add(GetReactorpar());
+            result.Add(GetSoundpar());
+            result.Add(GetStage());
+            result.AddRange(GetWdrCommon());
             result.AddRange(GetWdr());
 
             result.Sort();
