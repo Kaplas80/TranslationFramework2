@@ -115,6 +115,27 @@ namespace TFGame.YakuzaKiwami
             return bootpar;
         }
 
+        private GameFileContainer GetFontpar()
+        {
+            var ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "*.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(DDSFile)
+                };
+
+            var fontpar = new GameFileContainer
+            {
+                Path = @"data\fontpar\font.par",
+                Type = ContainerType.CompressedFile
+            };
+            fontpar.FileSearches.Add(ddsSearch);
+            return fontpar;
+        }
+
         private IList<GameFileContainer> GetMappar(string path)
         {
             var result = new List<GameFileContainer>();
@@ -368,14 +389,15 @@ namespace TFGame.YakuzaKiwami
         {
             var result = new List<GameFileContainer>();
 
-            result.AddRange(GetAuth(path));
+            //result.AddRange(GetAuth(path));
             result.Add(GetBootpar());
-            result.AddRange(GetMappar(path));
-            result.Add(GetReactorpar());
-            result.Add(GetSoundpar());
-            result.Add(GetStage());
-            result.AddRange(GetWdrCommon());
-            result.AddRange(GetWdr());
+            result.Add(GetFontpar());
+            //result.AddRange(GetMappar(path));
+            //result.Add(GetReactorpar());
+            //result.Add(GetSoundpar());
+            //result.Add(GetStage());
+            //result.AddRange(GetWdrCommon());
+            //result.AddRange(GetWdr());
 
             result.Sort();
             return result.ToArray();
