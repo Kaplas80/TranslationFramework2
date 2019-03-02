@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TF.Core.Entities;
 using TF.Core.Files.DDS;
 
@@ -104,6 +100,18 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaCommon.Files.StringTbl.File)
                 };
 
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "ability.bin_?;battle_coefficient.bin_?;battle_deck_list.bin_?;caption.bin_?;complete_heat.bin_?;complete_majima.bin_?;explanation_main_scenario.bin_?;explanation_sub_story.bin_?;item.bin_?;tips_tutorial.bin_?",
+                    //SearchPattern = "*.bin_?",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    Exclusions = {"encounter_pupup_message.bin", "mail.bin", "string_tbl.bin"},
+                    FileType = typeof(YakuzaCommon.Files.Table.File)
+                };
+
             var bootpar = new GameFileContainer
             {
                 Path = @"data\bootpar\boot.par",
@@ -112,6 +120,7 @@ namespace TFGame.YakuzaKiwami
             bootpar.FileSearches.Add(empbSearch);
             bootpar.FileSearches.Add(mailSearch);
             bootpar.FileSearches.Add(stringTblSearch);
+            bootpar.FileSearches.Add(tableSearch);
             return bootpar;
         }
 
@@ -173,6 +182,29 @@ namespace TFGame.YakuzaKiwami
             result.AddRange(map_par_containers.GetContainers(path));
 
             return result;
+        }
+
+        private GameFileContainer GetMinigame()
+        {
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "baccarat_cpu.bin_?;baccarat_gallery_msg.bin_?;minigame_chohan_bakuto.bin_?;mesuking_*.bin_?;poker_com_*.bin_?",
+                    //SearchPattern = "*.bin_?",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaCommon.Files.Table.File)
+                };
+
+            var minigame = new GameFileContainer
+            {
+                Path = @"data\minigame",
+                Type = ContainerType.Folder
+            };
+
+            minigame.FileSearches.Add(tableSearch);
+            return minigame;
         }
 
         private GameFileContainer GetSoundpar()
@@ -385,17 +417,42 @@ namespace TFGame.YakuzaKiwami
             return stage;
         }
 
+        private GameFileContainer GetStaypar()
+        {
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "activity_list.bin_?;complete_minigame.bin_?;controller_explain.bin_?;correlation_person.bin_?;enc_boss_cmn_ability.bin_?;extra.bin_?;onedari_popup.bin_?;response_roulette.bin_?;tougijyo_mode.bin_?;tougijyo_participant.bin_?;tougijyo_realtime_quest.bin_?;tougijyo_string.bin_?;tutorial.bin_?;ultimate.bin_?;virtue_shop.bin_?",
+                    //SearchPattern = "*.bin_?",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaCommon.Files.Table.File)
+                };
+
+            var par = new GameFileContainer
+            {
+                Path = @"data\staypar\stay.par",
+                Type = ContainerType.CompressedFile
+            };
+            
+            par.FileSearches.Add(tableSearch);
+            return par;
+        }
+
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
 
             //result.AddRange(GetAuth(path));
             result.Add(GetBootpar());
-            result.Add(GetFontpar());
+            //result.Add(GetFontpar());
             //result.AddRange(GetMappar(path));
+            result.Add(GetMinigame());
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
             //result.Add(GetStage());
+            result.Add(GetStaypar());
             //result.AddRange(GetWdrCommon());
             //result.AddRange(GetWdr());
 

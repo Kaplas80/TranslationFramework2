@@ -86,6 +86,16 @@
     </Compile>
     <Compile Include="Files\StreetName\File.cs" />
     <Compile Include="Files\StringTbl\File.cs" />
+    <Compile Include="Files\Table\Column.cs" />
+    <Compile Include="Files\Table\ColumnFactory.cs" />
+    <Compile Include="Files\Table\File.cs" />
+    <Compile Include="Files\Table\TableData.cs" />
+    <Compile Include="Files\Table\View.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Files\Table\View.Designer.cs">
+      <DependentUpon>View.cs</DependentUpon>
+    </Compile>
     <Compile Include="Game.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,6 +115,9 @@
       <DependentUpon>View.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Files\SimpleSubtitle\View.resx">
+      <DependentUpon>View.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Files\Table\View.resx">
       <DependentUpon>View.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

@@ -154,9 +154,9 @@ namespace TF.GUI
                 }
 
                 _project = project;
-                _explorer.LoadTree(_project.FileContainers);
-
                 _currentFile = null;
+
+                _explorer.LoadTree(_project.FileContainers);
 
                 _project.Save();
 
@@ -177,6 +177,26 @@ namespace TF.GUI
         {
             if (_project != null)
             {
+                if (_currentFile != null)
+                {
+                    if (_currentFile.NeedSaving)
+                    {
+                        var result = MessageBox.Show(
+                            "Es necesario guardar los cambios antes de continuar.\n¿Quieres guardarlos?",
+                            "Guardar cambios", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (result == DialogResult.No)
+                        {
+                            return;
+                        }
+
+                        if (result == DialogResult.Yes)
+                        {
+                            _currentFile.SaveChanges();
+                        }
+                    }
+                }
+
                 var form = new ExportProjectForm(dockTheme, _project.FileContainers);
 
                 var formResult = form.ShowDialog(this);

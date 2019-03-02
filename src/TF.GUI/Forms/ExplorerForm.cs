@@ -82,7 +82,9 @@ namespace TF.GUI.Forms
             if (FileChanged != null)
             {
                 var cancel = FileChanged.Invoke(selectedFile);
+                tvGameFiles.BeforeSelect -= tvGameFiles_BeforeSelect;
                 tvGameFiles.Focus();
+                tvGameFiles.BeforeSelect += tvGameFiles_BeforeSelect;
                 return cancel;
             }
 
@@ -101,6 +103,12 @@ namespace TF.GUI.Forms
                 var item = e.Node.Tag as TranslationFile;
                 var result = OnFileChanged(item);
                 e.Cancel = result;
+#if DEBUG
+                if (item != null)
+                {
+                    Clipboard.SetText($"\"{item.Name}\", \n");
+                }
+#endif
             }
         }
 
