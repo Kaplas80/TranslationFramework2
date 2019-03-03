@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoding.cs" />
+    <Compile Include="Files\PocketCircuit\File.cs" />
+    <Compile Include="Files\PocketCircuit\Subtitle.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -55,6 +57,10 @@
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">
       <Project>{14BB172A-B3D4-4237-82AB-8FEF4E9AB8CD}</Project>
       <Name>TF.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
+      <Project>{4F0D7226-FA20-4FE3-A523-336702654E02}</Project>
+      <Name>TF.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\YakuzaCommon\YakuzaCommon.csproj">
       <Project>{24524a72-cbf8-439a-ab89-f809a92d6f0e}</Project>

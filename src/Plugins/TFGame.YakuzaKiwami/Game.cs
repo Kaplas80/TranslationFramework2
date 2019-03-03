@@ -184,7 +184,7 @@ namespace TFGame.YakuzaKiwami
             return result;
         }
 
-        private GameFileContainer GetMinigame()
+        private IList<GameFileContainer> GetMinigame()
         {
             var tableSearch =
                 new GameFileSearch
@@ -204,7 +204,29 @@ namespace TFGame.YakuzaKiwami
             };
 
             minigame.FileSearches.Add(tableSearch);
-            return minigame;
+
+            var pocketCircuitSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "db",
+                    SearchPattern = "*.bin_?",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaKiwami.Files.PocketCircuit.File)
+                };
+
+            var par = new GameFileContainer
+            {
+                Path = @"data\minigame\pokecir.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            par.FileSearches.Add(pocketCircuitSearch);
+
+            var result = new List<GameFileContainer>();
+            result.Add(minigame);
+            result.Add(par);
+            return result;
         }
 
         private GameFileContainer GetSoundpar()
@@ -448,7 +470,7 @@ namespace TFGame.YakuzaKiwami
             result.Add(GetBootpar());
             //result.Add(GetFontpar());
             //result.AddRange(GetMappar(path));
-            result.Add(GetMinigame());
+            result.AddRange(GetMinigame());
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
             //result.Add(GetStage());

@@ -195,16 +195,6 @@ namespace TF.IO
             }
         }
 
-        public string ReadString(int maxLength, Encoding encoding, char endChar = '\0')
-        {
-            return ReadString(maxLength, encoding, out _, endChar);
-        }
-
-        public string ReadString(int maxLength)
-        {
-            return ReadString(maxLength, Encoding);
-        }
-
         public override string ReadString()
         {
             return ReadString(Encoding);
@@ -404,6 +394,17 @@ namespace TF.IO
             }
 
             return -1;
+        }
+
+        public void SkipPadding(int align)
+        {
+            var value = Position % align;
+
+            if (value != 0)
+            {
+                value = align + (-Position % align);
+                Skip((int)value);
+            }
         }
     }
 }

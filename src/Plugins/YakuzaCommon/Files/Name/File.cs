@@ -116,10 +116,7 @@ namespace YakuzaCommon.Files.Name
 
                 output.Write(strings);
 
-                while (output.Position % 16 != 0)
-                {
-                    output.Write((byte)0);
-                }
+                output.WritePadding(16);
 
                 var outputOffsetsPointer = output.Position;
 
@@ -134,10 +131,7 @@ namespace YakuzaCommon.Files.Name
                 var outputLastPointer = output.Position;
                 output.Write((int)(outputRemainderPointer + 8));
 
-                while (output.Position % 16 != 0)
-                {
-                    output.Write((byte)0);
-                }
+                output.WritePadding(16);
 
                 var outputTotalLength = output.Position;
 

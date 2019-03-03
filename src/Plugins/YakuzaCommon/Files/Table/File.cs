@@ -65,7 +65,7 @@ namespace YakuzaCommon.Files.Table
                 for (var i = 0; i < numColumns; i++)
                 {
                     input.Seek(16 + i * 64, SeekOrigin.Begin);
-                    var columnName = input.ReadString(48, Encoding.UTF8);
+                    var columnName = input.ReadString(Encoding.UTF8);
                     input.Seek(16 + i * 64 + 48, SeekOrigin.Begin);
                     var type = input.ReadInt32();
                     var dataCount = input.ReadInt32();

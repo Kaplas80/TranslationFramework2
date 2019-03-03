@@ -56,7 +56,7 @@ namespace YakuzaCommon.Files.Mfpb
             var result = new Subtitle { Offset = offset };
             var pos = input.Position;
             input.Seek(offset, SeekOrigin.Begin);
-            result.Text = input.ReadString(MAX_SIZE);
+            result.Text = input.ReadString();
             result.Loaded = result.Text;
             result.Translation = result.Text;
             result.PropertyChanged += SubtitlePropertyChanged;

@@ -179,7 +179,7 @@ namespace YakuzaCommon.Files
 
             var folder = new ParFolderInfo
             {
-                Name = input.ReadString(64),
+                Name = input.ReadString(),
                 Index = index
             };
 
@@ -220,7 +220,7 @@ namespace YakuzaCommon.Files
 
             var f = new ParFileInfo
             {
-                Name = input.ReadString(64),
+                Name = input.ReadString(),
                 Index = index
             };
 

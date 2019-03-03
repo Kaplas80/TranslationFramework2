@@ -93,10 +93,7 @@ namespace YakuzaCommon.Files.Imb
 
                 output.Write(input.ReadBytes(titlePointer - (int)input.Position));
 
-                while (output.Position % 16 != 0)
-                {
-                    output.Write((byte)0);
-                }
+                output.WritePadding(16);
             }
         }
 
@@ -124,10 +121,7 @@ namespace YakuzaCommon.Files.Imb
             output.Seek(outputOffset, SeekOrigin.Begin);
             output.WriteString(text);
 
-            while (output.Position % 2 != 0)
-            {
-                output.Write((byte)0);
-            }
+            output.WritePadding(2);
 
             var result = (int)output.Position;
             output.Seek(retPos, SeekOrigin.Begin);

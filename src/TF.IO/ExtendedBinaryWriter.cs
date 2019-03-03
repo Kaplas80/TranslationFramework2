@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 
@@ -225,6 +226,18 @@ namespace TF.IO
             while (Position < currentPos + minSize)
             {
                 Write(trailingChar);
+            }
+        }
+
+        public void WritePadding(int align)
+        {
+            var value = Position % align;
+
+            if (value != 0)
+            {
+                value = align + (-Position % align);
+                var bytes = new byte[value];
+                Write(bytes);
             }
         }
 

@@ -156,7 +156,7 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var subtitle = new LongSubtitle { Offset = input.Position };
 
-            subtitle.Text = input.ReadString(subtitle.MaxLength);
+            subtitle.Text = input.ReadString();
             subtitle.Loaded = subtitle.Text;
             subtitle.Translation = subtitle.Text;
 
@@ -170,7 +170,7 @@ namespace YakuzaCommon.Files.CmnBin
         {
             var subtitle = new ShortSubtitle { Offset = input.Position };
 
-            subtitle.Text = input.ReadString(subtitle.MaxLength);
+            subtitle.Text = input.ReadString();
             subtitle.Loaded = subtitle.Text;
             subtitle.Translation = subtitle.Text;
             subtitle.PropertyChanged += SubtitlePropertyChanged;

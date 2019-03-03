@@ -51,7 +51,7 @@ namespace YakuzaCommon.Files.Epmb
 
         private Subtitle ReadSubtitle(ExtendedBinaryReader input)
         {
-            var result = new Subtitle {Offset = input.Position, Text = input.ReadString(64)};
+            var result = new Subtitle {Offset = input.Position, Text = input.ReadString()};
             result.Loaded = result.Text;
             result.Translation = result.Text;
             result.PropertyChanged += SubtitlePropertyChanged;

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using TF.Core.Entities;
 using TF.Core.Exceptions;
-using TF.Core.Helpers;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -29,7 +28,7 @@ namespace YakuzaCommon.Files.Msg
         }
 #if DEBUG
         protected new IList<Subtitle> _subtitles;
-        private View _view;
+        private new View _view;
         public override void Open(DockPanel panel, ThemeBase theme)
         {
             _view = new View(theme);
@@ -414,10 +413,7 @@ namespace YakuzaCommon.Files.Msg
 
                     output.Write(propertiesBytes);
                     output.Write(stringsBytes);
-                    while (output.Position % 4 != 0)
-                    {
-                        output.Write((byte) 0);
-                    }
+                    output.WritePadding(4);
                 }
 
                 if (inputPointer1 > 0)
