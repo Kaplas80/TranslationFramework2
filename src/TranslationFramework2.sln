@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YakuzaCommon", "Plugins\Yak
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.YakuzaKiwami", "Plugins\TFGame.YakuzaKiwami\TFGame.YakuzaKiwami.csproj", "{FDD32C6D-0544-47BE-AF04-A2E0A3D68A2C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalTools", "ExternalTools", "{7E18623E-5F2C-435F-AB6C-297273CE7CB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YakuzaFontCreator", "ExternalTools\YakuzaFontCreator\YakuzaFontCreator.csproj", "{A1748892-6BF9-4E84-A9C4-DB6D5646D3CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,10 @@ Global
 		{FDD32C6D-0544-47BE-AF04-A2E0A3D68A2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDD32C6D-0544-47BE-AF04-A2E0A3D68A2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDD32C6D-0544-47BE-AF04-A2E0A3D68A2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1748892-6BF9-4E84-A9C4-DB6D5646D3CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1748892-6BF9-4E84-A9C4-DB6D5646D3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1748892-6BF9-4E84-A9C4-DB6D5646D3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1748892-6BF9-4E84-A9C4-DB6D5646D3CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +63,7 @@ Global
 		{BFE27A60-5A4A-4AAD-818F-F973D991AA9C} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{24524A72-CBF8-439A-AB89-F809A92D6F0E} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{FDD32C6D-0544-47BE-AF04-A2E0A3D68A2C} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
+		{A1748892-6BF9-4E84-A9C4-DB6D5646D3CA} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}
