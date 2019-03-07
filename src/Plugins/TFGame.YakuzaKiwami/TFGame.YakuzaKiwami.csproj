@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoding.cs" />
+    <Compile Include="Files\Exe\File.cs" />
     <Compile Include="Files\PocketCircuit\File.cs" />
     <Compile Include="Files\PocketCircuit\Subtitle.cs" />
     <Compile Include="Game.cs" />

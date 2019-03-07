@@ -43,6 +43,25 @@ namespace YakuzaFontCreator
 
             var bitmap = new Bitmap(512, 1024);
 
+            var heightFactor = 1.0f;
+            /*foreach (var character in font.Characters)
+            {
+                if (character.Value.Bounds.Height >= 64)
+                {
+                    heightFactor = Math.Min(heightFactor, 64f / character.Value.Bounds.Height);
+                }
+            }*/
+
+            var yOffsetCorrection = 0;
+
+            foreach (var character in font.Characters)
+            {
+                if (character.Value.Offset.Y + character.Value.Bounds.Height > 64)
+                {
+                    yOffsetCorrection = Math.Min(yOffsetCorrection, 64 - character.Value.Offset.Y - character.Value.Bounds.Height);
+                }
+            }
+
             using (var g = Graphics.FromImage(bitmap))
             {
                 var x = 0;
@@ -68,7 +87,7 @@ namespace YakuzaFontCreator
                         if (font.Characters.ContainsKey(chr))
                         {
                             var data = font[chr];
-                            DrawCharacter(g, data, textures[data.TexturePage], x, y);
+                            DrawCharacter(g, data, textures[data.TexturePage], x, y, heightFactor, yOffsetCorrection);
                         }
 
                         x += 32;
@@ -85,7 +104,7 @@ namespace YakuzaFontCreator
                         if (font.Characters.ContainsKey(chr))
                         {
                             var data = font[chr];
-                            DrawCharacter(g, data, textures[data.TexturePage], x, y);
+                            DrawCharacter(g, data, textures[data.TexturePage], x, y, heightFactor, yOffsetCorrection);
                         }
                         x += 32;
                     }
@@ -111,22 +130,22 @@ namespace YakuzaFontCreator
             Exit();
         }
 
-        private static void DrawCharacter(Graphics g, Character character, Image texture, int x, int y)
+        private static void DrawCharacter(Graphics g, Character character, Image texture, int x, int y, float heightFactor, int yOffsetCorrection)
         {
-            RectangleF dest;
-            if (character.Bounds.Width > 32)
+            var width = character.Bounds.Width;
+            var height = character.Bounds.Height * heightFactor;
+
+            if (width >= 30)
             {
-                dest = new RectangleF(x + character.Offset.X,
-                    y + character.Offset.Y, 32,
-                    character.Bounds.Height);
-            }
-            else
-            {
-                dest = new RectangleF(x + character.Offset.X + 16 - character.Bounds.Width / 2,
-                    y + character.Offset.Y, character.Bounds.Width,
-                    character.Bounds.Height);
+                width = 30;
             }
 
+            /*if (character.Offset.Y - yOffsetCorrection + height >= 62)
+            {
+                height = 62 - character.Offset.Y + yOffsetCorrection;
+            }*/
+
+            var dest = new RectangleF(x + 16 - width / 2, y + character.Offset.Y + yOffsetCorrection, width, height);
             g.DrawImage(texture, dest, character.Bounds, GraphicsUnit.Pixel);
         }
 

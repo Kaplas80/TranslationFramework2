@@ -10,10 +10,32 @@ namespace TFGame.YakuzaKiwami
         
         public override string Id => "7f8efe16-87fd-4f5a-a837-cacf3dde2852";
         public override string Name => "Yakuza Kiwami";
-        public override string Description => "Versión PC Steam sin DENUVO (lanzada el 19/02/2019)";
+        public override string Description => "Versión PC Steam Patch v3 (lanzada el 06/03/2019)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-Icon-750908330
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
+
+        private GameFileContainer GetRoot()
+        {
+            var search =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "YakuzaKiwami.exe",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(Files.Exe.File)
+                };
+
+            var c = new GameFileContainer
+            {
+                Path = @"",
+                Type = ContainerType.Folder
+            };
+            
+            c.FileSearches.Add(search);
+            return c;
+        }
 
         private IList<GameFileContainer> GetAuth(string path)
         {
@@ -466,15 +488,16 @@ namespace TFGame.YakuzaKiwami
         {
             var result = new List<GameFileContainer>();
 
+            result.Add(GetRoot());
             //result.AddRange(GetAuth(path));
-            result.Add(GetBootpar());
-            //result.Add(GetFontpar());
+            //result.Add(GetBootpar());
+            result.Add(GetFontpar());
             //result.AddRange(GetMappar(path));
-            result.AddRange(GetMinigame());
+            //result.AddRange(GetMinigame());
             //result.Add(GetReactorpar());
             //result.Add(GetSoundpar());
             //result.Add(GetStage());
-            result.Add(GetStaypar());
+            //result.Add(GetStaypar());
             //result.AddRange(GetWdrCommon());
             //result.AddRange(GetWdr());
 
