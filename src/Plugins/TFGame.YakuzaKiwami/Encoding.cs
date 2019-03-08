@@ -6,7 +6,7 @@ namespace TFGame.YakuzaKiwami
 {
     public class Encoding : System.Text.Encoding
     {
-        private readonly System.Text.Encoding utf8Encoding = GetEncoding("UTF-8", EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
+        private readonly System.Text.Encoding utf8Encoding = GetEncoding("UTF-8");
 
         private List<Tuple<string, string>> DecodingReplacements;
         private List<Tuple<string, string>> EncodingReplacements;
@@ -16,14 +16,17 @@ namespace TFGame.YakuzaKiwami
             DecodingReplacements = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("\\", "¥"),
+                new Tuple<string, string>("\u007F", "®"),
                 new Tuple<string, string>("\r", "\\r"),
                 new Tuple<string, string>("\n", "\\n"),
+                
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("\\r", "\r"),
                 new Tuple<string, string>("\\n", "\n"),
+                new Tuple<string, string>("®", "\u007F"),
                 new Tuple<string, string>("¥", "\\"),
             };
 

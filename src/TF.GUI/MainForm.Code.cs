@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using TF.Core;
 using TF.Core.Entities;
 using TF.Core.Exceptions;
+using TF.Core.Helpers;
 using TF.GUI.Forms;
 using TF.GUI.Properties;
 using WeifenLuo.WinFormsUI.Docking;
@@ -52,8 +53,7 @@ namespace TF.GUI
                 if (files.Length + directories.Length > 0)
                 {
 #if DEBUG
-                    Directory.Delete(workFolder, true);
-                    Directory.CreateDirectory(workFolder);
+                    PathHelper.DeleteDirectory(workFolder);
 #else
                     MessageBox.Show($"La carpeta {workFolder} no está vacía. Debes elegir una carpeta vacía.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;

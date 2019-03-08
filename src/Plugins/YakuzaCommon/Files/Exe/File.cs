@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using AsmResolver;
 using TF.Core.Exceptions;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
 using YakuzaCommon.Files.SimpleSubtitle;
+using View = YakuzaCommon.Files.SimpleSubtitle.View;
 
 namespace YakuzaCommon.Files.Exe
 {
@@ -17,6 +20,10 @@ namespace YakuzaCommon.Files.Exe
         private FontTableView _ftview;
 
         protected virtual long FontTableOffset => 0;
+        protected virtual string PointerSectionName => "";
+        protected virtual string StringsSectionName => "";
+        protected virtual List<Tuple<ulong, ulong>> AllowedStringOffsets => new List<Tuple<ulong, ulong>>() { new Tuple<ulong, ulong>(0, ulong.MaxValue)};
+
         public override int SubtitleCount => 1;
 
         protected File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
@@ -116,6 +123,49 @@ namespace YakuzaCommon.Files.Exe
 
             var result = new List<Subtitle>();
 
+            var peInfo = WindowsAssembly.FromFile(Path);
+
+            using (var fs = new FileStream(Path, FileMode.Open))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.LittleEndian))
+            {
+                var pointerSection = peInfo.GetSectionByName(PointerSectionName);
+                var pointerSectionStart = pointerSection.Header.PointerToRawData;
+                var pointerCount = pointerSection.GetPhysicalLength() / 8;
+
+                var stringsSection = peInfo.GetSectionByName(StringsSectionName);
+                var stringsSectionBase = peInfo.NtHeaders.OptionalHeader.ImageBase +
+                                  (stringsSection.Header.VirtualAddress - stringsSection.Header.PointerToRawData);
+
+                for (var i = 0; i < pointerCount; i++)
+                {
+                    input.Seek(pointerSectionStart + i * 8, SeekOrigin.Begin);
+                    var value = input.ReadUInt64();
+                    if (value != 0)
+                    {
+                        var possibleStringOffset = value - stringsSectionBase;
+
+                        var allowed = AllowedStringOffsets.Any(x => x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+
+                        if (allowed)
+                        {
+                            var exists = result.Any(x => x.Offset == (long) possibleStringOffset);
+
+                            if (!exists)
+                            {
+                                input.Seek((long) possibleStringOffset, SeekOrigin.Begin);
+                                var str = input.ReadString();
+                                var sub = new Subtitle { Offset = (long) possibleStringOffset, Text = str, Translation = str, Loaded = str };
+                                sub.PropertyChanged += SubtitlePropertyChanged;
+
+                                result.Add(sub);
+                            }
+                        }
+                    }
+                }
+                
+                result.Sort();
+            }
+
             return result;
         }
 
@@ -138,7 +188,15 @@ namespace YakuzaCommon.Files.Exe
                     _data[i].SetLoadedData();
                 }
 
-                // Save subtitles
+                output.Write(_subtitles.Count);
+                foreach (var subtitle in _subtitles)
+                {
+                    output.Write(subtitle.Offset);
+                    output.WriteString(subtitle.Text);
+                    output.WriteString(subtitle.Translation);
+
+                    subtitle.Loaded = subtitle.Translation;
+                }
             }
 
             NeedSaving = false;
@@ -147,7 +205,38 @@ namespace YakuzaCommon.Files.Exe
 
         protected override IList<Subtitle> LoadChanges(string file)
         {
-            return new List<Subtitle>();
+            using (var fs = new FileStream(file, FileMode.Open))
+            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
+            {
+                var version = input.ReadInt32();
+
+                if (version != ChangesFileVersion)
+                {
+                    throw new ChangesFileVersionMismatchException();
+                }
+
+                input.Skip(256 * 6 * 4);
+
+                var result = new List<Subtitle>();
+                var subtitleCount = input.ReadInt32();
+
+                for (var i = 0; i < subtitleCount; i++)
+                {
+                    var subtitle = new Subtitle
+                    {
+                        Offset = input.ReadInt64(),
+                        Text = input.ReadString(),
+                        Translation = input.ReadString()
+                    };
+                    subtitle.Loaded = subtitle.Translation;
+
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+
+                    result.Add(subtitle);
+                }
+
+                return result;
+            }
         }
 
         private void LoadFontTableChanges(string file, CharacterInfo[] data)
@@ -182,9 +271,8 @@ namespace YakuzaCommon.Files.Exe
 
         public override void Rebuild(string outputFolder)
         {
-            var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
+            var outputPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(outputFolder, RelativePath));
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
-            System.IO.File.Copy(Path, outputPath, true);
 
             RebuildSubtitles(outputPath);
             RebuildFontTable(outputPath);
@@ -192,7 +280,141 @@ namespace YakuzaCommon.Files.Exe
 
         private void RebuildSubtitles(string outputFile)
         {
+            CreateExeFile(outputFile);
 
+            var data = GetSubtitles();
+
+            var peInfo = WindowsAssembly.FromFile(outputFile);
+
+            using (var inputFs = new FileStream(Path, FileMode.Open))
+            using (var input = new ExtendedBinaryReader(inputFs, FileEncoding, Endianness.LittleEndian))
+            using (var outputFs = new FileStream(outputFile, FileMode.Open))
+            using (var output = new ExtendedBinaryWriter(outputFs, FileEncoding, Endianness.LittleEndian))
+            {
+                var pointerSection = peInfo.GetSectionByName(PointerSectionName);
+                var pointerSectionStart = pointerSection.Header.PointerToRawData;
+                var pointerCount = pointerSection.GetPhysicalLength() / 8;
+
+                var stringsSection = peInfo.GetSectionByName(StringsSectionName);
+                var stringsSectionBase = peInfo.NtHeaders.OptionalHeader.ImageBase +
+                                         (stringsSection.Header.VirtualAddress - stringsSection.Header.PointerToRawData);
+
+                var translationSection = peInfo.GetSectionByName(".trad\0\0\0");
+                var translationSectionBase = peInfo.NtHeaders.OptionalHeader.ImageBase +
+                                         (translationSection.Header.VirtualAddress - translationSection.Header.PointerToRawData);
+
+                var used = new Dictionary<ulong, ulong>();
+
+                var outputOffset = translationSection.Header.PointerToRawData;
+
+                for (var i = 0; i < pointerCount; i++)
+                {
+                    input.Seek(pointerSectionStart + i * 8, SeekOrigin.Begin);
+                    output.Seek(pointerSectionStart + i * 8, SeekOrigin.Begin);
+
+                    var value = input.ReadUInt64();
+                    if (value != 0)
+                    {
+                        var possibleStringOffset = value - stringsSectionBase;
+
+                        var allowed = AllowedStringOffsets.Any(x => x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+
+                        if (allowed)
+                        {
+                            var exists = used.ContainsKey(possibleStringOffset);
+
+                            if (exists)
+                            {
+                                output.Write(used[possibleStringOffset]);
+                            }
+                            else
+                            {
+                                var newOffset = outputOffset + translationSectionBase;
+                                output.Write(newOffset);
+                                used[possibleStringOffset] = newOffset;
+                                
+                                output.Seek(outputOffset, SeekOrigin.Begin);
+
+                                var sub = data.First(x => x.Offset == (long) possibleStringOffset);
+
+                                output.WriteString(sub.Translation);
+
+                                outputOffset = (uint) output.Position;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CreateExeFile(string outputFile)
+        {
+            var peInfo = WindowsAssembly.FromFile(Path);
+
+            using (var inputFs = new FileStream(Path, FileMode.Open))
+            using (var input = new ExtendedBinaryReader(inputFs, FileEncoding, Endianness.LittleEndian))
+            using (var outputFs = new FileStream(outputFile, FileMode.Create))
+            {
+                var output = new BinaryStreamWriter(outputFs);
+                var writingContext = new WritingContext(peInfo, new BinaryStreamWriter(outputFs));
+
+                var dosHeader = input.ReadBytes((int)peInfo.NtHeaders.StartOffset);
+                output.WriteBytes(dosHeader);
+
+                var ntHeader = peInfo.NtHeaders;
+                ntHeader.FileHeader.NumberOfSections++;
+                ntHeader.OptionalHeader.SizeOfImage += 0x00100000;
+
+                ntHeader.Write(writingContext);
+
+                var newSection = CreateTFSection(peInfo.SectionHeaders[peInfo.SectionHeaders.Count - 1], ntHeader.OptionalHeader.FileAlignment, ntHeader.OptionalHeader.SectionAlignment);
+                peInfo.SectionHeaders.Add(newSection);
+
+                foreach (var section in peInfo.SectionHeaders)
+                {
+                    section.Write(writingContext);
+                }
+
+                foreach (var section in peInfo.SectionHeaders)
+                {
+                    input.Seek(section.PointerToRawData, SeekOrigin.Begin);
+                    outputFs.Seek(section.PointerToRawData, SeekOrigin.Begin);
+
+                    var data = input.ReadBytes((int)section.SizeOfRawData);
+                    output.WriteBytes(data);
+                }
+
+                var bytes = new byte[0x00100000];
+                output.WriteBytes(bytes);
+            }
+        }
+
+        private ImageSectionHeader CreateTFSection(ImageSectionHeader previous, uint fileAlignment, uint sectionAlignment)
+        {
+            var realAddress = previous.PointerToRawData + previous.SizeOfRawData;
+            realAddress = Align(realAddress, fileAlignment);
+
+            var virtualAddress = previous.VirtualAddress + previous.VirtualSize;
+            virtualAddress = Align(virtualAddress, sectionAlignment);
+
+            var sectionHeader = new ImageSectionHeader
+            {
+                Name = ".trad",
+                Attributes = ImageSectionAttributes.MemoryRead |
+                             ImageSectionAttributes.ContentInitializedData,
+                PointerToRawData = realAddress,
+                SizeOfRawData = 0x00100000,
+                VirtualAddress = virtualAddress,
+                VirtualSize = 0x00100000,
+            };
+
+            return sectionHeader;
+        }
+
+        private static uint Align(uint value, uint align)
+        {
+            align--;
+            return (value + align) & ~align;
         }
 
         private void RebuildFontTable(string outputFile)

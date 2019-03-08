@@ -29,7 +29,7 @@ namespace TFGame.YakuzaKiwami
 
             var c = new GameFileContainer
             {
-                Path = @"",
+                Path = @".\",
                 Type = ContainerType.Folder
             };
             

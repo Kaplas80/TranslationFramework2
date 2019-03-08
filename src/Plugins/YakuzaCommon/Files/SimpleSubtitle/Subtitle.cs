@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using YakuzaCommon.Annotations;
 
 namespace YakuzaCommon.Files.SimpleSubtitle
 {
-    public class Subtitle : INotifyPropertyChanged
+    public class Subtitle : INotifyPropertyChanged, IComparable<Subtitle>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -26,6 +27,11 @@ namespace YakuzaCommon.Files.SimpleSubtitle
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public int CompareTo(Subtitle other)
+        {
+            return Offset.CompareTo(other.Offset);
         }
     }
 }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.SubtitleGridView = new TFDataGridView();
+            this.SubtitleGridView = new YakuzaCommon.Files.SimpleSubtitle.View.TFDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SubtitleGridView)).BeginInit();
             this.SuspendLayout();
@@ -68,7 +68,7 @@
             this.Controls.Add(this.dockPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "View";
-            this.Text = "CmnBinView";
+            this.Text = "Subtítulos";
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SubtitleGridView)).EndInit();
             this.ResumeLayout(false);
@@ -78,6 +78,6 @@
         #endregion
 
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel1;
-        private System.Windows.Forms.DataGridView SubtitleGridView;
+        private TFDataGridView SubtitleGridView;
     }
 }

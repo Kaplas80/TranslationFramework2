@@ -12,6 +12,7 @@ namespace TF.Core.Entities
     public class GameFileContainer : IComparable<GameFileContainer>
     {
         public string Path { get; set; }
+
         public ContainerType Type { get; set; }
         public IList<GameFileSearch> FileSearches { get; set; }
 

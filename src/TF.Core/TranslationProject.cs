@@ -208,7 +208,7 @@ namespace TF.Core
                     var outputFolder = Path.Combine(ExportFolder, container.Path);
                     if (Directory.Exists(outputFolder))
                     {
-                        Directory.Delete(outputFolder, true);
+                        PathHelper.DeleteDirectory(outputFolder);
                     }
 
                     foreach (var translationFile in container.Files)
