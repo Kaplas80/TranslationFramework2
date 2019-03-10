@@ -391,9 +391,9 @@ namespace YakuzaCommon.Files
             output.Seek(folderTableOffset + folder.Index * 32, SeekOrigin.Begin);
 
             output.Write(folder.FolderCount);
-            output.Write(folder.FolderIndex);
+            output.Write(folder.FolderCount > 0 ? folder.FoldersId[0] : 0);
             output.Write(folder.FileCount);
-            output.Write(folder.FileIndex);
+            output.Write(folder.FileCount > 0 ? folder.FilesId[0] : 0);
 
             output.Write(folder.UnknownE);
             output.Write(folder.UnknownF);
@@ -402,16 +402,16 @@ namespace YakuzaCommon.Files
 
             var newOffset = dataOffset;
 
-            foreach (var fileId in folder.FilesId)
-            {
-                var f = fileDict[fileId];
-                newOffset = Pack(f, output, newPath, fileTableOffset, newOffset, useCompression);
-            }
-
             foreach (var folderId in folder.FoldersId)
             {
                 var f = folderDict[folderId];
                 newOffset = Pack(f, output, newPath, folderDict, fileDict, folderTableOffset, fileTableOffset, newOffset, useCompression);
+            }
+
+            foreach (var fileId in folder.FilesId)
+            {
+                var f = fileDict[fileId];
+                newOffset = Pack(f, output, newPath, fileTableOffset, newOffset, useCompression);
             }
 
             return newOffset;
@@ -425,16 +425,16 @@ namespace YakuzaCommon.Files
 
             output.Seek(fileTableOffset + file.Index * 32, SeekOrigin.Begin);
 
-            output.Write((uint)file.CompressionFlags);
-
             if (useCompression && file.IsCompressed())
             {
+                output.Write((uint)FileFlags.IsCompressed);
                 var uncompressedData = File.ReadAllBytes(newPath);
                 data = SllzCompressor.Compress(uncompressedData);
                 output.Write((uint) uncompressedData.Length);
             }
             else
             {
+                output.Write((uint)FileFlags.None);
                 data = File.ReadAllBytes(newPath);
                 output.Write((uint) data.Length);
             }
