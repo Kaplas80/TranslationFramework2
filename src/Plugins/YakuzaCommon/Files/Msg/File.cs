@@ -264,13 +264,14 @@ namespace YakuzaCommon.Files.Msg
                     output.WriteString(subtitle.Text);
                     output.WriteString(subtitle.Translation);
 
-                    if (subtitle.Properties == null)
+                    var sub = subtitle as Subtitle;
+                    if (sub.Properties == null)
                     {
                         output.Write(0);
                     }
                     else
                     {
-                        var data = subtitle.Properties.ToByteArray();
+                        var data = sub.Properties.ToByteArray();
                         output.Write(data.Length);
                         output.Write(data);
                     }
