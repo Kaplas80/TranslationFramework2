@@ -44,8 +44,6 @@
   <ItemGroup>
     <Compile Include="Encoding.cs" />
     <Compile Include="Files\Exe\File.cs" />
-    <Compile Include="Files\PocketCircuit\File.cs" />
-    <Compile Include="Files\PocketCircuit\Subtitle.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">

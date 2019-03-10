@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using TF.Core.Exceptions;
 using TF.IO;
 
-namespace TFGame.YakuzaKiwami.Files.PocketCircuit
+namespace YakuzaCommon.Files.PocketCircuit
 {
-    public class File : YakuzaCommon.Files.SimpleSubtitle.File
+    public class File : SimpleSubtitle.File
     {
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -67,12 +66,12 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
                 return GetSubtitlesPUSB();
             }
 
-            return new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            return new List<SimpleSubtitle.Subtitle>();
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPOCB()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -103,9 +102,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPCSB()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPCSB()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -147,9 +146,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPOCB1()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB1()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -180,9 +179,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPOCB2()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB2()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -226,9 +225,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPOCB3()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB3()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -271,9 +270,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPPTB()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPPTB()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -304,9 +303,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPOPB()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOPB()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -350,9 +349,9 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             return temp;
         }
 
-        private IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitlesPUSB()
+        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPUSB()
         {
-            var temp = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+            var temp = new List<SimpleSubtitle.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -407,7 +406,7 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
             OnFileChanged();
         }
 
-        private new IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> LoadChanges(string file)
+        private new IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
         {
             using (var fs = new FileStream(file, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
@@ -419,7 +418,7 @@ namespace TFGame.YakuzaKiwami.Files.PocketCircuit
                     throw new ChangesFileVersionMismatchException();
                 }
 
-                var result = new List<YakuzaCommon.Files.SimpleSubtitle.Subtitle>();
+                var result = new List<SimpleSubtitle.Subtitle>();
                 var subtitleCount = input.ReadInt32();
 
                 for (var i = 0; i < subtitleCount; i++)

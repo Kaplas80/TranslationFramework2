@@ -234,7 +234,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "*.bin_?",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaKiwami.Files.PocketCircuit.File)
+                    FileType = typeof(YakuzaCommon.Files.PocketCircuit.File)
                 };
 
             var par = new GameFileContainer

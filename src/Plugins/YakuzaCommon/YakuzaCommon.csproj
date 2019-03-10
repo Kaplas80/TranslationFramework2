@@ -88,7 +88,14 @@
     <Compile Include="Files\CmnBin\Subtitle.cs" />
     <Compile Include="Files\Epmb\File.cs" />
     <Compile Include="Files\Exe\CharacterInfo.cs" />
+    <Compile Include="Files\Exe\ExePatch.cs" />
     <Compile Include="Files\Exe\File.cs" />
+    <Compile Include="Files\Exe\PatchView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Files\Exe\PatchView.Designer.cs">
+      <DependentUpon>PatchView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Files\Exe\FontTableView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +116,8 @@
     <Compile Include="Files\Name\File.cs" />
     <Compile Include="Files\PacFile.cs" />
     <Compile Include="Files\ParFile.cs" />
+    <Compile Include="Files\PocketCircuit\File.cs" />
+    <Compile Include="Files\PocketCircuit\Subtitle.cs" />
     <Compile Include="Files\PresentSendThrow\File.cs" />
     <Compile Include="Files\Restaurant\File.cs" />
     <Compile Include="Files\Sale\File.cs" />
@@ -147,6 +156,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Files\Exe\PatchView.resx">
+      <DependentUpon>PatchView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Files\Exe\FontTableView.resx">
       <DependentUpon>FontTableView.cs</DependentUpon>
     </EmbeddedResource>
