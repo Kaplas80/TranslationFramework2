@@ -232,28 +232,61 @@ namespace YakuzaCommon.Core
 
         private static MatchResult FindMatch(byte[] input, int startPos, int readPos)
         {
-            var bestPos = 0;
-            var bestLength = 1;
+            var result = new MatchResult();
 
-            var current = readPos - 1;
-            while (current >= startPos)
+            var searchSize = Math.Min(SEARCH_SIZE, readPos - startPos);
+
+            var maxLength = Math.Min(input.Length - readPos, MAX_LENGTH);
+            maxLength = Math.Min(maxLength, readPos);
+
+            if (maxLength < 3)
             {
-                if (input[current] == input[readPos])
-                {
-                    var maxLength = Math.Min(input.Length - readPos, MAX_LENGTH);
-                    maxLength = Math.Min(maxLength, readPos - current);
-                    var length = DataCompare(input, current + 1, readPos + 1, maxLength);
-                    if (length > bestLength)
-                    {
-                        bestLength = length;
-                        bestPos = current;
-                    }
-                }
+                result.Found = false;
+                result.Distance = 0;
+                result.Length = 1;
 
-                current--;
+                return result;
             }
 
-            var result = new MatchResult();
+            var bestPos = 0;
+            var bestLength = 0;
+
+            var kmpTable = FillTable(input, readPos, maxLength);
+
+            var k = 0;
+            var i = 0;
+
+            while (k + i < searchSize)
+            {
+                if (input[readPos + i] == input[startPos + k + i])
+                {
+                    i++;
+                    if (i >= bestLength)
+                    {
+                        bestLength = i;
+                        bestPos = k + startPos;
+                    }
+
+                    if (i == maxLength)
+                    {
+                        i = 0;
+                        k++;
+                    }
+                }
+                else
+                {
+                    if (i > bestLength)
+                    {
+                        bestLength = i;
+                        bestPos = k + startPos;
+                    }
+
+                    k = k + i - kmpTable[i];
+
+                    i = kmpTable[i] > 0 ? kmpTable[i] : 0;
+                }
+                
+            }
 
             if (bestLength >= 3)
             {
@@ -271,18 +304,36 @@ namespace YakuzaCommon.Core
             return result;
         }
 
-        private static int DataCompare(byte[] input, int pos1, int pos2, int maxLength)
+        private static int[] FillTable(byte[] input, int readPos, int maxLength)
         {
-            var length = 1;
+            var kmpTable = new int[maxLength];
 
-            while (length < maxLength && input[pos1] == input[pos2])
+            var pos = 2;  
+            var cnd = 0;  
+
+            kmpTable[0] = -1;
+            kmpTable[1] = 0;
+
+            while (pos < maxLength)
             {
-                pos1++;
-                pos2++;
-                length++;
+                if (input[readPos + pos - 1] == input[readPos + cnd])
+                {
+                    cnd++;
+                    kmpTable[pos] = cnd;
+                    pos++;
+                }
+                else if (cnd > 0)
+                {
+                    cnd = kmpTable[cnd];
+                }
+                else
+                {
+                    kmpTable[pos] = 0;
+                    pos++;
+                }
             }
 
-            return length;
+            return kmpTable;
         }
     }
 }
