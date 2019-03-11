@@ -256,21 +256,16 @@ namespace YakuzaCommon.Core
             var k = 0;
             var i = 0;
 
-            while (k + i < searchSize)
+            while (k + i < searchSize && i < maxLength)
             {
                 if (input[readPos + i] == input[startPos + k + i])
                 {
                     i++;
-                    if (i >= bestLength)
+                    if (i == maxLength)
                     {
                         bestLength = i;
                         bestPos = k + startPos;
-                    }
-
-                    if (i == maxLength)
-                    {
-                        i = 0;
-                        k++;
+                        break;
                     }
                 }
                 else
