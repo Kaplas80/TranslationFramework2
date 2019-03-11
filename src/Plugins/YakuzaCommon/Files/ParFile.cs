@@ -143,7 +143,7 @@ namespace YakuzaCommon.Files
         private void ReadInfo(string inputPath)
         {
             using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 Magic = input.ReadUInt32();
 
@@ -241,7 +241,7 @@ namespace YakuzaCommon.Files
         private void Dump(string inputPath, string outputFolder)
         {
             using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var input = new ExtendedBinaryReader(fs, Encoding.UTF8, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(fs, Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 var logFile = System.IO.Path.Combine(outputFolder, "Extract_Data.tf");
                 Dump(input, Root, outputFolder, logFile);
@@ -250,7 +250,7 @@ namespace YakuzaCommon.Files
 
         private static void Dump(ExtendedBinaryReader input, ParFolderInfo folder, string parentFolder, string logFile)
         {
-            using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Append), Encoding.UTF8, Endianness.BigEndian))
+            using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Append), Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 log.Write((byte)0);
                 log.WriteString(folder.Name);
@@ -289,7 +289,7 @@ namespace YakuzaCommon.Files
 
         private static void Dump(ExtendedBinaryReader input, ParFileInfo file, string outputFolder, string logFile)
         {
-            using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Append), Encoding.UTF8, Endianness.BigEndian))
+            using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Append), Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 log.Write((byte)1);
                 log.WriteString(file.Name);
@@ -339,7 +339,7 @@ namespace YakuzaCommon.Files
 
             var root = folderDict[0];
 
-            using (var output = new ExtendedBinaryWriter(new FileStream(outputFile, FileMode.Create), Encoding.UTF8, Endianness.BigEndian))
+            using (var output = new ExtendedBinaryWriter(new FileStream(outputFile, FileMode.Create), Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 output.Write(0x50415243);
                 output.Write(0x02010000);
@@ -391,9 +391,9 @@ namespace YakuzaCommon.Files
             output.Seek(folderTableOffset + folder.Index * 32, SeekOrigin.Begin);
 
             output.Write(folder.FolderCount);
-            output.Write(folder.FolderCount > 0 ? folder.FoldersId[0] : 0);
+            output.Write(folder.FolderIndex);
             output.Write(folder.FileCount);
-            output.Write(folder.FileCount > 0 ? folder.FilesId[0] : 0);
+            output.Write(folder.FileIndex);
 
             output.Write(folder.UnknownE);
             output.Write(folder.UnknownF);
@@ -402,16 +402,16 @@ namespace YakuzaCommon.Files
 
             var newOffset = dataOffset;
 
-            foreach (var folderId in folder.FoldersId)
-            {
-                var f = folderDict[folderId];
-                newOffset = Pack(f, output, newPath, folderDict, fileDict, folderTableOffset, fileTableOffset, newOffset, useCompression);
-            }
-
             foreach (var fileId in folder.FilesId)
             {
                 var f = fileDict[fileId];
                 newOffset = Pack(f, output, newPath, fileTableOffset, newOffset, useCompression);
+            }
+
+            foreach (var folderId in folder.FoldersId)
+            {
+                var f = folderDict[folderId];
+                newOffset = Pack(f, output, newPath, folderDict, fileDict, folderTableOffset, fileTableOffset, newOffset, useCompression);
             }
 
             return newOffset;
@@ -465,7 +465,7 @@ namespace YakuzaCommon.Files
 
         private static void LoadLogFile(string logFileName, IDictionary<uint, ParFolderInfo> folderDict, IDictionary<uint, ParFileInfo> fileDict)
         {
-            using (var log = new ExtendedBinaryReader(new FileStream(logFileName, FileMode.Open), Encoding.UTF8, Endianness.BigEndian))
+            using (var log = new ExtendedBinaryReader(new FileStream(logFileName, FileMode.Open), Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 while (log.Position < log.Length)
                 {

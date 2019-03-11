@@ -27,7 +27,7 @@ namespace YakuzaCommon.Core
 
         public static byte[] Decompress(byte[] compressedData)
         {
-            using (var input = new ExtendedBinaryReader(new MemoryStream(compressedData), Encoding.UTF8, Endianness.BigEndian))
+            using (var input = new ExtendedBinaryReader(new MemoryStream(compressedData), Encoding.GetEncoding(1252), Endianness.BigEndian))
             using (var output = new MemoryStream())
             {
                 var magic = input.ReadUInt32();
@@ -116,7 +116,7 @@ namespace YakuzaCommon.Core
         public static byte[] Compress(byte[] uncompressedData)
         {
             using (var ms = new MemoryStream())
-            using (var output = new ExtendedBinaryWriter(ms, Encoding.UTF8, Endianness.BigEndian))
+            using (var output = new ExtendedBinaryWriter(ms, Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 output.Write((uint)0x534c4c5a);
                 output.Write((byte)0x00);
@@ -232,66 +232,25 @@ namespace YakuzaCommon.Core
 
         private static MatchResult FindMatch(byte[] input, int startPos, int readPos)
         {
-            var bestIPos = 0;
-            var bestLength = -1;
-            var currentLength = 0;
+            var bestPos = 0;
+            var bestLength = 1;
 
-            var i = 0;
-            var j = 0;
-            var k = 0;
-            while (startPos + i < readPos)
+            var current = readPos - 1;
+            while (current >= startPos)
             {
-                if (startPos + i + j < readPos && readPos + k < input.Length)
+                if (input[current] == input[readPos])
                 {
-                    if (input[startPos + i + j] == input[readPos + k])
+                    var maxLength = Math.Min(input.Length - readPos, MAX_LENGTH);
+                    maxLength = Math.Min(maxLength, readPos - current);
+                    var length = DataCompare(input, current + 1, readPos + 1, maxLength);
+                    if (length > bestLength)
                     {
-                        j++;
-                        k++;
-                        currentLength++;
-
-                        if (currentLength < MAX_LENGTH)
-                        {
-                            continue;
-                        }
-
-                        if (currentLength >= bestLength)
-                        {
-                            bestLength = currentLength;
-                            bestIPos = i;
-                        }
-
-                        i++;
-                        j = 0;
-                        k = 0;
-                        currentLength = 0;
-                    }
-                    else
-                    {
-                        if (currentLength >= bestLength)
-                        {
-                            bestLength = currentLength;
-                            bestIPos = i;
-                        }
-
-                        i++;
-                        j = 0;
-                        k = 0;
-                        currentLength = 0;
+                        bestLength = length;
+                        bestPos = current;
                     }
                 }
-                else
-                {
-                    if (currentLength >= bestLength)
-                    {
-                        bestLength = currentLength;
-                        bestIPos = i;
-                    }
 
-                    i++;
-                    j = 0;
-                    k = 0;
-                    currentLength = 0;
-                }
+                current--;
             }
 
             var result = new MatchResult();
@@ -299,7 +258,7 @@ namespace YakuzaCommon.Core
             if (bestLength >= 3)
             {
                 result.Found = true;
-                result.Distance = readPos - (startPos + bestIPos);
+                result.Distance = readPos - bestPos;
                 result.Length = bestLength;
             }
             else
@@ -310,6 +269,20 @@ namespace YakuzaCommon.Core
             }
 
             return result;
+        }
+
+        private static int DataCompare(byte[] input, int pos1, int pos2, int maxLength)
+        {
+            var length = 1;
+
+            while (length < maxLength && input[pos1] == input[pos2])
+            {
+                pos1++;
+                pos2++;
+                length++;
+            }
+
+            return length;
         }
     }
 }
