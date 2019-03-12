@@ -17,25 +17,20 @@ namespace TFGame.Yakuza0
             DecodingReplacements = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("\\", "¥"),
+                new Tuple<string, string>("\u007F", "®"),
                 new Tuple<string, string>("^", "%"),
                 new Tuple<string, string>("~", "™"),
-                new Tuple<string, string>("\u0008", "®"),
-                new Tuple<string, string>("\u00A0", "\u2022"),
-                new Tuple<string, string>("\u00A1", "\uFF0E"),
-                new Tuple<string, string>("\u00A2", "\u00A1"),
                 new Tuple<string, string>("\r", "\\r"),
                 new Tuple<string, string>("\n", "\\n"),
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
             {
-                new Tuple<string, string>("\\r", "\r"),
                 new Tuple<string, string>("\\n", "\n"),
-                new Tuple<string, string>("\u00A1", "\u00A2"),
-                new Tuple<string, string>("\uFF0E", "\u00A1"),
-                new Tuple<string, string>("\u2022", "\u00A0"),
-                new Tuple<string, string>("®", "\u0008"),
+                new Tuple<string, string>("\\r", "\r"),
                 new Tuple<string, string>("™", "~"),
+                new Tuple<string, string>("^", "%"),
+                new Tuple<string, string>("®", "\u007F"),
                 new Tuple<string, string>("¥", "\\"),
             };
 

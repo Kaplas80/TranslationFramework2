@@ -23,7 +23,7 @@ namespace YakuzaCommon.Files.Exe
         protected virtual long FontTableOffset => 0;
         protected virtual string PointerSectionName => "";
         protected virtual string StringsSectionName => "";
-        protected virtual List<Tuple<ulong, ulong>> AllowedStringOffsets => new List<Tuple<ulong, ulong>>() { new Tuple<ulong, ulong>(0, ulong.MaxValue)};
+        protected virtual List<Tuple<ulong, ulong>> AllowedStringOffsets => null;
         protected virtual List<ExePatch> Patches => new List<ExePatch>();
 
         public override int SubtitleCount => 1;
@@ -182,7 +182,18 @@ namespace YakuzaCommon.Files.Exe
                     {
                         var possibleStringOffset = value - stringsSectionBase;
 
-                        var allowed = AllowedStringOffsets.Any(x => x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+                        bool allowed;
+
+                        if (AllowedStringOffsets != null)
+                        {
+                            allowed = AllowedStringOffsets.Any(x =>
+                                x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+                        }
+                        else
+                        {
+                            allowed = (stringsSection.Header.PointerToRawData <= possibleStringOffset) &&
+                                      (possibleStringOffset < (stringsSection.Header.PointerToRawData + stringsSection.Header.SizeOfRawData));
+                        }
 
                         if (allowed)
                         {
@@ -351,10 +362,10 @@ namespace YakuzaCommon.Files.Exe
         {
             var data = GetSubtitles();
 
+            CreateExeFile(outputFile);
+
             if (data.Any(x => x.Text != x.Translation))
             {
-                CreateExeFile(outputFile);
-
                 var peInfo = WindowsAssembly.FromFile(outputFile);
 
                 using (var inputFs = new FileStream(Path, FileMode.Open))
@@ -390,8 +401,17 @@ namespace YakuzaCommon.Files.Exe
                         {
                             var possibleStringOffset = value - stringsSectionBase;
 
-                            var allowed = AllowedStringOffsets.Any(x =>
-                                x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+                            bool allowed;
+                            if (AllowedStringOffsets != null)
+                            {
+                                allowed = AllowedStringOffsets.Any(x =>
+                                    x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+                            }
+                            else
+                            {
+                                allowed = (stringsSection.Header.PointerToRawData <= possibleStringOffset) &&
+                                          (possibleStringOffset < (stringsSection.Header.PointerToRawData + stringsSection.Header.SizeOfRawData));
+                            }
 
                             if (allowed)
                             {

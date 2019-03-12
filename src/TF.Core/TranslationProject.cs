@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -253,8 +254,13 @@ namespace TF.Core
 
                     // 3. Empaquetar
                     worker.ReportProgress(0, "Empaquetando fichero...");
-                    Game.RepackFile(dest, outputFile, options.UseCompression);
 
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    Game.RepackFile(dest, outputFile, options.UseCompression);
+                    stopwatch.Stop();
+                    var elapsed_time = stopwatch.ElapsedMilliseconds;
+                    worker.ReportProgress(0, $"{elapsed_time} ms");
                     // 4. Eliminar la carpeta temporal
                     if (!options.SaveTempFiles)
                     {
