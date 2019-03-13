@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Mfpb
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         private readonly int MAX_SIZE = 0xC0;
 
@@ -17,50 +17,37 @@ namespace YakuzaCommon.Files.Mfpb
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
-                input.Skip(0x24);
+                input.Seek(0x20, SeekOrigin.Begin);
+
                 var pointer = input.ReadInt32();
                 if (pointer > -1)
                 {
                     input.Seek(pointer, SeekOrigin.Begin);
-                    var offset = input.ReadInt32();
-                    if (offset > 0)
-                    {
-                        result.Add(ReadSubtitle(input, offset));
-                    }
+
+                    var subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
+                }
+
+                input.Seek(0x24, SeekOrigin.Begin);
+
+                pointer = input.ReadInt32();
+                if (pointer > -1)
+                {
+                    input.Seek(pointer, SeekOrigin.Begin);
+
+                    var subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle { Offset = offset };
-            var pos = input.Position;
-            input.Seek(offset, SeekOrigin.Begin);
-            result.Text = input.ReadString();
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
-            input.Seek(pos, SeekOrigin.Begin);
+            LoadChanges(result);
 
             return result;
         }

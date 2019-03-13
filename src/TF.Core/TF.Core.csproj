@@ -62,13 +62,18 @@
     <Compile Include="Entities\IGame.cs" />
     <Compile Include="Entities\TranslationFile.cs" />
     <Compile Include="Entities\TranslationFileContainer.cs" />
-    <Compile Include="Exceptions\ChangesFileVersionMismatchException.cs" />
     <Compile Include="Exceptions\UserCancelException.cs" />
-    <Compile Include="Files\DDS\DDSFile.cs" />
-    <Compile Include="Files\DDS\DDSView.cs">
+    <Compile Include="Files\BinaryTextFileWithOffsetTable.cs" />
+    <Compile Include="Files\TextFile.cs" />
+    <Compile Include="Files\DDSFile.cs" />
+    <Compile Include="Files\BinaryTextFile.cs" />
+    <Compile Include="TranslationEntities\FixedLengthSubtitle.cs" />
+    <Compile Include="TranslationEntities\Subtitle.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Views\DDSView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Files\DDS\DDSView.Designer.cs">
+    <Compile Include="Views\DDSView.Designer.cs">
       <DependentUpon>DDSView.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\PathHelper.cs" />
@@ -78,14 +83,23 @@
     <Compile Include="POCO\ExportOptions.cs" />
     <Compile Include="TranslationProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\GridView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\GridView.Designer.cs">
+      <DependentUpon>GridView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Files\DDS\DDSView.resx">
+    <EmbeddedResource Include="Views\DDSView.resx">
       <DependentUpon>DDSView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GridView.resx">
+      <DependentUpon>GridView.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

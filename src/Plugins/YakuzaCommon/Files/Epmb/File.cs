@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Epmb
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFile
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,19 +15,6 @@ namespace YakuzaCommon.Files.Epmb
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
@@ -40,21 +26,16 @@ namespace YakuzaCommon.Files.Epmb
                 for (var i = 0; i < count; i++)
                 {
                     input.ReadInt32();
-                    var returnPos = input.Position;
-                    result.Add(ReadSubtitle(input));
-                    input.Seek(returnPos + 64, SeekOrigin.Begin);
+
+                    var subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
+
+                    input.Seek(subtitle.Offset + 64, SeekOrigin.Begin);
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input)
-        {
-            var result = new Subtitle {Offset = input.Position, Text = input.ReadString()};
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
+            LoadChanges(result);
 
             return result;
         }
@@ -78,24 +59,24 @@ namespace YakuzaCommon.Files.Epmb
                 for (var i = 0; i < count; i++)
                 {
                     output.Write(input.ReadInt32());
+
                     var offset = (int)input.Position;
-                    input.Skip(64);
-                    WriteString(output, subtitles, offset);
+                    WriteSubtitle(output, subtitles, offset);
+
+                    input.Seek(offset + 64, SeekOrigin.Begin);
                 }
             }
         }
 
-        private void WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset)
+        private void WriteSubtitle(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int offset)
         {
-            var str = subtitles.First(x => x.Offset == inputOffset);
-            var startPos = output.Position;
+            output.Seek(offset, SeekOrigin.Begin);
             var zeros = new byte[64];
             output.Write(zeros);
 
-            output.Seek(-64, SeekOrigin.Current);
-            output.WriteString(str.Translation);
+            WriteSubtitle(output, subtitles, offset, offset);
 
-            output.Seek(startPos + 64, SeekOrigin.Begin);
+            output.Seek(offset + 64, SeekOrigin.Begin);
         }
     }
 }

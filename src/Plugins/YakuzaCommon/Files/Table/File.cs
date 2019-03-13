@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TF.Core.Entities;
-using TF.Core.Exceptions;
 using TF.Core.Helpers;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
@@ -90,17 +86,7 @@ namespace YakuzaCommon.Files.Table
                 }
             }
 
-            if (HasChanges)
-            {
-                try
-                {
-                    LoadChanges(ChangesFile, result);
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
+            LoadChanges(result);
 
             return result;
         }
@@ -130,7 +116,7 @@ namespace YakuzaCommon.Files.Table
         public override void SaveChanges()
         {
             using (var fs = new FileStream(ChangesFile, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
+            using (var output = new ExtendedBinaryWriter(fs, Encoding.Unicode))
             {
                 output.Write(ChangesFileVersion);
                 foreach (var column in _data.Columns)
@@ -143,23 +129,27 @@ namespace YakuzaCommon.Files.Table
             OnFileChanged();
         }
 
-        protected virtual void LoadChanges(string file, TableData data)
+        protected virtual void LoadChanges(TableData data)
         {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
+            if (HasChanges)
             {
-                var version = input.ReadInt32();
-
-                if (version != ChangesFileVersion)
+                using (var fs = new FileStream(ChangesFile, FileMode.Open))
+                using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
                 {
-                    throw new ChangesFileVersionMismatchException();
-                }
+                    var version = input.ReadInt32();
 
-                foreach (var column in data.Columns)
-                {
-                    column.PropertyChanged -= SubtitlePropertyChanged;
-                    column.LoadChanges(input);
-                    column.PropertyChanged += SubtitlePropertyChanged;
+                    if (version != ChangesFileVersion)
+                    {
+                        System.IO.File.Delete(ChangesFile);
+                        return;
+                    }
+
+                    foreach (var column in data.Columns)
+                    {
+                        column.PropertyChanged -= SubtitlePropertyChanged;
+                        column.LoadChanges(input);
+                        column.PropertyChanged += SubtitlePropertyChanged;
+                    }
                 }
             }
         }

@@ -1,6 +1,6 @@
-﻿namespace YakuzaCommon.Files.SimpleSubtitle
+﻿namespace TF.Core.Views
 {
-    partial class View
+    partial class GridView
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.SubtitleGridView = new YakuzaCommon.Files.SimpleSubtitle.View.TFDataGridView();
+            this.SubtitleGridView = new TF.Core.Views.GridView.TFDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SubtitleGridView)).BeginInit();
             this.SuspendLayout();

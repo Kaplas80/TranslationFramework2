@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Restaurant
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,19 +15,6 @@ namespace YakuzaCommon.Files.Restaurant
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
@@ -38,14 +24,14 @@ namespace YakuzaCommon.Files.Restaurant
                 var groupCount = input.ReadInt16();
                 input.Skip(8);
 
+                Subtitle subtitle;
                 for (var i = 0; i < 43; i++)
                 {
-                    var offset = input.ReadInt32();
-                    var returnPos = input.Position;
-                    result.Add(ReadSubtitle(input, offset));
-                    input.Seek(returnPos, SeekOrigin.Begin);
+                    subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
                 }
-                
+
                 input.Seek(0x110, SeekOrigin.Begin);
                 for (var i = 0; i < groupCount; i++)
                 {
@@ -57,26 +43,15 @@ namespace YakuzaCommon.Files.Restaurant
 
                     var returnPos = input.Position;
 
-                    result.Add(ReadSubtitle(input, offsets[8]));
+                    subtitle = ReadSubtitle(input, offsets[8], false);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
 
                     input.Seek(returnPos, SeekOrigin.Begin);
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle {Offset = offset};
-            if (offset > 0)
-            {
-                input.Seek(offset, SeekOrigin.Begin);
-                result.Text = input.ReadString();
-                result.Loaded = result.Text;
-                result.Translation = result.Text;
-                result.PropertyChanged += SubtitlePropertyChanged;
-            }
+            LoadChanges(result);
 
             return result;
         }
@@ -98,16 +73,17 @@ namespace YakuzaCommon.Files.Restaurant
                 output.Write(groupCount);
                 output.Write(input.ReadBytes(8));
 
-                var outputOffset = input.PeekInt32();
+                long outputOffset = input.PeekInt32();
                 var firstStringOffset = outputOffset;
 
                 for (var i = 0; i < 43; i++)
                 {
                     var offset = input.ReadInt32();
-                    outputOffset = WriteString(output, subtitles, offset, outputOffset);
+                    outputOffset = WriteSubtitle(output, subtitles, offset, outputOffset);
                 }
 
                 output.Write(input.ReadBytes(0x110 - (int)input.Position));
+
                 for (var i = 0; i < groupCount; i++)
                 {
                     var offsets = new int[12];
@@ -121,7 +97,7 @@ namespace YakuzaCommon.Files.Restaurant
                         output.Write(offsets[j]);
                     }
 
-                    outputOffset = WriteString(output, subtitles, offsets[8], outputOffset);
+                    outputOffset = WriteSubtitle(output, subtitles, offsets[8], outputOffset);
 
                     for (var j = 9; j < 12; j++)
                     {
@@ -129,30 +105,8 @@ namespace YakuzaCommon.Files.Restaurant
                     }
                 }
 
-                output.Write(input.ReadBytes(firstStringOffset - (int)input.Position));
+                output.Write(input.ReadBytes((int)(firstStringOffset - input.Position)));
             }
-        }
-
-        private int WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset, int outputOffset)
-        {
-            var result = outputOffset;
-
-            if (inputOffset == 0)
-            {
-                output.Write(0);
-            }
-            else
-            {
-                var str = subtitles.First(x => x.Offset == inputOffset);
-                output.Write(outputOffset);
-                var retPos = output.Position;
-                output.Seek(outputOffset, SeekOrigin.Begin);
-                output.WriteString(str.Translation);
-                result = (int)output.Position;
-                output.Seek(retPos, SeekOrigin.Begin);
-            }
-
-            return result;
         }
     }
 }

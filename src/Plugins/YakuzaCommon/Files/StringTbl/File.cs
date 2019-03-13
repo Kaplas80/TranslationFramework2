@@ -2,13 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.StringTbl
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,19 +16,6 @@ namespace YakuzaCommon.Files.StringTbl
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
@@ -45,29 +32,16 @@ namespace YakuzaCommon.Files.StringTbl
                     input.Seek(offset1, SeekOrigin.Begin);
                     for (var j = 0; j < count2; j++)
                     {
-                        var offset2 = input.ReadInt32();
-                        if (offset2 > 0)
-                        {
-                            result.Add(ReadSubtitle(input, offset2));
-                        }
+                        var subtitle = ReadSubtitle(input);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
                     input.Seek(returnPos, SeekOrigin.Begin);
                 }
             }
 
-            return result;
-        }
+            LoadChanges(result);
 
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle {Offset = offset};
-            var returnPos = input.Position;
-            input.Seek(offset, SeekOrigin.Begin);
-            result.Text = input.ReadString();
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
-            input.Seek(returnPos, SeekOrigin.Begin);
             return result;
         }
 
@@ -85,13 +59,13 @@ namespace YakuzaCommon.Files.StringTbl
             using (var tempMemoryStream = new MemoryStream())
             using (var tempOutput = new ExtendedBinaryWriter(tempMemoryStream, FileEncoding, Endianness.BigEndian))
             {
-                var offsets = new List<int>();
+                var offsets = new List<long>();
 
                 var count1 = input.ReadInt32();
                 output.Write(count1);
                 output.Write(input.ReadBytes(4));
 
-                var outputOffset = 0;
+                long outputOffset = 0;
 
                 for (var i = 0; i < count1; i++)
                 {
@@ -105,7 +79,7 @@ namespace YakuzaCommon.Files.StringTbl
                     
                     for (var j = 0; j < count2; j++)
                     {
-                        var offset2 = input.ReadInt32();
+                        long offset2 = input.ReadInt32();
                         if (offset2 == 0)
                         {
                             offsets.Add(-1);
@@ -113,7 +87,7 @@ namespace YakuzaCommon.Files.StringTbl
                         else 
                         {
                             offsets.Add(outputOffset);
-                            outputOffset = WriteString(tempOutput, subtitles, offset2);
+                            outputOffset = WriteSubtitle(tempOutput, subtitles, offset2);
                         }
                     }
                     input.Seek(returnPos, SeekOrigin.Begin);
@@ -129,7 +103,7 @@ namespace YakuzaCommon.Files.StringTbl
                     }
                     else
                     {
-                        output.Write(outputOffset + offset);
+                        output.Write((int)(outputOffset + offset));
                     }
                 }
 
@@ -138,10 +112,10 @@ namespace YakuzaCommon.Files.StringTbl
             }
         }
 
-        private int WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset)
+        private long WriteSubtitle(ExtendedBinaryWriter output, IList<Subtitle> subtitles, long inputOffset)
         {
-            var str = subtitles.First(x => x.Offset == inputOffset);
-            output.WriteString(str.Translation);
+            var sub = subtitles.First(x => x.Offset == inputOffset);
+            output.WriteString(sub.Translation);
             var result = (int) output.Position;
 
             return result;

@@ -14,6 +14,9 @@ namespace TF.Core.Entities
 
     public class TranslationFile
     {
+        public event FileChangedEventHandler FileChanged;
+        public delegate void FileChangedEventHandler();
+
         private string _id;
         private readonly string _changesFolder;
 
@@ -25,6 +28,7 @@ namespace TF.Core.Entities
                 ChangesFile = System.IO.Path.Combine(_changesFolder, $"{value}.tf");
             }
         }
+
         public string Path { get; set; }
         public string RelativePath { get; set; }
         public string Name { get; set; }
@@ -81,14 +85,6 @@ namespace TF.Core.Entities
             OnFileChanged();
         }
 
-        public event FileChangedEventHandler FileChanged;
-        public delegate void FileChangedEventHandler();
-
-        protected virtual void OnFileChanged()
-        {
-            FileChanged?.Invoke();
-        }
-
         public virtual bool Search(string searchString)
         {
             return false;
@@ -97,6 +93,11 @@ namespace TF.Core.Entities
         public virtual bool SearchText(string searchString, int direction)
         {
             return false;
+        }
+
+        protected virtual void OnFileChanged()
+        {
+            FileChanged?.Invoke();
         }
     }
 }

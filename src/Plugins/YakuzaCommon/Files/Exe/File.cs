@@ -5,25 +5,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AsmResolver;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
-using YakuzaCommon.Files.SimpleSubtitle;
-using View = YakuzaCommon.Files.SimpleSubtitle.View;
 
 namespace YakuzaCommon.Files.Exe
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFile
     {
         private CharacterInfo[] _data;
-        private FontTableView _ftview;
+        private FontTableView _ftView;
         private PatchView _patchView;
         private List<ExePatch> _patches;
 
         protected virtual long FontTableOffset => 0;
         protected virtual string PointerSectionName => "";
         protected virtual string StringsSectionName => "";
-        protected virtual List<Tuple<ulong, ulong>> AllowedStringOffsets => null;
+        protected virtual List<Tuple<long, long>> AllowedStringOffsets => null;
         protected virtual List<ExePatch> Patches => new List<ExePatch>();
 
         public override int SubtitleCount => 1;
@@ -34,25 +33,20 @@ namespace YakuzaCommon.Files.Exe
 
         public override void Open(DockPanel panel, ThemeBase theme)
         {
-            _view = new View(theme);
-            _subtitles = GetSubtitles();
-            _view.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
-            _view.Show(panel, DockState.Document);
-
-            _ftview = new FontTableView(theme);
-            _data = GetFontTable();
-            _ftview.LoadFontTable(_data);
-            _ftview.Show(panel, DockState.Document);
-
             _patchView = new PatchView(theme);
             _patches = GetPatches();
             _patchView.LoadPatches(_patches);
             _patchView.Show(panel, DockState.Document);
 
-            _view.Show(_view.Pane, null);
+            _ftView = new FontTableView(theme);
+            _data = GetFontTable();
+            _ftView.LoadFontTable(_data);
+            _ftView.Show(panel, DockState.Document);
+
+            base.Open(panel, theme);
         }
 
-        private List<ExePatch> GetPatches()
+        protected virtual List<ExePatch> GetPatches()
         {
             var result = new List<ExePatch>();
             foreach (var exePatch in Patches)
@@ -60,17 +54,7 @@ namespace YakuzaCommon.Files.Exe
                 result.Add(exePatch);
             }
 
-            if (HasChanges)
-            {
-                try
-                {
-                    LoadPatchesChanges(ChangesFile, result);
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
+            LoadPatchesChanges(result);
 
             foreach (var exePatch in result)
             {
@@ -123,17 +107,7 @@ namespace YakuzaCommon.Files.Exe
                 }
             }
 
-            if (HasChanges)
-            {
-                try
-                {
-                    LoadFontTableChanges(ChangesFile, result);
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
+            LoadFontTableChanges(result);
 
             for (var i = 0; i < 256; i++)
             {
@@ -146,19 +120,6 @@ namespace YakuzaCommon.Files.Exe
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             var peInfo = WindowsAssembly.FromFile(Path);
@@ -171,13 +132,12 @@ namespace YakuzaCommon.Files.Exe
                 var pointerCount = pointerSection.GetPhysicalLength() / 8;
 
                 var stringsSection = peInfo.GetSectionByName(StringsSectionName);
-                var stringsSectionBase = peInfo.NtHeaders.OptionalHeader.ImageBase +
-                                  (stringsSection.Header.VirtualAddress - stringsSection.Header.PointerToRawData);
-
+                var stringsSectionBase = (long) (peInfo.NtHeaders.OptionalHeader.ImageBase +
+                                                  (stringsSection.Header.VirtualAddress - stringsSection.Header.PointerToRawData));
                 for (var i = 0; i < pointerCount; i++)
                 {
                     input.Seek(pointerSectionStart + i * 8, SeekOrigin.Begin);
-                    var value = input.ReadUInt64();
+                    var value = input.ReadInt64();
                     if (value != 0)
                     {
                         var possibleStringOffset = value - stringsSectionBase;
@@ -197,13 +157,11 @@ namespace YakuzaCommon.Files.Exe
 
                         if (allowed)
                         {
-                            var exists = result.Any(x => x.Offset == (long) possibleStringOffset);
+                            var exists = result.Any(x => x.Offset == possibleStringOffset);
 
                             if (!exists)
                             {
-                                input.Seek((long) possibleStringOffset, SeekOrigin.Begin);
-                                var str = input.ReadString();
-                                var sub = new Subtitle { Offset = (long) possibleStringOffset, Text = str, Translation = str, Loaded = str };
+                                var sub = ReadSubtitle(input, possibleStringOffset, false);
                                 sub.PropertyChanged += SubtitlePropertyChanged;
 
                                 result.Add(sub);
@@ -214,6 +172,8 @@ namespace YakuzaCommon.Files.Exe
                 
                 result.Sort();
             }
+
+            LoadChanges(result);
 
             return result;
         }
@@ -247,7 +207,6 @@ namespace YakuzaCommon.Files.Exe
                 foreach (var subtitle in _subtitles)
                 {
                     output.Write(subtitle.Offset);
-                    output.WriteString(subtitle.Text);
                     output.WriteString(subtitle.Translation);
 
                     subtitle.Loaded = subtitle.Translation;
@@ -258,93 +217,102 @@ namespace YakuzaCommon.Files.Exe
             OnFileChanged();
         }
 
-        protected override IList<Subtitle> LoadChanges(string file)
+        protected override void LoadChanges(IList<Subtitle> subtitles)
         {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
+            if (HasChanges)
             {
-                var version = input.ReadInt32();
-
-                if (version != ChangesFileVersion)
+                using (var fs = new FileStream(ChangesFile, FileMode.Open))
+                using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
                 {
-                    throw new ChangesFileVersionMismatchException();
-                }
+                    var version = input.ReadInt32();
 
-                input.Skip(256 * 6 * 4);
-
-                input.Skip(Patches.Count * 4);
-
-                var result = new List<Subtitle>();
-                var subtitleCount = input.ReadInt32();
-
-                for (var i = 0; i < subtitleCount; i++)
-                {
-                    var subtitle = new Subtitle
+                    if (version != ChangesFileVersion)
                     {
-                        Offset = input.ReadInt64(),
-                        Text = input.ReadString(),
-                        Translation = input.ReadString()
-                    };
-                    subtitle.Loaded = subtitle.Translation;
+                        System.IO.File.Delete(ChangesFile);
+                        return;
+                    }
 
-                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    input.Skip(256 * 6 * 4);
 
-                    result.Add(subtitle);
-                }
+                    input.Skip(Patches.Count * 4);
 
-                return result;
-            }
-        }
+                    var subtitleCount = input.ReadInt32();
 
-        private void LoadFontTableChanges(string file, CharacterInfo[] data)
-        {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
-            {
-                var version = input.ReadInt32();
+                    for (var i = 0; i < subtitleCount; i++)
+                    {
+                        var offset = input.ReadInt64();
+                        var text = input.ReadString();
 
-                if (version != ChangesFileVersion)
-                {
-                    throw new ChangesFileVersionMismatchException();
-                }
-
-                for (var i = 0; i < 256; i++)
-                {
-                    data[i][0] = input.ReadSingle();
-                    data[i][1] = input.ReadSingle();
-                    data[i][2] = input.ReadSingle();
-                    data[i][3] = input.ReadSingle();
-                    data[i][4] = input.ReadSingle();
-                    data[i][5] = input.ReadSingle();
+                        var subtitle = subtitles.FirstOrDefault(x => x.Offset == offset);
+                        if (subtitle != null)
+                        {
+                            subtitle.PropertyChanged -= SubtitlePropertyChanged;
+                            subtitle.Translation = text;
+                            subtitle.Loaded = subtitle.Translation;
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        }
+                    }
                 }
             }
         }
 
-        private void LoadPatchesChanges(string file, IList<ExePatch> data)
+        private void LoadFontTableChanges( CharacterInfo[] data)
         {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
+            if (HasChanges)
             {
-                var version = input.ReadInt32();
-
-                if (version != ChangesFileVersion)
+                using (var fs = new FileStream(ChangesFile, FileMode.Open))
+                using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
                 {
-                    throw new ChangesFileVersionMismatchException();
+                    var version = input.ReadInt32();
+
+                    if (version != ChangesFileVersion)
+                    {
+                        System.IO.File.Delete(ChangesFile);
+                        return;
+                    }
+
+                    for (var i = 0; i < 256; i++)
+                    {
+                        data[i][0] = input.ReadSingle();
+                        data[i][1] = input.ReadSingle();
+                        data[i][2] = input.ReadSingle();
+                        data[i][3] = input.ReadSingle();
+                        data[i][4] = input.ReadSingle();
+                        data[i][5] = input.ReadSingle();
+                    }
                 }
+            }
+        }
 
-                input.Skip(256 * 6 * 4);
-
-                foreach (var patch in data)
+        private void LoadPatchesChanges(IList<ExePatch> data)
+        {
+            if (HasChanges)
+            {
+                using (var fs = new FileStream(ChangesFile, FileMode.Open))
+                using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
                 {
-                    var value = input.ReadInt32();
-                    patch.Enabled = value == 1;
+                    var version = input.ReadInt32();
+
+                    if (version != ChangesFileVersion)
+                    {
+                        System.IO.File.Delete(ChangesFile);
+                        return;
+                    }
+
+                    input.Skip(256 * 6 * 4);
+
+                    foreach (var patch in data)
+                    {
+                        var value = input.ReadInt32();
+                        patch.Enabled = value == 1;
+                    }
                 }
             }
         }
 
         protected override void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            NeedSaving = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation) || _data.Any(x => x.HasChanged || _patches.Any(y => y.HasChanges));
+            NeedSaving = _subtitles.Any(subtitle => subtitle.HasChanges) || _data.Any(x => x.HasChanged) || _patches.Any(y => y.HasChanges);
             OnFileChanged();
         }
 
@@ -362,41 +330,41 @@ namespace YakuzaCommon.Files.Exe
         {
             var data = GetSubtitles();
 
-            CreateExeFile(outputFile);
-
             if (data.Any(x => x.Text != x.Translation))
             {
+                CreateExeFile(outputFile);
+
                 var peInfo = WindowsAssembly.FromFile(outputFile);
 
                 using (var inputFs = new FileStream(Path, FileMode.Open))
-                using (var input = new ExtendedBinaryReader(inputFs, FileEncoding, Endianness.LittleEndian))
+                using (var input = new ExtendedBinaryReader(inputFs, FileEncoding))
                 using (var outputFs = new FileStream(outputFile, FileMode.Open))
-                using (var output = new ExtendedBinaryWriter(outputFs, FileEncoding, Endianness.LittleEndian))
+                using (var output = new ExtendedBinaryWriter(outputFs, FileEncoding))
                 {
                     var pointerSection = peInfo.GetSectionByName(PointerSectionName);
                     var pointerSectionStart = pointerSection.Header.PointerToRawData;
                     var pointerCount = pointerSection.GetPhysicalLength() / 8;
 
                     var stringsSection = peInfo.GetSectionByName(StringsSectionName);
-                    var stringsSectionBase = peInfo.NtHeaders.OptionalHeader.ImageBase +
-                                             (stringsSection.Header.VirtualAddress -
-                                              stringsSection.Header.PointerToRawData);
+                    var stringsSectionBase = (long) (peInfo.NtHeaders.OptionalHeader.ImageBase +
+                                                     (stringsSection.Header.VirtualAddress -
+                                                      stringsSection.Header.PointerToRawData));
 
                     var translationSection = peInfo.GetSectionByName(".trad\0\0\0");
-                    var translationSectionBase = peInfo.NtHeaders.OptionalHeader.ImageBase +
-                                                 (translationSection.Header.VirtualAddress -
-                                                  translationSection.Header.PointerToRawData);
+                    var translationSectionBase = (long) (peInfo.NtHeaders.OptionalHeader.ImageBase +
+                                                         (translationSection.Header.VirtualAddress -
+                                                          translationSection.Header.PointerToRawData));
 
-                    var used = new Dictionary<ulong, ulong>();
+                    var used = new Dictionary<long, long>();
 
-                    var outputOffset = translationSection.Header.PointerToRawData;
+                    var outputOffset = (long)translationSection.Header.PointerToRawData;
 
                     for (var i = 0; i < pointerCount; i++)
                     {
                         input.Seek(pointerSectionStart + i * 8, SeekOrigin.Begin);
                         output.Seek(pointerSectionStart + i * 8, SeekOrigin.Begin);
 
-                        var value = input.ReadUInt64();
+                        var value = input.ReadInt64();
                         if (value != 0)
                         {
                             var possibleStringOffset = value - stringsSectionBase;
@@ -427,13 +395,7 @@ namespace YakuzaCommon.Files.Exe
                                     output.Write(newOffset);
                                     used[possibleStringOffset] = newOffset;
 
-                                    output.Seek(outputOffset, SeekOrigin.Begin);
-
-                                    var sub = data.First(x => x.Offset == (long) possibleStringOffset);
-
-                                    output.WriteString(sub.Translation);
-
-                                    outputOffset = (uint) output.Position;
+                                    outputOffset = WriteSubtitle(output, data, possibleStringOffset, outputOffset);
                                 }
                             }
                         }
@@ -522,7 +484,7 @@ namespace YakuzaCommon.Files.Exe
             var data = GetFontTable();
 
             using (var fs = new FileStream(outputFile, FileMode.Open))
-            using (var output = new ExtendedBinaryWriter(fs, FileEncoding, Endianness.LittleEndian))
+            using (var output = new ExtendedBinaryWriter(fs, FileEncoding))
             {
                 output.Seek(FontTableOffset, SeekOrigin.Begin);
 
@@ -548,7 +510,7 @@ namespace YakuzaCommon.Files.Exe
             var data = GetPatches();
 
             using (var fs = new FileStream(outputFile, FileMode.Open))
-            using (var output = new ExtendedBinaryWriter(fs, FileEncoding, Endianness.LittleEndian))
+            using (var output = new ExtendedBinaryWriter(fs, FileEncoding))
             {
                 foreach (var patch in data)
                 {

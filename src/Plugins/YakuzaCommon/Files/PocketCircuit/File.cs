@@ -1,77 +1,67 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using TF.Core.Exceptions;
+using System.Text;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
 
 namespace YakuzaCommon.Files.PocketCircuit
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFile
     {
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
-        protected override IList<YakuzaCommon.Files.SimpleSubtitle.Subtitle> GetSubtitles()
+        protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
+            IList<Subtitle> result;
 
             if (Name.StartsWith("pokecir_car.bin"))
             {
-                return GetSubtitlesPOCB();
+                result = GetSubtitlesPOCB();
             }
-
-            if (Name.StartsWith("pokecir_chara_set.bin"))
+            else if (Name.StartsWith("pokecir_chara_set.bin"))
             {
-                return GetSubtitlesPCSB();
+                result = GetSubtitlesPCSB();
             }
-
-            if (Name.StartsWith("pokecir_chara.bin"))
+            else if (Name.StartsWith("pokecir_chara.bin"))
             {
-                return GetSubtitlesPOCB1();
+                result = GetSubtitlesPOCB1();
             }
-
-            if (Name.StartsWith("pokecir_competition.bin"))
+            else if (Name.StartsWith("pokecir_competition.bin"))
             {
-                return GetSubtitlesPOCB2();
+                result = GetSubtitlesPOCB2();
             }
-
-            if (Name.StartsWith("pokecir_course.bin"))
+            else if (Name.StartsWith("pokecir_course.bin"))
             {
-                return GetSubtitlesPOCB3();
+                result = GetSubtitlesPOCB3();
             }
-
-            if (Name.StartsWith("pokecir_parts_type.bin"))
+            else if (Name.StartsWith("pokecir_parts_type.bin"))
             {
-                return GetSubtitlesPPTB();
+                result = GetSubtitlesPPTB();
             }
-
-            if (Name.StartsWith("pokecir_parts.bin"))
+            else if (Name.StartsWith("pokecir_parts.bin"))
             {
-                return GetSubtitlesPOPB();
+                result = GetSubtitlesPOPB();
             }
-
-            if (Name.StartsWith("pokecir_unit_set.bin"))
+            else if (Name.StartsWith("pokecir_unit_set.bin"))
             {
-                return GetSubtitlesPUSB();
+                result = GetSubtitlesPUSB();
+            }
+            else
+            {
+                result = new List<Subtitle>();
             }
 
-            return new List<SimpleSubtitle.Subtitle>();
+            LoadChanges(result);
+
+            return result;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB()
+        private IList<Subtitle> GetSubtitlesPOCB()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -84,17 +74,12 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(20); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-                    var subtitle = new Subtitle {Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-                    
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
 
-                    input.Seek(offset + 64, SeekOrigin.Begin);
                     input.Skip(4); // unknown
                 }
             }
@@ -102,9 +87,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPCSB()
+        private IList<Subtitle> GetSubtitlesPCSB()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -117,27 +102,17 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(17); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-                    input.Seek(offset + 64, SeekOrigin.Begin);
 
-                    offset = input.Position;
-                    str = input.ReadString();
-                    subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 192 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    subtitle = ReadSubtitle(input, 192);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-                    input.Seek(offset + 192, SeekOrigin.Begin);
 
                     input.SkipPadding(4);
                 }
@@ -146,9 +121,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB1()
+        private IList<Subtitle> GetSubtitlesPOCB1()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -161,16 +136,11 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(2); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-                    input.Seek(offset + 64, SeekOrigin.Begin);
 
                     input.Skip(42); // unknown
                 }
@@ -179,9 +149,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB2()
+        private IList<Subtitle> GetSubtitlesPOCB2()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -194,29 +164,17 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(2); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
 
-                    input.Seek(offset + 64, SeekOrigin.Begin);
-
-                    offset = input.Position;
-                    str = input.ReadString();
-                    subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 192 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    subtitle = ReadSubtitle(input, 192);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-
-                    input.Seek(offset + 192, SeekOrigin.Begin);
 
                     input.SkipPadding(4);
                 }
@@ -225,9 +183,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOCB3()
+        private IList<Subtitle> GetSubtitlesPOCB3()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -241,27 +199,17 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // bin
                     input.Skip(3); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-                    input.Seek(offset + 64, SeekOrigin.Begin);
 
-                    offset = input.Position;
-                    str = input.ReadString();
-                    subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 192 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    subtitle = ReadSubtitle(input, 192);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-                    input.Seek(offset + 192, SeekOrigin.Begin);
 
                     input.SkipPadding(4);
                 }
@@ -270,9 +218,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPPTB()
+        private IList<Subtitle> GetSubtitlesPPTB()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -285,16 +233,11 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(1); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-                    input.Seek(offset + 64, SeekOrigin.Begin);
 
                     input.SkipPadding(4);
                 }
@@ -303,9 +246,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPOPB()
+        private IList<Subtitle> GetSubtitlesPOPB()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -318,29 +261,17 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(140); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
 
-                    input.Seek(offset + 64, SeekOrigin.Begin);
-
-                    offset = input.Position;
-                    str = input.ReadString();
-                    subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 192 };
-
-                    if (!string.IsNullOrEmpty(str))
+                    subtitle = ReadSubtitle(input, 192);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-
-                    input.Seek(offset + 192, SeekOrigin.Begin);
 
                     input.Skip(4);
                 }
@@ -349,9 +280,9 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        private IList<SimpleSubtitle.Subtitle> GetSubtitlesPUSB()
+        private IList<Subtitle> GetSubtitlesPUSB()
         {
-            var temp = new List<SimpleSubtitle.Subtitle>();
+            var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -364,17 +295,11 @@ namespace YakuzaCommon.Files.PocketCircuit
                     input.Skip(32); // id
                     input.Skip(11); // unknown
 
-                    var offset = input.Position;
-                    var str = input.ReadString();
-
-                    var subtitle = new Subtitle { Offset = offset, Text = str, Translation = str, Loaded = str, MaxLength = 64 };
-                    if (!string.IsNullOrEmpty(str))
+                    var subtitle = ReadSubtitle(input, 64);
+                    if (!string.IsNullOrEmpty(subtitle.Text))
                     {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
                         temp.Add(subtitle);
                     }
-
-                    input.Seek(offset + 64, SeekOrigin.Begin);
 
                     input.Skip(193); // unknown
                 }
@@ -383,63 +308,16 @@ namespace YakuzaCommon.Files.PocketCircuit
             return temp;
         }
 
-        public override void SaveChanges()
+        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int subtitleLength)
         {
-            using (var fs = new FileStream(ChangesFile, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
-            {
-                output.Write(ChangesFileVersion);
-                output.Write(_subtitles.Count);
-                foreach (var subtitle in _subtitles)
-                {
-                    var sub = subtitle as Subtitle;
-                    output.Write(sub.Offset);
-                    output.Write(sub.MaxLength);
-                    output.WriteString(sub.Text);
-                    output.WriteString(sub.Translation);
+            var sub = ReadSubtitle(input);
 
-                    sub.Loaded = sub.Translation;
-                }
-            }
+            var subtitle = new FixedLengthSubtitle(sub, subtitleLength);
+            subtitle.PropertyChanged += SubtitlePropertyChanged;
 
-            NeedSaving = false;
-            OnFileChanged();
-        }
+            input.Seek(subtitle.Offset + subtitle.MaxLength, SeekOrigin.Begin);
 
-        private new IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
-        {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
-            {
-                var version = input.ReadInt32();
-
-                if (version != ChangesFileVersion)
-                {
-                    throw new ChangesFileVersionMismatchException();
-                }
-
-                var result = new List<SimpleSubtitle.Subtitle>();
-                var subtitleCount = input.ReadInt32();
-
-                for (var i = 0; i < subtitleCount; i++)
-                {
-                    var sub = new Subtitle
-                    {
-                        Offset = input.ReadInt64(),
-                        MaxLength = input.ReadInt32(),
-                        Text = input.ReadString(),
-                        Translation = input.ReadString()
-                    };
-
-                    sub.Loaded = sub.Translation;
-
-                    sub.PropertyChanged += SubtitlePropertyChanged;
-
-                    result.Add(sub);
-                }
-
-                return result;
-            }
+            return subtitle;
         }
 
         public override void Rebuild(string outputFolder)
@@ -457,7 +335,7 @@ namespace YakuzaCommon.Files.PocketCircuit
                 {
                     output.Seek(subtitle.Offset, SeekOrigin.Begin);
 
-                    var sub = subtitle as Subtitle;
+                    var sub = subtitle as FixedLengthSubtitle;
                     var zeros = new byte[sub.MaxLength];
                     output.Write(zeros);
                     output.Seek(sub.Offset, SeekOrigin.Begin);

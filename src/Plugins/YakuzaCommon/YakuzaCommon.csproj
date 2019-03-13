@@ -106,6 +106,7 @@
     <Compile Include="Files\Mail\File.cs" />
     <Compile Include="Files\Mfpb\File.cs" />
     <Compile Include="Files\Msg\File.cs" />
+    <Compile Include="Files\Msg\Property.cs" />
     <Compile Include="Files\Msg\Subtitle.cs" />
     <Compile Include="Files\Msg\View.cs">
       <SubType>Form</SubType>
@@ -117,18 +118,10 @@
     <Compile Include="Files\PacFile.cs" />
     <Compile Include="Files\ParFile.cs" />
     <Compile Include="Files\PocketCircuit\File.cs" />
-    <Compile Include="Files\PocketCircuit\Subtitle.cs" />
     <Compile Include="Files\PresentSendThrow\File.cs" />
     <Compile Include="Files\Restaurant\File.cs" />
     <Compile Include="Files\Sale\File.cs" />
-    <Compile Include="Files\SimpleSubtitle\File.cs" />
-    <Compile Include="Files\SimpleSubtitle\Subtitle.cs" />
-    <Compile Include="Files\SimpleSubtitle\View.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Files\SimpleSubtitle\View.Designer.cs">
-      <DependentUpon>View.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Files\ArmsRepair\File.cs" />
     <Compile Include="Files\StreetName\File.cs" />
     <Compile Include="Files\StringTbl\File.cs" />
     <Compile Include="Files\Table\Column.cs" />
@@ -163,9 +156,6 @@
       <DependentUpon>FontTableView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Files\Msg\View.resx">
-      <DependentUpon>View.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Files\SimpleSubtitle\View.resx">
       <DependentUpon>View.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Files\Table\View.resx">

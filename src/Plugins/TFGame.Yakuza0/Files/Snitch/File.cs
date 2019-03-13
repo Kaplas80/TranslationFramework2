@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace TFGame.Yakuza0.Files.Snitch
 {
-    public class File : YakuzaCommon.Files.SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,19 +14,6 @@ namespace TFGame.Yakuza0.Files.Snitch
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
@@ -43,28 +28,16 @@ namespace TFGame.Yakuza0.Files.Snitch
                 for (var i = 0; i < count1 + count2; i++)
                 {
                     input.Skip(0x8);
-                    var offset = input.ReadInt32();
-                    if (offset > 0)
-                    {
-                        result.Add(ReadSubtitle(input, offset));
-                    }
+
+                    var subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
+
                     input.Skip(0x4);
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle { Offset = offset };
-            var pos = input.Position;
-            input.Seek(offset, SeekOrigin.Begin);
-            result.Text = input.ReadString();
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
-            input.Seek(pos, SeekOrigin.Begin);
+            LoadChanges(result);
 
             return result;
         }
@@ -93,7 +66,7 @@ namespace TFGame.Yakuza0.Files.Snitch
                 output.Write(count2);
                 output.Write(start2);
 
-                var outputOffset = 0x18 + 0x10 * (count1 + count2);
+                long outputOffset = 0x18 + 0x10 * (count1 + count2);
 
                 var inputStringOffsets = new int[count1 + count2];
                 var inputUnknownOffsets = new int[count1 + count2];
@@ -120,39 +93,19 @@ namespace TFGame.Yakuza0.Files.Snitch
 
                     output.Write(input.ReadBytes(8));
 
+                    var inputSubtitle = ReadSubtitle(input);
+                    outputOffset = WriteSubtitle(output, subtitles, inputSubtitle.Offset, outputOffset);
+
                     var inputOffset = input.ReadInt32();
-                    outputOffset = WriteString(output, subtitles, inputOffset, outputOffset);
-                    inputOffset = input.ReadInt32();
                     output.Write(outputOffset);
                     
                     input.Seek(inputOffset, SeekOrigin.Begin);
                     output.Seek(outputOffset, SeekOrigin.Begin);
+
                     output.Write(input.ReadBytes(inputUnknownSizes[i]));
                     outputOffset += inputUnknownSizes[i];
                 }
             }
-        }
-
-        private int WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset, int outputOffset)
-        {
-            var result = outputOffset;
-
-            if (inputOffset == 0)
-            {
-                output.Write(0);
-            }
-            else
-            {
-                var str = subtitles.First(x => x.Offset == inputOffset);
-                output.Write(outputOffset);
-                var retPos = output.Position;
-                output.Seek(outputOffset, SeekOrigin.Begin);
-                output.WriteString(str.Translation);
-                result = (int)output.Position;
-                output.Seek(retPos, SeekOrigin.Begin);
-            }
-
-            return result;
         }
     }
 }

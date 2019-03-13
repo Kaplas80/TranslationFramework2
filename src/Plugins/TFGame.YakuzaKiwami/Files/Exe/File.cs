@@ -10,24 +10,24 @@ namespace TFGame.YakuzaKiwami.Files.Exe
         protected override string PointerSectionName => ".data\0\0\0";
         protected override string StringsSectionName => ".rdata\0\0";
 
-        protected override List<Tuple<ulong, ulong>> AllowedStringOffsets => new List<Tuple<ulong, ulong>>()
+        protected override List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
-            new Tuple<ulong, ulong>(0x00C9A128, 0x00C9A128),
-            new Tuple<ulong, ulong>(0x00C9F5F8, 0x00C9F610),
-            new Tuple<ulong, ulong>(0x00CA8800, 0x00CA8CF0),
-            new Tuple<ulong, ulong>(0x00CAA228, 0x00CAB070),
-            new Tuple<ulong, ulong>(0x00CAC528, 0x00CAC540),
-            new Tuple<ulong, ulong>(0x00CAD0B0, 0x00CB0A00),
-            new Tuple<ulong, ulong>(0x00D5B5B0, 0x00D5BE58),
-            new Tuple<ulong, ulong>(0x00D5CEB0, 0x00D5CF20),
-            new Tuple<ulong, ulong>(0x00D5D090, 0x00D5D090),
-            new Tuple<ulong, ulong>(0x00D8CA90, 0x00D8CA90),
-            new Tuple<ulong, ulong>(0x00DA09C0, 0x00DA09C0),
-            new Tuple<ulong, ulong>(0x00DA2A00, 0x00DA2A20),
-            new Tuple<ulong, ulong>(0x00DA68E0, 0x00DA6E70),
-            new Tuple<ulong, ulong>(0x00DA7048, 0x00DA7170),
-            new Tuple<ulong, ulong>(0x00DABA10, 0x00DACDB0),
-            new Tuple<ulong, ulong>(0x00E133F0, 0x00E2D2E8),
+            new Tuple<long, long>(0x00C9A128, 0x00C9A128),
+            new Tuple<long, long>(0x00C9F5F8, 0x00C9F610),
+            new Tuple<long, long>(0x00CA8800, 0x00CA8CF0),
+            new Tuple<long, long>(0x00CAA228, 0x00CAB070),
+            new Tuple<long, long>(0x00CAC528, 0x00CAC540),
+            new Tuple<long, long>(0x00CAD0B0, 0x00CB0A00),
+            new Tuple<long, long>(0x00D5B5B0, 0x00D5BE58),
+            new Tuple<long, long>(0x00D5CEB0, 0x00D5CF20),
+            new Tuple<long, long>(0x00D5D090, 0x00D5D090),
+            new Tuple<long, long>(0x00D8CA90, 0x00D8CA90),
+            new Tuple<long, long>(0x00DA09C0, 0x00DA09C0),
+            new Tuple<long, long>(0x00DA2A00, 0x00DA2A20),
+            new Tuple<long, long>(0x00DA68E0, 0x00DA6E70),
+            new Tuple<long, long>(0x00DA7048, 0x00DA7170),
+            new Tuple<long, long>(0x00DABA10, 0x00DACDB0),
+            new Tuple<long, long>(0x00E133F0, 0x00E2D2E8),
         };
 
         protected override List<ExePatch> Patches => new List<ExePatch>()

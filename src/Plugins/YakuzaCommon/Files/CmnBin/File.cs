@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
 using TF.IO;
 
 namespace YakuzaCommon.Files.CmnBin
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFile
     {
         private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B };
 
@@ -15,21 +15,8 @@ namespace YakuzaCommon.Files.CmnBin
         {
         }
 
-        protected override IList<SimpleSubtitle.Subtitle> GetSubtitles()
+        protected override IList<TF.Core.TranslationEntities.Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var temp = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
@@ -68,9 +55,11 @@ namespace YakuzaCommon.Files.CmnBin
                 }
             }
 
-            var result = new List<SimpleSubtitle.Subtitle>();
+            var result = new List<TF.Core.TranslationEntities.Subtitle>();
             result.AddRange(englishSubtitles);
             result.AddRange(japaneseSubtitles);
+
+            LoadChanges(result);
 
             return result;
         }
@@ -90,7 +79,7 @@ namespace YakuzaCommon.Files.CmnBin
             {
                 input.Skip(16); //0x10
 
-                var subtitle = ReadLongSubtitle(input);
+                var subtitle = ReadSubtitle(input, 256);
                 subtitle.Language = SubtitleLanguage.Japanese;
                 if (subtitle.Text.Length > 0)
                 {
@@ -102,7 +91,7 @@ namespace YakuzaCommon.Files.CmnBin
             {
                 input.Skip(16); //0x10
 
-                var subtitle = ReadLongSubtitle(input);
+                var subtitle = ReadSubtitle(input, 256);
                 subtitle.Language = SubtitleLanguage.English;
                 if (subtitle.Text.Length > 0)
                 {
@@ -126,7 +115,7 @@ namespace YakuzaCommon.Files.CmnBin
             {
                 input.Skip(16); //0x10
 
-                var subtitle = ReadShortSubtitle(input);
+                var subtitle = ReadSubtitle(input, 128);
                 subtitle.Language = SubtitleLanguage.Japanese;
                 if (subtitle.Text.Length > 0)
                 {
@@ -141,7 +130,7 @@ namespace YakuzaCommon.Files.CmnBin
             {
                 input.Skip(16); //0x10
 
-                var subtitle = ReadShortSubtitle(input);
+                var subtitle = ReadSubtitle(input, 128);
                 subtitle.Language = SubtitleLanguage.English;
                 if (subtitle.Text.Length > 0)
                 {
@@ -152,95 +141,16 @@ namespace YakuzaCommon.Files.CmnBin
             return result;
         }
 
-        private Subtitle ReadLongSubtitle(ExtendedBinaryReader input)
+        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int subtitleLength)
         {
-            var subtitle = new LongSubtitle { Offset = input.Position };
+            var sub = ReadSubtitle(input);
 
-            subtitle.Text = input.ReadString();
-            subtitle.Loaded = subtitle.Text;
-            subtitle.Translation = subtitle.Text;
-
+            var subtitle = new Subtitle(sub, subtitleLength);
             subtitle.PropertyChanged += SubtitlePropertyChanged;
+
             input.Seek(subtitle.Offset + subtitle.MaxLength, SeekOrigin.Begin);
 
             return subtitle;
-        }
-
-        private Subtitle ReadShortSubtitle(ExtendedBinaryReader input)
-        {
-            var subtitle = new ShortSubtitle { Offset = input.Position };
-
-            subtitle.Text = input.ReadString();
-            subtitle.Loaded = subtitle.Text;
-            subtitle.Translation = subtitle.Text;
-            subtitle.PropertyChanged += SubtitlePropertyChanged;
-            input.Seek(subtitle.Offset + subtitle.MaxLength, SeekOrigin.Begin);
-
-            return subtitle;
-        }
-
-        public override void SaveChanges()
-        {
-            using (var fs = new FileStream(ChangesFile, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
-            {
-                output.Write(ChangesFileVersion);
-                output.Write(_subtitles.Count);
-                foreach (var subtitle in _subtitles)
-                {
-                    var type = subtitle.GetType().Name;
-                    output.Write(type == "LongSubtitle" ? 1 : 0);
-                    output.Write(subtitle.Offset);
-                    output.WriteString(subtitle.Text);
-                    output.WriteString(subtitle.Translation);
-
-                    subtitle.Loaded = subtitle.Translation;
-                }
-            }
-
-            NeedSaving = false;
-            OnFileChanged();
-        }
-
-        private new IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
-        {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
-            {
-                var version = input.ReadInt32();
-
-                if (version != ChangesFileVersion)
-                {
-                    throw new ChangesFileVersionMismatchException();
-                }
-
-                var result = new List<SimpleSubtitle.Subtitle>();
-                var subtitleCount = input.ReadInt32();
-
-                for (var i = 0; i < subtitleCount; i++)
-                {
-                    Subtitle sub;
-                    var type = input.ReadInt32();
-                    if (type == 0)
-                    {
-                        sub = new ShortSubtitle();
-                    }
-                    else
-                    {
-                        sub = new LongSubtitle();
-                    }
-                    sub.Offset = input.ReadInt64();
-                    sub.Text = input.ReadString();
-                    sub.Translation = input.ReadString();
-                    sub.Loaded = sub.Translation;
-
-                    sub.PropertyChanged += SubtitlePropertyChanged;
-
-                    result.Add(sub);
-                }
-
-                return result;
-            }
         }
 
         public override void Rebuild(string outputFolder)
@@ -261,8 +171,8 @@ namespace YakuzaCommon.Files.CmnBin
                     var sub = subtitle as Subtitle;
                     var zeros = new byte[sub.MaxLength];
                     output.Write(zeros);
-                    output.Seek(subtitle.Offset, SeekOrigin.Begin);
-                    output.WriteString(subtitle.Translation);
+
+                    WriteSubtitle(output, subtitle, (int)subtitle.Offset, false);
                 }
             }
         }

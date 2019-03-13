@@ -5,27 +5,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using TF.Core.Entities;
-using TF.Core.Exceptions;
+using TF.Core.Files;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace YakuzaCommon.Files.Msg
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFile
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
-        public override int SubtitleCount
-        {
-            get
-            {
-                var subtitles = GetSubtitles();
-                return subtitles.Count;
-            }
-        }
 #if DEBUG
         protected new IList<Subtitle> _subtitles;
         private new View _view;
@@ -39,7 +30,7 @@ namespace YakuzaCommon.Files.Msg
                 _subtitles.Add(subtitle as Subtitle);
             }
 
-            _view.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
+            _view.LoadSubtitles(_subtitles.Where(x => (x != null) && (!string.IsNullOrEmpty(x.Text))).ToList());
             _view.Show(panel, DockState.Document);
         }
         
@@ -48,31 +39,10 @@ namespace YakuzaCommon.Files.Msg
             NeedSaving = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
             OnFileChanged();
         }
-#else
-        public override void Open(DockPanel panel, ThemeBase theme)
-        {
-            _view = new SimpleSubtitle.View(theme);
-            _subtitles = GetSubtitles();
-            _view.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
-            _view.Show(panel, DockState.Document);
-        }
 #endif
-        protected override IList<SimpleSubtitle.Subtitle> GetSubtitles()
+        protected override IList<TF.Core.TranslationEntities.Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
-            var result = new List<SimpleSubtitle.Subtitle>();
+            var result = new List<TF.Core.TranslationEntities.Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
@@ -109,14 +79,17 @@ namespace YakuzaCommon.Files.Msg
                     for (var i = 0; i < numTalkers; i++)
                     {
                         var offset = input.ReadInt32();
-                        var sub = ReadSubtitle(input, offset);
-                        if (sub != null)
+                        var subtitle = ReadSubtitle(input, offset, true);
+                        if (subtitle != null)
                         {
-                            result.Add(ReadSubtitle(input, offset));
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                            result.Add(subtitle);
                         }
                     }
                 }
             }
+
+            LoadChanges(result);
 
             return result;
         }
@@ -137,9 +110,12 @@ namespace YakuzaCommon.Files.Msg
                 var strOffset = input.ReadInt32();
                 var propOffset = input.ReadInt32();
 
-                var subtitle = ReadSubtitle(input, strOffset);
-                if (subtitle != null)
+                var sub = ReadSubtitle(input, strOffset, true);
+                if (sub != null)
                 {
+                    var subtitle = new Subtitle(sub);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+
                     var stringCharCount = subtitle.CleanText().Length;
                     subtitle.Properties = ReadProperties(input, propOffset, propCount);
                     foreach (var property in subtitle.Properties)
@@ -153,7 +129,6 @@ namespace YakuzaCommon.Files.Msg
                         {
                             if (!property.IsEndProperty && property.Position != 0)
                             {
-                                //throw new UnknownPropertyException($"{Path}\t{subtitle.Text}");
                                 var data = property.ToByteArray();
 
                                 Debug.WriteLine($"{this.Name}\t{data[0]:X2}{data[1]:X2}\t{subtitle.Text}");
@@ -161,6 +136,7 @@ namespace YakuzaCommon.Files.Msg
                         }
 #endif
                     }
+
                     result.Add(subtitle);
                 }
             }
@@ -170,23 +146,16 @@ namespace YakuzaCommon.Files.Msg
             return result;
         }
 
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
+        protected override TF.Core.TranslationEntities.Subtitle ReadSubtitle(ExtendedBinaryReader input, long offset, bool returnToPos)
         {
-            var result = new Subtitle { Offset = offset };
-            var pos = input.Position;
-            input.Seek(offset, SeekOrigin.Begin);
-            result.Text = input.ReadString();
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
-            input.Seek(pos, SeekOrigin.Begin);
+            var subtitle = base.ReadSubtitle(input, offset, returnToPos);
 
-            if (result.Offset == 0 || string.IsNullOrEmpty(result.Text))
+            if (subtitle.Offset == 0 || string.IsNullOrEmpty(subtitle.Text))
             {
-                result = null;
+                subtitle = null;
             }
 
-            return result;
+            return subtitle;
         }
 
         private MsgProperties ReadProperties(ExtendedBinaryReader input, int offset, int count)
@@ -198,90 +167,6 @@ namespace YakuzaCommon.Files.Msg
 
             var result = new MsgProperties(data);
             return result;
-        }
-
-        protected override IList<SimpleSubtitle.Subtitle> LoadChanges(string file)
-        {
-            using (var fs = new FileStream(file, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
-            {
-                var version = input.ReadInt32();
-
-                if (version != ChangesFileVersion)
-                {
-                    throw new ChangesFileVersionMismatchException();
-                }
-
-                var result = new List<SimpleSubtitle.Subtitle>();
-                var subtitleCount = input.ReadInt32();
-
-                for (var i = 0; i < subtitleCount; i++)
-                {
-                    var subtitle = new Subtitle
-                    {
-                        Offset = input.ReadInt64(),
-                        Text = input.ReadString(),
-                        Translation = input.ReadString()
-                    };
-
-                    var propertiesSize = input.ReadInt32();
-                    if (propertiesSize > 0)
-                    {
-                        var stringCharCount = subtitle.CleanText().Length;
-                        var data = input.ReadBytes(propertiesSize);
-                        subtitle.Properties = new MsgProperties(data);
-
-                        foreach (var property in subtitle.Properties)
-                        {
-                            if (property.Position == stringCharCount)
-                            {
-                                property.IsEndProperty = true;
-                            }
-                        }
-                    }
-
-                    subtitle.Loaded = subtitle.Translation;
-
-                    subtitle.PropertyChanged += SubtitlePropertyChanged;
-
-                    result.Add(subtitle);
-                }
-
-                return result;
-            }
-        }
-
-        public override void SaveChanges()
-        {
-            using (var fs = new FileStream(ChangesFile, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
-            {
-                output.Write(ChangesFileVersion);
-                output.Write(_subtitles.Count);
-                foreach (var subtitle in _subtitles)
-                {
-                    output.Write(subtitle.Offset);
-                    output.WriteString(subtitle.Text);
-                    output.WriteString(subtitle.Translation);
-
-                    var sub = subtitle as Subtitle;
-                    if (sub.Properties == null)
-                    {
-                        output.Write(0);
-                    }
-                    else
-                    {
-                        var data = sub.Properties.ToByteArray();
-                        output.Write(data.Length);
-                        output.Write(data);
-                    }
-
-                    subtitle.Loaded = subtitle.Translation;
-                }
-            }
-
-            NeedSaving = false;
-            OnFileChanged();
         }
 
         public override void Rebuild(string outputFolder)
@@ -419,10 +304,10 @@ namespace YakuzaCommon.Files.Msg
 
                 if (inputPointer1 > 0)
                 {
-                    var ouputPointer1 = (int)output.Position;
+                    var outputPointer1 = (int)output.Position;
                     output.Seek(8, SeekOrigin.Begin);
-                    output.Write(ouputPointer1);
-                    output.Seek(ouputPointer1, SeekOrigin.Begin);
+                    output.Write(outputPointer1);
+                    output.Seek(outputPointer1, SeekOrigin.Begin);
                     output.Write(dataPointer1);
                 }
                 

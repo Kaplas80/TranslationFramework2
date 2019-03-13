@@ -6,19 +6,17 @@
         Japanese
     }
 
-    internal abstract class Subtitle : SimpleSubtitle.Subtitle
+    internal class Subtitle : TF.Core.TranslationEntities.FixedLengthSubtitle
     {
-        public abstract int MaxLength { get; }
         public SubtitleLanguage Language { get; set; }
-    }
 
-    internal class LongSubtitle : Subtitle
-    {
-        public override int MaxLength => 256; //0x0100
-    }
+        public Subtitle(int maxLength) : base(maxLength)
+        {
 
-    internal class ShortSubtitle : Subtitle
-    {
-        public override int MaxLength => 128; //0x80
+        }
+
+        public Subtitle(TF.Core.TranslationEntities.Subtitle s, int maxLength) : base(s, maxLength)
+        {
+        }
     }
 }

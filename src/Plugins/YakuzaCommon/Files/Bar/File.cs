@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Bar
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,19 +16,6 @@ namespace YakuzaCommon.Files.Bar
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
@@ -38,21 +25,19 @@ namespace YakuzaCommon.Files.Bar
                 var groupCount = input.ReadInt16();
                 input.Skip(8);
 
-                var offset = 0;
-
+                Subtitle subtitle;
                 for (var i = 0; i < 43; i++)
                 {
-                    offset = input.ReadInt32();
-                    var returnPos = input.Position;
-                    result.Add(ReadSubtitle(input, offset));
-                    input.Seek(returnPos, SeekOrigin.Begin);
+                    subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
                 }
                 
                 // barkeeper
                 input.Seek(0x108, SeekOrigin.Begin);
-                offset = input.ReadInt32();
-                var barkeeper = ReadSubtitle(input, offset);
-                result.Add(barkeeper);
+                subtitle = ReadSubtitle(input);
+                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                result.Add(subtitle);
 
                 input.Seek(0x110, SeekOrigin.Begin);
                 for (var i = 0; i < groupCount; i++)
@@ -65,34 +50,22 @@ namespace YakuzaCommon.Files.Bar
 
                     var returnPos = input.Position;
 
-                    result.Add(ReadSubtitle(input, offsets[8]));
-                    result.Add(ReadSubtitle(input, offsets[14]));
-                    result.Add(ReadSubtitle(input, offsets[15]));
-                    result.Add(ReadSubtitle(input, offsets[16]));
-                    result.Add(ReadSubtitle(input, offsets[17]));
-                    result.Add(ReadSubtitle(input, offsets[18]));
-                    result.Add(ReadSubtitle(input, offsets[19]));
-                    result.Add(ReadSubtitle(input, offsets[20]));
-                    result.Add(ReadSubtitle(input, offsets[21]));
+                    subtitle = ReadSubtitle(input, offsets[8], false);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
+
+                    for (var j = 14; j < 22; j++)
+                    {
+                        subtitle = ReadSubtitle(input, offsets[j], false);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
+                    }
 
                     input.Seek(returnPos, SeekOrigin.Begin);
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle {Offset = offset};
-            if (offset > 0)
-            {
-                input.Seek(offset, SeekOrigin.Begin);
-                result.Text = input.ReadString();
-                result.Loaded = result.Text;
-                result.Translation = result.Text;
-                result.PropertyChanged += SubtitlePropertyChanged;
-            }
+            LoadChanges(result);
 
             return result;
         }
@@ -114,20 +87,20 @@ namespace YakuzaCommon.Files.Bar
                 output.Write(groupCount);
                 output.Write(input.ReadBytes(8));
 
-                var outputOffset = input.PeekInt32();
+                long outputOffset = input.PeekInt32();
                 var firstStringOffset = outputOffset;
 
                 for (var i = 0; i < 43; i++)
                 {
                     var offset = input.ReadInt32();
-                    outputOffset = WriteString(output, subtitles, offset, outputOffset);
+                    outputOffset = WriteSubtitle(output, subtitles, offset, outputOffset);
                 }
 
                 output.Write(input.ReadBytes(0x108 - (int)input.Position));
 
                 // barkeeper
                 var barKeeperOffset = input.ReadInt32();
-                outputOffset = WriteString(output, subtitles, barKeeperOffset, outputOffset);
+                outputOffset = WriteSubtitle(output, subtitles, barKeeperOffset, outputOffset);
 
                 output.Write(input.ReadBytes(0x110 - (int)input.Position));
                 for (var i = 0; i < groupCount; i++)
@@ -143,7 +116,7 @@ namespace YakuzaCommon.Files.Bar
                         output.Write(offsets[j]);
                     }
 
-                    outputOffset = WriteString(output, subtitles, offsets[8], outputOffset);
+                    outputOffset = WriteSubtitle(output, subtitles, offsets[8], outputOffset);
 
                     for (var j = 9; j < 14; j++)
                     {
@@ -152,34 +125,12 @@ namespace YakuzaCommon.Files.Bar
 
                     for (var j = 14; j < 22; j++)
                     {
-                        outputOffset = WriteString(output, subtitles, offsets[j], outputOffset);
+                        outputOffset = WriteSubtitle(output, subtitles, offsets[j], outputOffset);
                     }
                 }
 
-                output.Write(input.ReadBytes(firstStringOffset - (int)input.Position));
+                output.Write(input.ReadBytes((int) (firstStringOffset - input.Position)));
             }
-        }
-
-        private int WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset, int outputOffset)
-        {
-            var result = outputOffset;
-
-            if (inputOffset == 0)
-            {
-                output.Write(0);
-            }
-            else
-            {
-                var str = subtitles.First(x => x.Offset == inputOffset);
-                output.Write(outputOffset);
-                var retPos = output.Position;
-                output.Seek(outputOffset, SeekOrigin.Begin);
-                output.WriteString(str.Translation);
-                result = (int)output.Position;
-                output.Seek(retPos, SeekOrigin.Begin);
-            }
-
-            return result;
         }
     }
 }

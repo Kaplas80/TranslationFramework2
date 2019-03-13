@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using TF.Core.Entities;
-using TF.Core.Files.DDS;
+using TF.Core.Files;
 
 namespace TFGame.YakuzaKiwami
 {
@@ -443,7 +443,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "arms_repair.bin",
                     IsWildcard = false,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.SimpleSubtitle.File)
+                    FileType = typeof(YakuzaCommon.Files.ArmsRepair.File)
                 };
 
             var common_blacksmithSearch =

@@ -10,17 +10,17 @@ namespace TFGame.Yakuza0.Files.Exe
         protected override string PointerSectionName => ".data\0\0\0";
         protected override string StringsSectionName => ".rdata\0\0";
 
-        protected override List<Tuple<ulong, ulong>> AllowedStringOffsets => new List<Tuple<ulong, ulong>>()
+        protected override List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
-            new Tuple<ulong, ulong>(0xD2A770, 0xD2A770),
-            new Tuple<ulong, ulong>(0xD2C688, 0xD2D560),
-            new Tuple<ulong, ulong>(0xD2FA28, 0xD2FAC0),
-            new Tuple<ulong, ulong>(0xDC8F24, 0xDC98A8),
-            new Tuple<ulong, ulong>(0xDCA3C8, 0xDCABA8),
-            new Tuple<ulong, ulong>(0xDCABB8, 0xDCD7B0),
-            new Tuple<ulong, ulong>(0xDCEB1C, 0xDCFE38),
-            new Tuple<ulong, ulong>(0xDD0608, 0xDD4300),
-            new Tuple<ulong, ulong>(0xE88C88, 0xEA40F0),
+            new Tuple<long, long>(0xD2A770, 0xD2A770),
+            new Tuple<long, long>(0xD2C688, 0xD2D560),
+            new Tuple<long, long>(0xD2FA28, 0xD2FAC0),
+            new Tuple<long, long>(0xDC8F24, 0xDC98A8),
+            new Tuple<long, long>(0xDCA3C8, 0xDCABA8),
+            new Tuple<long, long>(0xDCABB8, 0xDCD7B0),
+            new Tuple<long, long>(0xDCEB1C, 0xDCFE38),
+            new Tuple<long, long>(0xDD0608, 0xDD4300),
+            new Tuple<long, long>(0xE88C88, 0xEA40F0),
         };
 
         protected override List<ExePatch> Patches => new List<ExePatch>()

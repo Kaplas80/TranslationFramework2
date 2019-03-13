@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Imb
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,52 +15,23 @@ namespace YakuzaCommon.Files.Imb
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
                 input.Skip(32);
-                var titlePointer = input.ReadInt32();
-                var descriptionPointer = input.ReadInt32();
 
-                if (titlePointer > 0)
-                {
-                    result.Add(ReadSubtitle(input, titlePointer));
-                }
+                var subtitle = ReadSubtitle(input);
+                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                result.Add(subtitle);
 
-                if (descriptionPointer > 0)
-                {
-                    result.Add(ReadSubtitle(input, descriptionPointer));
-                }
+                subtitle = ReadSubtitle(input);
+                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                result.Add(subtitle);
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle { Offset = offset };
-            var pos = input.Position;
-            input.Seek(offset, SeekOrigin.Begin);
-            result.Text = input.ReadString();
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
-            input.Seek(pos, SeekOrigin.Begin);
+            LoadChanges(result);
 
             return result;
         }
@@ -79,54 +49,42 @@ namespace YakuzaCommon.Files.Imb
             using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding, Endianness.BigEndian))
             {
                 output.Write(input.ReadBytes(32));
-                var titlePointer = input.ReadInt32();
-                var descriptionPointer = input.ReadInt32();
 
-                var outputOffset = titlePointer;
-                outputOffset = WriteString(output, subtitles, titlePointer, outputOffset);
-                outputOffset = WriteString(output, subtitles, descriptionPointer, outputOffset);
+                var firstString = input.PeekInt32();
+                long outputOffset = firstString;
+
+                var subtitle = ReadSubtitle(input);
+                outputOffset = WriteSubtitle(output, subtitles, subtitle.Offset, outputOffset);
+
+                subtitle = ReadSubtitle(input);
+                outputOffset = WriteSubtitle(output, subtitles, subtitle.Offset, outputOffset);
 
                 output.Write(input.ReadBytes(24));
-                var ddsPointer = input.ReadInt32();
-                var dds = ReadSubtitle(input, ddsPointer);
-                outputOffset = WriteString(output, dds.Text, outputOffset);
 
-                output.Write(input.ReadBytes(titlePointer - (int)input.Position));
+                var dds = ReadSubtitle(input);
+                WriteString(output, dds, outputOffset);
+
+                output.Write(input.ReadBytes(firstString - (int)input.Position));
 
                 output.WritePadding(16);
             }
         }
 
-        private int WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset, int outputOffset)
+        private void WriteString(ExtendedBinaryWriter output, Subtitle dds, long offset)
         {
-            var result = outputOffset;
+            var pos = output.Position;
 
-            if (inputOffset == 0)
+            if (dds == null || dds.Offset == 0)
             {
                 output.Write(0);
             }
             else
             {
-                var str = subtitles.First(x => x.Offset == inputOffset);
-                result = WriteString(output, str.Translation, outputOffset);
+                output.Write((int)offset);
+                base.WriteSubtitle(output, dds, offset, false);
             }
 
-            return result;
-        }
-
-        private int WriteString(ExtendedBinaryWriter output, string text, int outputOffset)
-        {
-            output.Write(outputOffset);
-            var retPos = output.Position;
-            output.Seek(outputOffset, SeekOrigin.Begin);
-            output.WriteString(text);
-
-            output.WritePadding(2);
-
-            var result = (int)output.Position;
-            output.Seek(retPos, SeekOrigin.Begin);
-
-            return result;
+            output.Seek(pos + 4, SeekOrigin.Begin);
         }
     }
 }

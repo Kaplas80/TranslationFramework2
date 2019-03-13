@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Files.DDS
+﻿namespace TF.Core.Views
 {
     partial class DDSView
     {

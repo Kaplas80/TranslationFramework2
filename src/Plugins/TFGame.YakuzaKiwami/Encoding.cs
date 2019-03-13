@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TFGame.YakuzaKiwami
 {
@@ -26,7 +25,7 @@ namespace TFGame.YakuzaKiwami
             {
                 new Tuple<string, string>("\\r", "\r"),
                 new Tuple<string, string>("\\n", "\n"),
-                new Tuple<string, string>("®", "\u007F"),
+                //new Tuple<string, string>("®", "\u007F"),
                 new Tuple<string, string>("¥", "\\"),
             };
 

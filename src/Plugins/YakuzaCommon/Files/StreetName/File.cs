@@ -2,13 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.StreetName
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFile
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,23 +16,10 @@ namespace YakuzaCommon.Files.StreetName
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.LittleEndian))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding))
             {
                 while (input.Position < input.Length)
                 {
@@ -44,7 +31,11 @@ namespace YakuzaCommon.Files.StreetName
                     while (aux != -1)
                     {
                         input.Skip(2);
-                        result.Add(ReadSubtitle(input));
+
+                        var subtitle = ReadSubtitle(input);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
+
                         aux = input.PeekInt16();
                     }
 
@@ -52,18 +43,7 @@ namespace YakuzaCommon.Files.StreetName
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input)
-        {
-            var offset = (int) input.Position;
-
-            var result = new Subtitle {Offset = offset};
-            result.Text = input.ReadString();
-            result.Loaded = result.Text;
-            result.Translation = result.Text;
-            result.PropertyChanged += SubtitlePropertyChanged;
+            LoadChanges(result);
 
             return result;
         }
@@ -101,7 +81,7 @@ namespace YakuzaCommon.Files.StreetName
                             var size = input.ReadByte();
 
                             var offset = (int)input.Position;
-                            WriteString(temp, subtitles, offset);
+                            WriteSubtitle(temp, subtitles, offset);
 
                             input.ReadString();
                             aux = input.PeekInt16();
@@ -120,11 +100,11 @@ namespace YakuzaCommon.Files.StreetName
             }
         }
 
-        private void WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, int inputOffset)
+        private void WriteSubtitle(ExtendedBinaryWriter output, IList<Subtitle> subtitles, long inputOffset)
         {
-            var str = subtitles.First(x => x.Offset == inputOffset);
-            output.Write((byte)FileEncoding.GetByteCount(str.Translation));
-            output.WriteString(str.Translation);
+            var sub = subtitles.First(x => x.Offset == inputOffset);
+            output.Write((byte)FileEncoding.GetByteCount(sub.Translation));
+            output.WriteString(sub.Translation);
         }
     }
 }

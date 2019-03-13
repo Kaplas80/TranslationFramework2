@@ -2,13 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using TF.Core.Exceptions;
+using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
-using YakuzaCommon.Files.SimpleSubtitle;
 
 namespace YakuzaCommon.Files.Mail
 {
-    public class File : SimpleSubtitle.File
+    public class File : BinaryTextFileWithOffsetTable
     {
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
@@ -16,22 +16,8 @@ namespace YakuzaCommon.Files.Mail
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            if (HasChanges)
-            {
-                try
-                {
-                    var loadedSubs = LoadChanges(ChangesFile);
-                    return loadedSubs;
-                }
-                catch (ChangesFileVersionMismatchException e)
-                {
-                    System.IO.File.Delete(ChangesFile);
-                }
-            }
-
             var result = new List<Subtitle>();
 
-            var used = new Dictionary<int, bool>();
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
@@ -41,44 +27,44 @@ namespace YakuzaCommon.Files.Mail
 
                 for (var i = 0; i < count; i++)
                 {
-                    var offset = input.ReadInt32();
-                    if (!used.ContainsKey(offset))
+                    var subtitle = ReadSubtitle(input);
+                    if (result.All(x => x.Offset != subtitle.Offset))
                     {
-                        result.Add(ReadSubtitle(input, offset));
-                        used.Add(offset, true);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
 
-                    offset = input.ReadInt32();
-                    if (!used.ContainsKey(offset))
+                    subtitle = ReadSubtitle(input);
+                    if (result.All(x => x.Offset != subtitle.Offset))
                     {
-                        result.Add(ReadSubtitle(input, offset));
-                        used.Add(offset, true);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
 
                     var pointer = input.ReadInt32();
                     var numLines = input.ReadInt32();
 
-                    offset = input.ReadInt32();
-                    if (!used.ContainsKey(offset))
+                    subtitle = ReadSubtitle(input);
+                    if (result.All(x => x.Offset != subtitle.Offset))
                     {
-                        result.Add(ReadSubtitle(input, offset));
-                        used.Add(offset, true);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
 
-                    offset = input.ReadInt32();
-                    if (!used.ContainsKey(offset))
+                    subtitle = ReadSubtitle(input);
+                    if (result.All(x => x.Offset != subtitle.Offset))
                     {
-                        result.Add(ReadSubtitle(input, offset));
-                        used.Add(offset, true);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
 
                     input.Skip(4);
 
-                    offset = input.ReadInt32();
-                    if (!used.ContainsKey(offset))
+                    subtitle = ReadSubtitle(input);
+                    if (result.All(x => x.Offset != subtitle.Offset))
                     {
-                        result.Add(ReadSubtitle(input, offset));
-                        used.Add(offset, true);
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
 
                     var pos = input.Position;
@@ -87,11 +73,11 @@ namespace YakuzaCommon.Files.Mail
 
                     for (var j = 0; j < numLines; j++)
                     {
-                        offset = input.ReadInt32();
-                        if (!used.ContainsKey(offset))
+                        subtitle = ReadSubtitle(input);
+                        if (result.All(x => x.Offset != subtitle.Offset))
                         {
-                            result.Add(ReadSubtitle(input, offset));
-                            used.Add(offset, true);
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                            result.Add(subtitle);
                         }
                     }
 
@@ -99,22 +85,7 @@ namespace YakuzaCommon.Files.Mail
                 }
             }
 
-            return result;
-        }
-
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int offset)
-        {
-            var result = new Subtitle { Offset = offset };
-            if (offset > 0)
-            {
-                var pos = input.Position;
-                input.Seek(offset, SeekOrigin.Begin);
-                result.Text = input.ReadString();
-                result.Loaded = result.Text;
-                result.Translation = result.Text;
-                result.PropertyChanged += SubtitlePropertyChanged;
-                input.Seek(pos, SeekOrigin.Begin);
-            }
+            LoadChanges(result);
 
             return result;
         }
@@ -126,7 +97,7 @@ namespace YakuzaCommon.Files.Mail
 
             var subtitles = GetSubtitles();
 
-            var used = new Dictionary<int, int>();
+            var used = new Dictionary<long, long>();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fsInput, FileEncoding, Endianness.BigEndian))
@@ -138,7 +109,7 @@ namespace YakuzaCommon.Files.Mail
                 output.Write(count);
                 output.Write(input.ReadBytes(8));
 
-                var outputOffset = input.PeekInt32();
+                long outputOffset = input.PeekInt32();
 
                 for (var i = 0; i < count; i++)
                 {
@@ -183,7 +154,7 @@ namespace YakuzaCommon.Files.Mail
             }
         }
 
-        private int WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, Dictionary<int, int> used, int inputOffset, int outputOffset)
+        private long WriteString(ExtendedBinaryWriter output, IList<Subtitle> subtitles, IDictionary<long, long> used, long inputOffset, long outputOffset)
         {
             var result = outputOffset;
 
@@ -196,27 +167,15 @@ namespace YakuzaCommon.Files.Mail
                 if (!used.ContainsKey(inputOffset))
                 {
                     used.Add(inputOffset, outputOffset);
-                    var str = subtitles.First(x => x.Offset == inputOffset);
-                    result = WriteString(output, str.Translation, outputOffset);
+                    var sub = subtitles.First(x => x.Offset == inputOffset);
+                    result = WriteSubtitle(output, sub, outputOffset, true);
+                    output.Skip(4);
                 }
                 else
                 {
-                    output.Write(used[inputOffset]);
+                    output.Write((int)used[inputOffset]);
                 }
             }
-
-            return result;
-        }
-
-        private int WriteString(ExtendedBinaryWriter output, string text, int outputOffset)
-        {
-            output.Write(outputOffset);
-            var retPos = output.Position;
-            output.Seek(outputOffset, SeekOrigin.Begin);
-            output.WriteString(text);
-
-            var result = (int)output.Position;
-            output.Seek(retPos, SeekOrigin.Begin);
 
             return result;
         }
