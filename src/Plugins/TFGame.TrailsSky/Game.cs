@@ -15,7 +15,7 @@ namespace TFGame.TrailsSky
         public string Description => "Versión en inglés GOG";
         public Image Icon => Resources.Icon;
         public int Version => 1;
-        public Encoding FileEncoding => Encoding.GetEncoding(936);
+        public Encoding FileEncoding => Encoding.GetEncoding(932);
 
         public GameFileContainer[] GetContainers(string path)
         {
@@ -26,7 +26,7 @@ namespace TFGame.TrailsSky
                 RelativePath = @".\",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = false,
-                SearchPattern = "ED6_DT01.dat",
+                SearchPattern = "ED6_DT00.dat;ED6_DT01.dat",
                 Exclusions = {"ED6_DT17.dat", "ED6_DT18.dat"}
             };
 

@@ -1,85 +1,108 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TF.IO;
 
 namespace TFGame.TrailsSky
 {
+    // Código adaptado de https://heroesoflegend.org/forums/viewtopic.php?f=38&t=289
+
     class FalcomCompressor
     {
-        private class Status
+        private enum FlagType
         {
-            public ushort Flag;
-            public byte FlagPos;
+            Literal,
+            ShortJump,
+            LongJump
         }
 
-        private static bool GetFlag(ExtendedBinaryReader input, Status status)
+        private class Flag
         {
-            if (status.FlagPos == 0x00)
+            private readonly ExtendedBinaryReader _input;
+            private ushort _currentValue;
+            private byte _remaining;
+
+            public Flag(ExtendedBinaryReader input)
             {
-                var data = input.ReadUInt16();
-                status.Flag = data;
-                status.FlagPos = 0x10;
+                _input = input;
+
+                _currentValue = (ushort)(input.ReadUInt16() >> 8);
+                _remaining = 0x08;
             }
 
-            var isFlag = (status.Flag & 0x01) == 0x01;
-
-            status.Flag >>= 0x01;
-            status.FlagPos--;
-
-            return isFlag;
-        }
-
-        private static void SetupRun(int prevBufferPos, ExtendedBinaryReader input, Stream output, Status status)
-        {
-            var run = 0x02;
-
-            if (!GetFlag(input, status))
+            public FlagType GetFlagType()
             {
-                run++;
+                var val = GetFlag();
 
-                if (!GetFlag(input, status))
+                if (val == 0)
                 {
-                    run++;
-
-                    if (!GetFlag(input, status))
-                    {
-                        run++;
-
-                        if (!GetFlag(input, status))
-                        {
-                            if (!GetFlag(input, status))
-                            {
-                                run = input.ReadByte();
-                                run = run + 0x0E;
-                            }
-                            else
-                            {
-                                run = 0;
-                                for (var i = 0; i < 3; i++)
-                                {
-                                    run <<= 1;
-
-                                    if (GetFlag(input, status))
-                                    {
-                                        run |= 1;
-                                    }
-                                }
-
-                                run += 0x06;
-                            }
-                        }
-                    }
+                    return FlagType.Literal;
                 }
+
+                val = GetFlag();
+                return val == 0 ? FlagType.ShortJump : FlagType.LongJump;
             }
 
-            for (var i = 0; i < run; i++)
-            {
-                output.Seek(-prevBufferPos, SeekOrigin.End);
-                var data = (byte)output.ReadByte();
-                output.Seek(0, SeekOrigin.End);
 
-                output.WriteByte(data);
+            public int GetFlag()
+            {
+                if (_remaining == 0x00)
+                {
+                    var data = _input.ReadUInt16();
+                    _currentValue = data;
+                    _remaining = 0x10;
+                }
+
+                var result = (_currentValue & 0x01);
+
+                _currentValue >>= 0x01;
+                _remaining--;
+
+                return result;
+            }
+
+            public int GetValue(int count)
+            {
+                var value = 0;
+
+                for (var i = 0; i < count; i++)
+                {
+                    value <<= 0x01;
+                    value |= GetFlag();
+                }
+
+                return value;
+            }
+
+            public int GetCopyCount()
+            {
+                if (GetFlag() == 1)
+                {
+                    return 0x02;
+                }
+
+                if (GetFlag() == 1)
+                {
+                    return 0x03;
+                }
+
+                if (GetFlag() == 1)
+                {
+                    return 0x04;
+                }
+
+                if (GetFlag() == 1)
+                {
+                    return 0x05;
+                }
+
+                if (GetFlag() == 1)
+                {
+                    return GetValue(3) + 0x06;
+                }
+
+                return _input.ReadByte() + 0x0E;
             }
         }
 
@@ -97,7 +120,7 @@ namespace TFGame.TrailsSky
 
                     endByte = input.ReadByte();
 
-                } while (endByte != 0 && input.Position < input.Length);
+                } while (endByte != 0);
 
                 return output.ToArray();
             }
@@ -107,91 +130,92 @@ namespace TFGame.TrailsSky
         { 
             using (var output = new MemoryStream())
             {
-                var flag = (ushort)(input.ReadUInt16() >> 8);
-                var status = new Status { Flag = flag, FlagPos = 8 };
-
                 var startPos = input.Position;
 
-                while (true)
+                var flag = new Flag(input);
+
+                var finished = false;
+
+                while (!finished)
                 {
                     if (input.Position >= startPos + chunkSize)
                     {
                         throw new Exception(); // El fichero está corrupto
                     }
 
-                    if (GetFlag(input, status))
+                    var type = flag.GetFlagType();
+
+                    switch (type)
                     {
-                        if (GetFlag(input, status))
+                        case FlagType.Literal:
                         {
-                            var prevBufferPos = 0;
-                            var run = 0;
+                            output.WriteByte(input.ReadByte());
+                        }
+                        break;
 
-                            for (var i = 0; i < 5; i++)
-                            {
-                                run <<= 0x01;
-                                if (GetFlag(input, status))
-                                {
-                                    run |= 0x01;
-                                }
-                            }
+                        case FlagType.ShortJump:
+                        {
+                            var copyDistance = (int) input.ReadByte();
+                            var copyCount = flag.GetCopyCount();
 
-                            prevBufferPos = input.ReadByte();
+                            CopyBytes(output, copyDistance, copyCount);
+                        }
+                        break;
 
-                            if (run != 0x00)
+                        case FlagType.LongJump:
+                        {
+                            var highDistance = flag.GetValue(5);
+                            var lowDistance = input.ReadByte();
+
+                            if (highDistance != 0 || lowDistance > 2)
                             {
-                                prevBufferPos |= (run << 8);
-                                SetupRun(prevBufferPos, input, output, status);
+                                var copyDistance = (highDistance << 8) | lowDistance;
+                                var copyCount = flag.GetCopyCount();
+
+                                CopyBytes(output, copyDistance, copyCount);
                             }
-                            else if (prevBufferPos > 2)
+                            else if (lowDistance == 0)
                             {
-                                SetupRun(prevBufferPos, input, output, status);
-                            }
-                            else if (prevBufferPos == 0)
-                            {
-                                break;
+                                finished = true;
                             }
                             else
                             {
-                                var branch = GetFlag(input, status);
+                                var branch = flag.GetFlag();
 
-                                for (var i = 0; i < 4; i++)
+                                var count = flag.GetValue(4);
+
+                                if (branch == 1)
                                 {
-                                    run <<= 0x01;
-                                    if (GetFlag(input, status))
-                                    {
-                                        run |= 0x01;
-                                    }
+                                    count <<= 8;
+                                    count |= input.ReadByte();
                                 }
 
-                                if (branch)
-                                {
-                                    run <<= 0x08;
-                                    run |= input.ReadByte();
-                                }
-
-                                run += 0x0E;
+                                count += 0x0E;
 
                                 var b = input.ReadByte();
-
-                                for (var i = 0; i < run; i++)
-                                {
-                                    output.WriteByte(b);
-                                }
+                                var data = Enumerable.Repeat(b, count).ToArray();
+                                output.Write(data, 0, count);
                             }
                         }
-                        else
-                        {
-                            var prevBufferPos = input.ReadByte();
-                            SetupRun(prevBufferPos, input, output, status);
-                        }
-                    }
-                    else
-                    {
-                        output.WriteByte(input.ReadByte());
-                    }
+                        break;
 
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
                 return output.ToArray();
+            }
+        }
+
+        private static void CopyBytes(Stream s, int distance, int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                s.Seek(-distance, SeekOrigin.End);
+                var data = (byte)s.ReadByte();
+                s.Seek(0, SeekOrigin.End);
+
+                s.WriteByte(data);
             }
         }
 

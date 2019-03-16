@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TF.IO;
 
 namespace TFGame.TrailsSky.Files
@@ -60,7 +57,6 @@ namespace TFGame.TrailsSky.Files
                     if (compressedSize != 0)
                     {
                         var outputFile = Path.Combine(outputFolder, name);
-                        var aux = Padding(compressedSize, 0x1000);
 
                         datInput.Seek(datOffset, SeekOrigin.Begin);
                         var data = datInput.ReadBytes(compressedSize);
@@ -78,19 +74,6 @@ namespace TFGame.TrailsSky.Files
                     currentPos = dirInput.Position;
                 }
             }
-        }
-
-        private static int Padding(int value, int align)
-        {
-            var v = value % align;
-
-            if (v != 0)
-            {
-                var v1 = (-value % align);
-                v = align + v1;
-            }
-
-            return value + v;
         }
     }
 }
