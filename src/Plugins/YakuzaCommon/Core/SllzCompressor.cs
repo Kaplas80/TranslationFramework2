@@ -25,6 +25,159 @@ namespace YakuzaCommon.Core
             public int Length;
         }
 
+        private enum FlagType
+        {
+            Literal,
+            Copy,
+        }
+
+        private class BitManager
+        {
+            private enum WorkMode
+            {
+                Read,
+                Write
+            }
+
+            private readonly ExtendedBinaryReader _input;
+            private readonly ExtendedBinaryWriter _output;
+            private byte _currentValue;
+            private byte _bitCount;
+
+            private WorkMode _mode;
+
+            public bool IsByteChange { get; private set; }
+
+            public BitManager(ExtendedBinaryReader input)
+            {
+                _input = input;
+
+                _currentValue = input.ReadByte();
+                _bitCount = 0x08;
+
+                IsByteChange = false;
+
+                _mode = WorkMode.Read;
+            }
+
+            public BitManager(ExtendedBinaryWriter output)
+            {
+                _output = output;
+
+                _currentValue = 0x0;
+                _bitCount = 0x00;
+
+                _mode = WorkMode.Write;
+            }
+
+            public void Flush()
+            {
+                if (_mode == WorkMode.Read)
+                {
+                    throw new NotImplementedException("Esta función no es válida para descomprimir");
+                }
+
+                _output.Write(_currentValue);
+                _currentValue = 0x00;
+                _bitCount = 0x00;
+                IsByteChange = true;
+            }
+
+            public FlagType GetFlagType()
+            {
+                if (_mode == WorkMode.Write)
+                {
+                    throw new NotImplementedException("Esta función no es válida para comprimir");
+                }
+
+                var val = GetFlag();
+
+                return val == 0 ? FlagType.Literal : FlagType.Copy;
+            }
+
+            public void SetFlagType(FlagType value)
+            {
+                if (_mode == WorkMode.Read)
+                {
+                    throw new NotImplementedException("Esta función no es válida para descomprimir");
+                }
+
+                switch (value)
+                {
+                    case FlagType.Literal:
+                        SetFlag(0);
+                        break;
+                    case FlagType.Copy:
+                        SetFlag(1);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+            }
+
+            public Tuple<int, int> GetCopyInfo()
+            {
+                if (_mode == WorkMode.Write)
+                {
+                    throw new NotImplementedException("Esta función no es válida para comprimir");
+                }
+
+                var copyFlags = (ushort)(_input.ReadByte() | _input.ReadByte() << 8);
+
+                var copyDistance = 1 + (copyFlags >> 4);
+                var copyCount = 3 + (copyFlags & 0xF);
+
+                return new Tuple<int, int>(copyDistance, copyCount);
+            }
+
+            private int GetFlag()
+            {
+                if (_mode == WorkMode.Write)
+                {
+                    throw new NotImplementedException("Esta función no es válida para comprimir");
+                }
+
+                IsByteChange = false;
+
+                var result = (_currentValue & 0x80);
+
+                _bitCount--;
+                _currentValue <<= 0x01;
+
+                if (_bitCount == 0x00)
+                {
+                    var data = _input.ReadByte();
+                    _currentValue = data;
+                    _bitCount = 0x08;
+                    IsByteChange = true;
+                }
+
+                return result;
+            }
+
+            private void SetFlag(byte value)
+            {
+                if (_mode == WorkMode.Read)
+                {
+                    throw new NotImplementedException("Esta función no es válida para descomprimir");
+                }
+
+                IsByteChange = false;
+
+                if (value == 0x01)
+                {
+                    _currentValue |= (byte)(1 << (7 - _bitCount));
+                }
+
+                _bitCount++;
+
+                if (_bitCount == 0x08)
+                {
+                    Flush();
+                }
+            }
+        }
+
         public static byte[] Decompress(byte[] compressedData)
         {
             using (var input = new ExtendedBinaryReader(new MemoryStream(compressedData), Encoding.GetEncoding(1252), Endianness.BigEndian))
@@ -41,72 +194,34 @@ namespace YakuzaCommon.Core
                 var uncompressedSize = input.ReadUInt32();
                 var compressedSize = input.ReadUInt32();
 
-                compressedSize -= 16; // compressed size includes SLLZ header
-
                 var block = new byte[18];
-                long compressedCount = 0;
-                long uncompressedCount = 0;
 
-                var opFlags = input.ReadByte();
-                compressedCount++;
-                var opBits = 8;
+                var manager = new BitManager(input);
 
-                var literalCount = 0;
-                while (compressedCount < compressedSize)
+                while (input.Position < input.Length)
                 {
-                    var isCopy = (opFlags & 0x80) != 0;
-                    opFlags <<= 1;
-                    opBits--;
+                    var type = manager.GetFlagType();
 
-                    if (opBits == 0)
+                    switch (type)
                     {
-                        if (literalCount > 0)
-                        {
-                            input.Read(block, 0, literalCount);
-                            output.Write(block, 0, literalCount);
-                            uncompressedCount += literalCount;
-                            literalCount = 0;
-                        }
+                        case FlagType.Literal:
+                            output.WriteByte(input.ReadByte());
 
-                        opFlags = input.ReadByte();
-                        compressedCount++;
-                        opBits = 8;
+                            break;
+
+                        case FlagType.Copy:
+                            var (copyPosition, copyCount) = manager.GetCopyInfo();
+
+                            output.Seek(-copyPosition, SeekOrigin.End);
+                            output.Read(block, 0, copyCount);
+                            output.Seek(0, SeekOrigin.End);
+                            output.Write(block, 0, copyCount);
+
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
-
-                    if (isCopy == false)
-                    {
-                        literalCount++;
-                        compressedCount++;
-                        continue;
-                    }
-
-                    if (literalCount > 0)
-                    {
-                        input.Read(block, 0, literalCount);
-                        output.Write(block, 0, literalCount);
-                        uncompressedCount += literalCount;
-                        literalCount = 0;
-                    }
-
-                    var copyFlags = (ushort) (input.ReadByte() | input.ReadByte() << 8);
-                    compressedCount += 2;
-
-                    var copyDistance = 1 + (copyFlags >> 4);
-                    var copyCount = 3 + (copyFlags & 0xF);
-
-                    var originalPosition = output.Position;
-                    output.Position = output.Length - copyDistance;
-                    output.Read(block, 0, copyCount);
-                    output.Position = originalPosition;
-                    output.Write(block, 0, copyCount);
-                    uncompressedCount += copyCount;
-                }
-
-                if (literalCount > 0)
-                {
-                    input.Read(block, 0, literalCount);
-                    output.Write(block, 0, literalCount);
-                    uncompressedCount += literalCount;
                 }
 
                 return output.ToArray();
@@ -131,16 +246,14 @@ namespace YakuzaCommon.Core
                 var uncompressedSize = uncompressedData.Length;
                 var currentPosition = 0;
 
-                byte flag = 0;
-                var flagCount = 0;
+                var manager = new BitManager(output);
 
                 var queue = new Queue<SllzItem>();
-                var first = true;
+                var itemsToWrite = 7; // La primera vez se escriben 7 elementos, el resto de las veces, 8
 
                 while (currentPosition < uncompressedSize)
                 {
-                    var scanPos = Math.Max(currentPosition - SEARCH_SIZE, 0);
-                    var match = FindMatch(uncompressedData, scanPos, currentPosition);
+                    var match = FindMatch(uncompressedData, currentPosition, false);
 
                     if (!match.Found)
                     {
@@ -152,10 +265,12 @@ namespace YakuzaCommon.Core
                         };
 
                         queue.Enqueue(item);
+
+                        manager.SetFlagType(FlagType.Literal);
                     }
                     else
                     {
-                        flag |= (byte)(1 << (7 - flagCount));
+                        manager.SetFlagType(FlagType.Copy);
 
                         var copyCount = (short)((match.Length - 3) & 0x0F);
                         var copyDistance = (short)((match.Distance - 1) << 4);
@@ -172,23 +287,10 @@ namespace YakuzaCommon.Core
                     }
 
                     currentPosition += match.Length;
-                    flagCount++;
 
-                    if (flagCount == 8)
+                    if (manager.IsByteChange)
                     {
-                        // Escribir flag
-                        output.Write(flag);
-
-                        // Escribir contenido acumulado
-                        var max = 8;
-
-                        if (first)
-                        {
-                            max = 7;
-                            first = false;
-                        }
-
-                        for (var i = 0; i < max; i++)
+                        for (var i = 0; i < itemsToWrite; i++)
                         {
                             var item = queue.Dequeue();
                             if (item.IsLiteral)
@@ -201,14 +303,14 @@ namespace YakuzaCommon.Core
                             }
                         }
 
-                        flag = 0;
-                        flagCount = 0;
+                        itemsToWrite = 8;
                     }
                 }
 
+                manager.Flush();
+                
                 if (queue.Count > 0)
                 {
-                    output.Write(flag);
                     while (queue.Count > 0)
                     {
                         var item = queue.Dequeue();
@@ -230,10 +332,74 @@ namespace YakuzaCommon.Core
             }
         }
 
-        private static MatchResult FindMatch(byte[] input, int startPos, int readPos)
+        private static MatchResult FindMatch(byte[] input, int readPos, bool useSegaCompression)
         {
+            return useSegaCompression ? FindMatchSega(input, readPos) : FindMatchKMP(input, readPos);
+        }
+
+        private static MatchResult FindMatchSega(byte[] input, int readPos)
+        {
+            var bestPos = 0;
+            var bestLength = 1;
+
+            var current = readPos - 1;
+
+            var startPos = Math.Max(readPos - SEARCH_SIZE, 0);
+
+            while (current >= startPos)
+            {
+                if (input[current] == input[readPos])
+                {
+                    var maxLength = Math.Min(input.Length - readPos, MAX_LENGTH);
+                    maxLength = Math.Min(maxLength, readPos - current);
+                    var length = DataCompare(input, current + 1, readPos + 1, maxLength);
+                    if (length > bestLength)
+                    {
+                        bestLength = length;
+                        bestPos = current;
+                    }
+                }
+
+                current--;
+            }
+
             var result = new MatchResult();
 
+            if (bestLength >= 3)
+            {
+                result.Found = true;
+                result.Distance = readPos - bestPos;
+                result.Length = bestLength;
+            }
+            else
+            {
+                result.Found = false;
+                result.Distance = 0;
+                result.Length = 1;
+            }
+
+            return result;
+        }
+
+        private static int DataCompare(byte[] input, int pos1, int pos2, int maxLength)
+        {
+            var length = 1;
+
+            while (length < maxLength && input[pos1] == input[pos2])
+            {
+                pos1++;
+                pos2++;
+                length++;
+            }
+
+            return length;
+        }
+
+        private static MatchResult FindMatchKMP(byte[] input, int readPos)
+        { 
+            var result = new MatchResult();
+
+            var startPos = Math.Max(readPos - SEARCH_SIZE, 0);
             var searchSize = Math.Min(SEARCH_SIZE, readPos - startPos);
 
             var maxLength = Math.Min(input.Length - readPos, MAX_LENGTH);
@@ -261,6 +427,7 @@ namespace YakuzaCommon.Core
                 if (input[readPos + i] == input[startPos + k + i])
                 {
                     i++;
+
                     if (i == maxLength)
                     {
                         bestLength = i;

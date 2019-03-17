@@ -41,7 +41,7 @@ namespace TF.Core.Helpers
                 return FILE_ATTRIBUTE_NORMAL;
             }
 
-            throw new FileNotFoundException();
+            return 0;
         }
 
         public static void CloneDirectory(string source, string dest)
