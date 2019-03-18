@@ -29,7 +29,7 @@ namespace TFGame.YakuzaKiwami
 
             var c = new GameFileContainer
             {
-                Path = @".\",
+                Path = @"media\",
                 Type = ContainerType.Folder
             };
             
@@ -63,7 +63,7 @@ namespace TFGame.YakuzaKiwami
 
             var sprite_c = new GameFileContainer
             { 
-                Path = @"data\2dpar\sprite_c.par",
+                Path = @"media\data\2dpar\sprite_c.par",
                 Type  = ContainerType.CompressedFile,
             };
             sprite_c.FileSearches.Add(dds1Search);
@@ -72,7 +72,7 @@ namespace TFGame.YakuzaKiwami
 
             var ui_c = new GameFileContainer
             {
-                Path = @"data\2dpar\ui_c.par",
+                Path = @"media\data\2dpar\ui_c.par",
                 Type = ContainerType.CompressedFile,
             };
             ui_c.FileSearches.Add(dds2Search);
@@ -108,7 +108,7 @@ namespace TFGame.YakuzaKiwami
 
             var auth_w64_containers = new GameFileContainerSearch
             {
-                RelativePath = @"data\auth_w64_e",
+                RelativePath = @"media\data\auth_w64_e",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = false,
                 SearchPattern = "*.par"
@@ -168,7 +168,7 @@ namespace TFGame.YakuzaKiwami
 
             var bootpar = new GameFileContainer
             {
-                Path = @"data\bootpar\boot.par",
+                Path = @"media\data\bootpar\boot.par",
                 Type = ContainerType.CompressedFile
             };
             bootpar.FileSearches.Add(empbSearch);
@@ -192,7 +192,7 @@ namespace TFGame.YakuzaKiwami
 
             var fontpar = new GameFileContainer
             {
-                Path = @"data\fontpar\font.par",
+                Path = @"media\data\fontpar\font.par",
                 Type = ContainerType.CompressedFile
             };
             fontpar.FileSearches.Add(ddsSearch);
@@ -215,7 +215,7 @@ namespace TFGame.YakuzaKiwami
 
             var map_par_containers = new GameFileContainerSearch
             {
-                RelativePath = @"data\map_par",
+                RelativePath = @"media\data\map_par",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = false,
                 SearchPattern = "st_kamuro.par_c;st_kawara_street.par_c"
@@ -240,7 +240,7 @@ namespace TFGame.YakuzaKiwami
 
             var minigame = new GameFileContainer
             {
-                Path = @"data\minigame",
+                Path = @"media\data\minigame",
                 Type = ContainerType.Folder
             };
 
@@ -258,7 +258,7 @@ namespace TFGame.YakuzaKiwami
 
             var par = new GameFileContainer
             {
-                Path = @"data\minigame\pokecir.par",
+                Path = @"media\data\minigame\pokecir.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -284,7 +284,7 @@ namespace TFGame.YakuzaKiwami
 
             var chapter = new GameFileContainer
             {
-                Path = @"data\pausepar\chapter_c.par",
+                Path = @"media\data\pausepar\chapter_c.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -302,7 +302,7 @@ namespace TFGame.YakuzaKiwami
 
             var pause_c = new GameFileContainer
             {
-                Path = @"data\pausepar\pause_c.par",
+                Path = @"media\data\pausepar\pause_c.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -320,7 +320,7 @@ namespace TFGame.YakuzaKiwami
 
             var tougijyo = new GameFileContainer
             {
-                Path = @"data\pausepar\tougijyo.par",
+                Path = @"media\data\pausepar\tougijyo.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -347,7 +347,7 @@ namespace TFGame.YakuzaKiwami
 
             var reactor = new GameFileContainer
             {
-                Path = @"data\reactorpar\reactor_w64.par",
+                Path = @"media\data\reactorpar\reactor_w64.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -369,7 +369,7 @@ namespace TFGame.YakuzaKiwami
 
             var soundpar = new GameFileContainer
             {
-                Path = @"data\soundpar\sound.par",
+                Path = @"media\data\soundpar\sound.par",
                 Type = ContainerType.CompressedFile
             };
             soundpar.FileSearches.Add(mfpSearch);
@@ -391,7 +391,7 @@ namespace TFGame.YakuzaKiwami
 
             var stage = new GameFileContainer
             {
-                Path = @"data\stage\w64\flag_data",
+                Path = @"media\data\stage\w64\flag_data",
                 Type = ContainerType.Folder
             };
 
@@ -414,7 +414,7 @@ namespace TFGame.YakuzaKiwami
 
             var par = new GameFileContainer
             {
-                Path = @"data\staypar\stay.par",
+                Path = @"media\data\staypar\stay.par",
                 Type = ContainerType.CompressedFile
             };
             
@@ -478,7 +478,7 @@ namespace TFGame.YakuzaKiwami
 
             var wdr_par_c_common = new GameFileContainer
             {
-                Path = @"data\wdr_par_c\common.par",
+                Path = @"media\data\wdr_par_c\common.par",
                 Type = ContainerType.CompressedFile
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
@@ -528,7 +528,7 @@ namespace TFGame.YakuzaKiwami
 
             var wdr_par = new GameFileContainer
             {
-                Path = @"data\wdr_par_c\wdr.par",
+                Path = @"media\data\wdr_par_c\wdr.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -546,19 +546,19 @@ namespace TFGame.YakuzaKiwami
             var result = new List<GameFileContainer>();
 
             result.Add(GetRoot());
-            result.AddRange(Get2dpar(path));
-            result.AddRange(GetAuth(path));
-            result.Add(GetBootpar());
+            //result.AddRange(Get2dpar(path));
+            //result.AddRange(GetAuth(path));
+            //result.Add(GetBootpar());
             result.Add(GetFontpar());
-            result.AddRange(GetMappar(path));
-            result.AddRange(GetMinigame());
-            result.AddRange(GetPause());
-            result.Add(GetReactorpar());
-            result.Add(GetSoundpar());
-            result.Add(GetStage());
-            result.Add(GetStaypar());
-            result.AddRange(GetWdrCommon());
-            result.AddRange(GetWdr());
+            //result.AddRange(GetMappar(path));
+            //result.AddRange(GetMinigame());
+            //result.AddRange(GetPause());
+            //result.Add(GetReactorpar());
+            //result.Add(GetSoundpar());
+            //result.Add(GetStage());
+            //result.Add(GetStaypar());
+            //result.AddRange(GetWdrCommon());
+            //result.AddRange(GetWdr());
 
             result.Sort();
             return result.ToArray();

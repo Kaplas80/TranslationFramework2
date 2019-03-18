@@ -206,8 +206,8 @@ namespace TF.Core
 
                 if (container.Type == ContainerType.Folder)
                 {
-                    var outputFolder = Path.Combine(ExportFolder, container.Path);
-                    if (Directory.Exists(outputFolder))
+                    var outputFolder = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
+                    if (Directory.Exists(outputFolder) && PathHelper.GetRelativePath(ExportFolder, outputFolder) != ".\\")
                     {
                         PathHelper.DeleteDirectory(outputFolder);
                     }
@@ -325,7 +325,7 @@ namespace TF.Core
                 var extractionContainerPath = Path.Combine(project.ContainersFolder, translationContainer.Id);
                 Directory.CreateDirectory(extractionContainerPath);
 
-                var containerPath = Path.Combine(project.InstallationPath, container.Path);
+                var containerPath = Path.GetFullPath(Path.Combine(project.InstallationPath, container.Path));
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
                 if (container.Type == ContainerType.CompressedFile)
@@ -404,7 +404,7 @@ namespace TF.Core
                         {
                             var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
 
-                            var destinationFileName = Path.Combine(extractionContainerPath, relativePath);
+                            var destinationFileName = Path.GetFullPath(Path.Combine(extractionContainerPath, relativePath));
                             var destPath = Path.GetDirectoryName(destinationFileName);
                             Directory.CreateDirectory(destPath);
 

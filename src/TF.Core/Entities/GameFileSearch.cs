@@ -23,7 +23,7 @@ namespace TF.Core.Entities
         {
             var result = new List<string>();
 
-            var fullPath = Path.Combine(path, RelativePath);
+            var fullPath = Path.GetFullPath(Path.Combine(path, RelativePath));
             if (IsWildcard)
             {
                 var split = SearchPattern.Split(';');
