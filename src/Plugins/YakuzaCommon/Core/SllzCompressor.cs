@@ -253,7 +253,7 @@ namespace YakuzaCommon.Core
 
                 while (currentPosition < uncompressedSize)
                 {
-                    var match = FindMatch(uncompressedData, currentPosition, false);
+                    var match = FindMatch(uncompressedData, currentPosition, true);
 
                     if (!match.Found)
                     {

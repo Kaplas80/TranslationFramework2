@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using TF.IO;
 using YakuzaCommon.Core;
 
@@ -69,6 +71,7 @@ namespace YakuzaCommon.Files
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
+
             ParFile.Pack(inputFolder, outputPath, useCompression);
         }
     }
@@ -402,10 +405,30 @@ namespace YakuzaCommon.Files
 
             var newOffset = dataOffset;
 
+            var compressedData = new Dictionary<uint, CompressResult>(folder.FilesId.Count);
+
+            var maxThread = new SemaphoreSlim(10);
+            var taskList = new List<Task>();
+
+            foreach (var fileId in folder.FilesId)
+            {
+                maxThread.Wait();
+                taskList.Add(Task.Factory.StartNew(() =>
+                    {
+                        var f = fileDict[fileId];
+                        var data = GetData(f, newPath, useCompression);
+                        compressedData[fileId] = data;
+                        maxThread.Release();
+                    }
+                    , TaskCreationOptions.LongRunning));
+            }
+
+            Task.WaitAll(taskList.ToArray());
+
             foreach (var fileId in folder.FilesId)
             {
                 var f = fileDict[fileId];
-                newOffset = Pack(f, output, newPath, fileTableOffset, newOffset, useCompression);
+                newOffset = Pack(f, compressedData[fileId], output, fileTableOffset, newOffset, useCompression);
             }
 
             foreach (var folderId in folder.FoldersId)
@@ -417,29 +440,49 @@ namespace YakuzaCommon.Files
             return newOffset;
         }
 
-        private static uint Pack(ParFileInfo file, ExtendedBinaryWriter output, string path, uint fileTableOffset, uint dataOffset, bool useCompression)
+        private class CompressResult
         {
+            public byte[] Data;
+            public uint UncompressedSize;
+        }
+
+        private static CompressResult GetData(ParFileInfo file, string path, bool useCompression)
+        {
+            var result = new CompressResult();
+            
             var newPath = Path.Combine(path, file.Name);
 
-            byte[] data;
+            if (useCompression && file.IsCompressed())
+            {
+                var uncompressedData = File.ReadAllBytes(newPath);
+                result.Data = SllzCompressor.Compress(uncompressedData);
+                result.UncompressedSize = (uint)uncompressedData.Length;
+            }
+            else
+            {
+                result.Data = File.ReadAllBytes(newPath);
+                result.UncompressedSize = (uint)result.Data.Length;
+            }
 
+            return result;
+        }
+
+        private static uint Pack(ParFileInfo file, CompressResult compress, ExtendedBinaryWriter output, uint fileTableOffset, uint dataOffset, bool useCompression)
+        {
             output.Seek(fileTableOffset + file.Index * 32, SeekOrigin.Begin);
 
             if (useCompression && file.IsCompressed())
             {
                 output.Write((uint)FileFlags.IsCompressed);
-                var uncompressedData = File.ReadAllBytes(newPath);
-                data = SllzCompressor.Compress(uncompressedData);
-                output.Write((uint) uncompressedData.Length);
+                output.Write(compress.UncompressedSize);
             }
             else
             {
                 output.Write((uint)FileFlags.None);
-                data = File.ReadAllBytes(newPath);
-                output.Write((uint) data.Length);
+                output.Write(compress.UncompressedSize);
             }
 
-            output.Write((uint)data.Length);
+            output.Write((uint)compress.Data.Length);
 
             if (file.FileOffset % 2048 == 0)
             {
@@ -458,7 +501,7 @@ namespace YakuzaCommon.Files
 
             output.Seek(dataOffset, SeekOrigin.Begin);
 
-            output.Write(data);
+            output.Write(compress.Data);
 
             return (uint)output.Position;
         }
