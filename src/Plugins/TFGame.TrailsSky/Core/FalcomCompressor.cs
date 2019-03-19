@@ -17,13 +17,13 @@ namespace TFGame.TrailsSky
             LongJump
         }
 
-        private class Flag
+        private class BitManager
         {
             private readonly ExtendedBinaryReader _input;
             private ushort _currentValue;
             private byte _remaining;
 
-            public Flag(ExtendedBinaryReader input)
+            public BitManager(ExtendedBinaryReader input)
             {
                 _input = input;
 
@@ -132,7 +132,7 @@ namespace TFGame.TrailsSky
             {
                 var startPos = input.Position;
 
-                var flag = new Flag(input);
+                var manager = new BitManager(input);
 
                 var finished = false;
 
@@ -143,7 +143,7 @@ namespace TFGame.TrailsSky
                         throw new Exception(); // El fichero está corrupto
                     }
 
-                    var type = flag.GetFlagType();
+                    var type = manager.GetFlagType();
 
                     switch (type)
                     {
@@ -156,7 +156,7 @@ namespace TFGame.TrailsSky
                         case FlagType.ShortJump:
                         {
                             var copyDistance = (int) input.ReadByte();
-                            var copyCount = flag.GetCopyCount();
+                            var copyCount = manager.GetCopyCount();
 
                             CopyBytes(output, copyDistance, copyCount);
                         }
@@ -164,13 +164,13 @@ namespace TFGame.TrailsSky
 
                         case FlagType.LongJump:
                         {
-                            var highDistance = flag.GetValue(5);
+                            var highDistance = manager.GetValue(5);
                             var lowDistance = input.ReadByte();
 
                             if (highDistance != 0 || lowDistance > 2)
                             {
                                 var copyDistance = (highDistance << 8) | lowDistance;
-                                var copyCount = flag.GetCopyCount();
+                                var copyCount = manager.GetCopyCount();
 
                                 CopyBytes(output, copyDistance, copyCount);
                             }
@@ -180,9 +180,9 @@ namespace TFGame.TrailsSky
                             }
                             else
                             {
-                                var branch = flag.GetFlag();
+                                var branch = manager.GetFlag();
 
-                                var count = flag.GetValue(4);
+                                var count = manager.GetValue(4);
 
                                 if (branch == 1)
                                 {

@@ -15,11 +15,20 @@ namespace TFGame.TrailsSky
         public string Description => "Versión en inglés GOG";
         public Image Icon => Resources.Icon;
         public int Version => 1;
-        public Encoding FileEncoding => Encoding.GetEncoding(932);
+        public System.Text.Encoding FileEncoding => new Encoding();
 
         public GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
+
+            var scripts = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "*._SN",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.SN.File)
+            };
 
             var datSearch = new GameFileContainerSearch
             {
@@ -29,6 +38,8 @@ namespace TFGame.TrailsSky
                 SearchPattern = "ED6_DT00.dat;ED6_DT01.dat",
                 Exclusions = {"ED6_DT17.dat", "ED6_DT18.dat"}
             };
+
+            datSearch.FileSearches.Add(scripts);
 
             result.AddRange(datSearch.GetContainers(path));
 
