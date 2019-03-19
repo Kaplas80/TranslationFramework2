@@ -31,7 +31,7 @@ namespace TF.Core.Views
             }
         }
 
-        private IList<Subtitle> _subtitles;
+        protected IList<Subtitle> _subtitles;
 
         protected GridView()
         {
@@ -101,7 +101,7 @@ namespace TF.Core.Views
             return new Tuple<int, Subtitle>(rowIndex, subtitles[rowIndex]);
         }
 
-        private void SubtitleGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        protected virtual void SubtitleGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.ColumnIndex < 0 || e.RowIndex < 0)
             {
