@@ -230,7 +230,7 @@ namespace TF.Core
                 }
                 else
                 {
-                    var outputFile = Path.Combine(ExportFolder, container.Path);
+                    var outputFile = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
                     if (File.Exists(outputFile))
                     {
                         File.Delete(outputFile);
@@ -240,6 +240,8 @@ namespace TF.Core
                     // 1. Copiar todos los ficheros del contenedor a una carpeta temporal
                     var source = Path.Combine(ContainersFolder, container.Id);
                     var dest = Path.Combine(TempFolder, container.Id);
+                    Directory.CreateDirectory(dest);
+
                     PathHelper.CloneDirectory(source, dest);
 
                     // 2. Crear los ficheros traducidos en esa carpeta temporal

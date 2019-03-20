@@ -49,13 +49,13 @@ namespace TF.Core.Helpers
             foreach (var directory in Directory.GetDirectories(source))
             {
                 var dirName = Path.GetFileName(directory);
-                Directory.CreateDirectory(Path.Combine(dest, dirName));
-                CloneDirectory(directory, Path.Combine(dest, dirName));
+                Directory.CreateDirectory(Path.GetFullPath(Path.Combine(dest, dirName)));
+                CloneDirectory(directory, Path.GetFullPath(Path.Combine(dest, dirName)));
             }
 
             foreach (var file in Directory.GetFiles(source))
             {
-                File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
+                File.Copy(file, Path.GetFullPath(Path.Combine(dest, Path.GetFileName(file))));
             }
         }
 

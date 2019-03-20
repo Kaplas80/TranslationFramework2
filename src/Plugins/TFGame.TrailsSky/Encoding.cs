@@ -15,8 +15,8 @@ namespace TFGame.TrailsSky
             DecodingReplacements = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("\u0001", "\\n"),
-                new Tuple<string, string>("\u0002", "<0x02>"),
-                new Tuple<string, string>("\u0003", "<0x03>"),
+                new Tuple<string, string>("\u0002", "<Enter>"),
+                new Tuple<string, string>("\u0003", "<Clear>"),
                 new Tuple<string, string>("\u0004", "<0x04>"),
                 new Tuple<string, string>("\u0005", "<0x05>"),
                 new Tuple<string, string>("\u0006", "<0x06>"),
@@ -50,8 +50,8 @@ namespace TFGame.TrailsSky
             EncodingReplacements = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("\\n", "\u0001"),
-                new Tuple<string, string>("<0x02>", "\u0002"),
-                new Tuple<string, string>("<0x03>", "\u0003"),
+                new Tuple<string, string>("<Enter>", "\u0002"),
+                new Tuple<string, string>("<Clear>", "\u0003"),
                 new Tuple<string, string>("<0x04>", "\u0004"),
                 new Tuple<string, string>("<0x05>", "\u0005"),
                 new Tuple<string, string>("<0x06>", "\u0006"),
