@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.SubtitleGridView = new TF.Core.Views.GridView.TFDataGridView();
@@ -86,6 +87,8 @@
             this.SubtitleGridView.Location = new System.Drawing.Point(0, 0);
             this.SubtitleGridView.MultiSelect = false;
             this.SubtitleGridView.Name = "SubtitleGridView";
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SubtitleGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.SubtitleGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.SubtitleGridView.Size = new System.Drawing.Size(1066, 418);
             this.SubtitleGridView.TabIndex = 2;
