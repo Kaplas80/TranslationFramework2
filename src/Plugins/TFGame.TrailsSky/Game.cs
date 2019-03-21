@@ -59,7 +59,13 @@ namespace TFGame.TrailsSky
 
         public void RepackFile(string inputPath, string outputFile, bool compress)
         {
-            throw new NotImplementedException();
+            var fileName = Path.GetFileName(outputFile);
+            var extension = Path.GetExtension(outputFile);
+
+            if (extension.StartsWith(".dat"))
+            {
+                DatFile.Repack(inputPath, outputFile, compress);
+            }
         }
     }
 }
