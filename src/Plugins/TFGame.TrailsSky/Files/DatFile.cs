@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using TF.IO;
 
 namespace TFGame.TrailsSky.Files
@@ -91,6 +93,49 @@ namespace TFGame.TrailsSky.Files
             }
         }
 
+        private class FileInfo
+        {
+            public string FileName;
+            public int CompressedSize;
+            public int MaxSize;
+            public int Unknown;
+            public int TimeStamp;
+            public bool IsCompressed;
+        }
+
+        private static IList<FileInfo> ReadFileInfo(ExtendedBinaryReader log)
+        {
+            var result = new List<FileInfo>();
+
+            while (log.Position < log.Length)
+            {
+                var fileName = log.ReadString();
+                var originalCompressedSize = log.ReadInt32();
+                var maxSize = log.ReadInt32();
+                var unknown = log.ReadInt32();
+                var timestamp = log.ReadInt32();
+
+                var compressed = false;
+                if (originalCompressedSize != 0)
+                {
+                    compressed = log.ReadInt32() == 1;
+                }
+
+                var fi = new FileInfo
+                {
+                    FileName = fileName,
+                    CompressedSize = originalCompressedSize,
+                    MaxSize = maxSize,
+                    Unknown = unknown,
+                    TimeStamp = timestamp,
+                    IsCompressed = compressed
+                };
+
+                result.Add(fi);
+            }
+
+            return result;
+        }
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
             var dir = Path.GetDirectoryName(outputPath);
@@ -112,68 +157,83 @@ namespace TFGame.TrailsSky.Files
                 dirOutput.Write(maxNumFiles);
                 datOutput.Write(maxNumFiles);
 
+                var files = ReadFileInfo(log);
+
+                var compressedData = new Dictionary<string, byte[]>(files.Count);
+
+                var maxThread = new SemaphoreSlim(10);
+                var taskList = new List<Task>();
+
+                foreach (var file in files)
+                {
+                    maxThread.Wait();
+                    taskList.Add(Task.Factory.StartNew(() =>
+                        {
+                            if (file.CompressedSize > 0)
+                            {
+                                var fileToInsert = Path.Combine(inputFolder, file.FileName);
+                                var data = GetData(fileToInsert, file.IsCompressed, useCompression);
+                                compressedData[file.FileName] = data;
+                            }
+
+                            maxThread.Release();
+                        }
+                        , TaskCreationOptions.LongRunning));
+                }
+
+                Task.WaitAll(taskList.ToArray());
+
                 var fileOffset = 0x10 + maxNumFiles * 4 + 0x04; // Posición en la que hay que empezar a insertar los ficheros
 
-                var fileIndex = 0;
-
-                while (log.Position < log.Length)
+                for (var i = 0; i < files.Count; i++)
                 {
-                    var fileName = log.ReadString();
-                    dirOutput.WriteString(fileName, 16);
+                    var file = files[i];
 
-                    var originalCompressedSize = log.ReadInt32();
-                    var maxSize = log.ReadInt32();
-                    var unknown = log.ReadInt32();
-                    var timestamp = log.ReadInt32();
+                    dirOutput.WriteString(file.FileName, 16);
 
-                    datOutput.Seek(0x10 + fileIndex * 4, SeekOrigin.Begin);
+                    datOutput.Seek(0x10 + i * 4, SeekOrigin.Begin);
                     datOutput.Write((int)fileOffset);
 
-                    if (originalCompressedSize == 0)
+                    if (file.CompressedSize == 0)
                     {
                         // Solo tiene ceros
-                        dirOutput.Write(originalCompressedSize);
-                        dirOutput.Write(maxSize);
-                        dirOutput.Write(unknown);
-                        dirOutput.Write(timestamp);
+                        dirOutput.Write(file.CompressedSize);
+                        dirOutput.Write(file.MaxSize);
+                        dirOutput.Write(file.Unknown);
+                        dirOutput.Write(file.TimeStamp);
                         dirOutput.Write((int)fileOffset);
 
-                        fileOffset += maxSize;
+                        fileOffset += file.MaxSize;
                     }
                     else
                     {
-                        var compressed = log.ReadInt32() == 1;
-
-                        var fileToInsert = Path.Combine(inputFolder, fileName);
                         datOutput.Seek(fileOffset, SeekOrigin.Begin);
 
-                        var data = GetData(fileToInsert, compressed, useCompression);
+                        var data = compressedData[file.FileName];
 
                         datOutput.Write(data);
 
                         dirOutput.Write(data.Length);
 
-                        if (data.Length <= maxSize)
+                        if (data.Length <= file.MaxSize)
                         {
-                            dirOutput.Write(maxSize);
-                            dirOutput.Write(unknown);
-                            dirOutput.Write(timestamp);
+                            dirOutput.Write(file.MaxSize);
+                            dirOutput.Write(file.Unknown);
+                            dirOutput.Write(file.TimeStamp);
                             dirOutput.Write((int)fileOffset);
 
-                            fileOffset += maxSize;
+                            fileOffset += file.MaxSize;
                         }
                         else
                         {
-                            dirOutput.Write(maxSize * 2);
-                            dirOutput.Write(maxSize * 2);
-                            dirOutput.Write(timestamp);
+                            dirOutput.Write(file.MaxSize * 2);
+                            dirOutput.Write(file.MaxSize * 2);
+                            dirOutput.Write(file.TimeStamp);
                             dirOutput.Write((int)fileOffset);
 
-                            fileOffset += maxSize * 2;
+                            fileOffset += file.MaxSize * 2;
                         }
                     }
-
-                    fileIndex++;
                 }
             }
         }

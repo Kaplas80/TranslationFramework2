@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using TF.IO;
 
 namespace TFGame.TrailsSky
@@ -17,155 +16,208 @@ namespace TFGame.TrailsSky
             LongJump
         }
 
-        private class BitManager
+        private class CompressedBinaryReader : ExtendedBinaryReader
         {
-            private readonly ExtendedBinaryReader _input;
-            private readonly ExtendedBinaryWriter _output;
-            private MemoryStream _outputBuffer;
-            private ushort _currentValue;
-            private byte _remaining;
+            private ushort _currentFlagValue;
+            private byte _remainingFlagCount;
 
-            public BitManager(ExtendedBinaryReader input)
+            public CompressedBinaryReader(Stream input, Endianness endianness = Endianness.LittleEndian) : base(input, endianness)
             {
-                _input = input;
-
-                _currentValue = (ushort)(input.ReadUInt16() >> 8);
-                _remaining = 0x08;
             }
 
-            public BitManager(ExtendedBinaryWriter output)
+            public void InitializeFlags()
             {
-                _output = output;
-                _outputBuffer = new MemoryStream();
-
-                _currentValue = 0;
-                _remaining = 0x08;
+                _currentFlagValue = (ushort)(ReadUInt16() >> 8);
+                _remainingFlagCount = 0x08;
             }
 
-            public FlagType GetFlagType()
+            public FlagType ReadFlagType()
             {
-                var val = GetFlag();
+                var isFlagSet = ReadFlag();
 
-                if (val == 0)
+                if (isFlagSet)
                 {
                     return FlagType.Literal;
                 }
 
-                val = GetFlag();
-                return val == 0 ? FlagType.ShortJump : FlagType.LongJump;
+                isFlagSet = ReadFlag();
+                return isFlagSet ? FlagType.ShortJump : FlagType.LongJump;
             }
 
 
-            public int GetFlag()
+            public bool ReadFlag()
             {
-                if (_remaining == 0x00)
+                if (_remainingFlagCount == 0x00)
                 {
-                    var data = _input.ReadUInt16();
-                    _currentValue = data;
-                    _remaining = 0x10;
+                    var data = ReadUInt16();
+                    _currentFlagValue = data;
+                    _remainingFlagCount = 0x10;
                 }
 
-                var result = (_currentValue & 0x01);
+                var result = (_currentFlagValue & 0x01) == 0x01;
 
-                _currentValue >>= 0x01;
-                _remaining--;
+                _currentFlagValue >>= 0x01;
+                _remainingFlagCount--;
 
                 return result;
             }
 
-            public int GetValue(int count)
+            public int ReadFlagValue(int numBits)
             {
                 var value = 0;
 
-                for (var i = 0; i < count; i++)
+                for (var i = 0; i < numBits; i++)
                 {
                     value <<= 0x01;
-                    value |= GetFlag();
+
+                    var isFlagSet = ReadFlag();
+                    value |= isFlagSet ? 0x01 : 0x00;
                 }
 
                 return value;
             }
 
-            public int GetCopyCount()
+            public int ReadCopyCount()
             {
-                if (GetFlag() == 1)
+                if (ReadFlag())
                 {
                     return 0x02;
                 }
 
-                if (GetFlag() == 1)
+                if (ReadFlag())
                 {
                     return 0x03;
                 }
 
-                if (GetFlag() == 1)
+                if (ReadFlag())
                 {
                     return 0x04;
                 }
 
-                if (GetFlag() == 1)
+                if (ReadFlag())
                 {
                     return 0x05;
                 }
 
-                if (GetFlag() == 1)
+                if (ReadFlag())
                 {
-                    return GetValue(3) + 0x06;
+                    return ReadFlagValue(3) + 0x06;
                 }
 
-                return _input.ReadByte() + 0x0E;
+                return ReadByte() + 0x0E;
+            }
+        }
+
+        private class CompressedBinaryWriter : ExtendedBinaryWriter
+        {
+            private ushort _currentFlagValue;
+            private byte _remainingFlagCount;
+            private MemoryStream _outputBuffer;
+
+            public CompressedBinaryWriter(Stream input, Endianness endianness = Endianness.LittleEndian) : base(input, endianness)
+            {
+                _outputBuffer = new MemoryStream();
             }
 
-            public void SetFlag(int value)
+            public void InitializeFlags()
             {
-                if (value == 1)
+                _currentFlagValue = 0;
+                _remainingFlagCount = 0x08;
+            }
+
+            public void WriteFlag(bool isSet)
+            {
+                if (isSet)
                 {
-                    _currentValue |= 0x8000;
+                    _currentFlagValue |= 0x8000;
                 }
 
-                _remaining--;
+                _remainingFlagCount--;
 
-                if (_remaining == 0)
+                if (_remainingFlagCount == 0)
                 {
-                    _output.Write(_currentValue);
-                    _output.Write(_outputBuffer.ToArray());
+                    base.Write(_currentFlagValue);
+                    base.Write(_outputBuffer.ToArray());
                     _outputBuffer.Close();
                     _outputBuffer.Dispose();
                     _outputBuffer = new MemoryStream();
 
-                    _remaining = 0x10;
-                    _currentValue = 0x0000;
+                    _remainingFlagCount = 0x10;
+                    _currentFlagValue = 0x0000;
                 }
                 else
                 {
-                    _currentValue >>= 0x01;
+                    _currentFlagValue >>= 0x01;
                 }
             }
 
-            public void Append(byte b)
+            public void WriteFlagValue(int value, int numBits)
             {
-                _outputBuffer.WriteByte(b);
+                for (var i = numBits - 1; i >= 0; i--)
+                {
+                    var flagValue = ((value >> i) & 0x01) == 0x01;
+                    WriteFlag(flagValue);
+                }
             }
 
-            public void Flush()
+            public void WriteCopyCount(int copyCount)
             {
-                if (_remaining != 0x10)
+                var i = 2;
+                var limit = Math.Min(5, copyCount);
+                while (i < limit)
                 {
-                    var x = _remaining;
-                    for (var i = 0; i < x; i++)
+                    WriteFlag(false);
+                    i++;
+                }
+
+                if (copyCount >= 0x06)
+                {
+                    WriteFlag(false);
+                    if (copyCount >= 0x0E)
                     {
-                        SetFlag(0);
+                        copyCount -= 0x0E;
+                        Write((byte)copyCount);
+                        WriteFlag(false);
+                    }
+                    else
+                    {
+                        WriteFlag(true);
+                        copyCount -= 0x06;
+                        WriteFlagValue(copyCount, 3);
+                    }
+                }
+                else
+                {
+                    WriteFlag(true);
+                }
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (_remainingFlagCount != 0x10)
+                {
+                    var count = _remainingFlagCount;
+                    for (var i = 0; i < count; i++)
+                    {
+                        WriteFlag(false);
                     }
                 }
 
                 _outputBuffer.Close();
                 _outputBuffer.Dispose();
+
+                base.Dispose(disposing);
+            }
+
+            public override void Write(byte value)
+            {
+                _outputBuffer.WriteByte(value);
             }
         }
 
         public static byte[] Decompress(byte[] compressedData)
         {
-            using (var input = new ExtendedBinaryReader(new MemoryStream(compressedData)))
+            using (var input = new CompressedBinaryReader(new MemoryStream(compressedData)))
             using (var output = new MemoryStream())
             {
                 byte endByte;
@@ -183,13 +235,13 @@ namespace TFGame.TrailsSky
             }
         }
 
-        private static byte[] DecompressChunk(ExtendedBinaryReader input, ushort chunkSize)
+        private static byte[] DecompressChunk(CompressedBinaryReader input, ushort chunkSize)
         { 
             using (var output = new MemoryStream())
             {
                 var startPos = input.Position;
 
-                var manager = new BitManager(input);
+                input.InitializeFlags();
 
                 var finished = false;
 
@@ -200,7 +252,7 @@ namespace TFGame.TrailsSky
                         throw new Exception(); // El fichero está corrupto
                     }
 
-                    var type = manager.GetFlagType();
+                    var type = input.ReadFlagType();
 
                     switch (type)
                     {
@@ -213,7 +265,7 @@ namespace TFGame.TrailsSky
                         case FlagType.ShortJump:
                         {
                             var copyDistance = (int) input.ReadByte();
-                            var copyCount = manager.GetCopyCount();
+                            var copyCount = input.ReadCopyCount();
 
                             CopyBytes(output, copyDistance, copyCount);
                         }
@@ -221,13 +273,13 @@ namespace TFGame.TrailsSky
 
                         case FlagType.LongJump:
                         {
-                            var highDistance = manager.GetValue(5);
+                            var highDistance = input.ReadFlagValue(5);
                             var lowDistance = input.ReadByte();
 
                             if (highDistance != 0 || lowDistance > 2)
                             {
                                 var copyDistance = (highDistance << 8) | lowDistance;
-                                var copyCount = manager.GetCopyCount();
+                                var copyCount = input.ReadCopyCount();
 
                                 CopyBytes(output, copyDistance, copyCount);
                             }
@@ -237,11 +289,11 @@ namespace TFGame.TrailsSky
                             }
                             else
                             {
-                                var branch = manager.GetFlag();
+                                var isBranch = input.ReadFlag();
 
-                                var count = manager.GetValue(4);
+                                var count = input.ReadFlagValue(4);
 
-                                if (branch == 1)
+                                if (isBranch)
                                 {
                                     count <<= 8;
                                     count |= input.ReadByte();
@@ -308,50 +360,45 @@ namespace TFGame.TrailsSky
             var CHUNK_SIZE_UNC_MAX = 0x3DFF0;
 
             using (var outputMemoryStream = new MemoryStream())
-            using (var output = new ExtendedBinaryWriter(outputMemoryStream))
             {
-                var manager = new BitManager(output);
-
-                while (pos < data.Length)
+                using (var output = new CompressedBinaryWriter(outputMemoryStream))
                 {
-                    if (output.Length >= CHUNK_SIZE_CMP_MAX || pos >= CHUNK_SIZE_UNC_MAX)
+                    output.InitializeFlags();
+
+                    while (pos < data.Length)
                     {
-                        break;
+                        if (output.Length >= CHUNK_SIZE_CMP_MAX || pos >= CHUNK_SIZE_UNC_MAX)
+                        {
+                            break;
+                        }
+
+                        var match = FindMatch(data, pos);
+                        var repeat = FindRepeat(data, pos);
+
+                        if (repeat.Length > match.Length)
+                        {
+                            EncodeRepeat(output, data[pos], repeat.Length);
+                            pos += repeat.Length;
+                        }
+                        else if (match.Length > 0)
+                        {
+                            EncodeMatch(output, match.Length, match.Position);
+                            pos += match.Length;
+                        }
+                        else
+                        {
+                            output.Write(data[pos]);
+                            pos++;
+                            output.WriteFlag(false);
+                        }
+
                     }
 
-                    var match = FindMatch(data, pos);
-                    var repeat = FindRepeat(data, pos);
+                    output.WriteFlagValue(0b110000, 6);
 
-                    if (repeat.Length > match.Length)
-                    {
-                        EncodeRepeat(manager, data[pos], repeat.Length);
-                        pos += repeat.Length;
-                    }
-                    else if (match.Length > 0)
-                    {
-                        EncodeMatch(manager, match.Length, match.Position);
-                        pos += match.Length;
-                    }
-                    else
-                    {
-                        manager.Append(data[pos]);
-                        pos++;
-                        manager.SetFlag(0);
-                    }
-
+                    output.Write((byte) 0x00);
+                    output.WriteFlag(false);
                 }
-
-                manager.SetFlag(1);
-                manager.SetFlag(1);
-
-                manager.SetFlag(0);
-                manager.SetFlag(0);
-                manager.SetFlag(0);
-                manager.SetFlag(0);
-                manager.Append(0);
-                manager.SetFlag(0);
-
-                manager.Flush();
 
                 return outputMemoryStream.ToArray();
             }
@@ -446,113 +493,92 @@ namespace TFGame.TrailsSky
             return result;
         }
 
-        private static void EncodeRepeat(BitManager manager, byte repeatByte, int size)
+        private static void EncodeRepeat(CompressedBinaryWriter output, byte repeatByte, int size)
         {
             if (size < 0x0E)
             {
-                manager.Append(repeatByte);
-                manager.SetFlag(0);
-                EncodeMatch(manager, size - 1, 1);
+                output.Write(repeatByte);
+                output.WriteFlag(false);
+                EncodeMatch(output, size - 1, 1);
             }
             else
             {
                 size -= 0x0E;
 
-                manager.SetFlag(1);
-                manager.SetFlag(1);
-                manager.SetFlag(0);
-                manager.SetFlag(0);
-                manager.SetFlag(0);
-                manager.SetFlag(0);
-
-                manager.Append((byte) 0x01);
-                manager.SetFlag(0);
+                output.WriteFlagValue(0b110000, 6);
+                output.Write((byte) 0x01);
+                output.WriteFlag(false);
 
                 if (size < 0x10)
                 {
-                    manager.SetFlag(0);
-                    for (var i = 3; i >= 0; i--)
-                    {
-                        manager.SetFlag((size >> i) & 1);
-                        if (i == 1)
-                        {
-                            manager.Append(repeatByte);
-                        }
-                    }
+                    output.WriteFlag(false);
+
+                    var flagValue = ((size >> 3) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
+                    flagValue = ((size >> 2) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
+                    flagValue = ((size >> 1) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
+
+                    output.Write(repeatByte);
+
+                    flagValue = ((size >> 0) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
                 }
                 else
                 {
                     var high = size >> 8;
                     var low = size & 0xFF;
-                    manager.SetFlag(1);
+                    output.WriteFlag(true);
 
-                    for (var i = 3; i >= 0; i--)
-                    {
-                        manager.SetFlag((high >> i) & 1);
-                        if (i == 1)
-                        {
-                            manager.Append((byte) low);
-                            manager.Append(repeatByte);
-                        }
-                    }
+                    var flagValue = ((high >> 3) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
+                    flagValue = ((high >> 2) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
+                    flagValue = ((high >> 1) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
+
+                    output.Write((byte)low);
+                    output.Write(repeatByte);
+
+                    flagValue = ((high >> 0) & 0x01) == 0x01;
+                    output.WriteFlag(flagValue);
                 }
             }
         }
 
-        private static void EncodeMatch(BitManager manager, int matchSize, int matchPos)
+        private static void EncodeMatch(CompressedBinaryWriter output, int matchSize, int matchPos)
         {
             if (matchPos < 0x100)
             {
-                manager.SetFlag(1);
-                manager.Append((byte) matchPos);
-                manager.SetFlag(0);
+                output.WriteFlag(true);
+                output.Write((byte) matchPos);
+                output.WriteFlag(false);
             }
             else
             {
                 var high = matchPos >> 8;
                 var low = matchPos & 0xFF;
 
-                manager.SetFlag(1);
-                manager.SetFlag(1);
-                manager.SetFlag((high >> 4) & 0x01);
-                manager.SetFlag((high >> 3) & 0x01);
-                manager.SetFlag((high >> 2) & 0x01);
-                manager.SetFlag((high >> 1) & 0x01);
-                manager.Append((byte)low);
-                manager.SetFlag((high >> 0) & 0x01);
+                output.WriteFlag(true);
+                output.WriteFlag(true);
+
+                var flagValue = ((high >> 4) & 0x01) == 0x01;
+                output.WriteFlag(flagValue);
+                flagValue = ((high >> 3) & 0x01) == 0x01;
+                output.WriteFlag(flagValue);
+                flagValue = ((high >> 2) & 0x01) == 0x01;
+                output.WriteFlag(flagValue);
+                flagValue = ((high >> 1) & 0x01) == 0x01;
+                output.WriteFlag(flagValue);
+
+                output.Write((byte)low);
+
+                flagValue = ((high >> 0) & 0x01) == 0x01;
+                output.WriteFlag(flagValue);
             }
 
-            for (var i = 2; i < 5; i++)
-            {
-                if (i >= matchSize)
-                {
-                    break;
-                }
-                manager.SetFlag(0);
-            }
-
-            if (matchSize >= 0x06)
-            {
-                manager.SetFlag(0);
-                if (matchSize >= 0x0E)
-                {
-                    matchSize -= 0x0E;
-                    manager.Append((byte) matchSize);
-                    manager.SetFlag(0);
-                }
-                else
-                {
-                    manager.SetFlag(1);
-                    matchSize -= 0x06;
-                    manager.SetFlag((matchSize >> 2) & 0x01);
-                    manager.SetFlag((matchSize >> 1) & 0x01);
-                    manager.SetFlag((matchSize >> 0) & 0x01);
-                }
-            }
-            else
-            {
-                manager.SetFlag(1);
-            }
+            output.WriteCopyCount(matchSize);
         }
     }
 }
