@@ -35,13 +35,13 @@ namespace TFGame.TrailsSky
             {
                 var isFlagSet = ReadFlag();
 
-                if (isFlagSet)
+                if (!isFlagSet)
                 {
                     return FlagType.Literal;
                 }
 
                 isFlagSet = ReadFlag();
-                return isFlagSet ? FlagType.ShortJump : FlagType.LongJump;
+                return isFlagSet ? FlagType.LongJump : FlagType.ShortJump;
             }
 
 
