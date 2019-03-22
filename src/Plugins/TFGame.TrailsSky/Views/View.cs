@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using TF.Core.Views;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace TFGame.TrailsSky.Files.SN
+namespace TFGame.TrailsSky.Views
 {
     public class View : GridView
     {

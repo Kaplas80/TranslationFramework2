@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using TF.Core.Files;
 using TF.Core.TranslationEntities;
 using TF.IO;
+using TFGame.TrailsSky.Views;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TFGame.TrailsSky.Files.SN

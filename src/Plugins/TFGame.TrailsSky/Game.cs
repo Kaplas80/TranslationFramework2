@@ -21,7 +21,7 @@ namespace TFGame.TrailsSky
         {
             var result = new List<GameFileContainer>();
 
-            var scripts = new GameFileSearch
+            var scenarios = new GameFileSearch
             {
                 RelativePath = ".",
                 SearchPattern = "*._SN",
@@ -30,18 +30,114 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.SN.File)
             };
 
-            var datSearch = new GameFileContainerSearch
+            var dt01 = new GameFileContainer
             {
-                RelativePath = @".\",
-                TypeSearch = ContainerType.CompressedFile,
-                RecursiveSearch = false,
-                SearchPattern = "ED6_DT00.dat;ED6_DT01.dat",
-                Exclusions = {"ED6_DT17.dat", "ED6_DT18.dat"}
+                Path = @".\ED6_DT01.dat",
+                Type = ContainerType.CompressedFile
             };
 
-            datSearch.FileSearches.Add(scripts);
+            dt01.FileSearches.Add(scenarios);
 
-            result.AddRange(datSearch.GetContainers(path));
+            var bookFiles = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_BOOK??._DT",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.BookFile),
+                Exclusions = { "T_BOOK00._DT" }
+            };
+
+            var cookFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_COOK2 ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.CookFile),
+            };
+
+            var itemFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_ITEM2 ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.ItemFile),
+            };
+
+            var magicFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_MAGIC ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.MagicFile),
+            };
+
+            var memoFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_MEMO  ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.MemoFile),
+            };
+
+            var nameFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_NAME  ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.NameFile),
+            };
+
+            var questFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_QUEST ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.QuestFile),
+            };
+
+            var shopFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_SHOP  ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.ShopFile),
+            };
+
+            var townFile = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "T_TOWN  ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.DT.TownFile),
+            };
+
+            var dt02 = new GameFileContainer
+            {
+                Path = @".\ED6_DT02.dat",
+                Type = ContainerType.CompressedFile
+            };
+
+            dt02.FileSearches.Add(bookFiles);
+            dt02.FileSearches.Add(cookFile);
+            dt02.FileSearches.Add(itemFile);
+            dt02.FileSearches.Add(magicFile);
+            dt02.FileSearches.Add(memoFile);
+            dt02.FileSearches.Add(nameFile);
+            dt02.FileSearches.Add(questFile);
+            dt02.FileSearches.Add(shopFile);
+            dt02.FileSearches.Add(townFile);
+
+            result.Add(dt01);
+            result.Add(dt02);
 
             return result.ToArray();
         }

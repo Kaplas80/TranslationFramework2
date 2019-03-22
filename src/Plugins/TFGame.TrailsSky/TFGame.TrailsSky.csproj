@@ -49,8 +49,22 @@
     <Compile Include="Core\FalcomCompressor.cs" />
     <Compile Include="Encoding.cs" />
     <Compile Include="Files\DatFile.cs" />
+    <Compile Include="Files\DT\QuestFile.cs" />
+    <Compile Include="Files\DT\GenericDTFile.cs" />
+    <Compile Include="Files\DT\TownFile.cs" />
+    <Compile Include="Files\DT\TownElement.cs" />
+    <Compile Include="Files\DT\ShopElement.cs" />
+    <Compile Include="Files\DT\ShopFile.cs" />
+    <Compile Include="Files\DT\NameFile.cs" />
+    <Compile Include="Files\DT\MemoFile.cs" />
+    <Compile Include="Files\DT\MagicFile.cs" />
+    <Compile Include="Files\DT\ItemFile.cs" />
+    <Compile Include="Files\DT\ItemElement.cs" />
+    <Compile Include="Files\DT\CookFile.cs" />
+    <Compile Include="Files\DT\BookFile.cs" />
+    <Compile Include="Files\DT\DTElement.cs" />
     <Compile Include="Files\SN\File.cs" />
-    <Compile Include="Files\SN\View.cs">
+    <Compile Include="Views\View.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Game.cs" />
