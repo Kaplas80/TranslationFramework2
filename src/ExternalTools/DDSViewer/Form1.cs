@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Cyotek.Windows.Forms;
 using DirectXTexNet;
+using Image = System.Drawing.Image;
 
 namespace DDSViewer
 {
     public partial class Form1 : Form
     {
-        private List<string> _dds;
+        private List<string> _images;
         private int _index;
         private StreamWriter _file;
         private int _count;
@@ -44,10 +45,16 @@ namespace DDSViewer
             var result = folderBrowserDialog1.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                _dds = new List<string>(Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*.dds", SearchOption.AllDirectories));
-                _dds.Sort();
+                var dds = new List<string>(Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*.dds", SearchOption.AllDirectories));
+                var png = new List<string>(Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*.png", SearchOption.AllDirectories));
+
+                _images = new List<string>(dds.Count + png.Count);
+
+                _images.AddRange(dds);
+                _images.AddRange(png);
+                _images.Sort();
                 _index = 0;
-                _count = _dds.Count;
+                _count = _images.Count;
 
                 if (_count > 0)
                 {
@@ -77,18 +84,29 @@ namespace DDSViewer
 
         private void LoadImage()
         {
-            var currentFile = _dds[_index];
+            var currentFile = _images[_index];
             Text = $"{currentFile} ({_index + 1}/{_count})";
             try
             {
-                var dds = DirectXTexNet.TexHelper.Instance.LoadFromDDSFile(currentFile, DDS_FLAGS.NONE);
-                var codec = DirectXTexNet.TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+                if (Path.GetExtension(currentFile).ToLowerInvariant() == ".dds")
+                {
+                    var dds = DirectXTexNet.TexHelper.Instance.LoadFromDDSFile(currentFile, DDS_FLAGS.NONE);
+                    var codec = DirectXTexNet.TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
 
-                var metadata = dds.GetMetadata();
-                var decompressed = (metadata.Format != DXGI_FORMAT.B8G8R8A8_UNORM) ? dds.Decompress(DXGI_FORMAT.B8G8R8A8_UNORM) : dds;
-                var image = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+                    var metadata = dds.GetMetadata();
+                    var decompressed = dds.Decompress(metadata.Format);
+                    var image = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
 
-                imageBox1.Image = System.Drawing.Image.FromStream(image);
+                    imageBox1.Image = System.Drawing.Image.FromStream(image);
+                }
+                else if (Path.GetExtension(currentFile).ToLowerInvariant() == ".png")
+                {
+                    imageBox1.Image = Image.FromFile(currentFile);
+                }
+                else
+                {
+                    imageBox1.Image = null;
+                }
             }
             catch (Exception e)
             {
@@ -100,9 +118,9 @@ namespace DDSViewer
         {
             if (_file != null)
             {
-                _file.WriteLine(_dds[_index]);
+                _file.WriteLine(_images[_index]);
                 _index++;
-                if (_index == _dds.Count)
+                if (_index == _images.Count)
                 {
                     MessageBox.Show("Finalizado");
                     Close();
