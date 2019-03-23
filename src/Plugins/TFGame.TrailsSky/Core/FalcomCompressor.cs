@@ -359,6 +359,7 @@ namespace TFGame.TrailsSky
             var CHUNK_SIZE_CMP_MAX = 0x7FC0;
             var CHUNK_SIZE_UNC_MAX = 0x3DFF0;
 
+            var startPos = pos;
             using (var outputMemoryStream = new MemoryStream())
             {
                 using (var output = new CompressedBinaryWriter(outputMemoryStream))
@@ -367,7 +368,7 @@ namespace TFGame.TrailsSky
 
                     while (pos < data.Length)
                     {
-                        if (output.Length >= CHUNK_SIZE_CMP_MAX || pos >= CHUNK_SIZE_UNC_MAX)
+                        if (output.Length >= CHUNK_SIZE_CMP_MAX || (pos - startPos) >= CHUNK_SIZE_UNC_MAX)
                         {
                             break;
                         }
