@@ -21,6 +21,22 @@ namespace TFGame.TrailsSky
         {
             var result = new List<GameFileContainer>();
 
+            var fonts = new GameFileSearch()
+            {
+                RelativePath = ".",
+                SearchPattern = "FONT*._DA",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(TF.Core.Files.DDSFile)
+            };
+
+            var dt00 = new GameFileContainer
+            {
+                Path = @".\ED6_DT00.dat",
+                Type = ContainerType.CompressedFile
+            };
+            dt00.FileSearches.Add(fonts);
+
             var scenarios = new GameFileSearch
             {
                 RelativePath = ".",
@@ -136,8 +152,30 @@ namespace TFGame.TrailsSky
             dt02.FileSearches.Add(shopFile);
             dt02.FileSearches.Add(townFile);
 
+            var dt04 = new GameFileContainer
+            {
+                Path = @".\ED6_DT04.dat",
+                Type = ContainerType.CompressedFile
+            };
+
+            var dt0F = new GameFileContainer
+            {
+                Path = @".\ED6_DTF.dat",
+                Type = ContainerType.CompressedFile
+            };
+
+            var dt1C = new GameFileContainer
+            {
+                Path = @".\ED6_DT1C.dat",
+                Type = ContainerType.CompressedFile
+            };
+
+            result.Add(dt00);
             result.Add(dt01);
             result.Add(dt02);
+            result.Add(dt04);
+            result.Add(dt0F);
+            result.Add(dt1C);
 
             return result.ToArray();
         }

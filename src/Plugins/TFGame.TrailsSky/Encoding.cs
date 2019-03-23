@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace TFGame.TrailsSky
 {
     public class Encoding : System.Text.Encoding
     {
-        private readonly System.Text.Encoding defaultEncoding = GetEncoding(932);
+        private readonly System.Text.Encoding isoEncoding = GetEncoding("ISO-8859-1", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback);
+        private readonly System.Text.Encoding defaultEncoding = GetEncoding(932, EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
 
         private List<Tuple<string, string>> DecodingReplacements;
         private List<Tuple<string, string>> EncodingReplacements;
@@ -45,6 +47,14 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("\u001D", "<0x1D>"),
                 new Tuple<string, string>("\u001E", "<0x1E>"),
                 new Tuple<string, string>("\u001F", "<0x1F>"),
+
+                new Tuple<string, string>("\u00A4", "á"),
+                new Tuple<string, string>("\u00A6", "é"),
+                new Tuple<string, string>("\u00A7", "í"),
+                new Tuple<string, string>("\u00A8", "ó"),
+                new Tuple<string, string>("\u00B5", "ú"),
+                new Tuple<string, string>("\u00B6", "ü"),
+                new Tuple<string, string>("\u00B8", "ñ"),
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
@@ -80,6 +90,14 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("<0x1D>", "\u001D"),
                 new Tuple<string, string>("<0x1E>", "\u001E"),
                 new Tuple<string, string>("<0x1F>", "\u001F"),
+
+                new Tuple<string, string>("á", "\u00A4"),
+                new Tuple<string, string>("é", "\u00A6"),
+                new Tuple<string, string>("í", "\u00A7"),
+                new Tuple<string, string>("ó", "\u00A8"),
+                new Tuple<string, string>("ú", "\u00B5"),
+                new Tuple<string, string>("ü", "\u00B6"),
+                new Tuple<string, string>("ñ", "\u00B8"),
             };
         }
 
@@ -91,12 +109,32 @@ namespace TFGame.TrailsSky
 
         public override int GetByteCount(char[] chars, int index, int count)
         {
-            return defaultEncoding.GetEncoder().GetByteCount(chars, index, count, true);
+            int result;
+            try
+            {
+                result = isoEncoding.GetEncoder().GetByteCount(chars, index, count, true);
+            }
+            catch (EncoderFallbackException)
+            {
+                result = defaultEncoding.GetEncoder().GetByteCount(chars, index, count, true);
+            }
+
+            return result;
         }
 
         public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
         {
-            return defaultEncoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true); 
+            int result;
+            try
+            {
+                result = isoEncoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
+            }
+            catch (EncoderFallbackException)
+            {
+                result = defaultEncoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
+            }
+
+            return result;
         }
 
         public override byte[] GetBytes(string s)
@@ -113,12 +151,32 @@ namespace TFGame.TrailsSky
 
         public override int GetCharCount(byte[] bytes, int index, int count)
         {
-            return defaultEncoding.GetDecoder().GetCharCount(bytes, index, count, true);
+            int result;
+            try
+            {
+                result = defaultEncoding.GetDecoder().GetCharCount(bytes, index, count, true);
+            }
+            catch (DecoderFallbackException)
+            {
+                result = isoEncoding.GetDecoder().GetCharCount(bytes, index, count, true);
+            }
+
+            return result;
         }
 
         public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
         {
-            return defaultEncoding.GetDecoder().GetChars(bytes, byteIndex, byteCount, chars, charIndex, true);
+            int result;
+            try
+            {
+                result = defaultEncoding.GetDecoder().GetChars(bytes, byteIndex, byteCount, chars, charIndex, true);
+            }
+            catch (DecoderFallbackException)
+            {
+                result = isoEncoding.GetDecoder().GetChars(bytes, byteIndex, byteCount, chars, charIndex, true);
+            }
+
+            return result;
         }
 
         public override int GetMaxByteCount(int charCount)
