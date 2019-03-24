@@ -6,28 +6,28 @@ namespace TFGame.YakuzaKiwami.Files.Exe
 {
     public class File : YakuzaCommon.Files.Exe.File
     {
-        protected override long FontTableOffset => 0xD05FD0;
+        protected override long FontTableOffset => 0xCFF290;
         protected override string PointerSectionName => ".data\0\0\0";
         protected override string StringsSectionName => ".rdata\0\0";
 
         protected override List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
-            new Tuple<long, long>(0x00C9A128, 0x00C9A128),
-            new Tuple<long, long>(0x00C9F5F8, 0x00C9F610),
-            new Tuple<long, long>(0x00CA8800, 0x00CA8CF0),
-            new Tuple<long, long>(0x00CAA228, 0x00CAB070),
-            new Tuple<long, long>(0x00CAC528, 0x00CAC540),
-            new Tuple<long, long>(0x00CAD0B0, 0x00CB0A00),
-            new Tuple<long, long>(0x00D5B5B0, 0x00D5BE58),
-            new Tuple<long, long>(0x00D5CEB0, 0x00D5CF20),
-            new Tuple<long, long>(0x00D5D090, 0x00D5D090),
-            new Tuple<long, long>(0x00D8CA90, 0x00D8CA90),
-            new Tuple<long, long>(0x00DA09C0, 0x00DA09C0),
-            new Tuple<long, long>(0x00DA2A00, 0x00DA2A20),
-            new Tuple<long, long>(0x00DA68E0, 0x00DA6E70),
-            new Tuple<long, long>(0x00DA7048, 0x00DA7170),
-            new Tuple<long, long>(0x00DABA10, 0x00DACDB0),
-            new Tuple<long, long>(0x00E133F0, 0x00E2D2E8),
+            new Tuple<long, long>(0x00C934C8, 0x00C934C8),
+            new Tuple<long, long>(0x00C98948, 0x00C98960),
+            new Tuple<long, long>(0x00CA1E00, 0x00CA2040),
+            new Tuple<long, long>(0x00CA2A68, 0x00CA2BE0),
+            new Tuple<long, long>(0x00CA3588, 0x00CA43D0),
+            new Tuple<long, long>(0x00CA6410, 0x00CA8F40),
+            new Tuple<long, long>(0x00CA8FC0, 0x00CA9D60),
+            new Tuple<long, long>(0x00CD0A20, 0x00CD0FA0),
+            new Tuple<long, long>(0x00D54860, 0x00D55110),
+            new Tuple<long, long>(0x00D55D50, 0x00D55DC0),
+            new Tuple<long, long>(0x00D56320, 0x00D56320),
+            new Tuple<long, long>(0x00D85D38, 0x00D85D38),
+            new Tuple<long, long>(0x00D99CD0, 0x00D99CD0),
+            new Tuple<long, long>(0x00D9B150, 0x00D9BC08),
+            new Tuple<long, long>(0x00D9FC40, 0x00DA6120),
+            new Tuple<long, long>(0x00E0C7D0, 0x00E266C8),
         };
 
         protected override List<ExePatch> Patches => new List<ExePatch>()
@@ -39,7 +39,7 @@ namespace TFGame.YakuzaKiwami.Files.Exe
                 Enabled = false,
                 Patches = new List<Tuple<long, byte[]>>
                 {
-                    new Tuple<long, byte[]>(0xE3DE3C, new byte[] {0x25, 0x73, 0x5c})
+                    new Tuple<long, byte[]>(0xE3725C, new byte[] {0x25, 0x73, 0x5c})
                 },
             },
         };
