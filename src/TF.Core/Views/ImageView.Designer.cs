@@ -1,6 +1,6 @@
 ﻿namespace TF.Core.Views
 {
-    partial class DDSView
+    partial class ImageView
     {
         /// <summary>
         /// Required designer variable.
@@ -35,6 +35,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btnExportImage = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,6 +63,7 @@
             this.imageBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.imageBox1.BackColor = System.Drawing.Color.Black;
             this.imageBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imageBox1.Location = new System.Drawing.Point(0, 0);
             this.imageBox1.Name = "imageBox1";
@@ -79,14 +81,6 @@
             this.btnImportImage.UseVisualStyleBackColor = true;
             this.btnImportImage.Click += new System.EventHandler(this.btnImportImage_Click);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.Filter = "Ficheros DDS (*.dds)|*.dds|Todos los ficheros (*.*)|*.*";
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "Ficheros DDS (*.dds)|*.dds|Todos los ficheros (*.*)|*.*";
-            // 
             // btnExportImage
             // 
             this.btnExportImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -98,18 +92,33 @@
             this.btnExportImage.UseVisualStyleBackColor = true;
             this.btnExportImage.Click += new System.EventHandler(this.btnExportImage_Click);
             // 
-            // DDSView
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Fondo transparente",
+            "Fondo negro"});
+            this.comboBox1.Location = new System.Drawing.Point(408, 369);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(187, 21);
+            this.comboBox1.TabIndex = 7;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // ImageView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 402);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.btnExportImage);
             this.Controls.Add(this.btnImportImage);
             this.Controls.Add(this.imageBox1);
             this.Controls.Add(this.propertyGrid1);
             this.Controls.Add(this.dockPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "DDSView";
+            this.Name = "ImageView";
             this.Text = "View";
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
@@ -125,5 +134,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button btnExportImage;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

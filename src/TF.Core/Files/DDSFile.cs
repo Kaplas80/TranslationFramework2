@@ -1,56 +1,68 @@
 ﻿using System;
-using System.IO;
 using DirectXTexNet;
-using TF.Core.Entities;
-using TF.Core.Views;
-using WeifenLuo.WinFormsUI.Docking;
+using Image = System.Drawing.Image;
 
 namespace TF.Core.Files
 {
-    public class DDSFile : TranslationFile
+    public class DDSFile : ImageFile
     {
-        private DDSView _view;
-
-        public DDSFile(string path, string changesFolder) : base(path, changesFolder, null)
+        private class TexMetadataView
         {
-            this.Type = FileType.ImageFile;
-        }
+            private TexMetadata _metadata;
 
-        public override void Open(DockPanel panel, ThemeBase theme)
-        {
-            _view = new DDSView(theme);
-            _view.NewImageLoaded += FormOnNewImageLoaded;
+            public int Width => _metadata.Width;
+            public int Height => _metadata.Height;
+            public int Depth => _metadata.Depth;
+            public int ArraySize => _metadata.ArraySize;
+            public int MipLevels => _metadata.MipLevels;
+            public TEX_MISC_FLAG MiscFlags => _metadata.MiscFlags;
+            public TEX_MISC_FLAG2 MiscFlags2 => _metadata.MiscFlags2;
+            public DXGI_FORMAT Format => _metadata.Format;
+            public TEX_DIMENSION Dimension => _metadata.Dimension;
 
-            try
+            public TexMetadataView(TexMetadata metadata)
             {
-                UpdateFormImage();
-                _view.Show(panel, DockState.Document);
-            }
-            catch (Exception e)
-            {
-
+                _metadata = metadata;
             }
         }
 
-        private void FormOnNewImageLoaded(string filename)
-        {
-            File.Copy(filename, ChangesFile, true);
+        protected override string Filter => "Ficheros DDS (*.dds)|*.dds|Todos los ficheros (*.*)|*.*";
 
-            UpdateFormImage();
+        private ScratchImage _currentDDS;
+
+        public DDSFile(string path, string changesFolder) : base(path, changesFolder)
+        {
         }
 
-        private void UpdateFormImage()
+        protected override void FormOnSaveImage(string filename)
         {
-            var dds = GetImage();
-            _view.LoadImage(dds);
+            _currentDDS.SaveToDDSFile(DDS_FLAGS.NONE, filename);
         }
 
-        private ScratchImage GetImage()
+        protected override Tuple<Image, object> GetImage()
         {
             var source = HasChanges ? ChangesFile : Path;
-            var dds = DirectXTexNet.TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
+            _currentDDS = TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
 
-            return dds;
+            var codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+
+            var metadata = _currentDDS.GetMetadata();
+
+            ScratchImage decompressed;
+            try
+            {
+                decompressed = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
+            }
+            catch (ArgumentException e)
+            {
+                decompressed = _currentDDS;
+            }
+
+            var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+            var image = Image.FromStream(imageStream);
+
+            var properties = new TexMetadataView(metadata);
+            return new Tuple<Image, object>(image, properties);
         }
     }
 }

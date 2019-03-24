@@ -83,17 +83,18 @@
     <Compile Include="Entities\TranslationFileContainer.cs" />
     <Compile Include="Exceptions\UserCancelException.cs" />
     <Compile Include="Files\BinaryTextFileWithOffsetTable.cs" />
+    <Compile Include="Files\ImageFile.cs" />
     <Compile Include="Files\TextFile.cs" />
     <Compile Include="Files\DDSFile.cs" />
     <Compile Include="Files\BinaryTextFile.cs" />
     <Compile Include="TranslationEntities\FixedLengthSubtitle.cs" />
     <Compile Include="TranslationEntities\Subtitle.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Views\DDSView.cs">
+    <Compile Include="Views\ImageView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\DDSView.Designer.cs">
-      <DependentUpon>DDSView.cs</DependentUpon>
+    <Compile Include="Views\ImageView.Designer.cs">
+      <DependentUpon>ImageView.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\PathHelper.cs" />
     <Compile Include="Helpers\SearchHelper.cs" />
@@ -114,8 +115,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\DDSView.resx">
-      <DependentUpon>DDSView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\ImageView.resx">
+      <DependentUpon>ImageView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\GridView.resx">
       <DependentUpon>GridView.cs</DependentUpon>

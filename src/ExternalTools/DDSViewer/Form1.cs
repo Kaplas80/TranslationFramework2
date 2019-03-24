@@ -51,7 +51,7 @@ namespace DDSViewer
                 _images = new List<string>(dds.Count + png.Count);
 
                 _images.AddRange(dds);
-                _images.AddRange(png);
+                //_images.AddRange(png);
                 _images.Sort();
                 _index = 0;
                 _count = _images.Count;
@@ -94,7 +94,16 @@ namespace DDSViewer
                     var codec = DirectXTexNet.TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
 
                     var metadata = dds.GetMetadata();
-                    var decompressed = dds.Decompress(metadata.Format);
+                    ScratchImage decompressed;
+                    try
+                    {
+                        decompressed = dds.Decompress(DXGI_FORMAT.UNKNOWN);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        decompressed = dds;
+                    }
+                    
                     var image = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
 
                     imageBox1.Image = System.Drawing.Image.FromStream(image);
