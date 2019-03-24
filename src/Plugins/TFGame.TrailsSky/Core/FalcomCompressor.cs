@@ -331,25 +331,29 @@ namespace TFGame.TrailsSky
         public static byte[] Compress(byte[] uncompressedData)
         {
             using (var outputMemoryStream = new MemoryStream())
-            using (var output = new ExtendedBinaryWriter(outputMemoryStream))
             {
-                var pos = 0;
-
-                while (pos < uncompressedData.Length)
+                using (var output = new ExtendedBinaryWriter(outputMemoryStream))
                 {
-                    var data = CompressChunk(uncompressedData, ref pos);
-                    output.Write((ushort) data.Length);
-                    output.Write(data);
-                    if (pos == uncompressedData.Length)
-                    {
-                        output.Write((byte) 0);
-                    }
-                    else
-                    {
-                        output.Write((byte) 1);
-                    }
+                    var pos = 0;
 
+                    while (pos < uncompressedData.Length)
+                    {
+                        var data = CompressChunk(uncompressedData, ref pos);
+                        output.Write((ushort) (data.Length + 2));
+                        output.Write(data);
+                        if (pos == uncompressedData.Length)
+                        {
+                            output.Write((byte) 0);
+                        }
+                        else
+                        {
+                            output.Write((byte) 1);
+                        }
+
+                    }
+                    output.Flush();
                 }
+
                 return outputMemoryStream.ToArray();
             }
         }
@@ -376,15 +380,15 @@ namespace TFGame.TrailsSky
                         var match = FindMatch(data, pos);
                         var repeat = FindRepeat(data, pos);
 
-                        if (repeat.Length > match.Length)
-                        {
-                            EncodeRepeat(output, data[pos], repeat.Length);
-                            pos += repeat.Length;
-                        }
-                        else if (match.Length > 0)
+                        if (match.Length > 0)
                         {
                             EncodeMatch(output, match.Length, match.Position);
                             pos += match.Length;
+                        }
+                        else if (repeat.Length > 0)
+                        {
+                            EncodeRepeat(output, data[pos], repeat.Length);
+                            pos += repeat.Length;
                         }
                         else
                         {
@@ -392,7 +396,6 @@ namespace TFGame.TrailsSky
                             pos++;
                             output.WriteFlag(false);
                         }
-
                     }
 
                     output.WriteFlagValue(0b110000, 6);
@@ -436,7 +439,7 @@ namespace TFGame.TrailsSky
                 if (data[current] == data[pos])
                 {
                     var maxLength = Math.Min(data.Length - pos, maxMatch);
-                    maxLength = Math.Min(maxLength, pos - current);
+
                     var length = DataCompare(data, current + 1, pos + 1, maxLength);
                     if (length > bestLength)
                     {
