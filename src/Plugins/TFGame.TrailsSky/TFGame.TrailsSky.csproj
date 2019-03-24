@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -63,6 +65,7 @@
     <Compile Include="Files\DT\CookFile.cs" />
     <Compile Include="Files\DT\BookFile.cs" />
     <Compile Include="Files\DT\DTElement.cs" />
+    <Compile Include="Files\FONT\File.cs" />
     <Compile Include="Files\SN\File.cs" />
     <Compile Include="Views\View.cs">
       <SubType>Form</SubType>
@@ -95,5 +98,6 @@
     <None Include="packages.config" />
     <None Include="Resources\Icon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

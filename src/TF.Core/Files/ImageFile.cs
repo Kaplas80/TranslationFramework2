@@ -26,15 +26,8 @@ namespace TF.Core.Files
             _view.SaveImage += FormOnSaveImage;
             _view.SetFileFilter(Filter);
 
-            try
-            {
-                UpdateFormImage();
-                _view.Show(panel, DockState.Document);
-            }
-            catch (Exception e)
-            {
-
-            }
+            UpdateFormImage();
+            _view.Show(panel, DockState.Document);
         }
 
         protected virtual void FormOnNewImageLoaded(string filename)

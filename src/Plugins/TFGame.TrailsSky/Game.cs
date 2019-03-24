@@ -27,7 +27,7 @@ namespace TFGame.TrailsSky
                 SearchPattern = "FONT*._DA",
                 IsWildcard = true,
                 RecursiveSearch = false,
-                FileType = typeof(TF.Core.Files.DDSFile)
+                FileType = typeof(Files.FONT.File)
             };
 
             var dt00 = new GameFileContainer
@@ -160,7 +160,7 @@ namespace TFGame.TrailsSky
 
             var dt0F = new GameFileContainer
             {
-                Path = @".\ED6_DTF.dat",
+                Path = @".\ED6_DT0F.dat",
                 Type = ContainerType.CompressedFile
             };
 
