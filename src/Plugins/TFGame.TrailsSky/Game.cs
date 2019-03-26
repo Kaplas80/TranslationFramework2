@@ -37,7 +37,7 @@ namespace TFGame.TrailsSky
             };
             root.FileSearches.Add(exe);
 
-            var fonts = new GameFileSearch()
+            var fonts = new GameFileSearch
             {
                 RelativePath = ".",
                 SearchPattern = "FONT*._DA",
@@ -46,12 +46,52 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.FONT.File)
             };
 
+            var imagesT1 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "C_BTN01 ._CH;C_BTN02 ._CH;C_EMOTIO._CH;C_ICON1 ._CH;C_MOUSE ._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType1)
+            };
+
+            var imagesT2 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType2)
+            };
+
+            var imagesT3 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "C_CAMP02._CH",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType3)
+            };
+
+            var imagesT4 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "H_CAMP02._CH",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType4)
+            };
+
             var dt00 = new GameFileContainer
             {
                 Path = @".\ED6_DT00.dat",
                 Type = ContainerType.CompressedFile
             };
             dt00.FileSearches.Add(fonts);
+            dt00.FileSearches.Add(imagesT1);
+            dt00.FileSearches.Add(imagesT2);
+            dt00.FileSearches.Add(imagesT3);
+            dt00.FileSearches.Add(imagesT4);
 
             var scenarios = new GameFileSearch
             {
