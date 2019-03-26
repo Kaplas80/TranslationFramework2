@@ -159,6 +159,7 @@ namespace TF.GUI
             var documents = dockPanel.DocumentsToArray();
             foreach (var document in documents)
             {
+                document.DockHandler.Form.Close();
                 document.DockHandler.DockPanel = null;
             }
 

@@ -18,7 +18,7 @@ namespace TF.Core.Views
         protected ImageView()
         {
             InitializeComponent();
-            comboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 1;
         }
 
         public ImageView(ThemeBase theme) : this()
@@ -82,6 +82,12 @@ namespace TF.Core.Views
             {
                 imageBox1.GridDisplayMode = ImageBoxGridDisplayMode.None;
             }
+        }
+
+        private void ImageView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _image.Dispose();
+            GC.Collect();
         }
     }
 }

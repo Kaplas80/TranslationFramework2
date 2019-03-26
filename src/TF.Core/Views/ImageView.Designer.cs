@@ -120,6 +120,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "ImageView";
             this.Text = "View";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ImageView_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
 
