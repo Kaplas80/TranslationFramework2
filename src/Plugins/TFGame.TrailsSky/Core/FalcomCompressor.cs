@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TF.IO;
@@ -7,7 +8,7 @@ namespace TFGame.TrailsSky
 {
     // Código adaptado de https://heroesoflegend.org/forums/viewtopic.php?f=38&t=289
 
-    class FalcomCompressor
+    public class FalcomCompressor
     {
         private enum FlagType
         {
@@ -15,6 +16,8 @@ namespace TFGame.TrailsSky
             ShortJump,
             LongJump
         }
+
+        private const int CHUNK_SIZE_UNC_MAX = 0xFFF0;
 
         private class CompressedBinaryReader : ExtendedBinaryReader
         {
@@ -267,6 +270,8 @@ namespace TFGame.TrailsSky
                             var copyDistance = (int) input.ReadByte();
                             var copyCount = input.ReadCopyCount();
 
+                            //Debug.WriteLine($"{input.Position:X4}\tMatch\t{copyCount}\t{copyDistance}");
+
                             CopyBytes(output, copyDistance, copyCount);
                         }
                         break;
@@ -280,6 +285,8 @@ namespace TFGame.TrailsSky
                             {
                                 var copyDistance = (highDistance << 8) | lowDistance;
                                 var copyCount = input.ReadCopyCount();
+
+                                //Debug.WriteLine($"{input.Position:X4}\tMatch\t{copyCount}\t{copyDistance}");
 
                                 CopyBytes(output, copyDistance, copyCount);
                             }
@@ -300,6 +307,8 @@ namespace TFGame.TrailsSky
                                 }
 
                                 count += 0x0E;
+
+                                //Debug.WriteLine($"{input.Position:X4}\tRepeat\t{count}");
 
                                 var b = input.ReadByte();
                                 var data = Enumerable.Repeat(b, count).ToArray();
@@ -335,21 +344,14 @@ namespace TFGame.TrailsSky
                 using (var output = new ExtendedBinaryWriter(outputMemoryStream))
                 {
                     var pos = 0;
-
+                    var chunkCount = (int)(uncompressedData.Length / (double)CHUNK_SIZE_UNC_MAX);
                     while (pos < uncompressedData.Length)
                     {
                         var data = CompressChunk(uncompressedData, ref pos);
                         output.Write((ushort) (data.Length + 2));
                         output.Write(data);
-                        if (pos == uncompressedData.Length)
-                        {
-                            output.Write((byte) 0);
-                        }
-                        else
-                        {
-                            output.Write((byte) 1);
-                        }
-
+                        output.Write((byte)chunkCount);
+                        chunkCount--;
                     }
                     output.Flush();
                 }
@@ -360,10 +362,11 @@ namespace TFGame.TrailsSky
 
         private static byte[] CompressChunk(byte[] data, ref int pos)
         {
-            var CHUNK_SIZE_CMP_MAX = 0x7FC0;
-            var CHUNK_SIZE_UNC_MAX = 0x3DFF0;
+            var CHUNK_SIZE_CMP_MAX = 0xFFC0;
 
             var startPos = pos;
+            var endLimit = Math.Min(startPos + CHUNK_SIZE_UNC_MAX, data.Length);
+
             using (var outputMemoryStream = new MemoryStream())
             {
                 using (var output = new CompressedBinaryWriter(outputMemoryStream))
@@ -372,23 +375,58 @@ namespace TFGame.TrailsSky
 
                     while (pos < data.Length)
                     {
-                        if (output.Length >= CHUNK_SIZE_CMP_MAX || (pos - startPos) >= CHUNK_SIZE_UNC_MAX)
+                        if (output.Length >= CHUNK_SIZE_CMP_MAX || pos - startPos >= CHUNK_SIZE_UNC_MAX)
                         {
                             break;
                         }
+                        
+                        var match = FindMatch(data, pos, startPos, endLimit);
+                        var repeat = FindRepeat(data, pos, endLimit);
 
-                        var match = FindMatch(data, pos);
-                        var repeat = FindRepeat(data, pos);
-
-                        if (match.Length > 0)
+                        if (repeat.Length > 0 && match.Length > 0)
                         {
-                            EncodeMatch(output, match.Length, match.Position);
-                            pos += match.Length;
+                            if (repeat.Length >= 0x40)
+                            {
+                                //Debug.WriteLine($"Repeat\t{repeat.Length}\t{match.Length}\t{match.Position}");
+                                EncodeRepeat(output, data[pos], repeat.Length);
+                                pos += repeat.Length;
+                            }
+                            else if (match.Length >= 0x40)
+                            {
+                                //Debug.WriteLine($"Match\t{match.Length}\t{match.Position}\t{repeat.Length}");
+                                EncodeMatch(output, match.Length, match.Position);
+                                pos += match.Length;
+                            }
+                            else if (match.Length >= repeat.Length)
+                            {
+                                //Debug.WriteLine($"Match\t{match.Length}\t{match.Position}\t{repeat.Length}");
+                                EncodeMatch(output, match.Length, match.Position);
+                                pos += match.Length;
+                            }
+                            else if (repeat.Length >= 0x0E)
+                            {
+                                //Debug.WriteLine($"Repeat\t{repeat.Length}\t{match.Length}\t{match.Position}");
+                                EncodeRepeat(output, data[pos], repeat.Length);
+                                pos += repeat.Length;
+                            }
+                            else
+                            {
+                                //Debug.WriteLine($"Match\t{match.Length}\t{match.Position}\t{repeat.Length}");
+                                EncodeMatch(output, match.Length, match.Position);
+                                pos += match.Length;
+                            }
                         }
                         else if (repeat.Length > 0)
                         {
+                            //Debug.WriteLine($"Repeat\t{repeat.Length}");
                             EncodeRepeat(output, data[pos], repeat.Length);
                             pos += repeat.Length;
+                        }
+                        else if (match.Length > 0)
+                        {
+                            //Debug.WriteLine($"Match\t{match.Length}\t{match.Position}");
+                            EncodeMatch(output, match.Length, match.Position);
+                            pos += match.Length;
                         }
                         else
                         {
@@ -419,7 +457,7 @@ namespace TFGame.TrailsSky
             public int Length;
         }
 
-        private static MatchInfo FindMatch(byte[] data, int pos)
+        private static MatchInfo FindMatch(byte[] data, int pos, int startLimit, int endLimit)
         {
             var result = new MatchInfo {Position = -1, Length = 0};
 
@@ -432,13 +470,18 @@ namespace TFGame.TrailsSky
 
             var current = pos - 1;
 
-            var startPos = Math.Max(pos - WINDOW_SIZE, 0);
+            var startPos = Math.Max(pos - WINDOW_SIZE, startLimit);
+
+            if (endLimit - pos <= 3)
+            {
+                return result;
+            }
 
             while (current >= startPos)
             {
                 if (data[current] == data[pos])
                 {
-                    var maxLength = Math.Min(data.Length - pos, maxMatch);
+                    var maxLength = Math.Min(endLimit - pos, maxMatch);
 
                     var length = DataCompare(data, current + 1, pos + 1, maxLength);
                     if (length > bestLength)
@@ -477,11 +520,17 @@ namespace TFGame.TrailsSky
             return length;
         }
 
-        private static RepeatInfo FindRepeat(byte[] data, int pos)
+        private static RepeatInfo FindRepeat(byte[] data, int pos, int endLimit)
         {
-            var maxMatch = 0x0FFF + 0x0E;
+            if (endLimit - pos <= 3)
+            {
+                return new RepeatInfo{Length = 0};
+            }
+
+            var maxMatch = 0x0FFF;
+            
             var startPos = pos;
-            var endPos = Math.Min(data.Length, pos + maxMatch);
+            var endPos = Math.Min(endLimit, pos + maxMatch);
 
             var bestLength = 0;
 
@@ -526,7 +575,7 @@ namespace TFGame.TrailsSky
 
                     output.Write(repeatByte);
 
-                    flagValue = ((size >> 0) & 0x01) == 0x01;
+                    flagValue = (size & 0x01) == 0x01;
                     output.WriteFlag(flagValue);
                 }
                 else
@@ -545,7 +594,7 @@ namespace TFGame.TrailsSky
                     output.Write((byte)low);
                     output.Write(repeatByte);
 
-                    flagValue = ((high >> 0) & 0x01) == 0x01;
+                    flagValue = (high & 0x01) == 0x01;
                     output.WriteFlag(flagValue);
                 }
             }
@@ -578,7 +627,7 @@ namespace TFGame.TrailsSky
 
                 output.Write((byte)low);
 
-                flagValue = ((high >> 0) & 0x01) == 0x01;
+                flagValue = (high & 0x01) == 0x01;
                 output.WriteFlag(flagValue);
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -67,8 +68,9 @@ namespace TFGame.TrailsSky.Files
                     log.Write(timestamp);
 
                     var datOffset = dirInput.ReadInt32();
+                    log.Write(datOffset);
 
-                    if (compressedSize != 0)
+                    if (datOffset != 0 && compressedSize != 0)
                     {
                         var outputFile = Path.Combine(outputFolder, name);
 
@@ -86,7 +88,10 @@ namespace TFGame.TrailsSky.Files
                             log.Write(0);
                         }
                     }
-
+                    else
+                    {
+                        log.Write(0);
+                    }
 
                     currentPos = dirInput.Position;
                 }
@@ -100,6 +105,7 @@ namespace TFGame.TrailsSky.Files
             public int MaxSize;
             public int Unknown;
             public int TimeStamp;
+            public int OriginalOffset;
             public bool IsCompressed;
         }
 
@@ -114,12 +120,8 @@ namespace TFGame.TrailsSky.Files
                 var maxSize = log.ReadInt32();
                 var unknown = log.ReadInt32();
                 var timestamp = log.ReadInt32();
-
-                var compressed = false;
-                if (originalCompressedSize != 0)
-                {
-                    compressed = log.ReadInt32() == 1;
-                }
+                var originalOffset = log.ReadInt32();
+                var compressed = log.ReadInt32() == 1;
 
                 var fi = new FileInfo
                 {
@@ -128,6 +130,7 @@ namespace TFGame.TrailsSky.Files
                     MaxSize = maxSize,
                     Unknown = unknown,
                     TimeStamp = timestamp,
+                    OriginalOffset = originalOffset,
                     IsCompressed = compressed
                 };
 
@@ -192,7 +195,15 @@ namespace TFGame.TrailsSky.Files
                     dirOutput.WriteString(file.FileName, 16);
 
                     datOutput.Seek(0x10 + i * 4, SeekOrigin.Begin);
-                    datOutput.Write((int)fileOffset);
+
+                    if (file.OriginalOffset != 0)
+                    {
+                        datOutput.Write((int) fileOffset);
+                    }
+                    else
+                    {
+                        datOutput.Write(0);
+                    }
 
                     if (file.CompressedSize == 0)
                     {
@@ -201,7 +212,14 @@ namespace TFGame.TrailsSky.Files
                         dirOutput.Write(file.MaxSize);
                         dirOutput.Write(file.Unknown);
                         dirOutput.Write(file.TimeStamp);
-                        dirOutput.Write((int)fileOffset);
+                        if (file.OriginalOffset != 0)
+                        {
+                            dirOutput.Write((int)fileOffset);
+                        }
+                        else
+                        {
+                            dirOutput.Write(0);
+                        }
 
                         fileOffset += file.MaxSize;
                     }
@@ -243,7 +261,8 @@ namespace TFGame.TrailsSky.Files
             if (useCompression && wasCompressed)
             {
                 var uncompressedData = File.ReadAllBytes(file);
-                return FalcomCompressor.Compress(uncompressedData);
+                var data = FalcomCompressor.Compress(uncompressedData);
+                return data;
             }
             else
             {

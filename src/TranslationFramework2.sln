@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.TrailsSky", "Plugins
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrailsInTheSkyFontHelper", "ExternalTools\TrailsInTheSkyFontHelper\TrailsInTheSkyFontHelper.csproj", "{79051758-6017-4BE7-BDEE-1EA2F71373E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FalcomCompressorChecker", "ExternalTools\FalcomCompressorChecker\FalcomCompressorChecker.csproj", "{8878287B-F737-4856-87EF-E0D130A35845}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{79051758-6017-4BE7-BDEE-1EA2F71373E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79051758-6017-4BE7-BDEE-1EA2F71373E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79051758-6017-4BE7-BDEE-1EA2F71373E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8878287B-F737-4856-87EF-E0D130A35845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8878287B-F737-4856-87EF-E0D130A35845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8878287B-F737-4856-87EF-E0D130A35845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8878287B-F737-4856-87EF-E0D130A35845}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{1241DAC7-DEE6-4F24-8A9A-190EA2086C06} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 		{6CA88990-3B99-4645-B090-5F12791C7A1B} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{79051758-6017-4BE7-BDEE-1EA2F71373E6} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
+		{8878287B-F737-4856-87EF-E0D130A35845} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}
