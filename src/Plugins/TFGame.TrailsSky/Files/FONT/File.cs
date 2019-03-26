@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using TF.Core.Files;
 
@@ -35,7 +34,7 @@ namespace TFGame.TrailsSky.Files.FONT
 
         protected override void FormOnNewImageLoaded(string filename)
         {
-            //File.Copy(filename, ChangesFile, true);
+            System.IO.File.Copy(filename, ChangesFile, true);
 
             UpdateFormImage();
         }
@@ -58,6 +57,9 @@ namespace TFGame.TrailsSky.Files.FONT
             var fullWidth = (int)Math.Ceiling(_charHeight / 2.0d);
             var fullHeight = halfSizeHeight + fullSizeHeight;
             var bitmap = MergeBitmaps(bmpHalfSize, bmpFullSize, fullWidth, fullHeight);
+
+            bmpHalfSize.Dispose();
+            bmpFullSize.Dispose();
 
             return new Tuple<Image, object>(bitmap, null);
         }

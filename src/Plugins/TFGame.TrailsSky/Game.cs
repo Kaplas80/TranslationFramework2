@@ -21,6 +21,22 @@ namespace TFGame.TrailsSky
         {
             var result = new List<GameFileContainer>();
 
+            var exe = new GameFileSearch()
+            {
+                RelativePath = ".",
+                SearchPattern = "ed6_win.exe",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Exe.File)
+            };
+
+            var root = new GameFileContainer
+            {
+                Path = @".\",
+                Type = ContainerType.Folder
+            };
+            root.FileSearches.Add(exe);
+
             var fonts = new GameFileSearch()
             {
                 RelativePath = ".",
@@ -170,6 +186,7 @@ namespace TFGame.TrailsSky
                 Type = ContainerType.CompressedFile
             };
 
+            result.Add(root);
             result.Add(dt00);
             result.Add(dt01);
             result.Add(dt02);

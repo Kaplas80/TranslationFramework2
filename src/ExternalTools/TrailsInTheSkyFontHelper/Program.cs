@@ -89,7 +89,15 @@ namespace TrailsInTheSkyFontHelper
         {
             switch (index)
             {
-                case 0xA4: // á
+                case 0x26: // É
+                {
+                    return chars[0xC9];
+                }
+                case 0x2B: // Í
+                {
+                    return chars[0xCD];
+                }
+                case 0x3B: // á
                 {
                     var bytes1 = chars[0x61];
                     var bytes2 = chars[0xB4];
@@ -102,7 +110,7 @@ namespace TrailsInTheSkyFontHelper
 
                     return data;
                 }
-                case 0xA6: // é
+                case 0x3D: // é
                 {
                     var bytes1 = chars[0x65];
                     var bytes2 = chars[0xB4];
@@ -115,20 +123,30 @@ namespace TrailsInTheSkyFontHelper
 
                     return data;
                 }
-                case 0xA7: // í
+                case 0x5E: // í
                 {
                     var bytes1 = chars[0x69];
                     var bytes2 = chars[0xB4];
                     var data = new byte[bytes1.Length];
 
+                    var width = height / 4;
+                    var j = (height / 4) * width;
+
                     for (var i = 0; i < bytes1.Length; i++)
                     {
-                        data[i] = (byte)(bytes1[i] | bytes2[i]);
+                        if (i < j)
+                        {
+                            data[i] = bytes2[i];
+                        }
+                        else
+                        {
+                            data[i] = bytes1[i];
+                        }
                     }
 
                     return data;
                 }
-                case 0xA8: // ó
+                case 0x5F: // ó
                 {
                     var bytes1 = chars[0x6F];
                     var bytes2 = chars[0xB4];
@@ -141,7 +159,7 @@ namespace TrailsInTheSkyFontHelper
 
                     return data;
                 }
-                case 0xB5: // ú
+                case 0x60: // ú
                 {
                     var bytes1 = chars[0x75];
                     var bytes2 = chars[0xB4];
@@ -155,7 +173,7 @@ namespace TrailsInTheSkyFontHelper
                     return data;
                 }
 
-                case 0xB6: // ü
+                case 0x7B: // ü
                 {
                     var bytes1 = chars[0x75];
                     var bytes2 = chars[0xA8];
@@ -169,7 +187,7 @@ namespace TrailsInTheSkyFontHelper
                     return data;
                 }
 
-                case 0xB8: // ñ
+                case 0x7D: // ñ
                 {
                     var bytes1 = chars[0x6E];
                     var bytes2 = chars[0x7E];
@@ -178,7 +196,6 @@ namespace TrailsInTheSkyFontHelper
 
                     var width = height / 4;
 
-                    // Hay que dibujar 20 líneas más arriba 80 /4 = 20
                     var j = (height / 4) * width;
 
                     for (var i = 0; i < bytes1.Length; i++)
@@ -196,7 +213,16 @@ namespace TrailsInTheSkyFontHelper
                     }
 
                     return data;
-                    }
+                }
+
+                case 0x7E: // ¡
+                {
+                    return chars[0xA1];
+                }
+                case 0x7F: // ¿
+                {
+                    return chars[0xBF];
+                }
                 default:
                 {
                     return chars[index];

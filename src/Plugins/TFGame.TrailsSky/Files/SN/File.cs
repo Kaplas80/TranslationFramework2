@@ -95,6 +95,7 @@ namespace TFGame.TrailsSky.Files.SN
                 }
 
                 input.Seek(stringTableOffset, SeekOrigin.Begin);
+                var filename = ReadSubtitle(input); //@filename
 
                 while (input.Position < input.Length)
                 {
@@ -1130,6 +1131,9 @@ namespace TFGame.TrailsSky.Files.SN
                 var newStringTableOffset = (ushort) output.Position;
 
                 input.Seek(stringTableOffset, SeekOrigin.Begin);
+
+                var filename = ReadSubtitle(input); //@filename
+                output.WriteString(filename.Text);
 
                 while (input.Position < input.Length)
                 {

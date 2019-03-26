@@ -9,13 +9,25 @@ namespace TFGame.TrailsSky
         private readonly System.Text.Encoding isoEncoding = GetEncoding("ISO-8859-1", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback);
         private readonly System.Text.Encoding defaultEncoding = GetEncoding(932, EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
 
-        private List<Tuple<string, string>> DecodingReplacements;
-        private List<Tuple<string, string>> EncodingReplacements;
+        public List<Tuple<string, string>> DecodingReplacements;
+        public List<Tuple<string, string>> EncodingReplacements;
 
         public Encoding() : base()
         {
             DecodingReplacements = new List<Tuple<string, string>>
             {
+                new Tuple<string, string>("\u0026", "É"), //&
+                new Tuple<string, string>("\u002B", "Í"), //+
+                new Tuple<string, string>("\u003B", "á"), //;
+                new Tuple<string, string>("\u003D", "é"), //=
+                new Tuple<string, string>("\u005E", "í"), //^
+                new Tuple<string, string>("\u005F", "ó"), //_
+                new Tuple<string, string>("\u0060", "ú"), //`
+                new Tuple<string, string>("\u007B", "ü"), //{
+                new Tuple<string, string>("\u007D", "ñ"), //}
+                new Tuple<string, string>("\u007E", "¡"), //~
+                new Tuple<string, string>("\u007F", "¿"), //DEL
+
                 new Tuple<string, string>("\u0001", "\\n"),
                 new Tuple<string, string>("\u0002", "<Enter>"),
                 new Tuple<string, string>("\u0003", "<Clear>"),
@@ -47,14 +59,6 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("\u001D", "<0x1D>"),
                 new Tuple<string, string>("\u001E", "<0x1E>"),
                 new Tuple<string, string>("\u001F", "<0x1F>"),
-
-                new Tuple<string, string>("\u00A4", "á"),
-                new Tuple<string, string>("\u00A6", "é"),
-                new Tuple<string, string>("\u00A7", "í"),
-                new Tuple<string, string>("\u00A8", "ó"),
-                new Tuple<string, string>("\u00B5", "ú"),
-                new Tuple<string, string>("\u00B6", "ü"),
-                new Tuple<string, string>("\u00B8", "ñ"),
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
@@ -91,13 +95,17 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("<0x1E>", "\u001E"),
                 new Tuple<string, string>("<0x1F>", "\u001F"),
 
-                new Tuple<string, string>("á", "\u00A4"),
-                new Tuple<string, string>("é", "\u00A6"),
-                new Tuple<string, string>("í", "\u00A7"),
-                new Tuple<string, string>("ó", "\u00A8"),
-                new Tuple<string, string>("ú", "\u00B5"),
-                new Tuple<string, string>("ü", "\u00B6"),
-                new Tuple<string, string>("ñ", "\u00B8"),
+                new Tuple<string, string>("É", "\u0026"), //&
+                new Tuple<string, string>("Í", "\u002B"), //+
+                new Tuple<string, string>("á", "\u003B"), //;
+                new Tuple<string, string>("é", "\u003D"), //=
+                new Tuple<string, string>("í", "\u005E"), //^
+                new Tuple<string, string>("ó", "\u005F"), //_
+                new Tuple<string, string>("ú", "\u0060"), //`
+                new Tuple<string, string>("ü", "\u007B"), //{
+                new Tuple<string, string>("ñ", "\u007D"), //}
+                new Tuple<string, string>("¡", "\u007E"), //~
+                new Tuple<string, string>("¿", "\u007F"), //DEL
             };
         }
 
