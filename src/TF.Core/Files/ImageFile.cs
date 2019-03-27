@@ -7,6 +7,13 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.Core.Files
 {
+    public class ImageProperties
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Format { get; set; }
+    }
+
     public class ImageFile : TranslationFile
     {
         private ImageView _view;
@@ -53,8 +60,20 @@ namespace TF.Core.Files
         {
             var source = HasChanges ? ChangesFile : Path;
             var image = Image.FromFile(source);
-            var properties = image.PropertyItems;
+            var properties = GetProperties(image.Width, image.Height, image.PixelFormat.ToString());
             return new Tuple<Image, object>(image, properties);
+        }
+
+        protected virtual ImageProperties GetProperties(int width, int height, string format)
+        {
+            var result = new ImageProperties
+            {
+                Width = width,
+                Height = height,
+                Format = format,
+            };
+
+            return result;
         }
     }
 }

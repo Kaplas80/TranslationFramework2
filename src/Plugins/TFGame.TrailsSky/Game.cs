@@ -208,10 +208,36 @@ namespace TFGame.TrailsSky
             dt02.FileSearches.Add(shopFile);
             dt02.FileSearches.Add(townFile);
 
+            var imagesDT04 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "C_ENCNT1._CH;C_GAMEOV._CH;C_NOTE??._CH;C_VIS018._CH;C_VIS019._CH;C_VIS020._CH;C_VIS021._CH;C_VIS022._CH;C_VIS023._CH;C_VIS024._CH;C_VIS025._CH;C_VIS026._CH;C_VIS027._CH;C_VIS040._CH;C_VIS041._CH;C_VIS042._CH;C_VIS043._CH;C_VIS044._CH;C_VIS045._CH;C_VIS046._CH;C_VIS047._CH;C_VIS048._CH;C_VIS049._CH;",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType5),
+                Exclusions =
+                {
+                    "C_NOTE01._CH",
+                    "C_NOTE02._CH",
+                    "C_NOTE21._CH",
+                    "C_NOTE22._CH",
+                }
+            };
+
             var dt04 = new GameFileContainer
             {
                 Path = @".\ED6_DT04.dat",
                 Type = ContainerType.CompressedFile
+            };
+            dt04.FileSearches.Add(imagesDT04);
+
+            var imagesDT0F = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "BATTLE  ._CH;BATTLE2 ._CH;BTLMENU ._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType1)
             };
 
             var dt0F = new GameFileContainer
@@ -219,12 +245,34 @@ namespace TFGame.TrailsSky
                 Path = @".\ED6_DT0F.dat",
                 Type = ContainerType.CompressedFile
             };
+            dt0F.FileSearches.Add(imagesDT0F);
+
+            var imagesDT1C_1 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "AREA    ._CH",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType6)
+            };
+
+            var imagesDT1C_2 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "ICONS   ._CH",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType1)
+            };
 
             var dt1C = new GameFileContainer
             {
                 Path = @".\ED6_DT1C.dat",
                 Type = ContainerType.CompressedFile
             };
+
+            dt1C.FileSearches.Add(imagesDT1C_1);
+            dt1C.FileSearches.Add(imagesDT1C_2);
 
             result.Add(root);
             result.Add(dt00);
