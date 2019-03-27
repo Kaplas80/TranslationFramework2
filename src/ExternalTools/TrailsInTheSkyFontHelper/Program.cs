@@ -57,10 +57,10 @@ namespace TrailsInTheSkyFontHelper
                     var currentPos = 0;
                     while (br.BaseStream.Position < br.BaseStream.Length)
                     {
-                        var width = charHeight / 2;
+                        var width = (int)Math.Ceiling(charHeight / 2.0d);
                         if (i < 0xE0)
                         {
-                            width = width / 2;
+                            width = (int)Math.Ceiling(charHeight / 4.0d);
                         }
 
                         br.BaseStream.Seek(currentPos, SeekOrigin.Begin);
@@ -93,7 +93,7 @@ namespace TrailsInTheSkyFontHelper
                 {
                     return chars[0xC9];
                 }
-                case 0x2B: // Í
+                case 0x27: // Í
                 {
                     return chars[0xCD];
                 }
@@ -110,7 +110,7 @@ namespace TrailsInTheSkyFontHelper
 
                     return data;
                 }
-                case 0x3D: // é
+                case 0x5C: // é
                 {
                     var bytes1 = chars[0x65];
                     var bytes2 = chars[0xB4];
@@ -237,92 +237,6 @@ namespace TrailsInTheSkyFontHelper
             Console.WriteLine("Pulse una tecla para salir...");
             Console.ReadKey();
             Environment.Exit(0);
-        }
-
-        private static bool NeedReplace(int value)
-        {
-            if (value == 0xA4)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private static Bitmap MergeBitmaps(Bitmap bmp1, Bitmap bmp2)
-        {
-            var bitmap = new Bitmap(bmp1.Width, bmp1.Height);
-            
-            using (var canvas = Graphics.FromImage(bitmap))
-            {
-                canvas.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                canvas.DrawImage(bmp1,
-                    new Rectangle(0,
-                        0,
-                        bmp1.Width,
-                        bmp1.Height),
-                    new Rectangle(0,
-                        0,
-                        bmp1.Width,
-                        bmp1.Height),
-                    GraphicsUnit.Pixel);
-                canvas.DrawImage(bmp2, 0, -20);
-                canvas.Save();
-            }
-
-            return bitmap;
-        }
-
-        private static Bitmap GetBitmap(int width, int height, byte[] imageData)
-        {
-            var data = new byte[width * height * 4];
-
-            var o = 0;
-
-            for (var i = 0; i < width * height; i++)
-            {
-                var value = imageData[i];
-
-                data[o++] = 255;
-                data[o++] = value;
-                data[o++] = value;
-                data[o++] = value;
-            }
-
-            unsafe
-            {
-                fixed (byte* ptr = data)
-                {
-                    var image = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, new IntPtr(ptr));
-                    return image;
-                }
-            }
-        }
-
-        private static byte[] GetBytes(Bitmap bmp)
-        {
-            var rectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
-
-            var bitmapData = bmp.LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-            var length = bitmapData.Stride * bitmapData.Height;
-
-            var bytes = new byte[length];
-            // Copy bitmap to byte[]
-            Marshal.Copy(bitmapData.Scan0, bytes, 0, length);
-            bmp.UnlockBits(bitmapData);
-
-            var result = new byte[bmp.Width * bmp.Height];
-            
-            var o = 0;
-
-            for (var i = 0; i < bytes.Length; i = i+4)
-            {
-                var value = bytes[i];
-
-                result[o++] = value;
-            }
-
-            return result;
         }
     }
 }

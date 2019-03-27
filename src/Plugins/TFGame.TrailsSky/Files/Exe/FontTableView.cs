@@ -105,9 +105,9 @@ namespace TFGame.TrailsSky.Files.Exe
             var replacements = new List<Tuple<char, char, char>>
             {
                 new Tuple<char, char, char>('É', '\u0026', 'E'), //&
-                new Tuple<char, char, char>('Í', '\u002B', 'I'), //+
+                new Tuple<char, char, char>('Í', '\u0027', 'I'), //'
                 new Tuple<char, char, char>('á', '\u003B', 'a'), //;
-                new Tuple<char, char, char>('é', '\u003D', 'e'), //=
+                new Tuple<char, char, char>('é', '\u005C', 'e'), //\
                 new Tuple<char, char, char>('í', '\u005E', 'i'), //^
                 new Tuple<char, char, char>('ó', '\u005F', 'o'), //_
                 new Tuple<char, char, char>('ú', '\u0060', 'u'), //`
