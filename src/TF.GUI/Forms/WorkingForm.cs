@@ -53,6 +53,7 @@ namespace TF.GUI.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            _worker.ReportProgress(-1, "Cancelando (hay que esperar a que termine la tarea actual)... ");
             _worker.CancelAsync();
             
             btnCancel.Enabled = false;

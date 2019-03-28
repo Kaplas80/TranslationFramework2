@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}</ProjectGuid>
+    <ProjectGuid>{E9436458-9CC1-450F-A9DC-38D603F63CD8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TFGame.Yakuza0</RootNamespace>
-    <AssemblyName>TFGame.Yakuza0</AssemblyName>
+    <RootNamespace>TFGame.ShiningResonance</RootNamespace>
+    <AssemblyName>TFGame.ShiningResonance</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -34,23 +34,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DockPanelSuite.3.1.0-beta3\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-    </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DockPanelSuite.ThemeVS2015.3.1.0-beta3\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Files\Exe\File.cs" />
-    <Compile Include="Files\Snitch\File.cs" />
+    <Compile Include="Files\Mtp\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -58,20 +45,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Encoding.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">
       <Project>{14bb172a-b3d4-4237-82ab-8fef4e9ab8cd}</Project>
       <Name>TF.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
-      <Project>{4f0d7226-fa20-4fe3-a523-336702654e02}</Project>
-      <Name>TF.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\YakuzaGame\YakuzaGame.csproj">
-      <Project>{24524a72-cbf8-439a-ab89-f809a92d6f0e}</Project>
-      <Name>YakuzaGame</Name>
+    <ProjectReference Include="..\CRIWareGame\CRIWareGame.csproj">
+      <Project>{32c4037e-106a-4d88-ba50-952bf60b835e}</Project>
+      <Name>CRIWareGame</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -81,10 +63,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Icon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
