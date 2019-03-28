@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encoding.cs" />
     <Compile Include="Files\Mtp\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,6 +51,10 @@
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">
       <Project>{14bb172a-b3d4-4237-82ab-8fef4e9ab8cd}</Project>
       <Name>TF.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
+      <Project>{4F0D7226-FA20-4FE3-A523-336702654E02}</Project>
+      <Name>TF.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\CRIWareGame\CRIWareGame.csproj">
       <Project>{32c4037e-106a-4d88-ba50-952bf60b835e}</Project>

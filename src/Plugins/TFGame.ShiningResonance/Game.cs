@@ -12,7 +12,7 @@ namespace TFGame.ShiningResonance
         public override string Description => "Versión en inglés Steam (10/09/2018)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Shining-Resonance-Refrain-Icon-v1-746462251
         public override int Version => 1;
-        public override Encoding FileEncoding => Encoding.UTF8;
+        public override System.Text.Encoding FileEncoding => Encoding.UTF8;
 
         public override GameFileContainer[] GetContainers(string path)
         {
