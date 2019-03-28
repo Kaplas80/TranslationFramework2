@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,13 +33,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DirectXTexNet, Version=1.0.0.3, Culture=neutral, PublicKeyToken=67e4f5ed452a4f5d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DirectXTexNet.1.0.0-rc3\lib\net40\DirectXTexNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Encoding.cs" />
+    <Compile Include="Files\Htx\File.cs" />
     <Compile Include="Files\Mtp\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,8 +73,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\Icon.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets" Condition="Exists('..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets'))" />
+  </Target>
 </Project>

@@ -6,7 +6,7 @@ namespace TF.Core.Files
 {
     public class DDSFile : ImageFile
     {
-        private class TexMetadataView
+        protected class TexMetadataView
         {
             private TexMetadata _metadata;
 
@@ -28,7 +28,7 @@ namespace TF.Core.Files
 
         protected override string Filter => "Ficheros DDS (*.dds)|*.dds|Todos los ficheros (*.*)|*.*";
 
-        private ScratchImage _currentDDS;
+        protected ScratchImage _currentDDS;
 
         public DDSFile(string path, string changesFolder) : base(path, changesFolder)
         {
