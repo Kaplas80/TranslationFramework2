@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using YakuzaCommon.Files.Exe;
+using YakuzaGame.Files.Exe;
 
 namespace TFGame.Yakuza0.Files.Exe
 {
-    public class File : YakuzaCommon.Files.Exe.File
+    public class File : YakuzaGame.Files.Exe.File
     {
         protected override long FontTableOffset => 0xD8FA60;
         protected override string PointerSectionName => ".data\0\0\0";

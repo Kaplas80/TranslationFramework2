@@ -4,14 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}</ProjectGuid>
+    <ProjectGuid>{E9436458-9CC1-450F-A9DC-38D603F63CD8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TFGame.Yakuza0</RootNamespace>
-    <AssemblyName>TFGame.Yakuza0</AssemblyName>
+    <RootNamespace>TFGame.ShiningResonance</RootNamespace>
+    <AssemblyName>TFGame.ShiningResonance</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,26 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DirectXTexNet, Version=1.0.0.3, Culture=neutral, PublicKeyToken=67e4f5ed452a4f5d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DirectXTexNet.1.0.0-rc3\lib\net40\DirectXTexNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DockPanelSuite.3.1.0-beta3\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-    </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DockPanelSuite.ThemeVS2015.3.1.0-beta3\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Files\Exe\File.cs" />
-    <Compile Include="Files\Snitch\File.cs" />
+    <Compile Include="Files\Htx\File.cs" />
+    <Compile Include="Files\Mtp\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -58,7 +51,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Encoding.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">
@@ -66,12 +58,12 @@
       <Name>TF.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
-      <Project>{4f0d7226-fa20-4fe3-a523-336702654e02}</Project>
+      <Project>{4F0D7226-FA20-4FE3-A523-336702654E02}</Project>
       <Name>TF.IO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YakuzaGame\YakuzaGame.csproj">
-      <Project>{24524a72-cbf8-439a-ab89-f809a92d6f0e}</Project>
-      <Name>YakuzaGame</Name>
+    <ProjectReference Include="..\CRIWareGame\CRIWareGame.csproj">
+      <Project>{32c4037e-106a-4d88-ba50-952bf60b835e}</Project>
+      <Name>CRIWareGame</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +74,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Icon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets" Condition="Exists('..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\DirectXTexNet.1.0.0-rc3\build\DirectXTexNet.targets'))" />
+  </Target>
 </Project>

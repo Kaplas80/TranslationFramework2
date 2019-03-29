@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{B4EF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.Yakuza0", "Plugins\TFGame.Yakuza0\TFGame.Yakuza0.csproj", "{BFE27A60-5A4A-4AAD-818F-F973D991AA9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YakuzaCommon", "Plugins\YakuzaCommon\YakuzaCommon.csproj", "{24524A72-CBF8-439A-AB89-F809A92D6F0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YakuzaGame", "Plugins\YakuzaGame\YakuzaGame.csproj", "{24524A72-CBF8-439A-AB89-F809A92D6F0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.YakuzaKiwami", "Plugins\TFGame.YakuzaKiwami\TFGame.YakuzaKiwami.csproj", "{FDD32C6D-0544-47BE-AF04-A2E0A3D68A2C}"
 EndProject
@@ -28,6 +28,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrailsInTheSkyFontHelper", "ExternalTools\TrailsInTheSkyFontHelper\TrailsInTheSkyFontHelper.csproj", "{79051758-6017-4BE7-BDEE-1EA2F71373E6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FalcomCompressorChecker", "ExternalTools\FalcomCompressorChecker\FalcomCompressorChecker.csproj", "{8878287B-F737-4856-87EF-E0D130A35845}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.ShiningResonance", "Plugins\TFGame.ShiningResonance\TFGame.ShiningResonance.csproj", "{E9436458-9CC1-450F-A9DC-38D603F63CD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRIWareGame", "Plugins\CRIWareGame\CRIWareGame.csproj", "{32C4037E-106A-4D88-BA50-952BF60B835E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +83,14 @@ Global
 		{8878287B-F737-4856-87EF-E0D130A35845}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8878287B-F737-4856-87EF-E0D130A35845}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8878287B-F737-4856-87EF-E0D130A35845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9436458-9CC1-450F-A9DC-38D603F63CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9436458-9CC1-450F-A9DC-38D603F63CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9436458-9CC1-450F-A9DC-38D603F63CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9436458-9CC1-450F-A9DC-38D603F63CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32C4037E-106A-4D88-BA50-952BF60B835E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32C4037E-106A-4D88-BA50-952BF60B835E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32C4037E-106A-4D88-BA50-952BF60B835E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32C4037E-106A-4D88-BA50-952BF60B835E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +104,8 @@ Global
 		{6CA88990-3B99-4645-B090-5F12791C7A1B} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{79051758-6017-4BE7-BDEE-1EA2F71373E6} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 		{8878287B-F737-4856-87EF-E0D130A35845} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
+		{E9436458-9CC1-450F-A9DC-38D603F63CD8} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
+		{32C4037E-106A-4D88-BA50-952BF60B835E} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}

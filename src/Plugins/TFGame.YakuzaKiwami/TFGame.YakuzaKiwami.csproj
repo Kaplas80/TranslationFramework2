@@ -55,9 +55,9 @@
       <Project>{4F0D7226-FA20-4FE3-A523-336702654E02}</Project>
       <Name>TF.IO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YakuzaCommon\YakuzaCommon.csproj">
+    <ProjectReference Include="..\YakuzaGame\YakuzaGame.csproj">
       <Project>{24524a72-cbf8-439a-ab89-f809a92d6f0e}</Project>
-      <Name>YakuzaCommon</Name>
+      <Name>YakuzaGame</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

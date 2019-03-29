@@ -5,7 +5,7 @@ using TF.Core.Files;
 
 namespace TFGame.YakuzaKiwami
 {
-    public class Game : YakuzaCommon.Game
+    public class Game : YakuzaGame.Game
     {
         
         public override string Id => "7f8efe16-87fd-4f5a-a837-cacf3dde2852";
@@ -93,7 +93,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "cmn.bin",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.CmnBin.File)
+                    FileType = typeof(YakuzaGame.Files.CmnBin.File)
                 };
 
             var ddsSearch =
@@ -131,7 +131,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "encounter_pupup_message.*",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.Epmb.File)
+                    FileType = typeof(YakuzaGame.Files.Epmb.File)
                 };
 
             var mailSearch =
@@ -141,7 +141,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "mail.*",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.Mail.File)
+                    FileType = typeof(YakuzaGame.Files.Mail.File)
                 };
 
             var stringTblSearch =
@@ -151,7 +151,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "string_tbl.bin_?",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.StringTbl.File)
+                    FileType = typeof(YakuzaGame.Files.StringTbl.File)
                 };
 
             var tableSearch =
@@ -163,7 +163,7 @@ namespace TFGame.YakuzaKiwami
                     IsWildcard = true,
                     RecursiveSearch = false,
                     Exclusions = {"encounter_pupup_message.bin", "mail.bin", "string_tbl.bin"},
-                    FileType = typeof(YakuzaCommon.Files.Table.File)
+                    FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
             var bootpar = new GameFileContainer
@@ -210,7 +210,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "*.imb",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.Imb.File)
+                    FileType = typeof(YakuzaGame.Files.Imb.File)
                 };
 
             var map_par_containers = new GameFileContainerSearch
@@ -235,7 +235,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "baccarat_cpu.bin_?;baccarat_gallery_msg.bin_?;minigame_chohan_bakuto.bin_?;mesuking_*.bin_?;poker_com_*.bin_?",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.Table.File)
+                    FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
             var minigame = new GameFileContainer
@@ -253,7 +253,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "*.bin_?",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.PocketCircuit.File)
+                    FileType = typeof(YakuzaGame.Files.PocketCircuit.File)
                 };
 
             var par = new GameFileContainer
@@ -342,7 +342,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "name_?.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Name.File)
+                    FileType = typeof(YakuzaGame.Files.Name.File)
                 };
 
             var reactor = new GameFileContainer
@@ -364,7 +364,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "*.mfp",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.Mfpb.File)
+                    FileType = typeof(YakuzaGame.Files.Mfpb.File)
                 };
 
             var soundpar = new GameFileContainer
@@ -386,7 +386,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "street_name_?.dat",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.StreetName.File)
+                    FileType = typeof(YakuzaGame.Files.StreetName.File)
                 };
 
             var stage = new GameFileContainer
@@ -409,7 +409,7 @@ namespace TFGame.YakuzaKiwami
                     //SearchPattern = "*.bin_?",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Table.File)
+                    FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
             var par = new GameFileContainer
@@ -433,7 +433,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "ai_popup.bin",
                     IsWildcard = false,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.AiPopup.File)
+                    FileType = typeof(YakuzaGame.Files.AiPopup.File)
                 };
 
             var common_armsRepairSearch =
@@ -443,7 +443,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "arms_repair.bin",
                     IsWildcard = false,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.ArmsRepair.File)
+                    FileType = typeof(YakuzaGame.Files.ArmsRepair.File)
                 };
 
             var common_blacksmithSearch =
@@ -453,7 +453,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "blacksmith.bin",
                     IsWildcard = false,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Blacksmith.File)
+                    FileType = typeof(YakuzaGame.Files.Blacksmith.File)
                 };
 
             var common_presentSearch =
@@ -463,7 +463,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "present.bin;send.bin;throw.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.PresentSendThrow.File)
+                    FileType = typeof(YakuzaGame.Files.PresentSendThrow.File)
                 };
 
             var common_saleSearch =
@@ -473,7 +473,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "sale????.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Sale.File)
+                    FileType = typeof(YakuzaGame.Files.Sale.File)
                 };
 
             var wdr_par_c_common = new GameFileContainer
@@ -503,7 +503,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "bar????.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Bar.File)
+                    FileType = typeof(YakuzaGame.Files.Bar.File)
                 };
 
             var wdr_restaurantSearch =
@@ -513,7 +513,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "restaurant????.bin;ex_shop????.bin;shop????.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(YakuzaCommon.Files.Restaurant.File)
+                    FileType = typeof(YakuzaGame.Files.Restaurant.File)
                 };
 
             var wdr_msgSearch =
@@ -523,7 +523,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "*.msg",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaCommon.Files.Msg.File)
+                    FileType = typeof(YakuzaGame.Files.Msg.File)
                 };
 
             var wdr_par = new GameFileContainer
