@@ -98,8 +98,7 @@
             // 
             // folderBrowserDialog1
             // 
-            this.folderBrowserDialog1.Description = "Selecciona la carpeta en la que buscar las dds";
-            this.folderBrowserDialog1.SelectedPath = "Z:\\Games\\Yakuza Kiwami\\media\\data";
+            this.folderBrowserDialog1.Description = "Selecciona la carpeta en la que buscar las imágenes";
             // 
             // saveFileDialog1
             // 

@@ -10,7 +10,7 @@ namespace TFGame.Yakuza0
     {
         public override string Id => "193b8191-39e2-4ad7-b0bf-9cb413bb910f";
         public override string Name => "Yakuza 0";
-        public override string Description => "Versión en inglés PC Steam Patch v3.2 (lanzada el 11/03/2019)";
+        public override string Description => "Versión en inglés PC Steam Patch v4 (lanzada el 26/03/2019)";
 
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-0-Icon-750908182
@@ -32,7 +32,7 @@ namespace TFGame.Yakuza0
 
             var c = new GameFileContainer
             {
-                Path = @".\",
+                Path = @"media",
                 Type = ContainerType.Folder
             };
 
@@ -54,6 +54,15 @@ namespace TFGame.Yakuza0
                     FileType = typeof(DDSFile),
                 };
 
+            var sprite_c = new GameFileContainer
+            {
+                Path = @"media\data\2dpar\sprite_c.par",
+                Type = ContainerType.CompressedFile,
+            };
+            sprite_c.FileSearches.Add(dds1Search);
+
+            result.Add(sprite_c);
+
             var dds2Search =
                 new GameFileSearch
                 {
@@ -64,23 +73,14 @@ namespace TFGame.Yakuza0
                     FileType = typeof(DDSFile),
                 };
 
-            var sprite_c = new GameFileContainer
-            {
-                Path = @"data\2dpar\sprite_c.par",
-                Type = ContainerType.CompressedFile,
-            };
-            sprite_c.FileSearches.Add(dds1Search);
-
-            result.Add(sprite_c);
-
             var ui_c = new GameFileContainer
             {
-                Path = @"data\2dpar\ui_c.par",
+                Path = @"media\data\2dpar\ui_e.par",
                 Type = ContainerType.CompressedFile,
             };
             ui_c.FileSearches.Add(dds2Search);
 
-            result.Add(sprite_c);
+            result.Add(ui_c);
 
             return result;
         }
@@ -103,7 +103,7 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "staffroll_d2_??.dds;ifc_jimaku_*.dds",
+                    SearchPattern = "staffroll*.dds;ycap_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(DDSFile)
@@ -111,7 +111,7 @@ namespace TFGame.Yakuza0
 
             var auth_w64_containers = new GameFileContainerSearch
             {
-                RelativePath = @"data\auth_w64_e",
+                RelativePath = @"media\data\auth_w64_e",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = false,
                 SearchPattern = "*.par"
@@ -131,9 +131,9 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "encounter_pupup_message.*",
-                    IsWildcard = true,
-                    RecursiveSearch = true,
+                    SearchPattern = "encounter_pupup_message.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Epmb.File)
                 };
 
@@ -141,9 +141,9 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "mail.*",
-                    IsWildcard = true,
-                    RecursiveSearch = true,
+                    SearchPattern = "mail.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Mail.File)
                 };
 
@@ -151,9 +151,9 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "string_tbl.bin_?",
-                    IsWildcard = true,
-                    RecursiveSearch = true,
+                    SearchPattern = "string_tbl.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.StringTbl.File)
                 };
 
@@ -162,17 +162,16 @@ namespace TFGame.Yakuza0
                 {
                     RelativePath = ".",
                     SearchPattern =
-                        "ability.bin_?;battle_coefficient.bin_?;battle_deck_list.bin_?;caption.bin_?;complete_heat.bin_?;complete_majima.bin_?;explanation_main_scenario.bin_?;explanation_sub_story.bin_?;item.bin_?;tips_tutorial.bin_?",
+                        "ability.bin_c;battle_deck_list.bin_c;caption.bin_c;complete_heat.bin_c;complete_shisho.bin_c;explanation_main_scenario.bin_c;explanation_sub_story.bin_c;item.bin_c;kiyaku.bin_c;money_result.bin_c;restaurant_menu.bin_c;tips_tutorial.bin_c",
                     //SearchPattern = "*.bin_?",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    Exclusions = {"encounter_pupup_message.bin", "mail.bin", "string_tbl.bin"},
                     FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
             var bootpar = new GameFileContainer
             {
-                Path = @"data\bootpar\boot.par",
+                Path = @"media\data\bootpar\boot.par",
                 Type = ContainerType.CompressedFile
             };
             bootpar.FileSearches.Add(empbSearch);
@@ -187,8 +186,8 @@ namespace TFGame.Yakuza0
             var ddsSearch =
                 new GameFileSearch
                 {
-                    RelativePath = @".\hd2",
-                    SearchPattern = "hd2_hankaku.dds",
+                    RelativePath = @".\hd",
+                    SearchPattern = "hd_hankaku.dds",
                     IsWildcard = false,
                     RecursiveSearch = false,
                     FileType = typeof(DDSFile)
@@ -196,11 +195,34 @@ namespace TFGame.Yakuza0
 
             var fontpar = new GameFileContainer
             {
-                Path = @"data\fontpar\font.par",
+                Path = @"media\data\fontpar\font.par",
                 Type = ContainerType.CompressedFile
             };
             fontpar.FileSearches.Add(ddsSearch);
             return fontpar;
+        }
+
+        private GameFileContainer GetHact()
+        {
+            var cmnSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "cmn.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaGame.Files.CmnBin.File)
+                };
+
+            var hact = new GameFileContainer
+            {
+                Path = @"media\data\hact.par",
+                Type = ContainerType.CompressedFile
+            };
+            
+            hact.FileSearches.Add(cmnSearch);
+
+            return hact;
         }
 
         private IList<GameFileContainer> GetMappar(string path)
@@ -219,10 +241,10 @@ namespace TFGame.Yakuza0
 
             var map_par_containers = new GameFileContainerSearch
             {
-                RelativePath = @"data\map_par",
+                RelativePath = @"media\data\map_par_e",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = false,
-                SearchPattern = "st_kamuro.par_c;st_kawara_street.par_c"
+                SearchPattern = "map_cmn.par;st_kamuro.par;st_osaka.par"
             };
             map_par_containers.FileSearches.Add(imbSearch);
 
@@ -236,34 +258,44 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern =
-                        "baccarat_cpu.bin_?;baccarat_gallery_msg.bin_?;minigame_chohan_bakuto.bin_?;mesuking_*.bin_?;poker_com_*.bin_?",
+                    SearchPattern = "baccarat_cpu.bin_c;baccarat_gallery_msg.bin_c;caba_item_list.bin_c;catfight_human_condition.bin_c;catfight_human_info.bin_c;catfight_information.bin_c;catfight_string.bin_c;catfight_string_matching.bin_c;minigame_chohan_bakuto.bin_c;fishing_bag_info.bin_c;fishing_dispose.bin_c;fishing_fish_info.bin_c;fishing_sao_info.bin_c;poker_com_*.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
+            var ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = @".\teleclub",
+                    SearchPattern = "*.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile)
+                };
+
             var minigame = new GameFileContainer
             {
-                Path = @"data\minigame",
+                Path = @"media\data\minigame",
                 Type = ContainerType.Folder
             };
 
             minigame.FileSearches.Add(tableSearch);
+            minigame.FileSearches.Add(ddsSearch);
 
             var pocketCircuitSearch =
                 new GameFileSearch
                 {
                     RelativePath = "db",
-                    SearchPattern = "*.bin_?",
+                    SearchPattern = "*.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(YakuzaGame.Files.PocketCircuit.File)
+                    FileType = typeof(Files.PocketCircuit.File)
                 };
 
             var par = new GameFileContainer
             {
-                Path = @"data\minigame\pokecir.par",
+                Path = @"media\data\minigame\pokecir.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -277,6 +309,24 @@ namespace TFGame.Yakuza0
 
         private IList<GameFileContainer> GetPause()
         {
+            var ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "2d_k2_kyaba_cutin_*.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile),
+                };
+
+            var cabaretIsland = new GameFileContainer
+            {
+                Path = @"media\data\pausepar_e\cabaret_island.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            cabaretIsland.FileSearches.Add(ddsSearch);
+
             var dds1Search =
                 new GameFileSearch
                 {
@@ -289,35 +339,119 @@ namespace TFGame.Yakuza0
 
             var chapter = new GameFileContainer
             {
-                Path = @"data\pausepar\chapter_c.par",
+                Path = @"media\data\pausepar_e\chapter.par",
                 Type = ContainerType.CompressedFile
             };
 
             chapter.FileSearches.Add(dds1Search);
 
-            var dds2Search =
+            ddsSearch =
                 new GameFileSearch
                 {
-                    RelativePath = ".",
-                    SearchPattern = "2d_mn_rom_continue.dds;2d_*.dds;head_pic_*.dds;kan_?.dds;ifc_jimaku_*.dds",
+                    RelativePath = @"result\",
+                    SearchPattern = "2d_ci_bu_rep*.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile),
+                };
+
+            var findArms = new GameFileContainer
+            {
+                Path = @"media\data\pausepar_e\find_arms.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            findArms.FileSearches.Add(ddsSearch);
+
+            ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = @".",
+                    SearchPattern = "rule_*.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile),
+                };
+
+            var minigame = new GameFileContainer
+            {
+                Path = @"media\data\pausepar_e\minigame.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            minigame.FileSearches.Add(ddsSearch);
+
+            ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = @".",
+                    SearchPattern = "p??_000.dds;staffroll.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile),
+                };
+
+            var movie = new GameFileContainer
+            {
+                Path = @"media\data\pausepar_e\movie.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            movie.FileSearches.Add(ddsSearch);
+
+            var pause = new GameFileContainer
+            {
+                Path = @"media\data\pausepar_e\pause.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = @"ability\",
+                    SearchPattern = "k_a_all.dds;k_master_??.dds;m_a_all.dds;m_master_??.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile)
+                };
+
+            pause.FileSearches.Add(ddsSearch);
+
+            ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = @"picture\",
+                    SearchPattern = "2d_*.dds;head_pic_*.dds;kan_?.dds;rule_*.dds;ifc_jimaku_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(DDSFile)
                 };
 
-            var pause_c = new GameFileContainer
+            pause.FileSearches.Add(ddsSearch);
+
+            var pcircuit = new GameFileContainer
             {
-                Path = @"data\pausepar\pause_c.par",
+                Path = @"media\data\pausepar_e\pcircuit.par",
                 Type = ContainerType.CompressedFile
             };
 
-            pause_c.FileSearches.Add(dds2Search);
+            ddsSearch =
+                new GameFileSearch
+                {
+                    RelativePath = @".",
+                    SearchPattern = "2d_ci_item_battery_??.dds",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(DDSFile)
+                };
+
+            pcircuit.FileSearches.Add(ddsSearch);
 
             var dds3Search =
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "2d_jm_gp_*.dds",
+                    SearchPattern = "2d_jm_gp_*.dds;2d_yk_tg_style_??.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(DDSFile)
@@ -325,15 +459,20 @@ namespace TFGame.Yakuza0
 
             var tougijyo = new GameFileContainer
             {
-                Path = @"data\pausepar\tougijyo.par",
+                Path = @"media\data\pausepar_e\tougijyo.par",
                 Type = ContainerType.CompressedFile
             };
 
             tougijyo.FileSearches.Add(dds3Search);
 
             var result = new List<GameFileContainer>();
+            result.Add(cabaretIsland);
             result.Add(chapter);
-            result.Add(pause_c);
+            result.Add(findArms);
+            result.Add(minigame);
+            result.Add(movie);
+            result.Add(pause);
+            result.Add(pcircuit);
             result.Add(tougijyo);
             return result;
         }
@@ -344,7 +483,7 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "name_?.bin",
+                    SearchPattern = "name_c.bin",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Name.File)
@@ -352,7 +491,7 @@ namespace TFGame.Yakuza0
 
             var reactor = new GameFileContainer
             {
-                Path = @"data\reactorpar\reactor_w64.par",
+                Path = @"media\data\reactorpar\reactor_w64.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -374,7 +513,7 @@ namespace TFGame.Yakuza0
 
             var soundpar = new GameFileContainer
             {
-                Path = @"data\soundpar\sound.par",
+                Path = @"media\data\soundpar\sound.par",
                 Type = ContainerType.CompressedFile
             };
             soundpar.FileSearches.Add(mfpSearch);
@@ -388,7 +527,7 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "street_name_?.dat",
+                    SearchPattern = "street_name_c.dat",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.StreetName.File)
@@ -396,7 +535,7 @@ namespace TFGame.Yakuza0
 
             var stage = new GameFileContainer
             {
-                Path = @"data\stage\w64\flag_data",
+                Path = @"media\data\stage\w64\flag_data",
                 Type = ContainerType.Folder
             };
 
@@ -411,8 +550,7 @@ namespace TFGame.Yakuza0
                 {
                     RelativePath = ".",
                     SearchPattern =
-                        "activity_list.bin_?;complete_minigame.bin_?;controller_explain.bin_?;correlation_person.bin_?;enc_boss_cmn_ability.bin_?;extra.bin_?;onedari_popup.bin_?;response_roulette.bin_?;tougijyo_mode.bin_?;tougijyo_participant.bin_?;tougijyo_realtime_quest.bin_?;tougijyo_string.bin_?;tutorial.bin_?;ultimate.bin_?;virtue_shop.bin_?",
-                    //SearchPattern = "*.bin_?",
+                        "activity_list.bin_c;battle_result.bin_c;caba_cast_info.bin_c;cabaret_island_area.bin_c;cabaret_island_shop.bin_c;controller_explain.bin_c;correlation_person.bin_c;money_island_shop.bin_c;money_island_tarent.bin_c;search_arms_agent.bin_c;search_arms_kind.bin_c;search_arms_location.bin_c;search_arms_result_picture.bin_c;tougijyo_realtime_quest.bin_c;tutorial.bin_c;ultimate.bin_c;virtue_shop.bin_c;",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Table.File)
@@ -420,7 +558,7 @@ namespace TFGame.Yakuza0
 
             var par = new GameFileContainer
             {
-                Path = @"data\staypar\stay.par",
+                Path = @"media\data\staypar\stay.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -484,7 +622,7 @@ namespace TFGame.Yakuza0
 
             var wdr_par_c_common = new GameFileContainer
             {
-                Path = @"data\wdr_par_c\common.par",
+                Path = @"media\data\wdr_par_c\common.par",
                 Type = ContainerType.CompressedFile
             };
             wdr_par_c_common.FileSearches.Add(aiPopupSearch);
@@ -542,27 +680,14 @@ namespace TFGame.Yakuza0
                     FileType = typeof(YakuzaGame.Files.Msg.File),
                     Exclusions =
                     {
-                        "pac_STID_ST_BOSS.bin", "pac_STID_ST_CRUISE.bin", "pac_STID_ST_EVENT.bin",
-                        "pac_STID_ST_JUMU03.bin",
-                        "pac_STID_ST_KENNSETSU.bin", "pac_STID_ST_KIRYU_APART.bin", "pac_STID_ST_KOUSOKU_CHASE.bin",
-                        "pac_STID_ST_K_BAR.bin", "pac_STID_ST_K_BOWL.bin", "pac_STID_ST_K_CATFIGHT.bin",
-                        "pac_STID_ST_K_CHUKA.bin", "pac_STID_ST_K_CLUBSEGA_01.bin", "pac_STID_ST_K_DEBORAH.bin",
-                        "pac_STID_ST_K_GOUMONN.bin", "pac_STID_ST_K_KAZAMAGUMI.bin", "pac_STID_ST_K_RAMEN.bin",
-                        "pac_STID_ST_K_RYOUTEI.bin", "pac_STID_ST_K_SAGAWA.bin", "pac_STID_ST_K_SNACK.bin",
-                        "pac_STID_ST_K_SNACK_NAMASE.bin", "pac_STID_ST_K_SUGITA.bin", "pac_STID_ST_K_SUSHI.bin",
-                        "pac_STID_ST_K_TEREKURA.bin", "pac_STID_ST_K_YAKINIKU.bin", "pac_STID_ST_K_YAMIISHA.bin",
-                        "pac_STID_ST_LOVEHOTEL02.bin", "pac_STID_ST_O_BUKI.bin", "pac_STID_ST_O_CLUBSEGA.bin",
-                        "pac_STID_ST_O_DOURAKU.bin", "pac_STID_ST_O_DUBORAYA.bin", "pac_STID_ST_O_GANKO.bin",
-                        "pac_STID_ST_O_KAMIAN.bin", "pac_STID_ST_O_KIJIN.bin", "pac_STID_ST_O_ODYSSEY.bin",
-                        "pac_STID_ST_O_RENTAL.bin", "pac_STID_ST_O_SOUKO.bin", "pac_STID_ST_O_STIJL.bin",
-                        "pac_STID_ST_O_TEREKURA.bin", "pac_STID_ST_PARKING.bin", "pac_STID_ST_RINGER.bin",
-                        "pac_STID_ST_SANCHU.bin", "pac_STID_ST_TOGYU.bin", "pac_STID_ST_TSUBAKI.bin",
+                        "pac_STID_TE_0009.bin",
+                        "pac_STID_TE_0010.bin"
                     }
                 };
 
             var wdr_par = new GameFileContainer
             {
-                Path = @"data\wdr_par_c\wdr.par",
+                Path = @"media\data\wdr_par_c\wdr.par",
                 Type = ContainerType.CompressedFile
             };
 
@@ -584,7 +709,8 @@ namespace TFGame.Yakuza0
             //result.AddRange(Get2dpar(path));
             //result.AddRange(GetAuth(path));
             //result.Add(GetBootpar());
-            result.Add(GetFontpar());
+            //result.Add(GetFontpar());
+            //result.Add(GetHact());
             //result.AddRange(GetMappar(path));
             //result.AddRange(GetMinigame());
             //result.AddRange(GetPause());

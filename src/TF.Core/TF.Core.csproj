@@ -87,6 +87,12 @@
     <Compile Include="Files\TextFile.cs" />
     <Compile Include="Files\DDSFile.cs" />
     <Compile Include="Files\BinaryTextFile.cs" />
+    <Compile Include="Fonts\FontCollection.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="TranslationEntities\FixedLengthSubtitle.cs" />
     <Compile Include="TranslationEntities\Subtitle.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -113,8 +119,13 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Resources\NotoSansCJKjp-Regular.otf" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\ImageView.resx">
       <DependentUpon>ImageView.cs</DependentUpon>
     </EmbeddedResource>

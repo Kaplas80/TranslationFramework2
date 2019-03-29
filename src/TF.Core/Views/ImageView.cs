@@ -86,7 +86,7 @@ namespace TF.Core.Views
 
         private void ImageView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _image.Dispose();
+            _image?.Dispose();
             GC.Collect();
         }
     }

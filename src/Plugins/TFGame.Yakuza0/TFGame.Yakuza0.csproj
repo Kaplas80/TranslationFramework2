@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Files\Exe\File.cs" />
+    <Compile Include="Files\PocketCircuit\File.cs" />
     <Compile Include="Files\Snitch\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

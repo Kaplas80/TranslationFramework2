@@ -19,6 +19,8 @@ namespace TF.GUI
 
             _pluginManager = new PluginManager();
             _pluginManager.LoadPlugins(Path.Combine(Application.StartupPath, "plugins"));
+
+            Core.Fonts.FontCollection.Initialize();
         }
 
         private void MainForm_Shown(object sender, EventArgs e)

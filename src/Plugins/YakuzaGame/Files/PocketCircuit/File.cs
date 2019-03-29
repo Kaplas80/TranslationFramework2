@@ -308,7 +308,7 @@ namespace YakuzaGame.Files.PocketCircuit
             return temp;
         }
 
-        private Subtitle ReadSubtitle(ExtendedBinaryReader input, int subtitleLength)
+        protected Subtitle ReadSubtitle(ExtendedBinaryReader input, int subtitleLength)
         {
             var sub = ReadSubtitle(input);
 

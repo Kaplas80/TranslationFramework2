@@ -73,7 +73,7 @@ namespace YakuzaGame.Files.Msg
                     }
                 }
 
-                if (pointerTalkers > 0)
+                if (pointerTalkers > 0 && result.Count > 0) 
                 {
                     input.Seek(pointerTalkers, SeekOrigin.Begin);
                     for (var i = 0; i < numTalkers; i++)

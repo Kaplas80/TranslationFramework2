@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.SubtitleGridView = new YakuzaGame.Files.Msg.View.TFDataGridView();
@@ -79,14 +78,6 @@
             this.SubtitleGridView.AllowUserToAddRows = false;
             this.SubtitleGridView.AllowUserToDeleteRows = false;
             this.SubtitleGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Noto Sans CJK SC Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.SubtitleGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.SubtitleGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SubtitleGridView.Location = new System.Drawing.Point(0, 0);
             this.SubtitleGridView.MultiSelect = false;

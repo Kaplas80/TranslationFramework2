@@ -35,6 +35,16 @@ namespace YakuzaGame.Files.Msg
         protected View()
         {
             InitializeComponent();
+
+            var cellStyle = new DataGridViewCellStyle();
+            cellStyle.Font = TF.Core.Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+            cellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            cellStyle.BackColor = SystemColors.Window;
+            cellStyle.ForeColor = SystemColors.ControlText;
+            cellStyle.SelectionBackColor = SystemColors.Highlight;
+            cellStyle.SelectionForeColor = SystemColors.HighlightText;
+            cellStyle.WrapMode = DataGridViewTriState.False;
+            SubtitleGridView.RowsDefaultCellStyle = cellStyle;
         }
 
         public View(ThemeBase theme) : this()

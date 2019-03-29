@@ -6,32 +6,28 @@ namespace TFGame.YakuzaKiwami.Files.Exe
 {
     public class File : YakuzaGame.Files.Exe.File
     {
-        protected override long FontTableOffset => 0xCFF290;
+        // Buscar "data/font". La tabla empieza 0x1900 bytes antes
+        protected override long FontTableOffset => 0xCFF560;
         protected override string PointerSectionName => ".data\0\0\0";
         protected override string StringsSectionName => ".rdata\0\0";
 
         protected override List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
-            new Tuple<long, long>(0x00C934C8, 0x00C934C8),
-            new Tuple<long, long>(0x00C98948, 0x00C98960),
-            new Tuple<long, long>(0x00CA1E00, 0x00CA2040),
-            new Tuple<long, long>(0x00CA2A68, 0x00CA2BE0),
-            new Tuple<long, long>(0x00CA3588, 0x00CA43D0),
-            new Tuple<long, long>(0x00CA6410, 0x00CA8F40),
-            new Tuple<long, long>(0x00CA8FC0, 0x00CA9D60),
-            new Tuple<long, long>(0x00CD0A20, 0x00CD0FA0),
-            new Tuple<long, long>(0x00D54860, 0x00D55110),
-            new Tuple<long, long>(0x00D55D50, 0x00D55DC0),
-            new Tuple<long, long>(0x00D56320, 0x00D56320),
-            new Tuple<long, long>(0x00D85D38, 0x00D85D38),
-            new Tuple<long, long>(0x00D99CD0, 0x00D99CD0),
-            new Tuple<long, long>(0x00D9B150, 0x00D9BC08),
-            new Tuple<long, long>(0x00D9FC40, 0x00DA6120),
-            new Tuple<long, long>(0x00E0C7D0, 0x00E266C8),
+            new Tuple<long, long>(0x00C93710, 0x00C93710),
+            new Tuple<long, long>(0x00C98B78, 0x00C98B90),
+            new Tuple<long, long>(0x00CA2020, 0x00CA2260),
+            new Tuple<long, long>(0x00CA37C8, 0x00CA4600),
+            new Tuple<long, long>(0x00CA6640, 0x00CA9F90),
+            new Tuple<long, long>(0x00D56050, 0x00D560C0),
+            new Tuple<long, long>(0x00D99F90, 0x00D99F90),
+            new Tuple<long, long>(0x00D9BED0, 0x00D9BEF0),
+            new Tuple<long, long>(0x00D9FEC0, 0x00DA6390),
+            new Tuple<long, long>(0x00E0D0A0, 0x00E26928),
         };
 
         protected override List<ExePatch> Patches => new List<ExePatch>()
         {
+            // Buscar el primer "CoInitialize". La cadena está justo antes
             new ExePatch
             {
                 Name = "Cambiar posición de ¥",
@@ -39,7 +35,7 @@ namespace TFGame.YakuzaKiwami.Files.Exe
                 Enabled = false,
                 Patches = new List<Tuple<long, byte[]>>
                 {
-                    new Tuple<long, byte[]>(0xE3725C, new byte[] {0x25, 0x73, 0x5c})
+                    new Tuple<long, byte[]>(0xE374BC, new byte[] {0x25, 0x73, 0x5c})
                 },
             },
         };

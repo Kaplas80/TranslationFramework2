@@ -58,11 +58,19 @@ namespace TF.Core.Files
                 decompressed = _currentDDS;
             }
 
-            var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
-            var image = Image.FromStream(imageStream);
+            try
+            {
+                var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+                var image = Image.FromStream(imageStream);
 
-            var properties = new TexMetadataView(metadata);
-            return new Tuple<Image, object>(image, properties);
+                var properties = new TexMetadataView(metadata);
+
+                return new Tuple<Image, object>(image, properties);
+            }
+            catch (Exception e)
+            {
+                return new Tuple<Image, object>(null, null);
+            }
         }
     }
 }

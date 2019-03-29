@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -32,6 +29,17 @@ namespace YakuzaGame.Files.Table
         protected View()
         {
             InitializeComponent();
+
+            var cellStyle = new DataGridViewCellStyle();
+            cellStyle.Font = TF.Core.Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+            cellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            cellStyle.BackColor = SystemColors.Window;
+            cellStyle.ForeColor = SystemColors.ControlText;
+            cellStyle.SelectionBackColor = SystemColors.Highlight;
+            cellStyle.SelectionForeColor = SystemColors.HighlightText;
+            cellStyle.WrapMode = DataGridViewTriState.False;
+
+            SubtitleGridView.RowsDefaultCellStyle = cellStyle;
         }
 
         public View(ThemeBase theme) : this()

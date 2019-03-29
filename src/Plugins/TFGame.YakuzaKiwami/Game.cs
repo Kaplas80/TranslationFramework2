@@ -10,7 +10,7 @@ namespace TFGame.YakuzaKiwami
         
         public override string Id => "7f8efe16-87fd-4f5a-a837-cacf3dde2852";
         public override string Name => "Yakuza Kiwami";
-        public override string Description => "Versión en inglés PC Steam Patch v4 (lanzada el 14/03/2019)";
+        public override string Description => "Versión en inglés PC Steam Patch v5 (lanzada el 26/03/2019)";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-Icon-750908330
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -77,7 +77,7 @@ namespace TFGame.YakuzaKiwami
             };
             ui_c.FileSearches.Add(dds2Search);
 
-            result.Add(sprite_c);
+            result.Add(ui_c);
 
             return result;
         }
@@ -549,7 +549,7 @@ namespace TFGame.YakuzaKiwami
             //result.AddRange(Get2dpar(path));
             //result.AddRange(GetAuth(path));
             //result.Add(GetBootpar());
-            result.Add(GetFontpar());
+            //result.Add(GetFontpar());
             //result.AddRange(GetMappar(path));
             //result.AddRange(GetMinigame());
             //result.AddRange(GetPause());

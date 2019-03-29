@@ -36,6 +36,10 @@ namespace TF.Core.Views
         protected GridView()
         {
             InitializeComponent();
+
+            var cellStyle = new DataGridViewCellStyle();
+            cellStyle.Font = Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            SubtitleGridView.RowsDefaultCellStyle = cellStyle;
         }
 
         public GridView(ThemeBase theme) : this()

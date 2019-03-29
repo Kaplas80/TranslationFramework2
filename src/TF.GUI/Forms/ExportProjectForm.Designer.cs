@@ -39,10 +39,10 @@
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.lbItems = new System.Windows.Forms.CheckedListBox();
             this.gbOptions = new System.Windows.Forms.GroupBox();
+            this.chkSaveTempFiles = new System.Windows.Forms.CheckBox();
+            this.chkForceRebuild = new System.Windows.Forms.CheckBox();
             this.chkCompress = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chkForceRebuild = new System.Windows.Forms.CheckBox();
-            this.chkSaveTempFiles = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.gbExportItems.SuspendLayout();
             this.gbOptions.SuspendLayout();
@@ -172,18 +172,17 @@
             this.gbOptions.TabStop = false;
             this.gbOptions.Text = "Opciones";
             // 
-            // chkCompress
+            // chkSaveTempFiles
             // 
-            this.chkCompress.AutoSize = true;
-            this.chkCompress.Location = new System.Drawing.Point(6, 19);
-            this.chkCompress.Name = "chkCompress";
-            this.chkCompress.Size = new System.Drawing.Size(71, 17);
-            this.chkCompress.TabIndex = 0;
-            this.chkCompress.Text = "Comprimir";
-            this.toolTip1.SetToolTip(this.chkCompress, "Selecciona esta opción si quieres que se compriman los ficheros exportados (SOLO " +
-        "EN LOS PROYECTOS SOPORTADOS)\\nSi no se marca, la exportación será más rápida, pe" +
-        "ro los ficheros ocuparán más espacio.");
-            this.chkCompress.UseVisualStyleBackColor = true;
+            this.chkSaveTempFiles.AutoSize = true;
+            this.chkSaveTempFiles.Location = new System.Drawing.Point(6, 65);
+            this.chkSaveTempFiles.Name = "chkSaveTempFiles";
+            this.chkSaveTempFiles.Size = new System.Drawing.Size(158, 17);
+            this.chkSaveTempFiles.TabIndex = 2;
+            this.chkSaveTempFiles.Text = "Guardar ficheros temporales";
+            this.toolTip1.SetToolTip(this.chkSaveTempFiles, "[DEBUG] Selecciona esta opción si quieres mantener los ficheros temporales genera" +
+        "dos.");
+            this.chkSaveTempFiles.UseVisualStyleBackColor = true;
             // 
             // chkForceRebuild
             // 
@@ -197,17 +196,20 @@
         "e traducción aunque no tengan cambios respecto al original.");
             this.chkForceRebuild.UseVisualStyleBackColor = true;
             // 
-            // chkSaveTempFiles
+            // chkCompress
             // 
-            this.chkSaveTempFiles.AutoSize = true;
-            this.chkSaveTempFiles.Location = new System.Drawing.Point(6, 65);
-            this.chkSaveTempFiles.Name = "chkSaveTempFiles";
-            this.chkSaveTempFiles.Size = new System.Drawing.Size(158, 17);
-            this.chkSaveTempFiles.TabIndex = 2;
-            this.chkSaveTempFiles.Text = "Guardar ficheros temporales";
-            this.toolTip1.SetToolTip(this.chkSaveTempFiles, "[DEBUG] Selecciona esta opción si quieres mantener los ficheros temporales genera" +
-        "dos.");
-            this.chkSaveTempFiles.UseVisualStyleBackColor = true;
+            this.chkCompress.AutoSize = true;
+            this.chkCompress.Checked = true;
+            this.chkCompress.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCompress.Location = new System.Drawing.Point(6, 19);
+            this.chkCompress.Name = "chkCompress";
+            this.chkCompress.Size = new System.Drawing.Size(71, 17);
+            this.chkCompress.TabIndex = 0;
+            this.chkCompress.Text = "Comprimir";
+            this.toolTip1.SetToolTip(this.chkCompress, "Selecciona esta opción si quieres que se compriman los ficheros exportados\\nSi no" +
+        " se marca, la exportación será más rápida, pero es posible que el fichero result" +
+        "ante no sea compatible.");
+            this.chkCompress.UseVisualStyleBackColor = true;
             // 
             // ExportProjectForm
             // 
