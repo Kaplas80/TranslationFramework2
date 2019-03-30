@@ -128,7 +128,7 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "encounter_pupup_message.*",
+                    SearchPattern = "encounter_pupup_message.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaGame.Files.Epmb.File)
@@ -138,7 +138,7 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "mail.*",
+                    SearchPattern = "mail.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaGame.Files.Mail.File)
@@ -148,7 +148,7 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "string_tbl.bin_?",
+                    SearchPattern = "string_tbl.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaGame.Files.StringTbl.File)
@@ -158,8 +158,8 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "ability.bin_?;battle_coefficient.bin_?;battle_deck_list.bin_?;caption.bin_?;complete_heat.bin_?;complete_majima.bin_?;explanation_main_scenario.bin_?;explanation_sub_story.bin_?;item.bin_?;tips_tutorial.bin_?",
-                    //SearchPattern = "*.bin_?",
+                    SearchPattern = "ability.bin_c;battle_coefficient.bin_c;battle_deck_list.bin_c;caption.bin_c;complete_heat.bin_c;complete_majima.bin_c;explanation_main_scenario.bin_c;explanation_sub_story.bin_c;item.bin_c;tips_tutorial.bin_c",
+                    //SearchPattern = "*.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     Exclusions = {"encounter_pupup_message.bin", "mail.bin", "string_tbl.bin"},
@@ -199,6 +199,29 @@ namespace TFGame.YakuzaKiwami
             return fontpar;
         }
 
+        private GameFileContainer GetHact()
+        {
+            var cmnSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "cmn.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = true,
+                    FileType = typeof(YakuzaGame.Files.CmnBin.File),
+                };
+
+            var hact = new GameFileContainer
+            {
+                Path = @"media\data\hact.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            hact.FileSearches.Add(cmnSearch);
+
+            return hact;
+        }
+
         private IList<GameFileContainer> GetMappar(string path)
         {
             var result = new List<GameFileContainer>();
@@ -232,7 +255,7 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "baccarat_cpu.bin_?;baccarat_gallery_msg.bin_?;minigame_chohan_bakuto.bin_?;mesuking_*.bin_?;poker_com_*.bin_?",
+                    SearchPattern = "baccarat_cpu.bin_c;baccarat_gallery_msg.bin_c;minigame_chohan_bakuto.bin_c;mesuking_*.bin_c;poker_com_*.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaGame.Files.Table.File)
@@ -250,7 +273,7 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = "db",
-                    SearchPattern = "*.bin_?",
+                    SearchPattern = "*.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(YakuzaGame.Files.PocketCircuit.File)
@@ -405,8 +428,8 @@ namespace TFGame.YakuzaKiwami
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "activity_list.bin_?;complete_minigame.bin_?;controller_explain.bin_?;correlation_person.bin_?;enc_boss_cmn_ability.bin_?;extra.bin_?;onedari_popup.bin_?;response_roulette.bin_?;tougijyo_mode.bin_?;tougijyo_participant.bin_?;tougijyo_realtime_quest.bin_?;tougijyo_string.bin_?;tutorial.bin_?;ultimate.bin_?;virtue_shop.bin_?",
-                    //SearchPattern = "*.bin_?",
+                    SearchPattern = "activity_list.bin_c;complete_minigame.bin_c;controller_explain.bin_c;correlation_person.bin_c;enc_boss_cmn_ability.bin_c;extra.bin_c;onedari_popup.bin_c;response_roulette.bin_c;tougijyo_mode.bin_c;tougijyo_participant.bin_c;tougijyo_realtime_quest.bin_c;tougijyo_string.bin_c;tutorial.bin_c;ultimate.bin_c;virtue_shop.bin_c",
+                    //SearchPattern = "*.bin_c",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Table.File)
@@ -546,19 +569,20 @@ namespace TFGame.YakuzaKiwami
             var result = new List<GameFileContainer>();
 
             result.Add(GetRoot());
-            //result.AddRange(Get2dpar(path));
-            //result.AddRange(GetAuth(path));
-            //result.Add(GetBootpar());
-            //result.Add(GetFontpar());
-            //result.AddRange(GetMappar(path));
-            //result.AddRange(GetMinigame());
-            //result.AddRange(GetPause());
-            //result.Add(GetReactorpar());
-            //result.Add(GetSoundpar());
-            //result.Add(GetStage());
-            //result.Add(GetStaypar());
-            //result.AddRange(GetWdrCommon());
-            //result.AddRange(GetWdr());
+            result.AddRange(Get2dpar(path));
+            result.AddRange(GetAuth(path));
+            result.Add(GetBootpar());
+            result.Add(GetFontpar());
+            result.Add(GetHact());
+            result.AddRange(GetMappar(path));
+            result.AddRange(GetMinigame());
+            result.AddRange(GetPause());
+            result.Add(GetReactorpar());
+            result.Add(GetSoundpar());
+            result.Add(GetStage());
+            result.Add(GetStaypar());
+            result.AddRange(GetWdrCommon());
+            result.AddRange(GetWdr());
 
             result.Sort();
             return result.ToArray();

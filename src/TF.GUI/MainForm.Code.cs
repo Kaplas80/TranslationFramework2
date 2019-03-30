@@ -81,6 +81,9 @@ namespace TF.GUI
                 catch (UserCancelException e)
                 {
                     args.Cancel = true;
+                    worker.ReportProgress(-1, "Eliminando ficheros...");
+                    PathHelper.DeleteDirectory(workFolder);
+                    worker.ReportProgress(-1, "Terminado");
                 }
 #if !DEBUG
                 catch (Exception e)

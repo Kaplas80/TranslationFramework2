@@ -166,7 +166,11 @@ namespace TF.IO
             var limit = maxLength * encoding.GetMaxByteCount(1);
 
             var buffer = ReadBytes(limit);
-
+            if (buffer.Length == 0)
+            {
+                finished = true;
+                return string.Empty;
+            }
             var endBytes = encoding.GetBytes(new char[] { endChar }, 0, 1);
 
             var found = false;

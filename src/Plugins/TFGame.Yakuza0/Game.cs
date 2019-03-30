@@ -706,20 +706,20 @@ namespace TFGame.Yakuza0
             var result = new List<GameFileContainer>();
 
             result.Add(GetRoot());
-            //result.AddRange(Get2dpar(path));
-            //result.AddRange(GetAuth(path));
-            //result.Add(GetBootpar());
-            //result.Add(GetFontpar());
-            //result.Add(GetHact());
-            //result.AddRange(GetMappar(path));
-            //result.AddRange(GetMinigame());
-            //result.AddRange(GetPause());
-            //result.Add(GetReactorpar());
-            //result.Add(GetSoundpar());
-            //result.Add(GetStage());
-            //result.Add(GetStaypar());
-            //result.AddRange(GetWdrCommon());
-            //result.AddRange(GetWdr());
+            result.AddRange(Get2dpar(path));
+            result.AddRange(GetAuth(path));
+            result.Add(GetBootpar());
+            result.Add(GetFontpar());
+            result.Add(GetHact());
+            result.AddRange(GetMappar(path));
+            result.AddRange(GetMinigame());
+            result.AddRange(GetPause());
+            result.Add(GetReactorpar());
+            result.Add(GetSoundpar());
+            result.Add(GetStage());
+            result.Add(GetStaypar());
+            result.AddRange(GetWdrCommon());
+            result.AddRange(GetWdr());
 
             result.Sort();
             return result.ToArray();

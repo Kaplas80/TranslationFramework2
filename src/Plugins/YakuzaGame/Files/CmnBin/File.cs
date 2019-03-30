@@ -32,7 +32,10 @@ namespace YakuzaGame.Files.CmnBin
 
                     var subtitles = type == 0 ? ReadLongSubtitles(input) : ReadShortSubtitles(input);
 
-                    temp.AddRange(subtitles);
+                    if (subtitles != null)
+                    {
+                        temp.AddRange(subtitles);
+                    }
 
                     currentIndex = input.FindPattern(SearchPattern);
                 }
@@ -73,6 +76,12 @@ namespace YakuzaGame.Files.CmnBin
             var numJapaneseSubs = input.ReadInt32();
             var numEnglishSubs = input.ReadInt32();
 
+            if (numJapaneseSubs > 0x1000 || numEnglishSubs > 0x1000)
+            {
+                // Probablemente el fichero no sea un cmn.bin
+                return null;
+            }
+
             input.Skip(16); //0x10
 
             for (var i = 0; i < numJapaneseSubs; i++)
@@ -80,11 +89,11 @@ namespace YakuzaGame.Files.CmnBin
                 input.Skip(16); //0x10
 
                 var subtitle = ReadSubtitle(input, 256);
-                subtitle.Language = SubtitleLanguage.Japanese;
+                /*subtitle.Language = SubtitleLanguage.Japanese;
                 if (subtitle.Text.Length > 0)
                 {
                     result.Add(subtitle);
-                }
+                }*/
             }
 
             for (var i = 0; i < numEnglishSubs; i++)
@@ -109,18 +118,30 @@ namespace YakuzaGame.Files.CmnBin
             input.Skip(266); //0x010A
 
             var numSubs = input.ReadInt32();
-            input.Skip(28); 
+            input.Skip(28);
+
+            if (numSubs > 0x1000)
+            {
+                // Probablemente el fichero no sea un cmn.bin
+                return null;
+            }
 
             for (var i = 0; i < numSubs; i++)
             {
                 input.Skip(16); //0x10
 
                 var subtitle = ReadSubtitle(input, 128);
-                subtitle.Language = SubtitleLanguage.Japanese;
+                /*subtitle.Language = SubtitleLanguage.Japanese;
                 if (subtitle.Text.Length > 0)
                 {
                     result.Add(subtitle);
-                }
+                }*/
+            }
+
+            if (numSubs > 0x1000)
+            {
+                // Probablemente el fichero no sea un cmn.bin
+                return null;
             }
 
             numSubs = input.ReadInt32();
