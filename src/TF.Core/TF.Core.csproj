@@ -119,7 +119,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Resources\NotoSansCJKjp-Regular.otf" />
+    <None Include="Resources\NotoSansCJKjp.ttf" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace TF.Core.Fonts
 {
@@ -19,15 +21,27 @@ namespace TF.Core.Fonts
             _fonts = new PrivateFontCollection();
             _fontDictionary = new Dictionary<string, int>();
 
-            var fontData = Resources.Noto_Sans_CJK;
-            var fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
-            Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
-            uint dummy = 0;
-            _fonts.AddMemoryFont(fontPtr, Resources.Noto_Sans_CJK.Length);
-            AddFontMemResourceEx(fontPtr, (uint)Resources.Noto_Sans_CJK.Length, IntPtr.Zero, ref dummy);
-            Marshal.FreeCoTaskMem(fontPtr);
+            var installedCollection = new InstalledFontCollection();
+            if (!installedCollection.Families.Any(x => x.Name == "Noto Sans CJK JP Regular"))
+            {
+                try
+                {
+                    var fontData = Resources.Noto_Sans_CJK;
+                    var fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
+                    Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+                    uint dummy = 0;
+                    _fonts.AddMemoryFont(fontPtr, fontData.Length);
+                    AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
+                    Marshal.FreeCoTaskMem(fontPtr);
 
-            _fontDictionary[_fonts.Families[0].Name] = 0;
+                    _fontDictionary[_fonts.Families[0].Name] = 0;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(
+                        "No se ha podido encontrar la fuente \"Noto Sans CJK JP Regular\". Puede que los textos no se muestren correctamente.");
+                }
+            }
         }
 
         public static void Initialize()
