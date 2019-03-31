@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using TF.Core.Entities;
 
 namespace TF.Core
@@ -22,9 +23,16 @@ namespace TF.Core
                 ICollection<Assembly> assemblies = new List<Assembly>(dllFileNames.Length);
                 foreach (var dllFile in dllFileNames)
                 {
-                    var an = AssemblyName.GetAssemblyName(dllFile);
-                    var assembly = Assembly.Load(an);
-                    assemblies.Add(assembly);
+                    try
+                    {
+                        var an = AssemblyName.GetAssemblyName(dllFile);
+                        var assembly = Assembly.Load(an);
+                        assemblies.Add(assembly);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show($"Error Loading Assembly: {dllFile}\n{e.Message}");
+                    }
                 }
 
                 var pluginType = typeof(IGame);
@@ -61,8 +69,15 @@ namespace TF.Core
 
                 foreach (var type in pluginTypes)
                 {
-                    var plugin = (IGame)Activator.CreateInstance(type);
-                    plugins.Add(plugin);
+                    try
+                    {
+                        var plugin = (IGame)Activator.CreateInstance(type);
+                        plugins.Add(plugin);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show($"Error Loading Game Plugin: {type.FullName}\n{e.Message}");
+                    }
                 }
             }
 
