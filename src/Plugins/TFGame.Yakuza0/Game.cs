@@ -67,7 +67,7 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "2d_yk_*.dds",
+                    SearchPattern = "*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
                     FileType = typeof(DDSFile),
