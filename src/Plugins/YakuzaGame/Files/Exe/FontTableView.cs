@@ -502,20 +502,20 @@ namespace YakuzaGame.Files.Exe
 
                 for (var i = 0x00; i < 0x20; i++)
                 {
-                    _data[i].Data[0] = 0f;
-                    _data[i].Data[1] = 0f;
-                    _data[i].Data[2] = 0f;
-                    _data[i].Data[3] = 0f;
-                    _data[i].Data[4] = 0f;
-                    _data[i].Data[5] = 0f;
+                    _data[i][0] = 0f;
+                    _data[i][1] = 0f;
+                    _data[i][2] = 0f;
+                    _data[i][3] = 0f;
+                    _data[i][4] = 0f;
+                    _data[i][5] = 0f;
                 }
 
-                _data[0x20].Data[0] = 0.5f;
-                _data[0x20].Data[1] = 0.5f;
-                _data[0x20].Data[2] = 0.5f;
-                _data[0x20].Data[3] = 0.5f;
-                _data[0x20].Data[4] = 0.5f;
-                _data[0x20].Data[5] = 0.5f;
+                _data[0x20][0] = 0.5f;
+                _data[0x20][1] = 0.5f;
+                _data[0x20][2] = 0.5f;
+                _data[0x20][3] = 0.5f;
+                _data[0x20][4] = 0.5f;
+                _data[0x20][5] = 0.5f;
 
                 for (var i = 0x21; i < 0x80; i++)
                 {
@@ -538,22 +538,22 @@ namespace YakuzaGame.Files.Exe
                             new Rectangle(bitmap.Width / 2, 2 * bitmap.Height / 3, bitmap.Width / 2,
                                 bitmap.Height / 3)));
 
-                    _data[i].Data[0] = (tlPixel - pixelsSpace) / (bitmap.Width / 2f);
-                    _data[i].Data[1] = (bitmap.Width - (trPixel + pixelsSpace)) / (bitmap.Width / 2f);
-                    _data[i].Data[2] = (mlPixel - pixelsSpace) / (bitmap.Width / 2f);
-                    _data[i].Data[3] = (bitmap.Width - (mrPixel + pixelsSpace)) / (bitmap.Width / 2f);
-                    _data[i].Data[4] = (blPixel - pixelsSpace) / (bitmap.Width / 2f);
-                    _data[i].Data[5] = (bitmap.Width - (brPixel + pixelsSpace)) / (bitmap.Width / 2f);
+                    _data[i][0] = (tlPixel - pixelsSpace) / (bitmap.Width / 2f);
+                    _data[i][1] = (bitmap.Width - (trPixel + pixelsSpace)) / (bitmap.Width / 2f);
+                    _data[i][2] = (mlPixel - pixelsSpace) / (bitmap.Width / 2f);
+                    _data[i][3] = (bitmap.Width - (mrPixel + pixelsSpace)) / (bitmap.Width / 2f);
+                    _data[i][4] = (blPixel - pixelsSpace) / (bitmap.Width / 2f);
+                    _data[i][5] = (bitmap.Width - (brPixel + pixelsSpace)) / (bitmap.Width / 2f);
                 }
 
                 for (var i = 0x80; i < 0xA1; i++)
                 {
-                    _data[i].Data[0] = 0f;
-                    _data[i].Data[1] = 0f;
-                    _data[i].Data[2] = 0f;
-                    _data[i].Data[3] = 0f;
-                    _data[i].Data[4] = 0f;
-                    _data[i].Data[5] = 0f;
+                    _data[i][0] = 0f;
+                    _data[i][1] = 0f;
+                    _data[i][2] = 0f;
+                    _data[i][3] = 0f;
+                    _data[i][4] = 0f;
+                    _data[i][5] = 0f;
                 }
 
                 for (var i = 0xA1; i < 0x100; i++)
@@ -577,12 +577,12 @@ namespace YakuzaGame.Files.Exe
                             new Rectangle(bitmap.Width / 2, 2 * bitmap.Height / 3, bitmap.Width / 2,
                                 bitmap.Height / 3)));
 
-                    _data[i].Data[0] = (tlPixel - pixelsSpace) / (bitmap.Width / 2f);
-                    _data[i].Data[1] = (bitmap.Width - (trPixel + pixelsSpace)) / (bitmap.Width / 2f);
-                    _data[i].Data[2] = (mlPixel - pixelsSpace) / (bitmap.Width / 2f);
-                    _data[i].Data[3] = (bitmap.Width - (mrPixel + pixelsSpace)) / (bitmap.Width / 2f);
-                    _data[i].Data[4] = (blPixel - pixelsSpace) / (bitmap.Width / 2f);
-                    _data[i].Data[5] = (bitmap.Width - (brPixel + pixelsSpace)) / (bitmap.Width / 2f);
+                    _data[i][0] = (tlPixel - pixelsSpace) / (bitmap.Width / 2f);
+                    _data[i][1] = (bitmap.Width - (trPixel + pixelsSpace)) / (bitmap.Width / 2f);
+                    _data[i][2] = (mlPixel - pixelsSpace) / (bitmap.Width / 2f);
+                    _data[i][3] = (bitmap.Width - (mrPixel + pixelsSpace)) / (bitmap.Width / 2f);
+                    _data[i][4] = (blPixel - pixelsSpace) / (bitmap.Width / 2f);
+                    _data[i][5] = (bitmap.Width - (brPixel + pixelsSpace)) / (bitmap.Width / 2f);
                 }
 
                 FontCharsGridView.Invalidate();

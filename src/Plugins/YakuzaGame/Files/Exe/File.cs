@@ -256,7 +256,7 @@ namespace YakuzaGame.Files.Exe
             }
         }
 
-        private void LoadFontTableChanges( CharacterInfo[] data)
+        private void LoadFontTableChanges(CharacterInfo[] data)
         {
             if (HasChanges)
             {
