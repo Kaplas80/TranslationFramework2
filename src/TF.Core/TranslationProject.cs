@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using TF.Core.Entities;
 using TF.Core.Exceptions;
 using TF.Core.Helpers;
@@ -207,10 +208,6 @@ namespace TF.Core
                 if (container.Type == ContainerType.Folder)
                 {
                     var outputFolder = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
-                    if (Directory.Exists(outputFolder) && PathHelper.GetRelativePath(ExportFolder, outputFolder) != ".\\")
-                    {
-                        PathHelper.DeleteDirectory(outputFolder);
-                    }
 
                     foreach (var translationFile in container.Files)
                     {
@@ -246,23 +243,18 @@ namespace TF.Core
 
                     // 2. Crear los ficheros traducidos en esa carpeta temporal
                     worker.ReportProgress(0, "Generando ficheros traducidos...");
-                    foreach (var translationFile in container.Files)
+                    Parallel.ForEach(container.Files, translationFile =>
                     {
                         if (translationFile.HasChanges || options.ForceRebuild)
                         {
                             translationFile.Rebuild(dest);
                         }
-                    }
+                    });
 
                     // 3. Empaquetar
                     worker.ReportProgress(0, "Empaquetando fichero...");
-
-                    var stopwatch = new Stopwatch();
-                    stopwatch.Start();
                     Game.RepackFile(dest, outputFile, options.UseCompression);
-                    stopwatch.Stop();
-                    var elapsed_time = stopwatch.ElapsedMilliseconds;
-                    worker.ReportProgress(0, $"{elapsed_time} ms");
+
                     // 4. Eliminar la carpeta temporal
                     if (!options.SaveTempFiles)
                     {
