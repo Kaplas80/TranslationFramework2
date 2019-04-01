@@ -17,29 +17,6 @@ namespace YakuzaGame.Files.Msg
         {
         }
 
-#if DEBUG
-        protected new IList<Subtitle> _subtitles;
-        private new View _view;
-        public override void Open(DockPanel panel, ThemeBase theme)
-        {
-            _view = new View(theme);
-            var subtitles = GetSubtitles();
-            _subtitles = new List<Subtitle>(subtitles.Count);
-            foreach (var subtitle in subtitles)
-            {
-                _subtitles.Add(subtitle as Subtitle);
-            }
-
-            _view.LoadSubtitles(_subtitles.Where(x => (x != null) && (!string.IsNullOrEmpty(x.Text))).ToList());
-            _view.Show(panel, DockState.Document);
-        }
-        
-        protected override void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            NeedSaving = _subtitles.Any(subtitle => subtitle.Loaded != subtitle.Translation);
-            OnFileChanged();
-        }
-#endif
         protected override IList<TF.Core.TranslationEntities.Subtitle> GetSubtitles()
         {
             var result = new List<TF.Core.TranslationEntities.Subtitle>();
@@ -124,17 +101,6 @@ namespace YakuzaGame.Files.Msg
                         {
                             property.IsEndProperty = true;
                         }
-#if DEBUG
-                        if (property.GetType().Name == nameof(MsgProperty))
-                        {
-                            if (!property.IsEndProperty && property.Position != 0)
-                            {
-                                var data = property.ToByteArray();
-
-                                Debug.WriteLine($"{this.Name}\t{data[0]:X2}{data[1]:X2}\t{subtitle.Text}");
-                            }
-                        }
-#endif
                     }
 
                     result.Add(subtitle);
@@ -150,7 +116,7 @@ namespace YakuzaGame.Files.Msg
         {
             var subtitle = base.ReadSubtitle(input, offset, returnToPos);
 
-            if (subtitle.Offset == 0 || string.IsNullOrEmpty(subtitle.Text))
+            if (subtitle.Offset == 0)
             {
                 subtitle = null;
             }
@@ -208,6 +174,8 @@ namespace YakuzaGame.Files.Msg
                 var inputPointerRemainder = input.ReadInt32();
                 output.Write(0); // Si no es 0, ya lo rellenaré luego
 
+                using (var unknownMemoryStream = new MemoryStream())
+                using (var outputUnknown = new ExtendedBinaryWriter(unknownMemoryStream, FileEncoding, Endianness.BigEndian))
                 using (var propertiesMemoryStream = new MemoryStream())
                 using (var outputProperties = new ExtendedBinaryWriter(propertiesMemoryStream, FileEncoding, Endianness.BigEndian))
                 using (var stringsMemoryStream = new MemoryStream())
@@ -217,23 +185,43 @@ namespace YakuzaGame.Files.Msg
                     var stringOffsets = new List<int>();
                     var propertiesCount = new List<byte>();
                     var propertiesOffsets = new List<int>();
+                    var unknownOffsets = new List<int>();
 
+                    var unknownSectionOffset = 0;
                     var strOffset = 0;
                     var propOffset = 0;
                     var totalStrCount = 0;
                     for (var i = 0; i < count; i++)
                     {
-                        output.Write(input.ReadBytes(4));
+                        input.Seek(0x18 + i * 0x10, SeekOrigin.Begin);
+
+                        var unknownOffset = input.ReadInt32();
+                        output.Write(0); // Si no es 0, ya lo rellenaré luego
+
                         var groupOffset = input.ReadInt32();
                         output.Write(groupOffset);
-                        output.Write(input.ReadBytes(1));
+                        var unknownCount = input.ReadByte();
+                        output.Write(unknownCount);
 
                         var stringCount = input.ReadByte();
                         output.Write(stringCount);
                         totalStrCount += stringCount;
                         output.Write(input.ReadBytes(6));
 
-                        var returnPos = input.Position;
+                        if (unknownOffset != 0)
+                        {
+                            var returnPos = input.Position;
+                            input.Seek(unknownOffset, SeekOrigin.Begin);
+                            outputUnknown.Write(input.ReadBytes(unknownCount * 12));
+                            unknownOffsets.Add(unknownSectionOffset);
+                            unknownSectionOffset = (int) outputUnknown.Position;
+                            input.Seek(returnPos, SeekOrigin.Begin);
+                        }
+                        else
+                        {
+                            unknownOffsets.Add(-1);
+                        }
+
                         input.Seek(groupOffset, SeekOrigin.Begin);
 
                         for (var j = 0; j < stringCount; j++)
@@ -278,15 +266,27 @@ namespace YakuzaGame.Files.Msg
                             }
                             
                         }
-
-                        input.Seek(returnPos, SeekOrigin.Begin);
                     }
 
+                    var unknownBytes = unknownMemoryStream.ToArray();
                     var propertiesBytes = propertiesMemoryStream.ToArray();
                     var stringsBytes = stringsMemoryStream.ToArray();
 
                     var propBase = (int) output.Position + totalStrCount * 12;
-                    var strBase = propBase + propertiesBytes.Length;
+                    var unknownBase = propBase + propertiesBytes.Length;
+                    var strBase = unknownBase + unknownBytes.Length;
+
+                    var outputReturnPos = output.Position;
+                    for (var i = 0; i < count; i++)
+                    {
+                        output.Seek(0x18 + i * 0x10, SeekOrigin.Begin);
+                        if (unknownOffsets[i] >= 0)
+                        {
+                            output.Write(unknownOffsets[i] + unknownBase);
+                        }
+                    }
+
+                    output.Seek(outputReturnPos, SeekOrigin.Begin);
 
                     for (var i = 0; i < totalStrCount; i++)
                     {
@@ -298,6 +298,10 @@ namespace YakuzaGame.Files.Msg
                     }
 
                     output.Write(propertiesBytes);
+                    if (unknownBytes.Length > 0)
+                    {
+                        output.Write(unknownBytes);
+                    }
                     output.Write(stringsBytes);
                     output.WritePadding(4);
                 }
@@ -324,7 +328,8 @@ namespace YakuzaGame.Files.Msg
                     using (var outputStrings =
                         new ExtendedBinaryWriter(stringsMemoryStream, FileEncoding, Endianness.BigEndian))
                     {
-                        var strOffset = (int)output.Position + numTalkers * 4;
+                        var baseOffset = (int) output.Position + numTalkers * 4;
+                        var strOffset = baseOffset;
                         for (var i = 0; i < numTalkers; i++)
                         {
                             var offset = input.ReadInt32();
@@ -340,7 +345,7 @@ namespace YakuzaGame.Files.Msg
                             }
                             
                             
-                            strOffset += (int)outputStrings.Position;
+                            strOffset = baseOffset + (int)outputStrings.Position;
                         }
 
                         output.Write(stringsMemoryStream.ToArray());

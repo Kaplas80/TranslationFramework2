@@ -77,7 +77,7 @@ namespace YakuzaGame.Files
                 output.Write((short)numFiles);
                 output.Write(log.ReadBytes(6));
 
-                var outputOffset = 8 + 16 * numFiles;
+                var outputOffset = 0x10 + 0x10 * numFiles;
 
                 for (var i = 0; i < numFiles; i++)
                 {
@@ -99,6 +99,7 @@ namespace YakuzaGame.Files
                         var returnPos = output.Position;
                         output.Seek(outputOffset, SeekOrigin.Begin);
                         output.Write(msg);
+                        output.WritePadding(0x04);
                         outputOffset = (int)output.Position;
                         output.Seek(returnPos + 4, SeekOrigin.Begin);
                         output.Write((short) msg.Length);
@@ -122,6 +123,7 @@ namespace YakuzaGame.Files
                         var returnPos = output.Position;
                         output.Seek(outputOffset, SeekOrigin.Begin);
                         output.Write(remainder);
+                        output.WritePadding(0x04);
                         outputOffset = (int)output.Position;
                         output.Seek(returnPos + 2, SeekOrigin.Begin);
                         output.Write((short)sizeRemainder);
