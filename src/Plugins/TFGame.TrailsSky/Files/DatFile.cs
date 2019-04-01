@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -162,29 +163,17 @@ namespace TFGame.TrailsSky.Files
 
                 var files = ReadFileInfo(log);
 
-                var compressedData = new Dictionary<string, byte[]>(files.Count);
+                var compressedData = new ConcurrentDictionary<string, byte[]>();
 
-                var maxThread = new SemaphoreSlim(10);
-                var taskList = new List<Task>();
-
-                foreach (var file in files)
+                Parallel.ForEach(files, file =>
                 {
-                    maxThread.Wait();
-                    taskList.Add(Task.Factory.StartNew(() =>
-                        {
-                            if (file.CompressedSize > 0)
-                            {
-                                var fileToInsert = Path.Combine(inputFolder, file.FileName);
-                                var data = GetData(fileToInsert, file.IsCompressed, useCompression);
-                                compressedData[file.FileName] = data;
-                            }
-
-                            maxThread.Release();
-                        }
-                        , TaskCreationOptions.LongRunning));
-                }
-
-                Task.WaitAll(taskList.ToArray());
+                    if (file.CompressedSize > 0)
+                    {
+                        var fileToInsert = Path.Combine(inputFolder, file.FileName);
+                        var data = GetData(fileToInsert, file.IsCompressed, useCompression);
+                        compressedData[file.FileName] = data;
+                    }
+                });
 
                 var fileOffset = 0x10 + maxNumFiles * 4 + 0x04; // Posición en la que hay que empezar a insertar los ficheros
 

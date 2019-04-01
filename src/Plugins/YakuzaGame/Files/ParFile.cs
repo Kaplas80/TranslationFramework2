@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -405,25 +406,14 @@ namespace YakuzaGame.Files
 
             var newOffset = dataOffset;
 
-            var compressedData = new Dictionary<uint, CompressResult>(folder.FilesId.Count);
+            var compressedData = new ConcurrentDictionary<uint, CompressResult>();
 
-            var maxThread = new SemaphoreSlim(10);
-            var taskList = new List<Task>();
-
-            foreach (var fileId in folder.FilesId)
+            Parallel.ForEach(folder.FilesId, fileId =>
             {
-                maxThread.Wait();
-                taskList.Add(Task.Factory.StartNew(() =>
-                    {
-                        var f = fileDict[fileId];
-                        var data = GetData(f, newPath, useCompression);
-                        compressedData[fileId] = data;
-                        maxThread.Release();
-                    }
-                    , TaskCreationOptions.LongRunning));
-            }
-
-            Task.WaitAll(taskList.ToArray());
+                var f = fileDict[fileId];
+                var data = GetData(f, newPath, useCompression);
+                compressedData[fileId] = data;
+            });
 
             foreach (var fileId in folder.FilesId)
             {
