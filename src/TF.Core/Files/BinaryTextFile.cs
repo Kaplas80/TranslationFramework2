@@ -68,13 +68,21 @@ namespace TF.Core.Files
         
         public override bool Search(string searchString)
         {
-            var bytes = File.ReadAllBytes(HasChanges ? ChangesFile : Path);
+            var bytes = File.ReadAllBytes(Path);
 
             var pattern = FileEncoding.GetBytes(searchString);
 
-            var index = SearchHelper.SearchPattern(bytes, pattern, 0);
+            var index1 = SearchHelper.SearchPattern(bytes, pattern, 0);
 
-            return index != -1;
+            var index2 = -1;
+            if (HasChanges)
+            {
+                bytes = File.ReadAllBytes(ChangesFile);
+                pattern = Encoding.Unicode.GetBytes(searchString);
+                index2 = SearchHelper.SearchPattern(bytes, pattern, 0);
+            }
+
+            return index1 != -1 || index2 != -1;
         }
 
         public override void SaveChanges()
