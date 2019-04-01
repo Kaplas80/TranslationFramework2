@@ -12,7 +12,7 @@ namespace TFGame.TrailsSky.Files.Exe
         private CharacterInfo[] _charWidths;
         private FontTableView _ftView;
 
-        protected virtual long FontTableOffset => 0x137770;
+        protected virtual long FontTableOffset => 0x15F140;
 
         public File(string path, string changesFolder) : base(path, changesFolder)
         {

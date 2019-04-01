@@ -12,7 +12,7 @@ namespace TFGame.TrailsSky
     {
         public string Id => "307504c9-90f7-45dd-a37f-4e3cd146a826";
         public string Name => "The Legend of Heroes: Trails in the Sky";
-        public string Description => "Versión en inglés GOG";
+        public string Description => "Versión en inglés Steam ";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-in-the-Sky-Icon-v1-586602301
         public int Version => 1;
         public System.Text.Encoding FileEncoding => new Encoding();
@@ -30,12 +30,22 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.Exe.File)
             };
 
+            var exe2 = new GameFileSearch()
+            {
+                RelativePath = ".",
+                SearchPattern = "ed6_win_DX9.exe",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Exe.DX9File)
+            };
+
             var root = new GameFileContainer
             {
                 Path = @".\",
                 Type = ContainerType.Folder
             };
             root.FileSearches.Add(exe);
+            root.FileSearches.Add(exe2);
 
             var fonts = new GameFileSearch
             {
@@ -58,7 +68,7 @@ namespace TFGame.TrailsSky
             var imagesT2 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH",
+                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH;H_EMOTIO._CH;H_ICON1 ._CH;H_MOUSE ._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType2)
@@ -224,17 +234,43 @@ namespace TFGame.TrailsSky
                 }
             };
 
+            var imagesDT04_2 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "H_ENCNT1._CH;H_GAMEOV._CH;H_NOTE??._CH;H_VIS018._CH;H_VIS019._CH;H_VIS020._CH;H_VIS021._CH;H_VIS022._CH;H_VIS023._CH;H_VIS024._CH;H_VIS025._CH;H_VIS026._CH;H_VIS027._CH;H_VIS040._CH;H_VIS041._CH;H_VIS042._CH;H_VIS043._CH;H_VIS044._CH;H_VIS045._CH;H_VIS046._CH;H_VIS047._CH;H_VIS048._CH;H_VIS049._CH;",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType6),
+                Exclusions =
+                {
+                    "H_NOTE01._CH",
+                    "H_NOTE02._CH",
+                    "H_NOTE21._CH",
+                    "H_NOTE22._CH",
+                }
+            };
+
             var dt04 = new GameFileContainer
             {
                 Path = @".\ED6_DT04.dat",
                 Type = ContainerType.CompressedFile
             };
             dt04.FileSearches.Add(imagesDT04);
+            dt04.FileSearches.Add(imagesDT04_2);
 
             var imagesDT0F = new GameFileSearch
             {
                 RelativePath = ".",
                 SearchPattern = "BATTLE  ._CH;BATTLE2 ._CH;BTLMENU ._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType1)
+            };
+
+            var imagesDT0F_2 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "HBATTLE ._CH;HBATTLE2._CH;HBTLMENU._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType1)
@@ -246,6 +282,7 @@ namespace TFGame.TrailsSky
                 Type = ContainerType.CompressedFile
             };
             dt0F.FileSearches.Add(imagesDT0F);
+            dt0F.FileSearches.Add(imagesDT0F_2);
 
             var imagesDT1C_1 = new GameFileSearch
             {
@@ -253,7 +290,7 @@ namespace TFGame.TrailsSky
                 SearchPattern = "AREA    ._CH",
                 IsWildcard = false,
                 RecursiveSearch = false,
-                FileType = typeof(Files.Images.ImageType6)
+                FileType = typeof(Files.Images.ImageType1)
             };
 
             var imagesDT1C_2 = new GameFileSearch
@@ -265,6 +302,15 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.Images.ImageType1)
             };
 
+            var imagesDT1C_3 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "HICONS  ._CH",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType2)
+            };
+
             var dt1C = new GameFileContainer
             {
                 Path = @".\ED6_DT1C.dat",
@@ -273,6 +319,7 @@ namespace TFGame.TrailsSky
 
             dt1C.FileSearches.Add(imagesDT1C_1);
             dt1C.FileSearches.Add(imagesDT1C_2);
+            dt1C.FileSearches.Add(imagesDT1C_3);
 
             result.Add(root);
             result.Add(dt00);

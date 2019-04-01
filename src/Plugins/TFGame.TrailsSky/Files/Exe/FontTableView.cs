@@ -113,7 +113,7 @@ namespace TFGame.TrailsSky.Files.Exe
                 new Tuple<char, char, char>('ú', '\u0060', 'u'), //`
                 new Tuple<char, char, char>('ü', '\u007B', 'u'), //{
                 new Tuple<char, char, char>('ñ', '\u007D', 'n'), //}
-                new Tuple<char, char, char>('¡', '\u007E', '!'), //~
+                new Tuple<char, char, char>('¡', '\u007E', 'i'), //~
                 new Tuple<char, char, char>('¿', '\u007F', '?'), //DEL
             };
 

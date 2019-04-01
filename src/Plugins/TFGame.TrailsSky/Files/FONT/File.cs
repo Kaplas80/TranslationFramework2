@@ -56,12 +56,23 @@ namespace TFGame.TrailsSky.Files.FONT
 
             var fullWidth = (int)Math.Ceiling(_charHeight / 2.0d);
             var fullHeight = halfSizeHeight + fullSizeHeight;
-            var bitmap = MergeBitmaps(bmpHalfSize, bmpFullSize, fullWidth, fullHeight);
 
-            bmpHalfSize.Dispose();
-            bmpFullSize.Dispose();
+            try
+            {
+                var bitmap = MergeBitmaps(bmpHalfSize, bmpFullSize, fullWidth, fullHeight);
 
-            return new Tuple<Image, object>(bitmap, null);
+                bmpHalfSize.Dispose();
+                bmpFullSize.Dispose();
+
+                return new Tuple<Image, object>(bitmap, null);
+            }
+            catch (Exception e)
+            {
+                bmpHalfSize.Dispose();
+                bmpFullSize.Dispose();
+
+                return new Tuple<Image, object>(null, null);
+            }
         }
 
         private static Bitmap GetBitmap(int width, int height, byte[] imageData, int startOffset)

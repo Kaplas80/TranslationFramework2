@@ -51,7 +51,7 @@ namespace DDSViewer
                 _images = new List<string>(dds.Count + png.Count);
 
                 _images.AddRange(dds);
-                //_images.AddRange(png);
+                _images.AddRange(png);
                 _images.Sort();
                 _index = 0;
                 _count = _images.Count;
