@@ -169,7 +169,6 @@ namespace YakuzaGame.Files.Mail
                     used.Add(inputOffset, outputOffset);
                     var sub = subtitles.First(x => x.Offset == inputOffset);
                     result = WriteSubtitle(output, sub, outputOffset, true);
-                    output.Skip(4);
                 }
                 else
                 {

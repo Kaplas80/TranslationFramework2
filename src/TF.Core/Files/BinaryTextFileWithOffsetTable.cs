@@ -124,7 +124,7 @@ namespace TF.Core.Files
 
             if (returnToPos)
             {
-                output.Seek(pos, SeekOrigin.Begin);
+                output.Seek(pos + 4, SeekOrigin.Begin); // Le añado 4 para que vuelva después de escribir el offset
             }
 
             return result;

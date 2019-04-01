@@ -121,7 +121,6 @@ namespace TFGame.TrailsSky.Files.DT
             {
                 var subtitle = subtitles.First(x => x.Offset == str.Offset);
                 currentOffset = WriteSubtitle(output, subtitle, currentOffset, true);
-                output.Seek(2, SeekOrigin.Current);
             }
 
             output.Seek(returnPos, SeekOrigin.Begin);
@@ -150,7 +149,7 @@ namespace TFGame.TrailsSky.Files.DT
 
             if (returnToPos)
             {
-                output.Seek(pos, SeekOrigin.Begin);
+                output.Seek(pos + 2, SeekOrigin.Begin);
             }
 
             return result;

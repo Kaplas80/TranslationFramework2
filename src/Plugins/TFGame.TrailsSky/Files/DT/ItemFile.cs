@@ -140,7 +140,7 @@ namespace TFGame.TrailsSky.Files.DT
 
             if (returnToPos)
             {
-                output.Seek(pos, SeekOrigin.Begin);
+                output.Seek(pos + 2, SeekOrigin.Begin);
             }
 
             return result;

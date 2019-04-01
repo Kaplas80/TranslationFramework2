@@ -96,7 +96,6 @@ namespace TFGame.Yakuza0.Files.Snitch
                     var inputSubtitle = ReadSubtitle(input);
                     outputOffset = WriteSubtitle(output, subtitles, inputSubtitle.Offset, outputOffset);
 
-                    output.Skip(4);
                     var inputOffset = input.ReadInt32();
                     output.Write((int)outputOffset);
                     
