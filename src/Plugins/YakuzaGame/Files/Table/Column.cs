@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -39,6 +40,16 @@ namespace YakuzaGame.Files.Table
         public virtual string GetValue(int index)
         {
             return string.Empty;
+        }
+
+        public virtual IList<Tuple<string, string>> GetUniqueValues()
+        {
+            return new List<Tuple<string, string>>();
+        }
+
+        public virtual void SetUniqueValues(IDictionary<string, string> values, bool useOrder)
+        {
+            
         }
 
         public virtual string GetTranslatedValue(int index)
@@ -138,6 +149,26 @@ namespace YakuzaGame.Files.Table
         public override string GetTranslatedValue(int index)
         {
             return _translatedData[index];
+        }
+
+        public override IList<Tuple<string, string>> GetUniqueValues()
+        {
+            return _data.Select((t, i) => new Tuple<string, string>(t, _translatedData[i])).ToList();
+        }
+
+        public override void SetUniqueValues(IDictionary<string, string> values, bool useOrder)
+        {
+            for (var i = 0; i < _data.Count; i++)
+            {
+                var key = useOrder ? string.Concat(Name, "|", i) : _data[i];
+
+                if (values.ContainsKey(key))
+                {
+                    _translatedData[i] = values[key];
+                }
+            }
+
+            OnPropertyChanged("Translation");
         }
 
         public override void SetTranslatedValue(int index, string value)
@@ -246,6 +277,26 @@ namespace YakuzaGame.Files.Table
         public override string GetTranslatedValue(int index)
         {
             return _translatedData[_index[index]];
+        }
+
+        public override IList<Tuple<string, string>> GetUniqueValues()
+        {
+            return _data.Select((t, i) => new Tuple<string, string>(t, _translatedData[i])).ToList();
+        }
+
+        public override void SetUniqueValues(IDictionary<string, string> values, bool useOrder)
+        {
+            for (var i = 0; i < _data.Count; i++)
+            {
+                var key = useOrder ? string.Concat(Name, "|", i) : _data[i];
+
+                if (values.ContainsKey(key))
+                {
+                    _translatedData[i] = values[key];
+                }
+            }
+
+            OnPropertyChanged("Translation");
         }
 
         public override void SetTranslatedValue(int index, string value)
@@ -359,6 +410,26 @@ namespace YakuzaGame.Files.Table
             }
 
             return string.Empty;
+        }
+
+        public override IList<Tuple<string, string>> GetUniqueValues()
+        {
+            return _data.Select(t => new Tuple<string, string>(t.Value, t.TranslatedValue)).ToList();
+        }
+
+        public override void SetUniqueValues(IDictionary<string, string> values, bool useOrder)
+        {
+            for (var i = 0; i < _data.Count; i++)
+            {
+                var key = useOrder ? string.Concat(Name, "|", i) : _data[i].Value;
+
+                if (values.ContainsKey(key))
+                {
+                    _data[i].TranslatedValue = values[key];
+                }
+            }
+
+            OnPropertyChanged("Translation");
         }
 
         public override void SetTranslatedValue(int index, string value)

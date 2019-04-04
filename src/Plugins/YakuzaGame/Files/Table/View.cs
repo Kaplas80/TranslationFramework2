@@ -1,7 +1,12 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ExcelDataReader;
+using OfficeOpenXml;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace YakuzaGame.Files.Table
@@ -131,6 +136,10 @@ namespace YakuzaGame.Files.Table
                     e.CellStyle.BackColor = Color.AntiqueWhite;
                 }
             }
+            else
+            {
+                e.CellStyle.BackColor = Color.LightGray;
+            }
 
             var lineBreakPattern = @"(\\r\\n)|(\\n)";
             var tagPattern = @"(<[^>]*>|%s|%[\d]*d|%u|%[[\d]+[\.\d]*]*f)";
@@ -215,6 +224,120 @@ namespace YakuzaGame.Files.Table
         {
             var rowIndex = SubtitleGridView.SelectedCells[0].RowIndex;
             return rowIndex;
+        }
+
+        private void btnExport_Click(object sender, System.EventArgs e)
+        {
+            var result = ExportFileDialog.ShowDialog(this);
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            using (var excel = new ExcelPackage())
+            {
+                var sheet = excel.Workbook.Worksheets.Add("Hoja 1");
+
+                var header = new List<string[]>
+                {
+                    new[] {"COLUMNA", "ORDEN", "ORIGINAL", "TRADUCCIÓN"}
+                };
+
+                sheet.Cells["A1:D1"].LoadFromArrays(header);
+
+                var row = 2;
+                foreach (var column in _data.Columns)
+                {
+                    var uniqueValues = column.GetUniqueValues();
+
+                    var i = 0;
+                    foreach (var (original, translation) in uniqueValues)
+                    {
+                        sheet.Cells[row, 1].Value = column.Name;
+                        sheet.Cells[row, 2].Value = i;
+                        sheet.Cells[row, 3].Value = original;
+                        sheet.Cells[row, 4].Value = translation;
+
+                        i++;
+                        row++;
+                    }
+                }
+
+                var excelFile = new FileInfo(ExportFileDialog.FileName);
+                excel.SaveAs(excelFile);
+            }
+        }
+
+        private void btnColumnImport_Click(object sender, System.EventArgs e)
+        {
+            Import(true);
+        }
+
+        private void btnSimpleImport_Click(object sender, System.EventArgs e)
+        {
+            Import(false);
+        }
+
+        private void Import(bool useOrder)
+        {
+            var result = ImportFileDialog.ShowDialog(this);
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            var strings = new Dictionary<string, string>();
+            try
+            {
+                using (var stream = System.IO.File.Open(ImportFileDialog.FileName, FileMode.Open, FileAccess.Read))
+                {
+                    // Auto-detect format, supports:
+                    //  - Binary Excel files (2.0-2003 format; *.xls)
+                    //  - OpenXml Excel files (2007 format; *.xlsx)
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+
+                        var content = reader.AsDataSet();
+
+                        var table = content.Tables[0];
+
+                        for (var i = 0; i < table.Rows.Count; i++)
+                        {
+                            string key;
+                            string value;
+                            if (useOrder)
+                            {
+                                key = string.Concat(table.Rows[i][0].ToString(), "|", table.Rows[i][1].ToString());
+                                value = table.Rows[i][3].ToString();
+                            }
+                            else
+                            {
+                                key = table.Rows[i][2].ToString();
+                                value = table.Rows[i][3].ToString();
+                            }
+
+                            if (!string.IsNullOrEmpty(key) && !strings.ContainsKey(key))
+                            {
+                                strings.Add(key, value);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var column in _data.Columns)
+                {
+                    column.SetUniqueValues(strings, useOrder);
+                }
+
+                SubtitleGridView.Invalidate();
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"No se ha podido abrir el fichero.\r\n{e.GetType()}: {e.Message}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
