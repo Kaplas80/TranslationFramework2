@@ -44,94 +44,58 @@ namespace TFGame.TrailsSky.Files.FONT
             var source = HasChanges ? ChangesFile : Path;
             _currentFont = System.IO.File.ReadAllBytes(source);
 
-            var halfSizeWidth = (int)Math.Ceiling(_charHeight / 4.0d);
-            var halfSizeHeight = _charHeight * 0xC0;
+            var halfSizeWidth = (int)Math.Ceiling(_charHeight / 2.0d);
+            var halfSizeHeight = _charHeight * 0xE0;
 
             var bmpHalfSize = GetBitmap(halfSizeWidth, halfSizeHeight, _currentFont, 0);
 
-            var fullSizeWidth = (int)Math.Ceiling(_charHeight / 2.0d);
-            var fullSizeHeight = (_currentFont.Length - (halfSizeWidth * halfSizeHeight)) / fullSizeWidth;
-
-            var bmpFullSize = GetBitmap(fullSizeWidth, fullSizeHeight, _currentFont, halfSizeWidth * halfSizeHeight);
-
-            var fullWidth = (int)Math.Ceiling(_charHeight / 2.0d);
-            var fullHeight = halfSizeHeight + fullSizeHeight;
-
-            try
-            {
-                var bitmap = MergeBitmaps(bmpHalfSize, bmpFullSize, fullWidth, fullHeight);
-
-                bmpHalfSize.Dispose();
-                bmpFullSize.Dispose();
-
-                return new Tuple<Image, object>(bitmap, null);
-            }
-            catch (Exception e)
-            {
-                bmpHalfSize.Dispose();
-                bmpFullSize.Dispose();
-
-                return new Tuple<Image, object>(null, null);
-            }
+            return new Tuple<Image, object>(bmpHalfSize, null);
         }
 
         private static Bitmap GetBitmap(int width, int height, byte[] imageData, int startOffset)
         {
-            var data = new byte[width * height * 4];
-
-            var o = 0;
-
-            for (var i = 0; i < width * height; i++)
+            if (width % 2 == 1)
             {
-                var value = imageData[startOffset + i];
-
-                data[o++] = 255;
-                data[o++] = value;
-                data[o++] = value;
-                data[o++] = value;
+                width++;
             }
+            var bmp = new Bitmap(width, height, PixelFormat.Format32bppRgb);
+            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
-            unsafe
+            var size = Math.Abs(bmpData.Stride) * bmp.Height;
+            var data = new byte[size];
+
+            var ptr = bmpData.Scan0;
+            var index = 0;
+            var pixel = 0;
+            for (var y = 0; y < height; y++)
             {
-                fixed (byte* ptr = data)
+                for (var x = 0; x < width * 4; x = x + 4)
                 {
-                    var image = new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, new IntPtr(ptr));
-                    return image;
+                    if (pixel == 0)
+                    {
+                        var pixelColor = (byte)(imageData[startOffset + index] & 0xF0);
+                        data[y * bmpData.Stride + x] = pixelColor;
+                        data[y * bmpData.Stride + x + 1] = pixelColor;
+                        data[y * bmpData.Stride + x + 2] = pixelColor;
+                        data[y * bmpData.Stride + x + 3] = 0;
+                        pixel = 1;
+                    }
+                    else
+                    {
+                        var pixelColor = (byte)((imageData[startOffset + index] & 0x0F) << 4);
+                        data[y * bmpData.Stride + x] = pixelColor;
+                        data[y * bmpData.Stride + x + 1] = pixelColor;
+                        data[y * bmpData.Stride + x + 2] = pixelColor;
+                        data[y * bmpData.Stride + x + 3] = 0;
+                        pixel = 0;
+                        index++;
+                    }
                 }
             }
-        }
 
-        private static Bitmap MergeBitmaps(Bitmap bmp1, Bitmap bmp2, int width, int height)
-        {
-            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            using (var canvas = Graphics.FromImage(bitmap))
-            {
-                canvas.InterpolationMode = InterpolationMode.Default;
-                canvas.DrawImage(bmp1,
-                    new Rectangle(0,
-                        0,
-                        bmp1.Width,
-                        bmp1.Height),
-                    new Rectangle(0,
-                        0,
-                        bmp1.Width,
-                        bmp1.Height),
-                    GraphicsUnit.Pixel);
-                canvas.DrawImage(bmp2,
-                    new Rectangle(0,
-                        bmp1.Height,
-                        bmp2.Width,
-                        bmp2.Height),
-                    new Rectangle(0,
-                        0,
-                        bmp2.Width,
-                        bmp2.Height),
-                    GraphicsUnit.Pixel);
-                canvas.Save();
-            }
-
-            return bitmap;
+            System.Runtime.InteropServices.Marshal.Copy(data, 0, ptr, data.Length);
+            bmp.UnlockBits(bmpData);
+            return bmp;
         }
     }
 }

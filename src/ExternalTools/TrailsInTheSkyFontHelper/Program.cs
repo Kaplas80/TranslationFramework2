@@ -58,7 +58,7 @@ namespace TrailsInTheSkyFontHelper
                     while (br.BaseStream.Position < br.BaseStream.Length)
                     {
                         var width = (int)Math.Ceiling(charHeight / 2.0d);
-                        if (i < 0xE0)
+                        if (i < 0x100)
                         {
                             width = (int)Math.Ceiling(charHeight / 4.0d);
                         }
@@ -99,120 +99,33 @@ namespace TrailsInTheSkyFontHelper
                 }
                 case 0x3B: // á
                 {
-                    var bytes1 = chars[0x61];
-                    var bytes2 = chars[0xB4];
-                    var data = new byte[bytes1.Length];
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        data[i] = (byte)(bytes1[i] | bytes2[i]);
-                    }
-
-                    return data;
+                    return chars[0xE1];
                 }
                 case 0x5C: // é
                 {
-                    var bytes1 = chars[0x65];
-                    var bytes2 = chars[0xB4];
-                    var data = new byte[bytes1.Length];
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        data[i] = (byte) (bytes1[i] | bytes2[i]);
-                    }
-
-                    return data;
+                    return chars[0xE9];
                 }
                 case 0x5E: // í
                 {
-                    var bytes1 = chars[0x69];
-                    var bytes2 = chars[0xB4];
-                    var data = new byte[bytes1.Length];
-
-                    var width = height / 4;
-                    var j = (height / 4) * width;
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        if (i < j)
-                        {
-                            data[i] = bytes2[i];
-                        }
-                        else
-                        {
-                            data[i] = bytes1[i];
-                        }
-                    }
-
-                    return data;
+                    return chars[0xED];
                 }
                 case 0x5F: // ó
                 {
-                    var bytes1 = chars[0x6F];
-                    var bytes2 = chars[0xB4];
-                    var data = new byte[bytes1.Length];
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        data[i] = (byte)(bytes1[i] | bytes2[i]);
-                    }
-
-                    return data;
+                    return chars[0xF3];
                 }
                 case 0x60: // ú
                 {
-                    var bytes1 = chars[0x75];
-                    var bytes2 = chars[0xB4];
-                    var data = new byte[bytes1.Length];
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        data[i] = (byte)(bytes1[i] | bytes2[i]);
-                    }
-
-                    return data;
+                    return chars[0xFA];
                 }
 
                 case 0x7B: // ü
                 {
-                    var bytes1 = chars[0x75];
-                    var bytes2 = chars[0xA8];
-                    var data = new byte[bytes1.Length];
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        data[i] = (byte)(bytes1[i] | bytes2[i]);
-                    }
-
-                    return data;
+                    return chars[0xFC];
                 }
 
                 case 0x7D: // ñ
                 {
-                    var bytes1 = chars[0x6E];
-                    var bytes2 = chars[0x7E];
-
-                    var data = new byte[bytes1.Length];
-
-                    var width = height / 4;
-
-                    var j = (height / 4) * width;
-
-                    for (var i = 0; i < bytes1.Length; i++)
-                    {
-                        if (j >= bytes2.Length)
-                        {
-                            data[i] = bytes1[i];
-                        }
-                        else
-                        {
-                            data[i] = (byte)(bytes1[i] | bytes2[j]);
-                        }
-
-                        j++;
-                    }
-
-                    return data;
+                    return chars[0xF1];
                 }
 
                 case 0x7E: // ¡
