@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -84,6 +85,8 @@ namespace TF.Core.Views
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
             SubtitleGridView.Columns.Add(column);
+
+            UpdateLabel();
         }
 
         public void DisplaySubtitle(int index)
@@ -304,11 +307,24 @@ namespace TF.Core.Views
                 }
 
                 SubtitleGridView.Invalidate();
+                UpdateLabel();
             }
             catch (Exception e)
             {
                 MessageBox.Show($"No se ha podido abrir el fichero.\r\n{e.GetType()}: {e.Message}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SubtitleGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            UpdateLabel();
+        }
+
+        private void UpdateLabel()
+        {
+            var changedLines = _subtitles.Count(x => x.Text != x.Translation);
+            var totalLines = _subtitles.Count;
+            lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines}";
         }
     }
 }

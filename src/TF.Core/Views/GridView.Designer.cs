@@ -38,6 +38,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ExportFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ImportFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.lblChangedLinesCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -51,7 +52,7 @@
             this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel1.Location = new System.Drawing.Point(0, 0);
             this.dockPanel1.Name = "dockPanel1";
-            this.dockPanel1.Size = new System.Drawing.Size(1066, 450);
+            this.dockPanel1.Size = new System.Drawing.Size(1069, 450);
             this.dockPanel1.TabIndex = 0;
             this.dockPanel1.Theme = null;
             // 
@@ -70,10 +71,11 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.lblChangedLinesCount);
             this.splitContainer1.Panel2.Controls.Add(this.btnSimpleImport);
             this.splitContainer1.Panel2.Controls.Add(this.btnOffsetImport);
             this.splitContainer1.Panel2.Controls.Add(this.btnExport);
-            this.splitContainer1.Size = new System.Drawing.Size(1066, 450);
+            this.splitContainer1.Size = new System.Drawing.Size(1069, 450);
             this.splitContainer1.SplitterDistance = 418;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -87,8 +89,9 @@
             this.SubtitleGridView.MultiSelect = false;
             this.SubtitleGridView.Name = "SubtitleGridView";
             this.SubtitleGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.SubtitleGridView.Size = new System.Drawing.Size(1066, 418);
+            this.SubtitleGridView.Size = new System.Drawing.Size(1069, 418);
             this.SubtitleGridView.TabIndex = 2;
+            this.SubtitleGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.SubtitleGridView_CellEndEdit);
             this.SubtitleGridView.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.SubtitleGridView_CellMouseDoubleClick);
             this.SubtitleGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.SubtitleGridView_CellPainting);
             this.SubtitleGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.SubtitleGridView_EditingControlShowing);
@@ -136,11 +139,21 @@
             // 
             this.ImportFileDialog.Filter = "Archivos Excel|*.xlsx";
             // 
+            // lblChangedLinesCount
+            // 
+            this.lblChangedLinesCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblChangedLinesCount.AutoSize = true;
+            this.lblChangedLinesCount.Location = new System.Drawing.Point(312, 8);
+            this.lblChangedLinesCount.Name = "lblChangedLinesCount";
+            this.lblChangedLinesCount.Size = new System.Drawing.Size(124, 13);
+            this.lblChangedLinesCount.TabIndex = 6;
+            this.lblChangedLinesCount.Text = "Líneas modificadas: X/Y";
+            // 
             // GridView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1066, 450);
+            this.ClientSize = new System.Drawing.Size(1069, 450);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.dockPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -149,6 +162,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SubtitleGridView)).EndInit();
@@ -167,5 +181,6 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.SaveFileDialog ExportFileDialog;
         private System.Windows.Forms.OpenFileDialog ImportFileDialog;
+        private System.Windows.Forms.Label lblChangedLinesCount;
     }
 }
