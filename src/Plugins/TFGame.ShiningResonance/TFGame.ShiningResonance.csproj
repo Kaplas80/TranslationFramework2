@@ -41,6 +41,8 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\FONT\File.cs" />
+    <Compile Include="Files\FONT\UfnFileHelper.cs" />
     <Compile Include="Files\Htx\File.cs" />
     <Compile Include="Files\Mtp\File.cs" />
     <Compile Include="Game.cs" />

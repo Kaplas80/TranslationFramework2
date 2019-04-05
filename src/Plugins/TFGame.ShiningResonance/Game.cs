@@ -18,6 +18,23 @@ namespace TFGame.ShiningResonance
         {
             var result = new List<GameFileContainer>();
 
+            var fontFiles = new GameFileSearch
+            {
+                RelativePath = @"data\resource\font",
+                SearchPattern = "*.*",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.FONT.File)
+            };
+
+            var drg000 = new GameFileContainer
+            {
+                Path = @".\drg000.cpk",
+                Type = ContainerType.CompressedFile
+            };
+
+            drg000.FileSearches.Add(fontFiles);
+
             var mtpFiles = new GameFileSearch
             {
                 RelativePath = @"data\resource\mtpa_en",
@@ -45,6 +62,7 @@ namespace TFGame.ShiningResonance
             drg022.FileSearches.Add(mtpFiles);
             drg022.FileSearches.Add(htxFiles);
 
+            result.Add(drg000);
             result.Add(drg022);
             return result.ToArray();
         }
