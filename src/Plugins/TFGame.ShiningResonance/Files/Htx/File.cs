@@ -70,13 +70,12 @@ namespace TFGame.ShiningResonance.Files.Htx
                     output.Write(0x10000004);
                     output.Skip(0x10);
 
-                    output.Write(0x48545346);
+                    output.Write(0x46535448);
                     output.Write(data.Length + 0x20);
                     output.Write(0x00000020);
                     output.Write(0x10000000);
                     output.Write(0x00000001);
                     output.Write(data.Length + 0x20);
-                    output.Skip(0x10);
 
                     output.Skip(0x28);
 
@@ -94,7 +93,10 @@ namespace TFGame.ShiningResonance.Files.Htx
                     output.Write(0x00000020);
                     output.Write(0x10000000);
                     output.Write(0x00000000);
-                    output.Skip(0x0C);
+                    output.Write(0x00000000);
+                    output.Write(0x00000000);
+                    output.Write(0x00000000);
+
                 }
 
                 return ms.ToArray();
