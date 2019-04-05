@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace TF.Core.Helpers
 {
@@ -63,12 +64,28 @@ namespace TF.Core.Helpers
         {
             foreach (var directory in Directory.GetDirectories(path))
             {
-                Directory.Delete(directory, true);
+                try
+                {
+                    Directory.Delete(directory, true);
+                }
+                catch (IOException)
+                {
+                    Thread.Sleep(0);
+                    Directory.Delete(directory, true);
+                }
             }
 
             foreach (var file in Directory.GetFiles(path))
             {
-                File.Delete(file);
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (IOException)
+                {
+                    Thread.Sleep(0);
+                    File.Delete(file);
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TF.Core.Entities;
 using TF.Core.Exceptions;
@@ -258,7 +259,15 @@ namespace TF.Core
                     // 4. Eliminar la carpeta temporal
                     if (!options.SaveTempFiles)
                     {
-                        Directory.Delete(dest, true);
+                        try
+                        {
+                            Directory.Delete(dest, true);
+                        }
+                        catch (IOException)
+                        {
+                            Thread.Sleep(0);
+                            Directory.Delete(dest, true);
+                        }
                     }
                 }
             }
