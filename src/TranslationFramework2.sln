@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGridViewNumericUpDownEl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrailsInTheSkyFontCreator", "ExternalTools\TrailsInTheSkyFontCreator\TrailsInTheSkyFontCreator.csproj", "{9FD8CE61-7F9B-401C-9284-E3D5379B4AED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.SenranKagura", "Plugins\TFGame.SenranKagura\TFGame.SenranKagura.csproj", "{141E1CBA-1B95-4BA9-AA19-EFEA22E952FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{9FD8CE61-7F9B-401C-9284-E3D5379B4AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FD8CE61-7F9B-401C-9284-E3D5379B4AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FD8CE61-7F9B-401C-9284-E3D5379B4AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{141E1CBA-1B95-4BA9-AA19-EFEA22E952FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{141E1CBA-1B95-4BA9-AA19-EFEA22E952FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{141E1CBA-1B95-4BA9-AA19-EFEA22E952FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{141E1CBA-1B95-4BA9-AA19-EFEA22E952FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +121,7 @@ Global
 		{32C4037E-106A-4D88-BA50-952BF60B835E} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{82B50731-BE90-433F-BB6E-9B509C5F3B7C} = {53972F1C-3B9C-40EA-97EA-58D898B5A027}
 		{9FD8CE61-7F9B-401C-9284-E3D5379B4AED} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
+		{141E1CBA-1B95-4BA9-AA19-EFEA22E952FD} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}
