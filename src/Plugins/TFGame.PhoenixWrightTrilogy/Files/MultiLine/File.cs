@@ -6,7 +6,7 @@ using TF.IO;
 
 namespace TFGame.PhoenixWrightTrilogy.Files.MultiLine
 {
-    public class File : EncryptedFile
+    public class File : EncryptedBinaryFile
     {
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {

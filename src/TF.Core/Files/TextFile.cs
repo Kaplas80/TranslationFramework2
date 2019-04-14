@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Text;
 using TF.Core.Entities;
 using TF.Core.Helpers;
@@ -15,16 +12,15 @@ namespace TF.Core.Files
 {
     public class TextFile : TranslationFile
     {
-        protected IList<Subtitle> _subtitles;
-
-        protected GridView _view;
+        protected PlainText _text;
+        protected TextView _view;
 
         public override int SubtitleCount
         {
             get
             {
-                var subtitles = GetSubtitles();
-                return subtitles.Count;
+                var subtitles = GetText();
+                return subtitles.Text.Length;
             }
         }
 
@@ -35,33 +31,23 @@ namespace TF.Core.Files
 
         public override void Open(DockPanel panel, ThemeBase theme)
         {
-            _view = new GridView(theme);
+            _view = new TextView(theme);
 
-            _subtitles = GetSubtitles();
-            _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)) as IList<Subtitle>);
+            _text = GetText();
+            _view.LoadData(_text);
             _view.Show(panel, DockState.Document);
         }
 
-        protected virtual IList<Subtitle> GetSubtitles()
+        protected virtual PlainText GetText()
         {
-            var result = new List<Subtitle>();
+            var result = new PlainText();
 
-            var lines = File.ReadAllLines(Path, FileEncoding);
-            for (var i = 0; i < lines.Length; i++)
-            {
-                var text = lines[i];
-                var subtitle = new Subtitle
-                {
-                    Offset = i,
-                    Text = text,
-                    Loaded = text,
-                    Translation = text
-                };
-
-                subtitle.PropertyChanged += SubtitlePropertyChanged;
-                result.Add(subtitle);
-            }
-
+            var lines = File.ReadAllText(Path, FileEncoding);
+            result.Text = lines;
+            result.Translation = lines;
+            result.Loaded = lines;
+            result.PropertyChanged += SubtitlePropertyChanged;
+            
             LoadChanges(result);
             
             return result;
@@ -69,7 +55,7 @@ namespace TF.Core.Files
         
         protected virtual void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            NeedSaving = _subtitles.Any(subtitle => subtitle.HasChanges);
+            NeedSaving = _text.HasChanges;
             OnFileChanged();
         }
 
@@ -98,21 +84,15 @@ namespace TF.Core.Files
             using (var output = new ExtendedBinaryWriter(fs, Encoding.Unicode))
             {
                 output.Write(ChangesFileVersion);
-                output.Write(_subtitles.Count);
-                foreach (var subtitle in _subtitles)
-                {
-                    output.Write(subtitle.Offset);
-                    output.WriteString(subtitle.Translation);
-
-                    subtitle.Loaded = subtitle.Translation;
-                }
+                output.WriteString(_text.Translation);
+                _text.Loaded = _text.Translation;
             }
 
             NeedSaving = false;
             OnFileChanged();
         }
 
-        protected virtual void LoadChanges(IList<Subtitle> subtitles)
+        protected virtual void LoadChanges(PlainText text)
         {
             if (HasChanges)
             {
@@ -127,22 +107,11 @@ namespace TF.Core.Files
                         return;
                     }
 
-                    var subtitleCount = input.ReadInt32();
-
-                    for (var i = 0; i < subtitleCount; i++)
-                    {
-                        var offset = input.ReadInt64();
-                        var text = input.ReadString();
-
-                        var subtitle = subtitles.FirstOrDefault(x => x.Offset == offset);
-                        if (subtitle != null)
-                        {
-                            subtitle.PropertyChanged -= SubtitlePropertyChanged;
-                            subtitle.Translation = text;
-                            subtitle.Loaded = subtitle.Translation;
-                            subtitle.PropertyChanged += SubtitlePropertyChanged;
-                        }
-                    }
+                    var t = input.ReadString();
+                    text.PropertyChanged -= SubtitlePropertyChanged;
+                    text.Translation = t;
+                    text.Loaded = t;
+                    text.PropertyChanged += SubtitlePropertyChanged;
                 }
             }
         }
@@ -152,68 +121,23 @@ namespace TF.Core.Files
             var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
-            var subtitles = GetSubtitles();
+            var text = GetText();
 
             using (var fs = new FileStream(outputPath, FileMode.Create))
             using (var output = new StreamWriter(fs, FileEncoding))
             {
-                foreach (var subtitle in subtitles)
-                {
-                    output.WriteLine(subtitle.Translation);
-                }
+                output.Write(text.Translation);
             }
         }
 
         public override bool SearchText(string searchString, int direction)
         {
-            if (_subtitles == null || _subtitles.Count == 0)
+            if (_text == null || string.IsNullOrEmpty(searchString))
             {
                 return false;
             }
 
-            int i;
-            int rowIndex;
-            if (direction == 0)
-            {
-                i = 1;
-                rowIndex = 1;
-            }
-            else
-            {
-                var (item1, item2) = _view.GetSelectedSubtitle();
-                i = _subtitles.IndexOf(item2) + direction;
-                rowIndex = item1 + direction;
-            }
-
-            var step = direction < 0 ? -1 : 1;
-
-            var result = -1;
-            while (i >= 0  && i < _subtitles.Count)
-            {
-                var subtitle = _subtitles[i];
-                var original = subtitle.Text;
-                var translation = subtitle.Translation;
-
-                if (!string.IsNullOrEmpty(original))
-                {
-                    if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
-                    {
-                        result = rowIndex;
-                        break;
-                    }
-
-                    rowIndex += step;
-                }
-
-                i+=step;
-            }
-
-            if (result != -1)
-            {
-                _view.DisplaySubtitle(rowIndex);
-            }
-
-            return result != -1;
+            return _view.SearchText(searchString, direction);
         }
     }
 }

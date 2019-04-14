@@ -7,12 +7,12 @@ using TF.Core.Helpers;
 
 namespace TFGame.PhoenixWrightTrilogy.Files
 {
-    public class EncryptedFile : BinaryTextFile
+    public class EncryptedBinaryFile : BinaryTextFile
     {
         private const string Password = "u8DurGE2";
         private const string Salt = "6BBGizHE";
 
-        public EncryptedFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        protected EncryptedBinaryFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
@@ -167,10 +167,10 @@ namespace TFGame.PhoenixWrightTrilogy.Files
                 {"⊆", "ç"},
                 {"⊂", "Ç"},
                 {"Ц", "û"},
-                {"↑", "î"},
+                //{"↑", "î"},
                 {"α", "â"},
                 {"л", "ñ"},
-                {"↓", "ï"},
+                //{"↓", "ï"},
                 {"ε", "ê"}
             };
             var sb = new StringBuilder();
@@ -268,18 +268,18 @@ namespace TFGame.PhoenixWrightTrilogy.Files
                 {";", "；"},
                 {"$", "＄"},
                 {"©", "Ы"},
-                {"è", "∋"},
-                {"é", "∈"},
-                {"á", "∀"},
-                {"à", "∧"},
-                {"ç", "⊆"},
-                {"Ç", "⊂"},
-                {"û", "Ц"},
-                {"î", "↑"},
-                {"â", "α"},
-                {"ñ", "л"},
-                {"ï", "↓"},
-                {"ê", "ε"},
+                //{"è", "∋"},
+                //{"é", "∈"},
+                //{"á", "∀"},
+                //{"à", "∧"},
+                //{"ç", "⊆"},
+                //{"Ç", "⊂"},
+                //{"û", "Ц"},
+                //{"î", "↑"},
+                //{"â", "α"},
+                //{"ñ", "л"},
+                //{"ï", "↓"},
+                //{"ê", "ε"},
             };
 
             var sb = new StringBuilder();

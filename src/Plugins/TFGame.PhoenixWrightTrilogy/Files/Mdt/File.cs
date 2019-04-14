@@ -9,7 +9,7 @@ using TF.IO;
 
 namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
 {
-    public class File : EncryptedFile
+    public class File : EncryptedTextFile
     {
         private class Op
         {
@@ -69,7 +69,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
             GameOps[0x2A] = new Op { Code = 0x2A, Name = "Op_2A", ParamCount = 3 };
             GameOps[0x2B] = new Op { Code = 0x2B, Name = "DoDamage", ParamCount = 0 };
             GameOps[0x2C] = new Op { Code = 0x2C, Name = "Op_2C", ParamCount = 1 };
-            GameOps[0x2D] = new Op { Code = 0x2D, Name = "Op_2D", ParamCount = 1 }; // Comparte código con 0x02 (ReadKey) pero no se exactamente qué hace
+            GameOps[0x2D] = new Op { Code = 0x2D, Name = "Op_2D", ParamCount = 0 }; // Comparte código con 0x02 (ReadKey) pero no se exactamente qué hace
             GameOps[0x2E] = new Op { Code = 0x2E, Name = "ClearText", ParamCount = 0 };
             GameOps[0x2F] = new Op { Code = 0x2F, Name = "PlayObjectAnimation", ParamCount = 2 };
             GameOps[0x30] = new Op { Code = 0x30, Name = "SetMessageSE", ParamCount = 1 };
@@ -154,9 +154,11 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
             GameOps[0x7F] = new Op { Code = 0x7F, Name = "DrawIconText", ParamCount = 1 };
         }
 
-        protected override IList<Subtitle> GetSubtitles()
+        protected override PlainText GetText()
         {
-            var result = new List<Subtitle>();
+            var result = new PlainText();
+            var txt = new StringBuilder();
+
             var encryptedData = System.IO.File.ReadAllBytes(Path);
             var data = DecryptData(encryptedData);
 
@@ -183,6 +185,12 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
                 for (var i = 0; i < messageCount; i++)
                 {
                     input.Seek(messageOffset[i], SeekOrigin.Begin);
+                    if (i > 0)
+                    {
+                        txt.AppendLine();
+                    }
+
+                    txt.AppendLine(messageOffset[i] < data.Length ? $"StartMessage({input.Position});" : $"StartMessageExtra({input.Position});");
 
                     while (input.Position < input.Length && input.Position - messageOffset[i] < messageSize[i])
                     {
@@ -199,7 +207,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
                                 args[j] = string.Concat(input.ReadUInt16().ToString());
                             }
 
-                            result.Add(GenerateSubtitle($"{op.Name}({string.Join(", ", args)});", offset));
+                            txt.AppendLine($"{op.Name}({string.Join(", ", args)});");
                         }
                         else
                         {
@@ -215,7 +223,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
 
                             var text = string.Concat("Text(\"", value, "\");");
 
-                            result.Add(GenerateSubtitle(text, offset));
+                            txt.AppendLine(text);
 
                             if (input.Position < input.Length)
                             {
@@ -225,6 +233,11 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
                     }
                 }
             }
+
+            result.Text = txt.ToString();
+            result.Translation = txt.ToString();
+            result.Loaded = txt.ToString();
+            result.PropertyChanged += SubtitlePropertyChanged;
 
             LoadChanges(result);
 
@@ -236,126 +249,94 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
             var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
-            var subtitles = GetSubtitles();
+            var subtitles = GetText();
 
-            var encryptedInputData = System.IO.File.ReadAllBytes(Path);
-            var inputData = DecryptData(encryptedInputData);
             byte[] outputData;
+            var outputMessageOffset = new List<uint>();
+            var outputMessageExtraOffset = new List<uint>();
 
-            using (var msInput = new MemoryStream(inputData))
-            using (var input = new ExtendedBinaryReader(msInput, FileEncoding))
             using (var msOutput = new MemoryStream())
             using (var output = new ExtendedBinaryWriter(msOutput, FileEncoding))
             {
-                var messageCount = input.ReadUInt16();
-                output.Write(messageCount);
-                var dummy = input.ReadUInt16();
-                output.Write(dummy);
-
-                var messageOffset = new uint[messageCount];
-                var outputMessageOffset = new uint[messageCount];
-                var messageSize = new uint[messageCount];
-                for (var i = 0; i < messageCount; i++)
+                var outputOffset = 0u;
+                var lines = subtitles.Translation.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
                 {
-                    messageOffset[i] = input.ReadUInt32();
-                    output.Write(0);
-                }
+                    var pattern1 = "(?<op>\\w+)\\((?<params>.*)\\)\\;";
+                    var pattern2 = "(?<op>\\w+)\\(\"(?<params>.*)\"\\)\\;";
 
-                for (var i = 0; i < messageCount - 1; i++)
-                {
-                    messageSize[i] = messageOffset[i + 1] - messageOffset[i];
-                }
+                    var pattern = Regex.IsMatch(line, pattern2) ? pattern2 : pattern1;
+                    var matches = Regex.Matches(line, pattern);
+                    var opName = matches[0].Groups["op"].Value;
+                    var opParam = matches[0].Groups["params"].Value;
 
-                messageSize[messageCount - 1] = (uint)(inputData.Length - messageOffset[messageCount - 1]);
-
-                var outputOffset = (uint)output.Position;
-                for (var i = 0; i < messageCount; i++)
-                {
-                    input.Seek(messageOffset[i], SeekOrigin.Begin);
-                    outputMessageOffset[i] = outputOffset;
-
-                    while (input.Position < input.Length && input.Position - messageOffset[i] < messageSize[i])
+                    if (opName != "Text")
                     {
-                        var offset = input.Position;
-                        var inputType = input.ReadUInt16();
-
-                        var subtitle = subtitles.First(x => x.Offset == offset);
-                        var pattern1 = "(?<op>\\w+)\\((?<params>.*)\\)\\;";
-                        var pattern2 = "(?<op>\\w+)\\(\"(?<params>.*)\"\\)\\;";
-
-                        var pattern = Regex.IsMatch(subtitle.Translation, pattern2) ? pattern2 : pattern1;
-                        var matches = Regex.Matches(subtitle.Translation, pattern);
-                        var opName = matches[0].Groups["op"].Value;
-                        var opParam = matches[0].Groups["params"].Value;
-
-                        if (opName != "Text")
+                        if (opName == "StartMessage")
                         {
-                            var op = GameOps.FirstOrDefault(x => x.Name == opName);
-                            if (op != null)
+                            outputMessageOffset.Add(outputOffset);
+                            continue;
+                        }
+
+                        if (opName == "StartMessageExtra")
+                        {
+                            outputMessageExtraOffset.Add(uint.Parse(opParam));
+                            continue;
+                        }
+
+                        var op = GameOps.FirstOrDefault(x => x.Name == opName);
+                        if (op != null)
+                        {
+                            output.Write(op.Code);
+                            var split = opParam.Split(',');
+                            foreach (var s in split)
                             {
-                                output.Write(op.Code);
-                                var split = opParam.Split(',');
-                                foreach (var s in split)
+                                if (!string.IsNullOrWhiteSpace(s))
                                 {
-                                    if (!string.IsNullOrWhiteSpace(s))
-                                    {
-                                        output.Write(ushort.Parse(s.Trim()));
-                                    }
+                                    output.Write(ushort.Parse(s.Trim()));
                                 }
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        var outputText = ToFullWidthChars(opParam);
+                        foreach (var chr in outputText)
                         {
-                            var outputText = ToFullWidthChars(opParam);
-                            foreach (var chr in outputText)
-                            {
-                                var c = (ushort) (chr + 128);
-                                output.Write(c);
-                            }
-                        }
-
-                        outputOffset = (uint)output.Position;
-
-                        if (inputType < 128)
-                        {
-                            var op = GameOps[inputType];
-
-                            input.Skip(2 * op.ParamCount);
-                        }
-                        else
-                        {
-                            while (input.Position < input.Length && inputType >= 128)
-                            {
-                                inputType = input.ReadUInt16();
-                            }
-
-                            if (input.Position < input.Length)
-                            {
-                                input.Seek(-2, SeekOrigin.Current);
-                            }
+                            var c = (ushort) (chr + 128);
+                            output.Write(c);
                         }
                     }
-                }
 
-                output.Seek(4, SeekOrigin.Begin);
-                for (var i = 0; i < messageCount; i++)
-                {
-                    output.Write(outputMessageOffset[i]);
+                    outputOffset = (uint)output.Position;
                 }
 
                 outputData = msOutput.ToArray();
             }
 
-            var encryptedOutputData = EncryptData(outputData);
-            System.IO.File.WriteAllBytes(outputPath, encryptedOutputData);
-        }
+            byte[] unencryptedFile;
+            using (var msOutput = new MemoryStream())
+            using (var output = new ExtendedBinaryWriter(msOutput, FileEncoding))
+            {
+                var totalMessageCount = outputMessageOffset.Count + outputMessageExtraOffset.Count;
+                output.Write((ushort) totalMessageCount);
+                output.Write((ushort) 0);
+                foreach (var offset in outputMessageOffset)
+                {
+                    output.Write((uint)(offset + 4 + totalMessageCount * 4));
+                }
 
-        private Subtitle GenerateSubtitle(string op, long offset)
-        {
-            var subtitle = new Subtitle { Offset = offset, Text = op, Translation = op, Loaded = op };
-            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                foreach (var offset in outputMessageExtraOffset)
+                {
+                    output.Write(offset);
+                }
+                output.Write(outputData);
 
-            return subtitle;
+                unencryptedFile = msOutput.ToArray();
+            }
+
+            var encryptedFile = EncryptData(unencryptedFile);
+            System.IO.File.WriteAllBytes(outputPath, encryptedFile);
         }
     }
 }
