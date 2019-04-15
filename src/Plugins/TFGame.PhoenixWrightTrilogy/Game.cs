@@ -12,7 +12,7 @@ namespace TFGame.PhoenixWrightTrilogy
         public string Id => "762580b0-6bf3-49df-8d09-d6b8804b79c6";
         public string Name => "Phoenix Wright: Ace Attorney Trilogy";
         public string Description => "Build Id 3633830";
-        public Image Icon => Resources.Icon; // https://www.deviantart.com/dovellas/art/Phoenix-Wright-56731742
+        public Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Phoenix-Wright-Ace-Attorney-Trilogy-793438577
         public int Version => 1;
         public System.Text.Encoding FileEncoding => new Encoding();
 
