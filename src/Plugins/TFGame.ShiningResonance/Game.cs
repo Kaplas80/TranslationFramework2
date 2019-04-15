@@ -5,7 +5,7 @@ using TF.Core.Entities;
 
 namespace TFGame.ShiningResonance
 {
-    public class Game : CRIWareGame.CRIWareGame
+    public class Game : CRIWareGame.Game
     {
         public override string Id => "f19142d4-d6bb-4fd1-bcfe-1cb29868df7b";
         public override string Name => "Shining Resonance Refrain";

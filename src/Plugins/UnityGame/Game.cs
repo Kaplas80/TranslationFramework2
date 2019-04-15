@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using CRIWareGame.Files;
 using TF.Core.Entities;
+using UnityGame.Files;
 
-namespace CRIWareGame
+namespace UnityGame
 {
     public abstract class Game : IGame
     {
@@ -22,25 +23,25 @@ namespace CRIWareGame
             return result.ToArray();
         }
 
-        public void ExtractFile(string inputFile, string outputPath)
+        public virtual void ExtractFile(string inputFile, string outputPath)
         {
             var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
-            if (extension.StartsWith(".cpk"))
+            if (extension.StartsWith(".unity3d"))
             {
-                CpkFile.Extract(inputFile, outputPath);
+                Unity3DFile.Extract(inputFile, outputPath);
             }
         }
 
-        public void RepackFile(string inputPath, string outputFile, bool compress)
+        public virtual void RepackFile(string inputPath, string outputFile, bool compress)
         {
             var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
-            if (extension.StartsWith(".cpk"))
+            if (extension.StartsWith(".unity3d"))
             {
-                CpkFile.Repack(inputPath, outputFile, compress);
+                Unity3DFile.Repack(inputPath, outputFile, compress);
             }
         }
     }
