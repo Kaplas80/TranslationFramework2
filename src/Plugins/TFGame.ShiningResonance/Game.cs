@@ -5,12 +5,12 @@ using TF.Core.Entities;
 
 namespace TFGame.ShiningResonance
 {
-    public class Game : CRIWareGame.CRIWareGame
+    public class Game : CRIWareGame.Game
     {
         public override string Id => "f19142d4-d6bb-4fd1-bcfe-1cb29868df7b";
         public override string Name => "Shining Resonance Refrain";
         public override string Description => "Versión en inglés Steam (10/09/2018)";
-        public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Shining-Resonance-Refrain-Icon-v1-746462251
+        public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Shining-Resonance-Refrain-754760674
         public override int Version => 1;
         public override Encoding FileEncoding => Encoding.UTF8;
 

@@ -13,7 +13,7 @@ namespace TFGame.Yakuza0
         public override string Description => "Versión en inglés PC Steam Patch v4 (lanzada el 26/03/2019)";
 
         public override Image Icon =>
-            Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-0-Icon-750908182
+            Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741
 
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
