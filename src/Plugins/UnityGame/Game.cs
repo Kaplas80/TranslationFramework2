@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TF.Core.Entities;
 using UnityGame.Files;
@@ -17,6 +18,11 @@ namespace UnityGame
         public virtual int Version { get; }
         public virtual Encoding FileEncoding { get; }
 
+        protected virtual string[] AllowedExtensions => new[]
+        {
+            ".unity3d", ".assets"
+        };
+
         public virtual GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
@@ -28,7 +34,7 @@ namespace UnityGame
             var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
-            if (extension.StartsWith(".unity3d"))
+            if (AllowedExtensions.Contains(extension))
             {
                 Unity3DFile.Extract(inputFile, outputPath);
             }
@@ -39,7 +45,7 @@ namespace UnityGame
             var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
-            if (extension.StartsWith(".unity3d"))
+            if (AllowedExtensions.Contains(extension))
             {
                 Unity3DFile.Repack(inputPath, outputFile, compress);
             }

@@ -83,6 +83,7 @@
     <Compile Include="Files\TextFile.cs" />
     <Compile Include="Files\DDSFile.cs" />
     <Compile Include="Files\BinaryTextFile.cs" />
+    <Compile Include="Files\TTFFile.cs" />
     <Compile Include="Fonts\FontCollection.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
