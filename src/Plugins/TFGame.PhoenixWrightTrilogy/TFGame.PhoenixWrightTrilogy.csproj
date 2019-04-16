@@ -40,7 +40,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Encoding.cs" />
+    <Compile Include="Core\EncryptionManager.cs" />
+    <Compile Include="Core\TextManager.cs" />
     <Compile Include="Files\EncryptedTextFile.cs" />
     <Compile Include="Files\EncryptedBinaryFile.cs" />
     <Compile Include="Files\Mdt\File.cs" />

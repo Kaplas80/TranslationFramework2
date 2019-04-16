@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TF.Core.TranslationEntities;
 using TF.IO;
+using TFGame.PhoenixWrightTrilogy.Core;
 
 namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
 {
@@ -160,7 +161,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
             var txt = new StringBuilder();
 
             var encryptedData = System.IO.File.ReadAllBytes(Path);
-            var data = DecryptData(encryptedData);
+            var data = EncryptionManager.DecryptData(encryptedData);
 
             using (var ms = new MemoryStream(data))
             using (var input = new ExtendedBinaryReader(ms))
@@ -219,7 +220,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
                                 type = input.ReadUInt16();
                             }
 
-                            var value = ToHalfWidthChars(sb.ToString());
+                            var value = sb.ToString().ToHalfWidthChars();
 
                             var text = string.Concat("Text(\"", value, "\");");
 
@@ -300,7 +301,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
                     }
                     else
                     {
-                        var outputText = ToFullWidthChars(opParam);
+                        var outputText = opParam.ToFullWidthChars();
                         foreach (var chr in outputText)
                         {
                             var c = (ushort) (chr + 128);
@@ -335,7 +336,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
                 unencryptedFile = msOutput.ToArray();
             }
 
-            var encryptedFile = EncryptData(unencryptedFile);
+            var encryptedFile = EncryptionManager.EncryptData(unencryptedFile);
             System.IO.File.WriteAllBytes(outputPath, encryptedFile);
         }
     }

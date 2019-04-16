@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using TF.Core.TranslationEntities;
 using TF.IO;
+using TFGame.PhoenixWrightTrilogy.Core;
 
 namespace TFGame.PhoenixWrightTrilogy.Files.SingleLine
 {
@@ -16,7 +17,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.SingleLine
         {
             var result = new List<Subtitle>();
             var encryptedData = System.IO.File.ReadAllBytes(Path);
-            var data = DecryptData(encryptedData);
+            var data = EncryptionManager.DecryptData(encryptedData);
 
             using (var ms = new MemoryStream(data))
             using (var input = new ExtendedBinaryReader(ms, FileEncoding))
@@ -26,7 +27,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.SingleLine
                     var offset = input.Position;
                     var id = input.ReadUInt16();
                     var text = input.ReadString();
-                    text = ToHalfWidthChars(text);
+                    text = text.ToHalfWidthChars();
                     var subtitle = new Subtitle {Offset = offset, Text = text, Translation = text, Loaded = text};
                     subtitle.PropertyChanged += SubtitlePropertyChanged;
                     result.Add(subtitle);
@@ -46,7 +47,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.SingleLine
             var subtitles = GetSubtitles();
 
             var encryptedInputData = System.IO.File.ReadAllBytes(Path);
-            var inputData = DecryptData(encryptedInputData);
+            var inputData = EncryptionManager.DecryptData(encryptedInputData);
             byte[] outputData;
 
             using (var msInput = new MemoryStream(inputData))
@@ -61,7 +62,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.SingleLine
                     var inputText = input.ReadString();
 
                     var subtitle = subtitles.First(x => x.Offset == offset);
-                    var outputText = ToFullWidthChars(subtitle.Translation);
+                    var outputText = subtitle.Translation.ToFullWidthChars();
                     output.Write(id);
                     output.WriteString(outputText);
                 }
@@ -69,7 +70,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.SingleLine
                 outputData = msOutput.ToArray();
             }
 
-            var encryptedOutputData = EncryptData(outputData);
+            var encryptedOutputData = EncryptionManager.EncryptData(outputData);
             System.IO.File.WriteAllBytes(outputPath, encryptedOutputData);
         }
     }

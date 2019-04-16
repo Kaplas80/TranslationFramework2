@@ -1,19 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Security.Cryptography;
+using TFGame.PhoenixWrightTrilogy.Core;
 
 namespace TFGame.PhoenixWrightTrilogy.Files
 {
     public class EncryptedUnity3DFile
     {
-        private const string Password = "u8DurGE2";
-        private const string Salt = "6BBGizHE";
-
         public static void Extract(string inputPath, string outputFolder)
         {
             var data = File.ReadAllBytes(inputPath);
-            var decryptedData = DecryptData(data);
+            var decryptedData = EncryptionManager.DecryptData(data);
 
             var copyPath = Path.Combine(outputFolder, Path.GetFileName(inputPath));
             File.WriteAllBytes(copyPath, decryptedData);
@@ -29,7 +26,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files
             RunUnityEx("import", copyPath);
 
             var decryptedData = File.ReadAllBytes(copyPath);
-            var data = EncryptData(decryptedData);
+            var data = EncryptionManager.EncryptData(decryptedData);
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
@@ -57,47 +54,6 @@ namespace TFGame.PhoenixWrightTrilogy.Files
         {
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
             return new FileInfo(location.AbsolutePath).Directory.FullName;
-        }
-
-        private static byte[] DecryptData(byte[] data)
-        {
-            try
-            {
-                var bytes = System.Text.Encoding.UTF8.GetBytes(Salt);
-                var rfc2898DeriveBytes = new Rfc2898DeriveBytes(Password, bytes) { IterationCount = 1000 };
-
-                var rijndaelManaged = new RijndaelManaged { KeySize = 128, BlockSize = 128 };
-                rijndaelManaged.Key = rfc2898DeriveBytes.GetBytes(rijndaelManaged.KeySize / 8);
-                rijndaelManaged.IV = rfc2898DeriveBytes.GetBytes(rijndaelManaged.BlockSize / 8);
-
-                var cryptoTransform = rijndaelManaged.CreateDecryptor();
-
-                var result = cryptoTransform.TransformFinalBlock(data, 0, data.Length);
-                cryptoTransform.Dispose();
-
-                return result;
-            }
-            catch (Exception)
-            {
-                return data;
-            }
-        }
-
-        private static byte[] EncryptData(byte[] data)
-        {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(Salt);
-            var rfc2898DeriveBytes = new Rfc2898DeriveBytes(Password, bytes) { IterationCount = 1000 };
-
-            var rijndaelManaged = new RijndaelManaged { KeySize = 128, BlockSize = 128 };
-            rijndaelManaged.Key = rfc2898DeriveBytes.GetBytes(rijndaelManaged.KeySize / 8);
-            rijndaelManaged.IV = rfc2898DeriveBytes.GetBytes(rijndaelManaged.BlockSize / 8);
-
-            var cryptoTransform = rijndaelManaged.CreateEncryptor();
-
-            var result = cryptoTransform.TransformFinalBlock(data, 0, data.Length);
-            cryptoTransform.Dispose();
-
-            return result;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using TF.Core.Entities;
 using TF.Core.Files;
 using TFGame.PhoenixWrightTrilogy.Files;
@@ -14,7 +15,7 @@ namespace TFGame.PhoenixWrightTrilogy
         public override string Description => "Build Id 3633830";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Phoenix-Wright-Ace-Attorney-Trilogy-793438577
         public override int Version => 1;
-        public override System.Text.Encoding FileEncoding => new Encoding();
+        public override System.Text.Encoding FileEncoding => Encoding.Unicode;
 
         private IEnumerable<GameFileContainer> GetScenario(string scenario, string path)
         {
