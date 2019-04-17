@@ -50,5 +50,13 @@ namespace UnityGame
                 Unity3DFile.Repack(inputPath, outputFile, compress);
             }
         }
+
+        public virtual void PreprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+        }
+
+        public virtual void PostprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+        }
     }
 }

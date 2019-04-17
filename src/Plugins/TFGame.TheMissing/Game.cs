@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Text;
 using TF.Core.Entities;
 using TF.Core.Files;
+using TFGame.TheMissing.Files;
 
 namespace TFGame.TheMissing
 {
@@ -25,7 +28,7 @@ namespace TFGame.TheMissing
                 RelativePath = @".",
                 SearchPattern = "msg????en.txt",
                 IsWildcard = true,
-                RecursiveSearch = false,
+                RecursiveSearch = true,
                 FileType = typeof(Files.Txt.File)
             };
 
@@ -41,10 +44,10 @@ namespace TFGame.TheMissing
             var ttfSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "TT_NewCinemaB-D.ttf",
+                SearchPattern = "mplus-1m-regular.ttf;TT_NewCinemaB-D.ttf",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(TTFFile)
+                FileType = typeof(TrueTypeFontFile)
             };
 
             var phoneMessageSizesSearch = new GameFileSearch()
@@ -53,7 +56,7 @@ namespace TFGame.TheMissing
                 SearchPattern = "resources_00001.-13",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.PhoneBox.File)
+                //FileType = typeof(Files.PhoneBox.File)
             };
 
             var resources = new GameFileContainer
@@ -89,6 +92,59 @@ namespace TFGame.TheMissing
             result.Add(sharedAssets44);
 
             return result.ToArray();
+        }
+
+        public override void ExtractFile(string inputFile, string outputPath)
+        {
+            var fileName = Path.GetFileName(inputFile);
+            var extension = Path.GetExtension(inputFile);
+
+            if (AllowedExtensions.Contains(extension))
+            {
+                Unity3DFile.Extract(inputFile, outputPath);
+            }
+        }
+
+        public override void RepackFile(string inputPath, string outputFile, bool compress)
+        {
+            var fileName = Path.GetFileName(outputFile);
+            var extension = Path.GetExtension(outputFile);
+
+            if (AllowedExtensions.Contains(extension))
+            {
+                Unity3DFile.Repack(inputPath, outputFile, compress);
+            }
+        }
+
+        public override void PreprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+            if (container.Type == ContainerType.CompressedFile)
+            {
+                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
+
+                var inputFolder = Path.GetDirectoryName(containerPath);
+                var files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
+                foreach (var file in files)
+                {
+                    var outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
+                    File.Copy(file, outputFilePath);
+                }
+            }
+        }
+
+        public override void PostprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+            if (container.Type == ContainerType.CompressedFile)
+            {
+                var extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*", SearchOption.AllDirectories);
+                foreach (var file in extractedFiles)
+                {
+                    if (container.Files.All(x => x.Path != file))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
         }
     }
 }

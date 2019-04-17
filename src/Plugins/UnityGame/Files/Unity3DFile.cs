@@ -8,10 +8,17 @@ namespace UnityGame.Files
     {
         public static void Extract(string inputPath, string outputFolder)
         {
-            var copyPath = Path.Combine(outputFolder, Path.GetFileName(inputPath));
-            File.Copy(inputPath, copyPath);
+            var fileName = Path.GetFileName(inputPath);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(inputPath);
+            var copyPath = Path.Combine(outputFolder, fileName);
+            var inputFolder = Path.GetDirectoryName(inputPath);
+            var files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
+            foreach (var file in files)
+            {
+                var outputPath = Path.Combine(outputFolder, Path.GetFileName(file));
+                File.Copy(file, outputPath);
+            }
 
-            RunUnityEx("exportbundle", copyPath);
             RunUnityEx("export", copyPath);
         }
 
@@ -21,6 +28,9 @@ namespace UnityGame.Files
 
             RunUnityEx("import", copyPath);
 
+			var dir = Path.GetDirectoryName(outputPath);
+            Directory.CreateDirectory(dir);
+			
             File.Copy(copyPath, outputPath);
         }
 

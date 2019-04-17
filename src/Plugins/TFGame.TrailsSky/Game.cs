@@ -353,5 +353,13 @@ namespace TFGame.TrailsSky
                 DatFile.Repack(inputPath, outputFile, compress);
             }
         }
+
+        public void PreprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+        }
+
+        public void PostprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+        }
     }
 }
