@@ -25,7 +25,7 @@ namespace TF.GUI.Forms
         {
             dockPanel1.Theme = theme;
 
-            _games = games;
+            _games = games.OrderBy(x => x.Name).ToList();
 
             foreach (var game in _games)
             {
