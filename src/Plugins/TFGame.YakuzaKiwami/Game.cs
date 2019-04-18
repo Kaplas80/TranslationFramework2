@@ -10,7 +10,7 @@ namespace TFGame.YakuzaKiwami
         
         public override string Id => "7f8efe16-87fd-4f5a-a837-cacf3dde2852";
         public override string Name => "Yakuza Kiwami";
-        public override string Description => "Versión en inglés PC Steam Patch v5 (lanzada el 26/03/2019)";
+        public override string Description => "Build Id: 3645748";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-786854223
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();

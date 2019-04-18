@@ -14,7 +14,7 @@ namespace TFGame.TheMissing
     {
         public override string Id => "880de844-b89d-42a8-b7c5-3361d887e983";
         public override string Name => "The MISSING: J.J. Macfield and the Island of Memories";
-        public override string Description => "Steam Build Id: 3174849";
+        public override string Description => "Build Id: 3174849";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/The-MISSING-J-J-Macfield-atIoM-768659719
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
