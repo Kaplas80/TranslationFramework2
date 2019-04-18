@@ -67,9 +67,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CpkMaker">
-      <HintPath>..\..\..\lib\CpkMaker.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -84,14 +81,16 @@
       <Project>{14bb172a-b3d4-4237-82ab-8fef4e9ab8cd}</Project>
       <Name>TF.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
-      <Project>{4F0D7226-FA20-4FE3-A523-336702654E02}</Project>
-      <Name>TF.IO</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="CpkBinder.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CpkMaker.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CpkTool.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="msvcp100.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
