@@ -17,16 +17,36 @@ namespace TFGame.TrailsSky.Files.Exe
         private CharacterInfo[] _charWidths;
         private FontTableView _ftView;
 
-        protected override int ChangesFileVersion => 2;
+        protected override int ChangesFileVersion => 3;
         
         protected virtual long FontTableOffset => 0x15F140;
         protected virtual string PointerSectionName => ".data\0\0\0";
         protected virtual string StringsSectionName => ".rdata\0\0";
+        protected virtual string CodeSectionName => ".text\0\0\0";
 
         protected virtual List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
-            new Tuple<long, long>(0x15E13C, 0x162AFC),
+            new Tuple<long, long>(0x15C064, 0x15C200),
+            new Tuple<long, long>(0x15C268, 0x15C4F4),
+            new Tuple<long, long>(0x15C564, 0x15C598),
+            new Tuple<long, long>(0x15C64C, 0x15D8A0),
+            new Tuple<long, long>(0x15DEFC, 0x15DF18),
+            new Tuple<long, long>(0x15E13C, 0x15E204),
+            new Tuple<long, long>(0x15E3F4, 0x15E3F4),
+            new Tuple<long, long>(0x15E57C, 0x15E5A4),
+            new Tuple<long, long>(0x15F520, 0x15F268),
+            new Tuple<long, long>(0x15F5CC, 0x15F67C),
+            new Tuple<long, long>(0x15F68C, 0x15F794),
+            new Tuple<long, long>(0x15F7F4, 0x160EDC),
+            new Tuple<long, long>(0x1613E8, 0x161C04),
+            new Tuple<long, long>(0x161DCC, 0x161F24),
+            new Tuple<long, long>(0x162038, 0x16293C),
+            new Tuple<long, long>(0x162AC0, 0x163444),
+            new Tuple<long, long>(0x163670, 0x1638F8),
+            new Tuple<long, long>(0x164B4C, 0x164FF4),
             new Tuple<long, long>(0x1654B0, 0x165870),
+            new Tuple<long, long>(0x165B68, 0x165B84),
+            new Tuple<long, long>(0x1662B8, 0x1668E4),
         };
 
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
@@ -123,6 +143,54 @@ namespace TFGame.TrailsSky.Files.Exe
 
                                 result.Add(sub);
                             }
+                        }
+                    }
+                }
+
+                var codeSection = peInfo.GetSectionByName(CodeSectionName);
+                var codeSectionStart = codeSection.Header.PointerToRawData;
+                var codeSectionEnd = codeSectionStart + codeSection.Header.SizeOfRawData;
+                input.Seek(codeSectionStart, SeekOrigin.Begin);
+                while (input.Position < codeSectionEnd)
+                {
+                    var b = input.ReadByte();
+                    while (b != 0x68)
+                    {
+                        b = input.ReadByte();
+                    }
+
+                    // He encontrado un 0x68
+                    if (input.Position + 4 >= codeSectionEnd)
+                    {
+                        break;
+                    }
+
+                    var value = input.ReadInt32();
+                    var possibleStringOffset = value - stringsSectionBase;
+
+                    bool allowed;
+
+                    if (AllowedStringOffsets != null)
+                    {
+                        allowed = AllowedStringOffsets.Any(x =>
+                            x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+                    }
+                    else
+                    {
+                        allowed = (stringsSection.Header.PointerToRawData <= possibleStringOffset) &&
+                                  (possibleStringOffset < (stringsSection.Header.PointerToRawData + stringsSection.Header.SizeOfRawData));
+                    }
+
+                    if (allowed)
+                    {
+                        var exists = result.Any(x => x.Offset == possibleStringOffset);
+
+                        if (!exists)
+                        {
+                            var sub = ReadSubtitle(input, possibleStringOffset, true);
+                            sub.PropertyChanged += SubtitlePropertyChanged;
+
+                            result.Add(sub);
                         }
                     }
                 }
@@ -308,6 +376,61 @@ namespace TFGame.TrailsSky.Files.Exe
 
                                     outputOffset = WriteSubtitle(output, data, possibleStringOffset, outputOffset);
                                 }
+                            }
+                        }
+                    }
+
+                    var codeSection = peInfo.GetSectionByName(CodeSectionName);
+                    var codeSectionStart = codeSection.Header.PointerToRawData;
+                    var codeSectionEnd = codeSectionStart + codeSection.Header.SizeOfRawData;
+                    input.Seek(codeSectionStart, SeekOrigin.Begin);
+                    output.Seek(codeSectionStart, SeekOrigin.Begin);
+                    while (input.Position < codeSectionEnd)
+                    {
+                        var b = input.ReadByte();
+                        while (b != 0x68)
+                        {
+                            b = input.ReadByte();
+                        }
+
+                        // He encontrado un 0x68
+                        if (input.Position + 4 >= codeSectionEnd)
+                        {
+                            break;
+                        }
+
+                        output.Seek(input.Position, SeekOrigin.Begin);
+                        var value = input.ReadInt32();
+                        var possibleStringOffset = value - stringsSectionBase;
+
+                        bool allowed;
+
+                        if (AllowedStringOffsets != null)
+                        {
+                            allowed = AllowedStringOffsets.Any(x =>
+                                x.Item1 <= possibleStringOffset && x.Item2 >= possibleStringOffset);
+                        }
+                        else
+                        {
+                            allowed = (stringsSection.Header.PointerToRawData <= possibleStringOffset) &&
+                                      (possibleStringOffset < (stringsSection.Header.PointerToRawData + stringsSection.Header.SizeOfRawData));
+                        }
+
+                        if (allowed)
+                        {
+                            var exists = used.ContainsKey(possibleStringOffset);
+
+                            if (exists)
+                            {
+                                output.Write((int)used[possibleStringOffset]);
+                            }
+                            else
+                            {
+                                var newOffset = outputOffset + translationSectionBase;
+                                output.Write((int)newOffset);
+                                used[possibleStringOffset] = newOffset;
+
+                                outputOffset = WriteSubtitle(output, data, possibleStringOffset, outputOffset);
                             }
                         }
                     }
