@@ -17,7 +17,7 @@ namespace TFGame.TheMissing
         public override string Description => "Steam Build Id: 3174849";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/The-MISSING-J-J-Macfield-atIoM-768659719
         public override int Version => 1;
-        public override System.Text.Encoding FileEncoding => Encoding.UTF8;
+        public override System.Text.Encoding FileEncoding => new Encoding();
 
         public override GameFileContainer[] GetContainers(string path)
         {
@@ -44,19 +44,10 @@ namespace TFGame.TheMissing
             var ttfSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "mplus-1m-regular.ttf;TT_NewCinemaB-D.ttf",
+                SearchPattern = "TT_NewCinemaB-D.ttf",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TrueTypeFontFile)
-            };
-
-            var phoneMessageSizesSearch = new GameFileSearch()
-            {
-                RelativePath = @".",
-                SearchPattern = "resources_00001.-13",
-                IsWildcard = true,
-                RecursiveSearch = true,
-                //FileType = typeof(Files.PhoneBox.File)
             };
 
             var resources = new GameFileContainer
@@ -68,7 +59,6 @@ namespace TFGame.TheMissing
             resources.FileSearches.Add(txtSearch);
             resources.FileSearches.Add(ddsSearch);
             resources.FileSearches.Add(ttfSearch);
-            resources.FileSearches.Add(phoneMessageSizesSearch);
 
             result.Add(resources);
 
@@ -139,7 +129,7 @@ namespace TFGame.TheMissing
                 var extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*", SearchOption.AllDirectories);
                 foreach (var file in extractedFiles)
                 {
-                    if (container.Files.All(x => x.Path != file))
+                    if (container.Files.All(x => x.Path != file) && !file.EndsWith("mplus-1m-regular.ttf") && !file.EndsWith("resources_00001.-13"))
                     {
                         File.Delete(file);
                     }
