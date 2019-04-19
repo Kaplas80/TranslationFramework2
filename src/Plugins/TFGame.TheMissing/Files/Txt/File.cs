@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using TF.Core.Entities;
-using TF.Core.Files;
 using TF.Core.Helpers;
-using TF.Core.Views;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -18,6 +17,8 @@ namespace TFGame.TheMissing.Files.Txt
     {
         [DllImport("msgconv4tm_dll_win.dll")]
         private static extern int MsgConvGetMsgInfoWithEnum([In] [Out] MsgInfo info, byte[] data, int msgEnum, bool voiceOnly = true);
+        [DllImport("gdi32.dll")]
+        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
 
         [StructLayout(LayoutKind.Sequential)]
         private class MsgInfo
@@ -37,26 +38,137 @@ namespace TFGame.TheMissing.Files.Txt
 
         protected GridView _view;
 
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        private PrivateFontCollection _fontCollection;
+
+        private readonly Font _cellFont;
+
+        public override int SubtitleCount
         {
+            get
+            {
+                var subtitles = GetSubtitles();
+                return subtitles.Count(x => (x != null) && (!string.IsNullOrEmpty(x.Text)));
+            }
+        }
+
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        {
+            Type = FileType.TextFile;
+
+            _fontCollection = new PrivateFontCollection();
+            var fontFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), "mplus-1m-regular.ttf");
+            var font = System.IO.File.ReadAllBytes(fontFile);
+            var fontPtr = Marshal.AllocCoTaskMem(font.Length);
+            Marshal.Copy(font, 0, fontPtr, font.Length);
+            uint dummy = 0;
+            _fontCollection.AddMemoryFont(fontPtr, font.Length);
+            AddFontMemResourceEx(fontPtr, (uint)font.Length, IntPtr.Zero, ref dummy);
+            Marshal.FreeCoTaskMem(fontPtr);
+
+            _cellFont = new Font(_fontCollection.Families[0], 20f, FontStyle.Regular, GraphicsUnit.Pixel);
         }
 
         public override void Open(DockPanel panel, ThemeBase theme)
         {
             _view = new GridView(theme);
-
+            _view.AutoAdjustSizes += ViewOnAutoAdjustSizes;
+            
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
             _view.Show(panel, DockState.Document);
         }
 
+        private void ViewOnAutoAdjustSizes()
+        {
+            foreach (var subtitle in _subtitles)
+            {
+                if (subtitle.Width >= 0 && subtitle.Height >= 0)
+                {
+                    var newSize = TextSize(subtitle.Translation);
+                    subtitle.Width = newSize.Width;
+                    subtitle.Height = newSize.Height;
+                }
+            }
+
+            _view.Refresh();
+        }
+
+        private SizeF TextSize(string str)
+        {
+            var lines = 1;
+            var maxWidth = 0f;
+            var acum = 34f;
+            if (str[0] == ' ')
+            {
+                acum = 43.5f;
+            }
+
+            var words = str.Split(' ');
+            for (var i = 0; i < words.Length; i++)
+            {
+                var tempWidth = GetWordWidth(words[i], i < words.Length - 1);
+                if (acum + tempWidth < 348.5)
+                {
+                    acum += tempWidth;
+                    if (acum > maxWidth)
+                    {
+                        maxWidth = acum;
+                    }
+                }
+                else
+                {
+                    acum = 34f + tempWidth;
+                    lines++;
+                }
+            }
+
+            var height = lines * 24 + 28;
+
+            if (Path.EndsWith("msg0801en.txt") && height < 76)
+            {
+                height = 76;
+            }
+
+            return new SizeF((float) Math.Ceiling(maxWidth), height);
+        }
+
+        private float GetWordWidth(string word, bool addSpace)
+        {
+            var result = 0f;
+            foreach (var chr in word)
+            {
+                result += GetCharWidth(chr);
+            }
+
+            if (addSpace)
+            {
+                result += 9.5f;
+            }
+
+            return result;
+        }
+
+        private float GetCharWidth(char chr)
+        {
+            SizeF size;
+
+            using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                size = graphics.MeasureString(chr.ToString(), _cellFont, int.MaxValue, StringFormat.GenericTypographic);
+                size.Width = (int)Math.Ceiling(size.Width);
+            }
+
+            return size.Width <= 10f ? 9.5f : 19.5f;
+        }
+
         protected virtual IList<Subtitle> GetSubtitles()
         {
             var result = new List<Subtitle>();
+
             var data = System.IO.File.ReadAllBytes(Path);
             var startMsg = int.Parse(System.IO.Path.GetFileName(Path).Substring(3, 4)) * 10000;
             var idDictionary = new Dictionary<string, int>();
-            var srcEncoding = Encoding.GetEncoding(1252);
+            var srcEncoding = System.Text.Encoding.GetEncoding(1252);
 
             for (var i = 0; i < 10000; i++)
             {
@@ -72,6 +184,8 @@ namespace TFGame.TheMissing.Files.Txt
                     }
                 }
             }
+
+            var sizeDictionary = ReadBoxSizes(System.IO.Path.GetDirectoryName(Path));
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding))
@@ -97,11 +211,59 @@ namespace TFGame.TheMissing.Files.Txt
                     }
 
                     var subtitle = new Subtitle(sub, id);
+                    
+                    if (sizeDictionary.ContainsKey(id))
+                    {
+                        var sz = sizeDictionary[id];
+                        subtitle.Width = sz[1].Width;
+                        subtitle.LoadedWidth = sz[1].Width;
+                        subtitle.Height = sz[1].Height;
+                        subtitle.LoadedHeight = sz[1].Height;
+                    }
+                    else
+                    {
+                        subtitle.Width = -1;
+                        subtitle.LoadedWidth = -1;
+                        subtitle.Height = -1;
+                        subtitle.LoadedHeight = -1;
+                    }
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
                     result.Add(subtitle);
                 }
             }
 
             LoadChanges(result);
+
+            return result;
+        }
+
+        private static IDictionary<int, SizeF[]> ReadBoxSizes(string path)
+        {
+            var result = new Dictionary<int, SizeF[]>();
+            var file = System.IO.Path.Combine(path, "resources_00001.-13");
+            using (var fs = new FileStream(file, FileMode.Open))
+            using (var input = new ExtendedBinaryReader(fs))
+            {
+                input.BaseStream.Seek(0x150, SeekOrigin.Begin);
+
+                var heightCount = input.ReadInt32();
+                for (var i = 0; i < heightCount; i++)
+                {
+                    var nameLength = input.ReadInt32();
+                    var name = input.ReadString();
+                    var msgEnum = input.ReadInt32();
+                    var langCount = input.ReadInt32();
+
+                    var sizes = new SizeF[langCount];
+                    for (var j = 0; j < langCount; j++)
+                    {
+                        var sz = new SizeF(input.ReadSingle(), input.ReadSingle());
+                        sizes[j] = sz;
+                    }
+                    
+                    result.Add(msgEnum, sizes);
+                }
+            }
 
             return result;
         }
@@ -174,6 +336,49 @@ namespace TFGame.TheMissing.Files.Txt
                     output.Write(lengths[id]);
                 }
             }
+
+            WriteBoxSizes(System.IO.Path.GetDirectoryName(outputPath), subtitles);
+        }
+
+        private static void WriteBoxSizes(string path, IList<Subtitle> subtitles)
+        {
+            var file = System.IO.Path.Combine(path, "resources_00001.-13");
+            using (var fs = new FileStream(file, FileMode.Open))
+            using (var input = new ExtendedBinaryReader(fs))
+            using (var output = new ExtendedBinaryWriter(fs))
+            {
+                input.Seek(0x150, SeekOrigin.Begin);
+
+                var heightCount = input.ReadInt32();
+                for (var i = 0; i < heightCount; i++)
+                {
+                    var nameLength = input.ReadInt32();
+                    var name = input.ReadString();
+                    var msgEnum = input.ReadInt32();
+                    var langCount = input.ReadInt32();
+
+                    input.Skip(8);
+
+                    var sub = subtitles.FirstOrDefault(x => x.MsgId == msgEnum);
+
+                    if (sub != null)
+                    {
+                        if (sub.Width > 0 && sub.Height > 0)
+                        {
+                            output.Write(sub.Width);
+                            output.Write(sub.Height);
+                        }
+                    }
+                    else
+                    {
+                        input.Skip(8);
+                    }
+
+                    input.Skip(16);
+                }
+            }
+
+            
         }
 
         public override bool Search(string searchString)
@@ -198,7 +403,7 @@ namespace TFGame.TheMissing.Files.Txt
         public override void SaveChanges()
         {
             using (var fs = new FileStream(ChangesFile, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, Encoding.Unicode))
+            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
             {
                 output.Write(ChangesFileVersion);
                 output.Write(_subtitles.Count);
@@ -206,8 +411,11 @@ namespace TFGame.TheMissing.Files.Txt
                 {
                     output.Write(subtitle.Offset);
                     output.WriteString(subtitle.Translation);
-
+                    output.Write(subtitle.Width);
+                    output.Write(subtitle.Height);
                     subtitle.Loaded = subtitle.Translation;
+                    subtitle.LoadedWidth = subtitle.Width;
+                    subtitle.LoadedHeight = subtitle.Height;
                 }
             }
 
@@ -220,7 +428,7 @@ namespace TFGame.TheMissing.Files.Txt
             if (HasChanges)
             {
                 using (var fs = new FileStream(ChangesFile, FileMode.Open))
-                using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
+                using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
                 {
                     var version = input.ReadInt32();
 
@@ -236,13 +444,19 @@ namespace TFGame.TheMissing.Files.Txt
                     {
                         var offset = input.ReadInt64();
                         var text = input.ReadString();
+                        var width = input.ReadSingle();
+                        var height = input.ReadSingle();
 
                         var subtitle = subtitles.FirstOrDefault(x => x.Offset == offset);
                         if (subtitle != null)
                         {
                             subtitle.PropertyChanged -= SubtitlePropertyChanged;
                             subtitle.Translation = text;
+                            subtitle.Width = width;
+                            subtitle.Height = height;
                             subtitle.Loaded = subtitle.Translation;
+                            subtitle.LoadedWidth = subtitle.Width;
+                            subtitle.LoadedHeight = subtitle.Height;
                             subtitle.PropertyChanged += SubtitlePropertyChanged;
                         }
                     }

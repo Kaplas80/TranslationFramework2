@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using DataGridViewNumericUpDownElements;
 using ExcelDataReader;
 using OfficeOpenXml;
 using TF.Core.TranslationEntities;
@@ -31,6 +32,9 @@ namespace TFGame.TheMissing.Files.Txt
                 return base.ProcessDataGridViewKey(e);
             }
         }
+
+        public event AutoAdjustEventHandler AutoAdjustSizes;
+        public delegate void AutoAdjustEventHandler();
 
         protected IList<Subtitle> _subtitles;
 
@@ -86,6 +90,36 @@ namespace TFGame.TheMissing.Files.Txt
             };
             SubtitleGridView.Columns.Add(column);
 
+            var nudColumn = new DataGridViewNumericUpDownColumn
+            {
+                DataPropertyName = "Width",
+                Name = "colWidth",
+                HeaderText = "Ancho",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                DecimalPlaces = 0,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
+                Maximum = new decimal(1000),
+                Minimum = new decimal(-1),
+                Increment = new decimal(10),
+                FillWeight = 25F,
+            };
+            SubtitleGridView.Columns.Add(nudColumn);
+
+            nudColumn = new DataGridViewNumericUpDownColumn
+            {
+                DataPropertyName = "Height",
+                Name = "colHeight",
+                HeaderText = "Alto",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                DecimalPlaces = 0,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
+                Maximum = new decimal(1000),
+                Minimum = new decimal(-1),
+                Increment = new decimal(24),
+                FillWeight = 25F,
+            };
+            SubtitleGridView.Columns.Add(nudColumn);
+
             UpdateLabel();
         }
 
@@ -120,12 +154,36 @@ namespace TFGame.TheMissing.Files.Txt
                 return;
             }
 
+            var subtitle = _subtitles[e.RowIndex];
+
             if (e.ColumnIndex == 2)
             {
-                var subtitle = _subtitles[e.RowIndex];
-
                 if (!e.State.HasFlag(DataGridViewElementStates.Selected) && (subtitle.Text != subtitle.Translation) &&
                     (!string.IsNullOrEmpty(subtitle.Translation)))
+                {
+                    e.CellStyle.BackColor = Color.AntiqueWhite;
+                }
+            }
+
+            if (e.ColumnIndex == 3 || e.ColumnIndex == 4)
+            {
+                if (subtitle.Width < 0)
+                {
+                    e.CellStyle.BackColor = Color.LightGray;
+                }
+            }
+
+            if (e.ColumnIndex == 3)
+            {
+                if (!e.State.HasFlag(DataGridViewElementStates.Selected) && (subtitle.LoadedWidth != subtitle.Width))
+                {
+                    e.CellStyle.BackColor = Color.AntiqueWhite;
+                }
+            }
+
+            if (e.ColumnIndex == 4)
+            {
+                if (!e.State.HasFlag(DataGridViewElementStates.Selected) && (subtitle.LoadedHeight != subtitle.Height))
                 {
                     e.CellStyle.BackColor = Color.AntiqueWhite;
                 }
@@ -219,10 +277,10 @@ namespace TFGame.TheMissing.Files.Txt
 
                 var header = new List<string[]>
                 {
-                    new[] {"OFFSET", "ORIGINAL", "TRADUCCIÓN"}
+                    new[] {"OFFSET", "ORIGINAL", "TRADUCCIÓN", "ANCHO", "ALTO" }
                 };
 
-                sheet.Cells["A1:C1"].LoadFromArrays(header);
+                sheet.Cells["A1:E1"].LoadFromArrays(header);
 
                 var row = 2;
                 foreach (var subtitle in _subtitles)
@@ -230,6 +288,8 @@ namespace TFGame.TheMissing.Files.Txt
                     sheet.Cells[row, 1].Value = subtitle.Offset;
                     sheet.Cells[row, 2].Value = subtitle.Text;
                     sheet.Cells[row, 3].Value = subtitle.Translation;
+                    sheet.Cells[row, 4].Value = subtitle.Width;
+                    sheet.Cells[row, 5].Value = subtitle.Height;
 
                     row++;
                 }
@@ -275,18 +335,9 @@ namespace TFGame.TheMissing.Files.Txt
 
                         for (var i = 0; i < table.Rows.Count; i++)
                         {
-                            string key;
-                            string value;
-                            if (useOffset)
-                            {
-                                key = table.Rows[i][0].ToString();
-                                value = table.Rows[i][2].ToString();
-                            }
-                            else
-                            {
-                                key = table.Rows[i][1].ToString();
-                                value = table.Rows[i][2].ToString();
-                            }
+                            var key = useOffset ? table.Rows[i][0].ToString() : table.Rows[i][1].ToString();
+
+                            var value = string.Concat(table.Rows[i][2].ToString(), "\t", table.Rows[i][3].ToString(), "\t", table.Rows[i][4].ToString());
 
                             if (!string.IsNullOrEmpty(key) && !strings.ContainsKey(key))
                             {
@@ -302,7 +353,10 @@ namespace TFGame.TheMissing.Files.Txt
 
                     if (!string.IsNullOrEmpty(key) && strings.ContainsKey(key))
                     {
-                        subtitle.Translation = strings[key];
+                        var values = strings[key].Split('\t');
+                        subtitle.Translation = values[0];
+                        subtitle.Width = float.Parse(values[1]);
+                        subtitle.Height = float.Parse(values[2]);
                     }
                 }
 
@@ -325,6 +379,24 @@ namespace TFGame.TheMissing.Files.Txt
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
             var totalLines = _subtitles.Count;
             lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines}";
+        }
+
+        private void SubtitleGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            var subtitle = _subtitles[e.RowIndex];
+
+            if (subtitle.Width < 0 && subtitle.Height < 0)
+            {
+                if (e.ColumnIndex == 3 || e.ColumnIndex == 4)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void btnAutoAdjust_Click(object sender, EventArgs e)
+        {
+            AutoAdjustSizes?.Invoke();
         }
     }
 }

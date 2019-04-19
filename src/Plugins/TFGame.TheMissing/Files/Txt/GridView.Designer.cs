@@ -39,6 +39,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ExportFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ImportFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.btnAutoAdjust = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnAutoAdjust);
             this.splitContainer1.Panel2.Controls.Add(this.lblChangedLinesCount);
             this.splitContainer1.Panel2.Controls.Add(this.btnSimpleImport);
             this.splitContainer1.Panel2.Controls.Add(this.btnOffsetImport);
@@ -89,6 +91,7 @@
             this.SubtitleGridView.Name = "SubtitleGridView";
             this.SubtitleGridView.Size = new System.Drawing.Size(1069, 418);
             this.SubtitleGridView.TabIndex = 0;
+            this.SubtitleGridView.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.SubtitleGridView_CellBeginEdit);
             this.SubtitleGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.SubtitleGridView_CellEndEdit);
             this.SubtitleGridView.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.SubtitleGridView_CellMouseDoubleClick);
             this.SubtitleGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.SubtitleGridView_CellPainting);
@@ -147,6 +150,18 @@
             // 
             this.ImportFileDialog.Filter = "Archivos Excel|*.xlsx";
             // 
+            // btnAutoAdjust
+            // 
+            this.btnAutoAdjust.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAutoAdjust.Location = new System.Drawing.Point(969, 3);
+            this.btnAutoAdjust.Name = "btnAutoAdjust";
+            this.btnAutoAdjust.Size = new System.Drawing.Size(97, 23);
+            this.btnAutoAdjust.TabIndex = 7;
+            this.btnAutoAdjust.Text = "Auto Ajustar";
+            this.toolTip1.SetToolTip(this.btnAutoAdjust, "Exporta las líneas a un fichero .xlsx");
+            this.btnAutoAdjust.UseVisualStyleBackColor = true;
+            this.btnAutoAdjust.Click += new System.EventHandler(this.btnAutoAdjust_Click);
+            // 
             // GridView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -180,5 +195,6 @@
         private System.Windows.Forms.OpenFileDialog ImportFileDialog;
         private System.Windows.Forms.Label lblChangedLinesCount;
         private TFGame.TheMissing.Files.Txt.GridView.TFDataGridView SubtitleGridView;
+        private System.Windows.Forms.Button btnAutoAdjust;
     }
 }
