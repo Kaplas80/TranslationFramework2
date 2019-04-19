@@ -10,7 +10,7 @@ namespace TFGame.Yakuza0
     {
         public override string Id => "193b8191-39e2-4ad7-b0bf-9cb413bb910f";
         public override string Name => "Yakuza 0";
-        public override string Description => "Versión en inglés PC Steam Patch v4 (lanzada el 26/03/2019)";
+        public override string Description => "Build Id: 3642285";
 
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741

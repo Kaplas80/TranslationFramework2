@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
-using CriCpkMaker;
-using TF.IO;
+using System.Reflection;
 
 namespace CRIWareGame.Files
 {
@@ -9,85 +8,33 @@ namespace CRIWareGame.Files
     {
         public static void Extract(string inputPath, string outputFolder)
         {
-            Directory.CreateDirectory(outputFolder);
-
-            var logFile = Path.Combine(outputFolder, "Extract_Data.tf");
-
-            var cpkMaker = InitializeCpkMaker();
-            cpkMaker.AnalyzeCpkFile(inputPath);
-            cpkMaker.StartToExtract(outputFolder);
-
-            using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Create)))
-            {
-                log.Write(cpkMaker.DataAlign);
-                log.Write(cpkMaker.Mask ? 1 : 0);
-                log.Write(cpkMaker.FileData.CompressedFiles > 0 ? 1 : 0);
-                log.Write((int)cpkMaker.CompressCodec);
-                log.Write(cpkMaker.EnableMself ? 1 : 0);
-                log.Write((int)cpkMaker.CpkFileMode);
-            }
-
-            var status = cpkMaker.Execute();
-            while (status != Status.Complete)
-            {
-                status = cpkMaker.Execute();
-            }
+            RunCpkTool("e", inputPath, outputFolder, string.Empty);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
-            var dir = Path.GetDirectoryName(outputPath);
-            Directory.CreateDirectory(dir);
+            RunCpkTool("p", inputFolder, outputPath, useCompression ? "1" : "0");
+        }
 
-            var logFile = Path.Combine(inputFolder, "Extract_Data.tf");
-
-            var cpkMaker = InitializeCpkMaker();
-            cpkMaker.ClearFile();
-            cpkMaker.BaseDirectory = inputFolder;
-            cpkMaker.ToolVersion = "TF2";
-
-            var files = Directory.EnumerateFiles(inputFolder, "*.*", SearchOption.AllDirectories);
-            var i = 0u;
-            foreach (var file in files)
+        private static void RunCpkTool(string operation, string param1, string param2, string param3)
+        {
+            using (var process = new System.Diagnostics.Process())
             {
-                var filename = file.Substring(inputFolder.Length);
-                if (!file.EndsWith("Extract_Data.tf"))
-                {
-                    cpkMaker.AddFile(file, filename, i);
-                    i++;
-                }
-            }
-
-            using (var log = new ExtendedBinaryReader(new FileStream(logFile, FileMode.Open)))
-            {
-                cpkMaker.DataAlign = log.ReadUInt32();
-                cpkMaker.Mask = log.ReadInt32() == 1;
-                cpkMaker.ForceCompress = (log.ReadInt32() == 1) && useCompression;
-                cpkMaker.CompressCodec = (EnumCompressCodec) log.ReadInt32();
-                cpkMaker.EnableMself = log.ReadInt32() == 1;
-                cpkMaker.CpkFileMode= (CpkMaker.EnumCpkFileMode)log.ReadInt32();
-            }
-
-            cpkMaker.StartToBuild(outputPath);
-
-            var status = cpkMaker.Execute();
-            while (status != Status.Complete)
-            {
-                status = cpkMaker.Execute();
+                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\CpkTool.exe";
+                process.StartInfo.Arguments = $"{operation} \"{param1}\" \"{param2}\" \"{param3}\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                process.StartInfo.CreateNoWindow = true; //not diplay a windows
+                process.Start();
+                process.WaitForExit();
             }
         }
 
-        private static CpkMaker InitializeCpkMaker()
+        private static string GetExecutingDirectoryName()
         {
-            var externalBuffer = new CExternalBuffer();
-            if (!externalBuffer.SetBuffers(134217728, 268435456, 134217728))
-            {
-                externalBuffer.Dispose();
-
-                throw new Exception("Can't allocate memory enough for working.");
-            }
-            var cpkMaker = new CpkMaker(true);
-            return cpkMaker;
+            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+            return new FileInfo(location.AbsolutePath).Directory.FullName;
         }
     }
 }

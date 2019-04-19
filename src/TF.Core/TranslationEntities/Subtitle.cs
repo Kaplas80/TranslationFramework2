@@ -23,7 +23,7 @@ namespace TF.Core.TranslationEntities
             }
         }
 
-        public bool HasChanges => Loaded != Translation;
+        public virtual bool HasChanges => Loaded != Translation;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

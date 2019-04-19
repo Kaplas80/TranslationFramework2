@@ -16,5 +16,7 @@ namespace TF.Core.Entities
 
         void ExtractFile(string inputFile, string outputPath);
         void RepackFile(string inputPath, string outputFile, bool compress);
+        void PreprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath);
+        void PostprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath);
     }
 }
