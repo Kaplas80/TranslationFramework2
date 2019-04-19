@@ -337,6 +337,7 @@ namespace TF.Core
                     {
                         if (addNewContainer)
                         {
+                            project.Game.PreprocessContainer(translationContainer, containerPath, extractionContainerPath);
                             project.Game.ExtractFile(containerPath, extractionContainerPath);
                         }
 
@@ -388,6 +389,8 @@ namespace TF.Core
                             }
                         }
 
+                        project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
+
                         worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");
                     }
                     else
@@ -398,6 +401,7 @@ namespace TF.Core
                 }
                 else
                 {
+                    project.Game.PreprocessContainer(translationContainer, containerPath, extractionContainerPath);
                     foreach (var fileSearch in container.FileSearches)
                     {
                         worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
@@ -456,6 +460,7 @@ namespace TF.Core
                             }
                         }
 
+                        project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
                         worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");
                     }
                 }

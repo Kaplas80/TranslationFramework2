@@ -5,7 +5,7 @@
         protected override int NumStringsPerItem => 1;
         protected override int UnknownSize => 0x02;
 
-        public MemoFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, System.Text.Encoding.GetEncoding(932))
+        public MemoFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
 
         }

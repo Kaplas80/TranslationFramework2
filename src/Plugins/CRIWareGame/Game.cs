@@ -7,7 +7,7 @@ using TF.Core.Entities;
 
 namespace CRIWareGame
 {
-    public abstract class CRIWareGame : IGame
+    public abstract class Game : IGame
     {
         public virtual string Id { get; }
         public virtual string Name { get; }
@@ -42,6 +42,14 @@ namespace CRIWareGame
             {
                 CpkFile.Repack(inputPath, outputFile, compress);
             }
+        }
+
+        public void PreprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
+        }
+
+        public void PostprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
+        {
         }
     }
 }

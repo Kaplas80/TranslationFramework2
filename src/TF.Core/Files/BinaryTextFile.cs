@@ -116,7 +116,7 @@ namespace TF.Core.Files
 
                     if (version != ChangesFileVersion)
                     {
-                        File.Delete(ChangesFile);
+                        //File.Delete(ChangesFile);
                         return;
                     }
 

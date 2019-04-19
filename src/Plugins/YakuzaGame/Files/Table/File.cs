@@ -148,7 +148,7 @@ namespace YakuzaGame.Files.Table
 
                     if (version != ChangesFileVersion)
                     {
-                        System.IO.File.Delete(ChangesFile);
+                        //System.IO.File.Delete(ChangesFile);
                         return;
                     }
 

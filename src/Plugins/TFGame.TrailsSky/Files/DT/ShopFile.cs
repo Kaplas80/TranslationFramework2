@@ -31,7 +31,7 @@ namespace TFGame.TrailsSky.Files.DT
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.GetEncoding(932)))
+            using (var input = new ExtendedBinaryReader(fs, FileEncoding))
             {
                 var tableEnd = input.PeekUInt16();
 
@@ -77,9 +77,9 @@ namespace TFGame.TrailsSky.Files.DT
             var subtitles = GetSubtitles();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fsInput, System.Text.Encoding.GetEncoding(932)))
+            using (var input = new ExtendedBinaryReader(fsInput, FileEncoding))
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fsOutput, System.Text.Encoding.GetEncoding(932)))
+            using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding))
             {
                 var tableEnd = input.PeekUInt16();
                 long outputOffset = tableEnd;

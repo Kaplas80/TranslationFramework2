@@ -16,6 +16,7 @@ namespace TFGame.TrailsSky
         {
             DecodingReplacements = new List<Tuple<string, string>>
             {
+                new Tuple<string, string>("\\n", "<LineBreak>"),
                 new Tuple<string, string>("\u0026", "É"), //&
                 //new Tuple<string, string>("\u0027", "Í"), //'
                 new Tuple<string, string>("\u003B", "á"), //;
@@ -106,6 +107,8 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("ñ", "\u007D"), //}
                 new Tuple<string, string>("¡", "\u007E"), //~
                 new Tuple<string, string>("¿", "\u007F"), //DEL
+
+                new Tuple<string, string>("<LineBreak>", "\\n"),
             };
         }
 

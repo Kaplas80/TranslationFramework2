@@ -5,7 +5,7 @@
         protected override int NumStringsPerItem => 2;
         protected override int UnknownSize => 0x28;
 
-        public CookFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, System.Text.Encoding.GetEncoding(932))
+        public CookFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
 
         }
