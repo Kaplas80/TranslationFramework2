@@ -18,6 +18,9 @@ namespace TF.Core.Views
         [DllImport("gdi32.dll")]
         private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
 
+        [DllImport("gdi32.dll")]
+        private static extern bool RemoveFontMemResourceEx(IntPtr handle);
+
         public event NewFontLoadedEventHandler NewFontLoaded;
         public delegate void NewFontLoadedEventHandler(string fileName);
         public event SaveFontEventHandler SaveFont;
@@ -25,6 +28,7 @@ namespace TF.Core.Views
 
         private byte[] _font;
         private PrivateFontCollection _fontCollection;
+        private IntPtr _fontHandle = IntPtr.Zero;
 
         protected FontView()
         {
@@ -48,6 +52,11 @@ namespace TF.Core.Views
 
         public void LoadFont(byte[] font)
         {
+            if (_fontHandle != IntPtr.Zero)
+            {
+                RemoveFontMemResourceEx(_fontHandle);
+            }
+
             _font = font;
             _fontCollection = new PrivateFontCollection();
 
@@ -55,7 +64,8 @@ namespace TF.Core.Views
             Marshal.Copy(_font, 0, fontPtr, _font.Length);
             uint dummy = 0;
             _fontCollection.AddMemoryFont(fontPtr, _font.Length);
-            AddFontMemResourceEx(fontPtr, (uint)_font.Length, IntPtr.Zero, ref dummy);
+            _fontHandle = AddFontMemResourceEx(fontPtr, (uint)_font.Length, IntPtr.Zero, ref dummy);
+
             Marshal.FreeCoTaskMem(fontPtr);
 
             RenderLabel();
@@ -104,6 +114,15 @@ namespace TF.Core.Views
         private void txtSample_TextChanged(object sender, EventArgs e)
         {
             RenderLabel();
+        }
+
+        private void FontView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_fontHandle != IntPtr.Zero)
+            {
+                RemoveFontMemResourceEx(_fontHandle);
+            }
+            GC.Collect();
         }
     }
 }

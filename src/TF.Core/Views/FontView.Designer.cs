@@ -127,6 +127,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FontView";
             this.Text = "FontView";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FontView_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
