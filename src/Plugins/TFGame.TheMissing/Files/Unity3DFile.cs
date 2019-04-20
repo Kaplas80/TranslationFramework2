@@ -30,7 +30,7 @@ namespace TFGame.TheMissing.Files
         {
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\UnityEX.exe";
+                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t -13";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -42,7 +42,7 @@ namespace TFGame.TheMissing.Files
 
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\UnityEX.exe";
+                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t dds";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -54,7 +54,7 @@ namespace TFGame.TheMissing.Files
 
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\UnityEX.exe";
+                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t txt";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -66,7 +66,7 @@ namespace TFGame.TheMissing.Files
 
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\UnityEX.exe";
+                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t ttf";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;

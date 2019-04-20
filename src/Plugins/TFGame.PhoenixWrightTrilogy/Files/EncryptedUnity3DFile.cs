@@ -39,7 +39,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files
         {
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\UnityEX.exe";
+                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\"";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;

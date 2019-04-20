@@ -20,7 +20,7 @@ namespace CRIWareGame.Files
         {
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"{GetExecutingDirectoryName()}\plugins\CpkTool.exe";
+                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\CpkTool.exe""";
                 process.StartInfo.Arguments = $"{operation} \"{param1}\" \"{param2}\" \"{param3}\"";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
