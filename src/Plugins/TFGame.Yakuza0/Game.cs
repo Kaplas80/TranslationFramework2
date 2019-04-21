@@ -15,7 +15,7 @@ namespace TFGame.Yakuza0
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741
 
-        public override int Version => 1;
+        public override int Version => 2;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -640,6 +640,56 @@ namespace TFGame.Yakuza0
         {
             var result = new List<GameFileContainer>();
 
+            var aiPopupSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "common",
+                    SearchPattern = "ai_popup.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.AiPopup.File)
+                };
+
+            var common_armsRepairSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "common\\shop",
+                    SearchPattern = "arms_repair.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.ArmsRepair.File)
+                };
+
+            var common_blacksmithSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "common\\shop",
+                    SearchPattern = "blacksmith.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Blacksmith.File)
+                };
+
+            var common_presentSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "common\\shop",
+                    SearchPattern = "present.bin;send.bin;throw.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.PresentSendThrow.File)
+                };
+
+            var common_saleSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "common\\shop",
+                    SearchPattern = "sale????.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Sale.File)
+                };
+
             var wdr_barSearch =
                 new GameFileSearch
                 {
@@ -690,6 +740,12 @@ namespace TFGame.Yakuza0
                 Path = @"media\data\wdr_par_c\wdr.par",
                 Type = ContainerType.CompressedFile
             };
+
+            wdr_par.FileSearches.Add(aiPopupSearch);
+            wdr_par.FileSearches.Add(common_armsRepairSearch);
+            wdr_par.FileSearches.Add(common_blacksmithSearch);
+            wdr_par.FileSearches.Add(common_presentSearch);
+            wdr_par.FileSearches.Add(common_saleSearch);
 
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
