@@ -210,6 +210,13 @@ namespace TF.IO
 
         #region Peek Methods
 
+        public short PeekByte()
+        {
+            var value = ReadByte();
+            Seek(-1, SeekOrigin.Current);
+            return value;
+        }
+
         public short PeekInt16()
         {
             var value = ReadInt16();
