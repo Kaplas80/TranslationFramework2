@@ -12,21 +12,8 @@ namespace TFGame.TrailsColdSteel.Files.Dat
 {
     public class File : TextFile
     {
-        private class Op
-        {
-            public byte Code;
-            public string Name;
-            public int ParamCount;
-        }
-
-        private readonly Op[] GameOps;
-
         public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
-            GameOps = new Op[160];
-
-            GameOps[0x00] = new Op { Code = 0x00, Name = "Nop", ParamCount = 0 };
-            GameOps[0x01] = new Op {Code = 0x01, Name = "Return", ParamCount = 0};
         }
 
         protected override PlainText GetText()
@@ -85,38 +72,18 @@ namespace TFGame.TrailsColdSteel.Files.Dat
 
                 for (var i = 0; i < functionCount; i++)
                 {
-                    input.Seek(functionOffset[i], SeekOrigin.Begin);
                     if (i > 0)
                     {
                         txt.AppendLine();
                     }
 
-                    var name = string.IsNullOrEmpty(functionName[i]) ? "AnonymousFunc" : functionName[i];
-                    txt.AppendLine($"{name}({functionOffset[i]:X8})");
+                    var fName = string.IsNullOrEmpty(functionName[i]) ? "Anonymous" : functionName[i];
+                    txt.AppendLine($"FUNCTION_{fName}({functionOffset[i]:X8})");
 
-                    var count = 0;
-                    while (count < functionSize[i])
+                    var lines = ExtractFunctionSubtitles(input, functionOffset[i], functionSize[i]);
+                    foreach (var line in lines)
                     {
-                        var opCode = input.ReadByte();
-                        count++;
-
-                        if (opCode < 160 && GameOps[opCode] != null)
-                        {
-                            var op = GameOps[opCode];
-
-                            var args = new string[op.ParamCount];
-                            for (var j = 0; j < op.ParamCount; j++)
-                            {
-                                args[j] = string.Concat(input.ReadByte().ToString());
-                            }
-
-                            txt.AppendLine($"{op.Name}({string.Join(", ", args)});");
-                        }
-                        else
-                        {
-                            txt.AppendLine($"Op_{opCode:X2}();");
-                        }
-
+                        txt.AppendLine(line);
                     }
                 }
             }
@@ -130,5 +97,278 @@ namespace TFGame.TrailsColdSteel.Files.Dat
 
             return result;
         }
+
+        private IEnumerable<string> ExtractFunctionSubtitles(ExtendedBinaryReader input, uint startOffset, uint size)
+        {
+            var result = new List<string>();
+
+            input.Seek(startOffset, SeekOrigin.Begin);
+
+            while (input.Position < startOffset + size)
+            {
+                int op = input.ReadByte();
+
+                result.AddRange(ExtractOperationSubtitles(input, op));
+            }
+
+            return result;
+        }
+
+        private IEnumerable<string> ExtractOperationSubtitles(ExtendedBinaryReader input, int op)
+        {
+            var result = new List<string>();
+            switch (op)
+            {
+                case 0x02:
+                    result.Add($"Op_{op:X2}({input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\")");
+                    break;
+                case 0x04: // Igual que 02??
+                    result.Add($"Op_{op:X2}({input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\")");
+                    break;
+                case 0x05: 
+                {
+                    var tmp = string.Join(", ", ExtractScpExpressionSubtitles(input));
+                    result.Add($"Op_{op:X2}({tmp}, {input.ReadUInt32()})"); // No se si este uint32 se da siempre
+                    break;
+                }
+
+                case 0x06: // Switch
+                {
+                    var tmp = string.Join(", ", ExtractScpExpressionSubtitles(input));
+                    var count = input.ReadByte();
+                    var tmp2 = new List<string>();
+                    for (var i = 0; i < count; i++)
+                    {
+                        tmp2.Add($"{input.ReadUInt16()}");
+                        tmp2.Add($"{input.ReadUInt32()}");
+                    }
+                    tmp2.Add($"{input.ReadUInt32()}");
+
+                    result.Add($"Op_{op:X2}({tmp}, {tmp2})");
+                    break;
+                }
+                case 0x07:
+                case 0x0E:
+                case 0x0F:
+                    result.Add($"Op_{op:X2}({input.ReadUInt32()})");
+                    break;
+
+                case 0x08:
+                case 0x0A:    
+                {
+                    var p1 = input.ReadByte();
+                    var tmp = string.Join(", ", ExtractScpExpressionSubtitles(input));
+                    result.Add($"Op_{op:X2}({p1}, {tmp})");
+                    break;
+                }
+                case 0x0C:
+                case 0x0D:
+                {
+                    result.Add($"Op_{op:X2}({input.ReadUInt16()})");
+                    break;
+                }
+                case 0x14:
+                    result.Add($"Op_{op:X2}({input.ReadByte()}, {input.ReadUInt16()}, {input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\")");
+                    break;
+                case 0x23:
+                    result.Add($"Op_{op:X2}({input.ReadByte()}, {input.ReadUInt16()}, {input.ReadUInt32()})");
+                    break;
+                case 0x30:
+                {
+                    var p1 = input.ReadByte();
+                    switch (p1)
+                    {
+                        case 0x00:
+                        case 0x04:
+                            result.Add($"Op_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadByte()})");
+                            break;
+                        case 0x01:
+                            result.Add($"Op_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadByte()})");
+                            break;
+                        case 0x02:
+                        case 0x06:
+                            result.Add($"Op_{op:X2}({p1}, {input.ReadUInt16()})");
+                            break;
+                        case 0x03:
+                            result.Add($"Op_{op:X2}({p1}, {input.ReadUInt32()}, {input.ReadUInt16()}, {input.ReadByte()})");
+                            break;
+                        case 0x05:
+                            result.Add($"Op_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt16()})");
+                            break;
+                        default:
+                        {
+                            result.Add($"Op_{op:X2}({p1})");
+                            break;
+                        }
+
+                    }
+
+                    break;
+                }
+                case 0x39:
+                {
+                    var p1 = input.ReadByte();
+                    var p2 = input.ReadUInt16();
+                    switch (p1)
+                    {
+                        case 0x05:
+                        case 0x0A:
+                        case 0x0B:
+                        case 0x0C:
+                        case 0x10:
+                        case 0x69:
+                        case 0xFF:
+                            result.Add($"Op_{op:X2}({p1}, {p2})");
+                            break;
+                        default:
+                        {
+                            var p3 = input.ReadUInt32();
+                            result.Add($"Op_{op:X2}({p1}, {p2}, {p3})");
+                            break;
+                        }
+
+                    }
+                    
+                    break;
+                }
+                case 0x3D:
+                    result.Add($"Op_{op:X2}({input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\", {input.ReadUInt16()})");
+                    break;
+
+                default:
+                    result.Add($"Op_{op:X2}()");
+                    break;
+            }
+
+            return result;
+        }
+
+        private IEnumerable<string> ExtractScpExpressionSubtitles(ExtendedBinaryReader input)
+        {
+            var result = new List<string>();
+            var finish = false;
+            while (!finish)
+            {
+                var op = input.ReadByte();
+                switch (op)
+                {
+                    case 0x00: // Push Long
+                        result.Add($"PUSH({input.ReadUInt32()})");
+                        break;
+                    case 0x01:
+                        finish = true;
+                        break;
+                    case 0x02:
+                        result.Add("EQU");
+                        break;
+                    case 0x03:
+                        result.Add("NEQ");
+                        break;
+                    case 0x04:
+                        result.Add("LSS");
+                        break;
+                    case 0x05:
+                        result.Add("GTR");
+                        break;
+                    case 0x06:
+                        result.Add("LEQ");
+                        break;
+                    case 0x07:
+                        result.Add("GEQ");
+                        break;
+                    case 0x08:
+                        result.Add("EQUZ");
+                        break;
+                    case 0x09:
+                        result.Add("NEQUZ64");
+                        break;
+                    case 0x0A:
+                        result.Add("AND");
+                        break;
+                    case 0x0B:
+                        result.Add("OR");
+                        break;
+                    case 0x0C:
+                        result.Add("ADD");
+                        break;
+                    case 0x0D:
+                        result.Add("SUB");
+                        break;
+                    case 0x0E:
+                        result.Add("NEG");
+                        break;
+                    case 0x0F:
+                        result.Add("XOR");
+                        break;
+                    case 0x10:
+                        result.Add("IMUL");
+                        break;
+                    case 0x11:
+                        result.Add("IDIV");
+                        break;
+                    case 0x12:
+                        result.Add("IMOD");
+                        break;
+                    case 0x14:
+                        result.Add("IMUL_SAVE");
+                        break;
+                    case 0x15:
+                        result.Add("IDIV_SAVE");
+                        break;
+                    case 0x16:
+                        result.Add("IMOD_SAVE");
+                        break;
+                    case 0x17:
+                        result.Add("ADD_SAVE");
+                        break;
+                    case 0x18:
+                        result.Add("SUB_SAVE");
+                        break;
+                    case 0x19:
+                        result.Add("AND_SAVE");
+                        break;
+                    case 0x1A:
+                        result.Add("XOR_SAVE");
+                        break;
+                    case 0x1B:
+                        result.Add("OR_SAVE");
+                        break;
+                    case 0x1C:
+                        {
+                            var b = input.ReadByte();
+                            var tmp = string.Join(", ", ExtractOperationSubtitles(input, b));
+
+                            result.Add($"EXEC_OP({tmp})");
+                            break;
+                        }
+                    case 0x1D:
+                        result.Add("NOT");
+                        break;
+                    case 0x1E:
+                        result.Add($"TEST_FLAGS({input.ReadUInt16()})");
+                        break;
+                    case 0x1F:
+                        result.Add($"GET_RESULT({input.ReadByte()})");
+                        break;
+                    case 0x20:
+                        result.Add($"PUSH_INDEX({input.ReadByte()})");
+                        break;
+                    case 0x21: //??
+                        result.Add($"GET_CHR_WORK({input.ReadUInt16()}, {input.ReadByte()})");
+                        break;
+                    case 0x22:
+                        result.Add("RAND");
+                        break;
+                    case 0x23:
+                        result.Add($"EXP_23({input.ReadByte()})");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return result;
+        }
     }
 }
+
