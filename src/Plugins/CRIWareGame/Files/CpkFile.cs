@@ -18,9 +18,12 @@ namespace CRIWareGame.Files
 
         private static void RunCpkTool(string operation, string param1, string param2, string param3)
         {
+            var exePath = Path.Combine(GetExecutingDirectoryName(), "plugins", "CpkTool.exe");
+
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\CpkTool.exe""";
+                process.StartInfo.FileName = exePath;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(exePath);
                 process.StartInfo.Arguments = $"{operation} \"{param1}\" \"{param2}\" \"{param3}\"";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -34,7 +37,7 @@ namespace CRIWareGame.Files
         private static string GetExecutingDirectoryName()
         {
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            return new FileInfo(location.AbsolutePath).Directory.FullName;
+            return Path.GetDirectoryName(location.LocalPath);
         }
     }
 }

@@ -37,9 +37,12 @@ namespace TFGame.PhoenixWrightTrilogy.Files
 
         private static void RunUnityEx(string operation, string unityFile)
         {
+            var unityExPath = Path.Combine(GetExecutingDirectoryName(), "plugins", "UnityEX.exe");
+
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
+                process.StartInfo.FileName = unityExPath;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\"";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -53,7 +56,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files
         private static string GetExecutingDirectoryName()
         {
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            return new FileInfo(location.AbsolutePath).Directory.FullName;
+            return Path.GetDirectoryName(location.LocalPath);
         }
     }
 }

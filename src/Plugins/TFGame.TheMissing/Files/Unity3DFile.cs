@@ -28,9 +28,12 @@ namespace TFGame.TheMissing.Files
 
         private static void RunUnityEx(string operation, string unityFile)
         {
+            var unityExPath = Path.Combine(GetExecutingDirectoryName(), "plugins", "UnityEX.exe");
+
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
+                process.StartInfo.FileName = unityExPath;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t -13";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -42,7 +45,8 @@ namespace TFGame.TheMissing.Files
 
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
+                process.StartInfo.FileName = unityExPath;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t dds";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -54,7 +58,8 @@ namespace TFGame.TheMissing.Files
 
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
+                process.StartInfo.FileName = unityExPath;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t txt";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -66,7 +71,8 @@ namespace TFGame.TheMissing.Files
 
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = $@"""{GetExecutingDirectoryName()}\plugins\UnityEX.exe""";
+                process.StartInfo.FileName = unityExPath;
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t ttf";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -80,7 +86,8 @@ namespace TFGame.TheMissing.Files
         private static string GetExecutingDirectoryName()
         {
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            return new FileInfo(location.AbsolutePath).Directory.FullName;
+            
+            return Path.GetDirectoryName(location.LocalPath);
         }
     }
 }

@@ -88,7 +88,7 @@ namespace TF.GUI
 #if !DEBUG
                 catch (Exception e)
                 {
-                    worker.ReportProgress(0, $"ERROR: {e.StackTrace}");
+                    worker.ReportProgress(0, $"ERROR: {e.Message}\n{e.StackTrace}");
                 }
 #endif
             };
