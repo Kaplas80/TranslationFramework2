@@ -123,6 +123,11 @@ namespace TFGame.TrailsColdSteel.Files.Dat
             var offset = input.Position - 1;
             switch (op)
             {
+                case 0x00:
+                case 0x01:
+                case 0x03:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}()");
+                    break;
                 case 0x02:
                 {
                     var type = input.ReadByte();
@@ -164,6 +169,7 @@ namespace TFGame.TrailsColdSteel.Files.Dat
                 case 0x07:
                 case 0x0E:
                 case 0x0F:
+                case 0x43:
                     result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt32()})");
                     break;
 
@@ -176,6 +182,7 @@ namespace TFGame.TrailsColdSteel.Files.Dat
                     break;
                 }
                 case 0x0C:
+                case 0x10:
                 {
                     result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt16()})");
                     break;
@@ -186,8 +193,35 @@ namespace TFGame.TrailsColdSteel.Files.Dat
                     break;
                 }
                 case 0x13:
-                    Por aqui
-                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt16()}, \"{input.ReadString(Encoding.ASCII)}\", \"{input.ReadString(Encoding.ASCII)}\", \"{input.ReadString(Encoding.ASCII)}\", {input.ReadUInt16()}, {input.ReadUInt32()}, )");
+                {
+                    var pars = new List<string>();
+                    pars.Add($"{input.ReadUInt16()}");
+                    for (var i = 0; i < 3; i++)
+                    {
+                        pars.Add($"\"{input.ReadString()}\"");
+                    }
+
+                    pars.Add($"{input.ReadByte()}");
+
+                    for (var i = 0; i < 8; i++)
+                    {
+                        pars.Add($"{input.ReadUInt32()}");
+                    }
+
+                    for (var i = 0; i < 2; i++)
+                    {
+                        pars.Add($"\"{input.ReadString()}\"");
+                    }
+
+                    pars.Add($"{input.ReadUInt32()}");
+                    pars.Add($"{input.ReadByte()}");
+                    pars.Add($"{input.ReadUInt32()}");
+                    pars.Add($"{input.ReadUInt32()}");
+                    pars.Add($"{input.ReadUInt16()}");
+
+                    var txt = string.Join(", ", pars);
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({txt})");
+                }
                     break;
 
                 case 0x14:
@@ -197,11 +231,65 @@ namespace TFGame.TrailsColdSteel.Files.Dat
                     result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadByte()})");
                     break;
                 case 0x1E:
+                case 0x45:
                     result.Add($"0x{offset:X8}\tOp_{op:X2}(\"{input.ReadString(Encoding.ASCII)}\", \"{input.ReadString(Encoding.ASCII)}\")");
                     break;
+                case 0x20:
+                {
+                    var p1 = input.ReadByte();
+                    var p2 = input.ReadUInt16();
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {p2}, \"{input.ReadString(Encoding.ASCII)}\", \"{input.ReadString(Encoding.ASCII)}\", {input.ReadByte()})");
+                    break;
+                }
+                case 0x22:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt16()}, \"{input.ReadString(Encoding.ASCII)}\", {input.ReadByte()}, {input.ReadByte()}, {input.ReadByte()}, {input.ReadByte()}, {input.ReadByte()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                    break;
                 case 0x23:
+                case 0x2B:
+                case 0x2C:
                     result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt16()}, {input.ReadUInt32()})");
                     break;
+                case 0x27:
+                    {
+                        var p1 = input.ReadByte();
+                        switch (p1)
+                        {
+                            case 0x0A:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\")");
+                                break;
+                            case 0x0B:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadByte()})");
+                                break;
+                            case 0x0C:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, \"{input.ReadString(Encoding.ASCII)}\", {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadByte()})");
+                                break;
+                            case 0x0D:
+                            case 0x0E:
+                            case 0x0F:
+                            case 0x10:
+                            case 0x11:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadByte()})");
+                                break;
+                            case 0x12:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadByte()}, {input.ReadUInt16()})");
+                                break;
+                            case 0x13:
+                            case 0x14:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadByte()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                                break;
+                            case 0x15:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadByte()})");
+                                break;
+                            default:
+                                {
+                                    result.Add($"0x{offset:X8}\tOp_{op:X2}({p1})");
+                                    break;
+                                }
+
+                        }
+
+                        break;
+                    }
                 case 0x2D:
                 {
                     var p1 = input.ReadByte();
@@ -260,6 +348,12 @@ namespace TFGame.TrailsColdSteel.Files.Dat
 
                     break;
                 }
+                case 0x2E:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                    break;
+                case 0x2F:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt16()}, {input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\")");
+                    break;
                 case 0x30:
                 {
                     var p1 = input.ReadByte();
@@ -294,6 +388,51 @@ namespace TFGame.TrailsColdSteel.Files.Dat
 
                     break;
                 }
+                case 0x31:
+                {
+                    var p1 = input.ReadByte();
+                    switch (p1)
+                    {
+                            case 0x00:
+                            case 0x32:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, \"{input.ReadString(Encoding.ASCII)}\")");
+                                break;
+                            case 0x01:
+                            case 0x33:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt16()})");
+                                break;
+                            case 0x02:
+                            case 0x34:
+                            case 0x05:
+                            case 0x37:
+                            case 0x06:
+                            case 0x38:
+                            case 0x39:
+                            case 0x96:
+                            case 0xFE:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()})");
+                            break;
+                            case 0x3A:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()})");
+                                break;
+                            case 0x03:
+                            case 0x35:
+                            case 0x64:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt16()})");
+                                break;
+                            case 0x65:
+                                result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                                break;
+                            case 0xFF:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                            break;
+                        default: 
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1})");
+                            break;
+                    }
+
+                    break;
+                }
                 case 0x39:
                 {
                     var p1 = input.ReadByte();
@@ -317,6 +456,24 @@ namespace TFGame.TrailsColdSteel.Files.Dat
                         }
 
                     }
+                    
+                    break;
+                }
+                case 0x3C:
+                {
+                    var p1 = input.ReadUInt16();
+                    var p2 = input.ReadUInt16();
+                    var p3 = input.ReadUInt16();
+
+                    if (p2 == ushort.MaxValue)
+                    {
+                        result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {p2}, {p3}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                    }
+                    else
+                    {
+                        result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {p2}, {p3})");
+                    }
+
                     
                     break;
                 }
@@ -351,13 +508,101 @@ namespace TFGame.TrailsColdSteel.Files.Dat
                 case 0x4A:
                     result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadByte()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadByte()}, \"{input.ReadString(Encoding.ASCII)}\")");
                     break;
+                case 0x4B:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadByte()}, {input.ReadByte()}, {input.ReadByte()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                    break;
+                case 0x4C:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadByte()}, {input.ReadByte()})");
+                    break;
+                case 0x53:
+                    result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadByte()}, {input.ReadUInt16()}, {input.ReadUInt16()}, {input.ReadUInt32()})");
+                    break;
+                case 0x5C:
+                {
+                    var p1 = input.ReadByte();
+                    var p2 = input.ReadUInt16();
+                    switch (p1)
+                    {
+                        case 0x00:
+                        case 0x01:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {p2}, {input.ReadUInt32()})");
+                            break;
+                        default:
+                        {
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {p2})");
+                            break;
+                        }
+
+                    }
+
+                    break;
+                }
+                case 0x5D:
+                {
+                    var p1 = input.ReadByte();
+                    var p2 = input.ReadString(Encoding.ASCII);
+                    switch (p1)
+                    {
+                        case 0x00:
+                        case 0x01:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, \"{p2}\", {input.ReadUInt16()})");
+                            break;
+                        case 0x02:
+                        case 0x03:
+                        case 0x04:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, \"{p2}\", {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                            break;
+                        case 0x07:
+                            result.Add(
+                                $"0x{offset:X8}\tOp_{op:X2}({p1}, \"{p2}\", {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt16()}, {input.ReadByte()})");
+                            break;
+                        case 0x08:
+                            result.Add(
+                                $"0x{offset:X8}\tOp_{op:X2}({p1}, \"{p2}\", {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt16()}, {input.ReadByte()})");
+                            break;
+                        default:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, \"{p2}\")");
+                            break;
+                    }
+
+                    break;
+                }
                 case 0x66:
                     // En el código lo que hace es avanzar 6 posiciones
                     // Yo lo pongo como int + short para ver los parámetros
                     result.Add($"0x{offset:X8}\tOp_{op:X2}({input.ReadUInt32()}, {input.ReadUInt16()})");
                     break;
+                case 0x73:
+                {
+                    var p1 = input.ReadByte();
+                    switch (p1)
+                    {
+                        case 0x00:
+                        case 0x01:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1})");
+                            break;
+                        case 0x02:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()})");
+                            break;
+                        case 0x03:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt32()}, {input.ReadUInt32()}, {input.ReadUInt32()})");
+                            break;
+                        case 0x04:
+                        case 0x06:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt16()})");
+                            break;
+                        case 0x05:
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1}, {input.ReadUInt32()})");
+                            break;
+                        default: 
+                            result.Add($"0x{offset:X8}\tOp_{op:X2}({p1})");
+                            break;
+                    }
+
+                    break;
+                }
                 default:
-                    result.Add($"0x{offset:X8}\tOp_{op:X2}()");
+                    result.Add($"0x{offset:X8}\tOP_UNKNOWN{op:X2}()");
                     break;
             }
 
