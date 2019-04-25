@@ -14,7 +14,7 @@ namespace TFGame.TrailsColdSteel
         public string Description => "Build Id: 3170008";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-of-Cold-Steel-Icon-704948381
         public int Version => 1;
-        public System.Text.Encoding FileEncoding => Encoding.UTF8;
+        public System.Text.Encoding FileEncoding => new Encoding();
 
         public GameFileContainer[] GetContainers(string path)
         {
