@@ -354,9 +354,10 @@ namespace YakuzaGame.Files
                 var folderTableOffset = headerSize;
                 var fileTableOffset = (uint)(folderTableOffset + folderDict.Count * 32);
                 var dataOffset = (uint)(fileTableOffset + fileDict.Count * 32);
-                while (dataOffset % 2048 != 0)
+                if (dataOffset % 2048 != 0)
                 {
-                    dataOffset++;
+                    var padding = 2048 + (-dataOffset % 2048);
+                    dataOffset += (uint)padding;
                 }
 
                 output.Write((uint)folderDict.Count);
@@ -376,19 +377,17 @@ namespace YakuzaGame.Files
                     output.WriteString(f.Name, 64);
                 }
 
-                Pack(root, output, inputFolder, folderDict, fileDict, folderTableOffset, fileTableOffset, dataOffset, useCompression);
+                var blockSize = 0;
+                Pack(root, output, inputFolder, folderDict, fileDict, folderTableOffset, fileTableOffset, dataOffset, useCompression, ref blockSize);
 
                 output.Seek(0, SeekOrigin.End);
-                while (output.Position % 2048 != 0)
-                {
-                    output.Write((byte)0);
-                }
+                output.WritePadding(2048);
             }
         }
 
         private static uint Pack(ParFolderInfo folder, ExtendedBinaryWriter output, string path,
             IDictionary<uint, ParFolderInfo> folderDict,
-            IDictionary<uint, ParFileInfo> fileDict, uint folderTableOffset, uint fileTableOffset, uint dataOffset, bool useCompression)
+            IDictionary<uint, ParFileInfo> fileDict, uint folderTableOffset, uint fileTableOffset, uint dataOffset, bool useCompression, ref int blockSize)
         {
             var newPath = Path.Combine(path, folder.Name);
 
@@ -418,13 +417,13 @@ namespace YakuzaGame.Files
             foreach (var fileId in folder.FilesId)
             {
                 var f = fileDict[fileId];
-                newOffset = Pack(f, compressedData[fileId], output, fileTableOffset, newOffset, useCompression);
+                newOffset = Pack(f, compressedData[fileId], output, fileTableOffset, newOffset, useCompression, ref blockSize);
             }
 
             foreach (var folderId in folder.FoldersId)
             {
                 var f = folderDict[folderId];
-                newOffset = Pack(f, output, newPath, folderDict, fileDict, folderTableOffset, fileTableOffset, newOffset, useCompression);
+                newOffset = Pack(f, output, newPath, folderDict, fileDict, folderTableOffset, fileTableOffset, newOffset, useCompression, ref blockSize);
             }
 
             return newOffset;
@@ -457,7 +456,7 @@ namespace YakuzaGame.Files
             return result;
         }
 
-        private static uint Pack(ParFileInfo file, CompressResult compress, ExtendedBinaryWriter output, uint fileTableOffset, uint dataOffset, bool useCompression)
+        private static uint Pack(ParFileInfo file, CompressResult compress, ExtendedBinaryWriter output, uint fileTableOffset, uint dataOffset, bool useCompression, ref int blockSize)
         {
             output.Seek(fileTableOffset + file.Index * 32, SeekOrigin.Begin);
 
@@ -474,11 +473,29 @@ namespace YakuzaGame.Files
 
             output.Write((uint)compress.Data.Length);
 
-            if (file.FileOffset % 2048 == 0)
+            if (compress.Data.Length > 2048)
             {
-                while (dataOffset % 2048 != 0)
+                blockSize = 2048 + (-compress.Data.Length % 2048);
+                if (dataOffset % 2048 != 0)
                 {
-                    dataOffset++;
+                    var padding = 2048 + (-dataOffset % 2048);
+                    dataOffset += (uint)padding;
+                }
+            }
+            else
+            {
+                if (compress.Data.Length < blockSize)
+                {
+                    blockSize -= compress.Data.Length;
+                }
+                else
+                {
+                    blockSize = 2048 + (-compress.Data.Length % 2048);
+                    if (dataOffset % 2048 != 0)
+                    {
+                        var padding = 2048 + (-dataOffset % 2048);
+                        dataOffset += (uint)padding;
+                    }
                 }
             }
 
