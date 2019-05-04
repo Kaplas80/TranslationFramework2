@@ -17,6 +17,17 @@ namespace YakuzaGame.Files.Msg
         {
         }
 
+#if DEBUG
+        private View _msgView;
+        public override void Open(DockPanel panel, ThemeBase theme)
+        {
+            _msgView = new View(theme);
+
+            _subtitles = GetSubtitles();
+            _msgView.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
+            _msgView.Show(panel, DockState.Document);
+        }
+#endif
         protected override IList<TF.Core.TranslationEntities.Subtitle> GetSubtitles()
         {
             var result = new List<TF.Core.TranslationEntities.Subtitle>();

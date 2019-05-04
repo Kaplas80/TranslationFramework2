@@ -30,7 +30,7 @@ namespace YakuzaGame.Files.Msg
             }
         }
 
-        private IList<Subtitle> _subtitles;
+        private IList<TF.Core.TranslationEntities.Subtitle> _subtitles;
 
         protected View()
         {
@@ -54,7 +54,7 @@ namespace YakuzaGame.Files.Msg
             dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
-        internal void LoadSubtitles(IList<Subtitle> subtitles)
+        internal void LoadSubtitles(IList<TF.Core.TranslationEntities.Subtitle> subtitles)
         {
             _subtitles = subtitles;
 
@@ -102,27 +102,6 @@ namespace YakuzaGame.Files.Msg
             if (e.Value == null)
             {
                 return;
-            }
-
-            if (e.ColumnIndex == 0)
-            {
-                var subtitle = _subtitles[e.RowIndex];
-
-                if (subtitle.Properties != null)
-                {
-                    if (!subtitle.Properties.ToByteArray().SequenceEqual(subtitle.TranslationProperties.ToByteArray()))
-                    {
-                        e.CellStyle.BackColor = Color.Red;
-                    }
-                    else
-                    {
-                        e.CellStyle.BackColor = SubtitleGridView.Columns[0].DefaultCellStyle.BackColor;
-                    }
-                }
-                else
-                {
-                    e.CellStyle.BackColor = SubtitleGridView.Columns[0].DefaultCellStyle.BackColor;
-                }
             }
 
             if (e.ColumnIndex == 2)
@@ -226,14 +205,14 @@ namespace YakuzaGame.Files.Msg
             if (SubtitleGridView.SelectedCells.Count == 1)
             {
                 var subtitle =
-                    ((List<Subtitle>) SubtitleGridView.DataSource)[SubtitleGridView.SelectedCells[0].RowIndex];
+                    ((List<TF.Core.TranslationEntities.Subtitle>) SubtitleGridView.DataSource)[SubtitleGridView.SelectedCells[0].RowIndex];
 
-                if (subtitle.Properties != null)
+                if (subtitle is Subtitle msgSubtitle && msgSubtitle.Properties != null)
                 {
-                    var byteProvider = new DynamicByteProvider(subtitle.Properties.ToByteArray());
+                    var byteProvider = new DynamicByteProvider(msgSubtitle.Properties.ToByteArray());
                     hexBox1.ByteProvider = byteProvider;
 
-                    var byteProvider2 = new DynamicByteProvider(subtitle.TranslationProperties.ToByteArray());
+                    var byteProvider2 = new DynamicByteProvider(msgSubtitle.TranslationProperties.ToByteArray());
                     hexBox2.ByteProvider = byteProvider2;
                 }
                 else

@@ -18,14 +18,15 @@ namespace YakuzaGame.Files.Msg
 
 
                 var i = 0;
+                var cleanTextLength = (short) CleanTranslation().Length;
                 foreach (var property in Properties)
                 {
                     if (property.GetType().Name == nameof(MsgProperty))
                     {
                         var copy = new MsgProperty(property.ToByteArray());
-                        if (property.IsEndProperty)
+                        if (property.IsEndProperty || property.Position > cleanTextLength)
                         {
-                            copy.Position = (short) CleanTranslation().Length;
+                            copy.Position = cleanTextLength;
                         }
 
                         copy.Order = i;
