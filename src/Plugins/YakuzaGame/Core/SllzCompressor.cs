@@ -33,32 +33,12 @@ namespace YakuzaGame.Core
 
         private class BitManager
         {
-            private enum WorkMode
-            {
-                Read,
-                Write
-            }
-
             private readonly ExtendedBinaryReader _input;
             private readonly ExtendedBinaryWriter _output;
             private byte _currentValue;
             private byte _bitCount;
 
-            private WorkMode _mode;
-
             public bool IsByteChange { get; private set; }
-
-            public BitManager(ExtendedBinaryReader input)
-            {
-                _input = input;
-
-                _currentValue = input.ReadByte();
-                _bitCount = 0x08;
-
-                IsByteChange = false;
-
-                _mode = WorkMode.Read;
-            }
 
             public BitManager(ExtendedBinaryWriter output)
             {
@@ -66,42 +46,18 @@ namespace YakuzaGame.Core
 
                 _currentValue = 0x0;
                 _bitCount = 0x00;
-
-                _mode = WorkMode.Write;
             }
 
             public void Flush()
             {
-                if (_mode == WorkMode.Read)
-                {
-                    throw new NotImplementedException("Esta función no es válida para descomprimir");
-                }
-
                 _output.Write(_currentValue);
                 _currentValue = 0x00;
                 _bitCount = 0x00;
                 IsByteChange = true;
             }
 
-            public FlagType GetFlagType()
-            {
-                if (_mode == WorkMode.Write)
-                {
-                    throw new NotImplementedException("Esta función no es válida para comprimir");
-                }
-
-                var val = GetFlag();
-
-                return val == 0 ? FlagType.Literal : FlagType.Copy;
-            }
-
             public void SetFlagType(FlagType value)
             {
-                if (_mode == WorkMode.Read)
-                {
-                    throw new NotImplementedException("Esta función no es válida para descomprimir");
-                }
-
                 switch (value)
                 {
                     case FlagType.Literal:
@@ -115,53 +71,8 @@ namespace YakuzaGame.Core
                 }
             }
 
-            public Tuple<int, int> GetCopyInfo()
-            {
-                if (_mode == WorkMode.Write)
-                {
-                    throw new NotImplementedException("Esta función no es válida para comprimir");
-                }
-
-                var copyFlags = (ushort)(_input.ReadByte() | _input.ReadByte() << 8);
-
-                var copyDistance = 1 + (copyFlags >> 4);
-                var copyCount = 3 + (copyFlags & 0xF);
-
-                return new Tuple<int, int>(copyDistance, copyCount);
-            }
-
-            private int GetFlag()
-            {
-                if (_mode == WorkMode.Write)
-                {
-                    throw new NotImplementedException("Esta función no es válida para comprimir");
-                }
-
-                IsByteChange = false;
-
-                var result = (_currentValue & 0x80);
-
-                _bitCount--;
-                _currentValue <<= 0x01;
-
-                if (_bitCount == 0x00)
-                {
-                    var data = _input.ReadByte();
-                    _currentValue = data;
-                    _bitCount = 0x08;
-                    IsByteChange = true;
-                }
-
-                return result;
-            }
-
             private void SetFlag(byte value)
             {
-                if (_mode == WorkMode.Read)
-                {
-                    throw new NotImplementedException("Esta función no es válida para descomprimir");
-                }
-
                 IsByteChange = false;
 
                 if (value == 0x01)
@@ -181,9 +92,8 @@ namespace YakuzaGame.Core
         public static byte[] Decompress(byte[] compressedData)
         {
             using (var input = new ExtendedBinaryReader(new MemoryStream(compressedData), Encoding.GetEncoding(1252), Endianness.BigEndian))
-            using (var output = new MemoryStream())
             {
-                var magic = input.ReadUInt32();
+                var magic = input.ReadUInt32(); // 53 4C 4C 5A
                 var endianness = input.ReadByte();
 
                 input.Endianness = endianness == 0 ? Endianness.LittleEndian : Endianness.BigEndian;
@@ -194,38 +104,78 @@ namespace YakuzaGame.Core
                 var uncompressedSize = input.ReadUInt32();
                 var compressedSize = input.ReadUInt32();
 
-                var block = new byte[18];
-
-                var manager = new BitManager(input);
-
-                while (input.Position < input.Length)
+                if (version == 0x01)
                 {
-                    var type = manager.GetFlagType();
-
-                    switch (type)
-                    {
-                        case FlagType.Literal:
-                            output.WriteByte(input.ReadByte());
-
-                            break;
-
-                        case FlagType.Copy:
-                            var (copyPosition, copyCount) = manager.GetCopyInfo();
-
-                            output.Seek(-copyPosition, SeekOrigin.End);
-                            output.Read(block, 0, copyCount);
-                            output.Seek(0, SeekOrigin.End);
-                            output.Write(block, 0, copyCount);
-
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    return DecompressV1(compressedData, uncompressedSize);
                 }
 
-                return output.ToArray();
+                return new byte[0];
             }
+        }
+        private static byte[] DecompressV1(byte[] data, uint uncompressedSize)
+        {
+            if (uncompressedSize == 0)
+            {
+                return new byte[0];
+            }
+
+            var output = new byte[uncompressedSize];
+
+            var processedBytes = 0;
+            var inputPosition = 0x10; // Después de la cabecera del SLLZ
+            var outputPosition = 0;
+
+            var flag = data[inputPosition];
+            inputPosition++;
+            var flagCount = 8;
+            do
+            {
+                if ((flag & 0x80) == 0x80)
+                {
+                    flag = (byte) (flag << 1);
+                    flagCount--;
+                    if (flagCount == 0)
+                    {
+                        flag = data[inputPosition];
+                        inputPosition++;
+                        flagCount = 8;
+                    }
+
+                    var copyFlags = (ushort)(data[inputPosition] | data[inputPosition + 1] << 8);
+                    inputPosition += 2;
+
+                    var copyDistance = 1 + (copyFlags >> 4);
+                    var copyCount = 3 + (copyFlags & 0xF);
+
+                    var i = 0;
+                    do
+                    {
+                        output[outputPosition] = output[outputPosition - copyDistance];
+                        outputPosition++;
+                        i++;
+                    } while (i < copyCount);
+
+                    processedBytes += copyCount;
+                }
+                else
+                {
+                    flag = (byte)(flag << 1);
+                    flagCount--;
+                    if (flagCount == 0)
+                    {
+                        flag = data[inputPosition];
+                        inputPosition++;
+                        flagCount = 8;
+                    }
+
+                    output[outputPosition] = data[inputPosition];
+                    inputPosition++;
+                    outputPosition++;
+                    processedBytes++;
+                }
+            } while (processedBytes < uncompressedSize);
+            
+            return output;
         }
 
         public static byte[] Compress(byte[] uncompressedData)
@@ -309,19 +259,16 @@ namespace YakuzaGame.Core
 
                 manager.Flush();
                 
-                if (queue.Count > 0)
+                while (queue.Count > 0)
                 {
-                    while (queue.Count > 0)
+                    var item = queue.Dequeue();
+                    if (item.IsLiteral)
                     {
-                        var item = queue.Dequeue();
-                        if (item.IsLiteral)
-                        {
-                            output.Write(item.Literal);
-                        }
-                        else
-                        {
-                            output.Write(item.CopyFlags);
-                        }
+                        output.Write(item.Literal);
+                    }
+                    else
+                    {
+                        output.Write(item.CopyFlags);
                     }
                 }
 
