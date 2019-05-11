@@ -253,7 +253,7 @@ namespace YakuzaGame.Core
 
                 while (currentPosition < uncompressedSize)
                 {
-                    var match = FindMatch(uncompressedData, currentPosition, true);
+                    var match = FindMatch(uncompressedData, currentPosition);
 
                     if (!match.Found)
                     {
@@ -332,12 +332,7 @@ namespace YakuzaGame.Core
             }
         }
 
-        private static MatchResult FindMatch(byte[] input, int readPos, bool useSegaCompression)
-        {
-            return useSegaCompression ? FindMatchSega(input, readPos) : FindMatchKMP(input, readPos);
-        }
-
-        private static MatchResult FindMatchSega(byte[] input, int readPos)
+        private static MatchResult FindMatch(byte[] input, int readPos)
         {
             var bestPos = 0;
             var bestLength = 1;
@@ -393,109 +388,6 @@ namespace YakuzaGame.Core
             }
 
             return length;
-        }
-
-        private static MatchResult FindMatchKMP(byte[] input, int readPos)
-        { 
-            var result = new MatchResult();
-
-            var startPos = Math.Max(readPos - SEARCH_SIZE, 0);
-            var searchSize = Math.Min(SEARCH_SIZE, readPos - startPos);
-
-            var maxLength = Math.Min(input.Length - readPos, MAX_LENGTH);
-            maxLength = Math.Min(maxLength, readPos);
-
-            if (maxLength < 3)
-            {
-                result.Found = false;
-                result.Distance = 0;
-                result.Length = 1;
-
-                return result;
-            }
-
-            var bestPos = 0;
-            var bestLength = 0;
-
-            var kmpTable = FillTable(input, readPos, maxLength);
-
-            var k = 0;
-            var i = 0;
-
-            while (k + i < searchSize && i < maxLength)
-            {
-                if (input[readPos + i] == input[startPos + k + i])
-                {
-                    i++;
-
-                    if (i == maxLength)
-                    {
-                        bestLength = i;
-                        bestPos = k + startPos;
-                        break;
-                    }
-                }
-                else
-                {
-                    if (i > bestLength)
-                    {
-                        bestLength = i;
-                        bestPos = k + startPos;
-                    }
-
-                    k = k + i - kmpTable[i];
-
-                    i = kmpTable[i] > 0 ? kmpTable[i] : 0;
-                }
-                
-            }
-
-            if (bestLength >= 3)
-            {
-                result.Found = true;
-                result.Distance = readPos - bestPos;
-                result.Length = bestLength;
-            }
-            else
-            {
-                result.Found = false;
-                result.Distance = 0;
-                result.Length = 1;
-            }
-
-            return result;
-        }
-
-        private static int[] FillTable(byte[] input, int readPos, int maxLength)
-        {
-            var kmpTable = new int[maxLength];
-
-            var pos = 2;  
-            var cnd = 0;  
-
-            kmpTable[0] = -1;
-            kmpTable[1] = 0;
-
-            while (pos < maxLength)
-            {
-                if (input[readPos + pos - 1] == input[readPos + cnd])
-                {
-                    cnd++;
-                    kmpTable[pos] = cnd;
-                    pos++;
-                }
-                else if (cnd > 0)
-                {
-                    cnd = kmpTable[cnd];
-                }
-                else
-                {
-                    kmpTable[pos] = 0;
-                    pos++;
-                }
-            }
-
-            return kmpTable;
         }
     }
 }

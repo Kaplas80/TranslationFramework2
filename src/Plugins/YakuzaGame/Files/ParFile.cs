@@ -27,49 +27,10 @@ namespace YakuzaGame.Files
             {
                 parFile.Dump(inputPath, outputFolder);
             }
-
-            var newParFiles = Directory.GetFiles(outputFolder, "*.par", SearchOption.TopDirectoryOnly);
-            foreach (var file in newParFiles)
-            {
-                var newOutputPath = Path.Combine(outputFolder, $"{Path.GetFileName(file)}.unpack");
-                Extract(file, newOutputPath);
-            }
-
-            var pacFolder = Path.Combine(outputFolder, "pac");
-            if (Directory.Exists(pacFolder))
-            {
-                var newPacFiles = Directory.GetFiles(pacFolder, "pac_*.bin", SearchOption.TopDirectoryOnly);
-                foreach (var file in newPacFiles)
-                {
-                    var newOutputPath = Path.Combine(pacFolder, $"{Path.GetFileName(file)}.unpack");
-                    PacFile.Extract(file, newOutputPath);
-                }
-            }
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
-            var unpackedParFolders = Directory.GetDirectories(inputFolder, "*.par.unpack", SearchOption.TopDirectoryOnly);
-            foreach (var folder in unpackedParFolders)
-            {
-                var tempFile = folder.Substring(0, folder.Length - 7);
-                Repack(folder, tempFile, useCompression);
-            }
-
-            var pacFolder = Path.Combine(inputFolder, "pac");
-            if (Directory.Exists(pacFolder))
-            {
-                var unpackedPacFolders =
-                    Directory.GetDirectories(pacFolder, "pac_*.bin.unpack", SearchOption.TopDirectoryOnly);
-
-                foreach (var folder in unpackedPacFolders)
-                {
-                    var tempFile = folder.Substring(0, folder.Length - 7);
-                    PacFile.Repack(folder, tempFile, useCompression);
-                }
-            }
-
-
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
 
@@ -203,18 +164,18 @@ namespace YakuzaGame.Files
 
         private static void ProcessFolder(ParFolderInfo folder, ExtendedBinaryReader input, uint folderNamesOffset, uint folderTableOffset, uint fileNamesOffset, uint fileTableOffset)
         {
+            for (uint i = 0; i < folder.FileCount; i++)
+            {
+                var file = ReadFileInfo(folder.FileIndex + i, input, fileNamesOffset, fileTableOffset);
+                folder.Files.Add(file);
+            }
+
             for (uint i = 0; i < folder.FolderCount; i++)
             {
                 var f = ReadFolderInfo(folder.FolderIndex + i, input, folderNamesOffset, folderTableOffset);
                 ProcessFolder(f, input, folderNamesOffset, folderTableOffset, fileNamesOffset, fileTableOffset);
 
                 folder.Folders.Add(f);
-            }
-
-            for (uint i = 0; i < folder.FileCount; i++)
-            {
-                var file = ReadFileInfo(folder.FileIndex + i, input, fileNamesOffset, fileTableOffset);
-                folder.Files.Add(file);
             }
         }
 
@@ -280,12 +241,13 @@ namespace YakuzaGame.Files
             }
 
             var outputFolder = Path.Combine(parentFolder, folder.Name);
-            foreach (var f in folder.Folders)
+
+            foreach (var f in folder.Files)
             {
                 Dump(input, f, outputFolder, logFile);
             }
-
-            foreach (var f in folder.Files)
+            
+            foreach (var f in folder.Folders)
             {
                 Dump(input, f, outputFolder, logFile);
             }
@@ -326,6 +288,15 @@ namespace YakuzaGame.Files
             }
 
             File.WriteAllBytes(name, data);
+
+            if (Path.GetExtension(name) == ".par")
+            {
+                ParFile.Extract(name, $"{name}.unpack");
+            }
+            else if (Path.GetExtension(name) == ".bin" && Path.GetFileNameWithoutExtension(name).StartsWith("pac_"))
+            {
+                PacFile.Extract(name, $"{name}.unpack");
+            }
         }
     }
 
@@ -440,6 +411,21 @@ namespace YakuzaGame.Files
             var result = new CompressResult();
             
             var newPath = Path.Combine(path, file.Name);
+
+            if (Path.GetExtension(newPath) == ".par")
+            {
+                if (Directory.Exists($"{newPath}.unpack"))
+                {
+                    ParFile.Repack($"{newPath}.unpack", newPath, useCompression);
+                }
+            }
+            else if (Path.GetExtension(newPath) == ".bin" && Path.GetFileNameWithoutExtension(newPath).StartsWith("pac_"))
+            {
+                if (Directory.Exists($"{newPath}.unpack"))
+                {
+                    PacFile.Repack($"{newPath}.unpack", newPath, useCompression);
+                }
+            }
 
             if (useCompression && file.IsCompressed())
             {

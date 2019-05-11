@@ -28,11 +28,7 @@ namespace YakuzaGame
             var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
-            if (fileName == "ui_e.par" || fileName == "ui_c.par")
-            {
-                UIParFile.Extract(inputFile, outputPath);
-            }
-            else if (extension.StartsWith(".par"))
+            if (extension.StartsWith(".par"))
             {
                 ParFile.Extract(inputFile, outputPath);
             }
@@ -43,11 +39,7 @@ namespace YakuzaGame
             var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
-            if (fileName == "ui_e.par" || fileName == "ui_c.par")
-            {
-                UIParFile.Repack(inputPath, outputFile, compress);
-            }
-            else if (extension.StartsWith(".par"))
+            if (extension.StartsWith(".par"))
             {
                 ParFile.Repack(inputPath, outputFile, compress);
             }
