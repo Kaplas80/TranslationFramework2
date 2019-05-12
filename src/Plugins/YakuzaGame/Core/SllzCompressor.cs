@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using OfficeOpenXml.Packaging.Ionic.Zlib;
 using TF.IO;
 
 namespace YakuzaGame.Core
@@ -109,9 +110,15 @@ namespace YakuzaGame.Core
                     return DecompressV1(compressedData, uncompressedSize);
                 }
 
+                if (version == 0x02)
+                {
+                    return DecompressV2(compressedData, uncompressedSize);
+                }
+
                 return new byte[0];
             }
         }
+
         private static byte[] DecompressV1(byte[] data, uint uncompressedSize)
         {
             if (uncompressedSize == 0)
@@ -176,6 +183,54 @@ namespace YakuzaGame.Core
             } while (processedBytes < uncompressedSize);
             
             return output;
+        }
+
+        private static byte[] DecompressV2(byte[] data, uint uncompressedSize)
+        {
+            if (uncompressedSize == 0)
+            {
+                return new byte[0];
+            }
+
+            var output = new byte[uncompressedSize];
+
+            var inputPosition = 0x10; // Después de la cabecera del SLLZ
+            var outputPosition = 0;
+
+
+            while (outputPosition < uncompressedSize)
+            {
+                var compressedChunkSize = ((data[inputPosition] << 16) | (data[inputPosition + 1] << 8) | (data[inputPosition + 2]));
+                var uncompressedChunkSize = ((data[inputPosition + 3] << 8) | (data[inputPosition + 4])) + 1;
+
+                var flag = (data[inputPosition] & 0x80) == 0x80;
+
+                if (!flag)
+                {
+                    var deflated = DecompressZlib(data, inputPosition + 5, compressedChunkSize - 5);
+                    Array.Copy(deflated,0, output, outputPosition, deflated.Length);
+                    inputPosition += compressedChunkSize;
+                }
+                else
+                {
+                    throw new NotImplementedException("Modo de compresión no soportado");
+                    inputPosition += (compressedChunkSize - 0x800000);
+                }
+
+                outputPosition += uncompressedChunkSize;
+            }
+            return output;
+        }
+
+        private static byte[] DecompressZlib(byte[] input, int position, int size)
+        {
+            using (var inputMemoryStream = new MemoryStream(input, position, size))
+            using (var outputMemoryStream = new MemoryStream())
+            using (var zlibStream = new ZlibStream(inputMemoryStream, CompressionMode.Decompress))
+            {
+                zlibStream.CopyTo(outputMemoryStream);
+                return outputMemoryStream.ToArray();
+            }
         }
 
         public static byte[] Compress(byte[] uncompressedData)
