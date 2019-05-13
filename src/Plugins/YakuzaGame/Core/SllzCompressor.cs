@@ -207,8 +207,8 @@ namespace YakuzaGame.Core
 
                 if (!flag)
                 {
-                    var deflated = DecompressZlib(data, inputPosition + 5, compressedChunkSize - 5);
-                    Array.Copy(deflated,0, output, outputPosition, deflated.Length);
+                    var decompressedData = DecompressZlib(data, inputPosition + 5, compressedChunkSize - 5);
+                    Array.Copy(decompressedData, 0, output, outputPosition, decompressedData.Length);
                     inputPosition += compressedChunkSize;
                 }
                 else
