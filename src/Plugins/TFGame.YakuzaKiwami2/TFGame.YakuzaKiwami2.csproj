@@ -36,6 +36,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\Armp\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Encoding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,5 +69,6 @@
   <ItemGroup>
     <None Include="Resources\Icon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

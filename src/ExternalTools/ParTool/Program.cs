@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using YakuzaGame.Files;
 
 namespace ParTool
 {
@@ -21,7 +20,9 @@ namespace ParTool
             {
                 if (args[0].EndsWith(".unpack"))
                 {
-                    ParFile.Repack($"{args[0]}.unpack", args[0], true);
+                    var filename = args[0].Replace(".unpack", string.Empty);
+
+                    ParFile.Repack(args[0], filename, true);
                     return;
                 }
                 else

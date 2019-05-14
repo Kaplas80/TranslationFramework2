@@ -37,18 +37,24 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="zlib.net, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\zlib.net-mutliplatform.1.0.4\lib\net47\zlib.net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SllzCompressor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Plugins\YakuzaGame\YakuzaGame.csproj">
-      <Project>{24524a72-cbf8-439a-ab89-f809a92d6f0e}</Project>
-      <Name>YakuzaGame</Name>
+    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
+      <Project>{4f0d7226-fa20-4fe3-a523-336702654e02}</Project>
+      <Name>TF.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
