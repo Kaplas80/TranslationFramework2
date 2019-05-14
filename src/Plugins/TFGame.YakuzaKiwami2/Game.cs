@@ -11,7 +11,7 @@ namespace TFGame.YakuzaKiwami2
         public override string Id => "28bb0b85-2455-4cae-bb6a-fcc6b726c823";
         public override string Name => "Yakuza Kiwami 2";
         public override string Description => "Build Id: 3762252";
-        public override Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/Yakuza-Kiwami-2-Icon-794434106
+        public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-2-797479571
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
