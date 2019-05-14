@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TF.IO", "TF.IO\TF.IO.csproj", "{4F0D7226-FA20-4FE3-A523-336702654E02}"
 EndProject
@@ -44,6 +44,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.TheMissing", "Plugins\TFGame.TheMissing\TFGame.TheMissing.csproj", "{880DE844-B89D-42A8-B7C5-3361D887E983}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CpkTool", "ExternalTools\CpkTool\CpkTool.csproj", "{A82734A9-2FF1-43E8-97E3-F45BAF632BE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.YakuzaIshin", "Plugins\TFGame.YakuzaIshin\TFGame.YakuzaIshin.csproj", "{C3A0DF5A-A3AF-49BF-B604-C1161B5736BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +125,10 @@ Global
 		{A82734A9-2FF1-43E8-97E3-F45BAF632BE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A82734A9-2FF1-43E8-97E3-F45BAF632BE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A82734A9-2FF1-43E8-97E3-F45BAF632BE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3A0DF5A-A3AF-49BF-B604-C1161B5736BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3A0DF5A-A3AF-49BF-B604-C1161B5736BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3A0DF5A-A3AF-49BF-B604-C1161B5736BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3A0DF5A-A3AF-49BF-B604-C1161B5736BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +149,7 @@ Global
 		{DD463E12-4F5E-464C-AB30-4531CC9251AB} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{880DE844-B89D-42A8-B7C5-3361D887E983} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{A82734A9-2FF1-43E8-97E3-F45BAF632BE0} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
+		{C3A0DF5A-A3AF-49BF-B604-C1161B5736BC} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}

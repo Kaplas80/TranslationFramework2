@@ -112,6 +112,7 @@
     <Compile Include="Files\AiPopup\File.cs" />
     <Compile Include="Files\Bar\File.cs" />
     <Compile Include="Files\Blacksmith\File.cs" />
+    <Compile Include="Files\CmnBin\JpnFile.cs" />
     <Compile Include="Files\CmnBin\File.cs" />
     <Compile Include="Files\CmnBin\Subtitle.cs" />
     <Compile Include="Files\Epmb\File.cs" />
