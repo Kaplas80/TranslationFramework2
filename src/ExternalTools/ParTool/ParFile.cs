@@ -11,6 +11,8 @@ namespace ParTool
 {
     public partial class ParFile
     {
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private ParFile()
         {
         }
@@ -214,6 +216,7 @@ namespace ParTool
 
         private static void Dump(ExtendedBinaryReader input, ParFolderInfo folder, string parentFolder, string logFile)
         {
+            _logger.Info("Extracting {0}\\{1}", parentFolder, folder.Name);
             using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Append), Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 log.Write((byte)0);
@@ -254,6 +257,7 @@ namespace ParTool
 
         private static void Dump(ExtendedBinaryReader input, ParFileInfo file, string outputFolder, string logFile)
         {
+            _logger.Info("Extracting {0}\\{1}", outputFolder, file.Name);
             using (var log = new ExtendedBinaryWriter(new FileStream(logFile, FileMode.Append), Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
                 log.Write((byte)1);
@@ -359,6 +363,7 @@ namespace ParTool
             IDictionary<uint, ParFolderInfo> folderDict,
             IDictionary<uint, ParFileInfo> fileDict, uint folderTableOffset, uint fileTableOffset, uint dataOffset, bool useCompression, ref int blockSize)
         {
+            _logger.Info("Packing {0}\\{1}", path, folder.Name);
             var newPath = Path.Combine(path, folder.Name);
 
             output.Seek(folderTableOffset + folder.Index * 32, SeekOrigin.Begin);
@@ -380,6 +385,7 @@ namespace ParTool
             Parallel.ForEach(folder.FilesId, fileId =>
             {
                 var f = fileDict[fileId];
+                _logger.Info("Packing {0}\\{1}", newPath, f.Name);
                 var data = GetData(f, newPath, useCompression);
                 compressedData[fileId] = data;
             });
@@ -387,6 +393,7 @@ namespace ParTool
             foreach (var fileId in folder.FilesId)
             {
                 var f = fileDict[fileId];
+                
                 newOffset = Pack(f, compressedData[fileId], output, fileTableOffset, newOffset, useCompression, ref blockSize);
             }
 
