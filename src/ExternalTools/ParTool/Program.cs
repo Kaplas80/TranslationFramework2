@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using McMaster.Extensions.CommandLineUtils;
 using NLog.Layouts;
@@ -17,6 +18,9 @@ namespace ParTool
         [Option("-nc|--no-compression")]
         public bool NotUseCompression { get; }
 
+        [Option("-v|--verbose")]
+        public bool Verbose { get; }
+
         private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private void OnExecute()
@@ -25,15 +29,19 @@ namespace ParTool
 
             var useCompression = !NotUseCompression;
 
+            var sw = new Stopwatch();
+
             var isFile = File.Exists(Input);
             if (isFile)
             {
                 _logger.Info("MODE: EXTRACT");
                 _logger.Info("INPUT: {0}", Input);
 
+                sw.Start();
                 ParFile.Extract(Input, $"{Input}.unpack");
+                sw.Stop();
 
-                _logger.Info("FINISHED");
+                _logger.Info("Time elapsed: {0}ms", sw.ElapsedMilliseconds);
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
                 return;
@@ -52,9 +60,12 @@ namespace ParTool
 
                     var filename = Input.Replace(".unpack", string.Empty);
 
+                    sw.Start();
                     ParFile.Repack(Input, filename, useCompression);
 
-                    _logger.Info("FINISHED");
+                    sw.Stop();
+
+                    _logger.Info("Time elapsed: {0}ms", sw.ElapsedMilliseconds);
                     Console.WriteLine("Press any key to exit...");
                     Console.ReadKey();
                     return;
@@ -88,7 +99,7 @@ namespace ParTool
 
             var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
             logconsole.Layout = Layout.FromString("${message}");
-            nLogConfig.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
+            nLogConfig.AddRule(Verbose ? NLog.LogLevel.Debug : NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
 
             NLog.LogManager.Configuration = nLogConfig;
         }
