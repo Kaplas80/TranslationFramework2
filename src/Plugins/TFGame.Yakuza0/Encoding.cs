@@ -16,6 +16,7 @@ namespace TFGame.Yakuza0
         {
             DecodingReplacements = new List<Tuple<string, string>>
             {
+                new Tuple<string, string>("⑮", "\u2665"),
                 new Tuple<string, string>("\\", "¥"),
                 new Tuple<string, string>("\u007F", "®"),
                 new Tuple<string, string>("^", "%"),
@@ -32,6 +33,9 @@ namespace TFGame.Yakuza0
                 new Tuple<string, string>("^", "%"),
                 new Tuple<string, string>("®", "\u007F"),
                 new Tuple<string, string>("¥", "\\"),
+                new Tuple<string, string>("\u266A", "¤"), // Nota musical
+                new Tuple<string, string>("\u2665", "§"), // Corazón
+                new Tuple<string, string>("\u221E", "\u00B8") // Infinito
             };
 
         }
