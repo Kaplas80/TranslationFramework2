@@ -11,9 +11,32 @@ namespace TFGame.YakuzaIshin
         public override string Name => "Ryū ga Gotoku Ishin!";
         public override string Description => "BLJM61149";
         public override Image Icon => Resources.Icon; // https://en.wikipedia.org/wiki/Yakuza_Ishin
-        public override int Version => 3;
+        public override int Version => 4;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
+        private GameFileContainer GetBootpar()
+        {
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern =
+                        "ability.bin;caption.bin;chase_base.bin;chase_condition.bin;complete_haruka.bin;complete_heat.bin;complete_shisho.bin;continuepoint.bin;dictionary.bin;dictionary_ignore.bin;environment.bin;explanation_main_scenario.bin;explanation_sub_story.bin;item.bin;item_alias.bin;item_mark.bin;item_weapon_parameter.bin;kiyaku.bin;otazunemono.bin;pet_bonus.bin;restaurant_menu.bin;tips_tutorial.bin",
+                    
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Table.File)
+                };
+
+            var bootpar = new GameFileContainer
+            {
+                Path = @"data\bootpar\boot.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            bootpar.FileSearches.Add(tableSearch);
+            return bootpar;
+        }
 
         private GameFileContainer GetStage()
         {
@@ -35,6 +58,28 @@ namespace TFGame.YakuzaIshin
 
             stage.FileSearches.Add(streetNameSearch);
             return stage;
+        }
+
+        private GameFileContainer GetStaypar()
+        {
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "activity_list.bin;colosseum_participant.bin;commerce_*.bin;complete_haruka.bin;controller_explain.bin;correlation_*.bin;encount_loser_popup.bin;encounter_*.bin;explanation_soldier_mission.bin;farm_vegetable_list.bin;kyoukei_bird_param.bin;otazunemono.bin;pet_*.bin;response_chase.bin;response_roulette.bin;roulette_npc.bin;soldier_card_list.bin;soldier_leader_skill_list.bin;soldier_normal_skill_list.bin;soldier_training_mission.bin;tenkei_blog.bin;treasure_random_item.bin;tutorial.bin;ultimate.bin;virtue_shop_*.bin",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Table.File)
+                };
+
+            var par = new GameFileContainer
+            {
+                Path = @"data\staypar\stay.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            par.FileSearches.Add(tableSearch);
+            return par;
         }
 
         private IList<GameFileContainer> GetWdrCommon()
@@ -138,7 +183,9 @@ namespace TFGame.YakuzaIshin
         {
             var result = new List<GameFileContainer>();
 
+            result.Add(GetBootpar());
             result.Add(GetStage());
+            result.Add(GetStaypar());
             result.AddRange(GetWdrCommon());
             result.AddRange(GetWdr());
 
