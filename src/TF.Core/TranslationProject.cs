@@ -244,13 +244,13 @@ namespace TF.Core
 
                     // 2. Crear los ficheros traducidos en esa carpeta temporal
                     worker.ReportProgress(0, "Generando ficheros traducidos...");
-                    Parallel.ForEach(container.Files, translationFile =>
+                    foreach (var translationFile in container.Files)
                     {
                         if (translationFile.HasChanges || options.ForceRebuild)
                         {
                             translationFile.Rebuild(dest);
                         }
-                    });
+                    }
 
                     // 3. Empaquetar
                     worker.ReportProgress(0, "Empaquetando fichero...");

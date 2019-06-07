@@ -377,8 +377,6 @@ namespace TFGame.TheMissing.Files.Txt
                     input.Skip(16);
                 }
             }
-
-            
         }
 
         public override bool Search(string searchString)
