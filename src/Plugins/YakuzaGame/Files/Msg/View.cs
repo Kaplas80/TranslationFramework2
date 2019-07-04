@@ -67,7 +67,8 @@ namespace YakuzaGame.Files.Msg
                 Name = "colOffset",
                 HeaderText = "Offset",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "X8", BackColor = Color.LightGray},
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
@@ -78,7 +79,8 @@ namespace YakuzaGame.Files.Msg
                 HeaderText = "Original",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
                 DefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.LightGray },
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
@@ -87,7 +89,8 @@ namespace YakuzaGame.Files.Msg
                 DataPropertyName = "Translation",
                 Name = "colTranslation",
                 HeaderText = "Traducción",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
         }

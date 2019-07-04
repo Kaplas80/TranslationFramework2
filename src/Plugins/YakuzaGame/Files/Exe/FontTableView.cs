@@ -38,7 +38,8 @@ namespace YakuzaGame.Files.Exe
                 Name = "colId",
                 HeaderText = "Id",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "X2", BackColor = Color.LightGray},
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(colId);
 
@@ -47,7 +48,8 @@ namespace YakuzaGame.Files.Exe
                 Name = "colChr",
                 HeaderText = "Chr",
                 DefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.LightGray },
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(colChr);
 
@@ -59,7 +61,8 @@ namespace YakuzaGame.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle {Alignment = DataGridViewContentAlignment.MiddleRight},
                 Increment = new decimal(new [] {1, 0, 0, 131072}),
                 Maximum = new decimal(new [] {2, 0, 0, 0}),
-                Minimum = new decimal(new [] {2, 0, 0, -2147483648})
+                Minimum = new decimal(new [] {2, 0, 0, -2147483648}),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 
@@ -71,7 +74,8 @@ namespace YakuzaGame.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
                 Increment = new decimal(new[] { 1, 0, 0, 131072 }),
                 Maximum = new decimal(new[] { 2, 0, 0, 0 }),
-                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 })
+                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 }),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 
@@ -83,7 +87,8 @@ namespace YakuzaGame.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
                 Increment = new decimal(new[] { 1, 0, 0, 131072 }),
                 Maximum = new decimal(new[] { 2, 0, 0, 0 }),
-                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 })
+                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 }),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 
@@ -95,7 +100,8 @@ namespace YakuzaGame.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
                 Increment = new decimal(new[] { 1, 0, 0, 131072 }),
                 Maximum = new decimal(new[] { 2, 0, 0, 0 }),
-                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 })
+                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 }),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 
@@ -107,7 +113,8 @@ namespace YakuzaGame.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
                 Increment = new decimal(new[] { 1, 0, 0, 131072 }),
                 Maximum = new decimal(new[] { 2, 0, 0, 0 }),
-                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 })
+                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 }),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 
@@ -119,7 +126,8 @@ namespace YakuzaGame.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
                 Increment = new decimal(new[] { 1, 0, 0, 131072 }),
                 Maximum = new decimal(new[] { 2, 0, 0, 0 }),
-                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 })
+                Minimum = new decimal(new[] { 2, 0, 0, -2147483648 }),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 

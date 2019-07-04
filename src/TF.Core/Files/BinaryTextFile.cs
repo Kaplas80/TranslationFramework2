@@ -169,7 +169,7 @@ namespace TF.Core.Files
 
         public override bool SearchText(string searchString, int direction)
         {
-            if (_subtitles == null || _subtitles.Count == 0)
+            if (_subtitles == null || _subtitles.Count == 0 || _view == null)
             {
                 return false;
             }

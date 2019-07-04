@@ -70,7 +70,8 @@ namespace YakuzaGame.Files.Table
                         HeaderText = $"{dataColumn.Name}",
                         ReadOnly = true,
                         DefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.LightGray },
-                        Tag = dataColumn
+                        Tag = dataColumn,
+                        SortMode = DataGridViewColumnSortMode.NotSortable,
                     };
 
                     SubtitleGridView.Columns.Add(column);
@@ -80,7 +81,8 @@ namespace YakuzaGame.Files.Table
                         Name = $"{dataColumn.Name}_TRAD",
                         HeaderText = $"{dataColumn.Name} (TRAD)",
                         ReadOnly = false,
-                        Tag = dataColumn
+                        Tag = dataColumn,
+                        SortMode = DataGridViewColumnSortMode.NotSortable,
                     };
 
                     SubtitleGridView.Columns.Add(column);

@@ -34,7 +34,8 @@ namespace TFGame.TrailsSky.Files.Exe
                 Name = "colId",
                 HeaderText = "Id",
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "X2", BackColor = Color.LightGray},
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(colId);
 
@@ -43,7 +44,8 @@ namespace TFGame.TrailsSky.Files.Exe
                 Name = "colChr",
                 HeaderText = "Chr",
                 DefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.LightGray },
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(colChr);
 
@@ -55,7 +57,8 @@ namespace TFGame.TrailsSky.Files.Exe
                 DefaultCellStyle = new DataGridViewCellStyle {Alignment = DataGridViewContentAlignment.MiddleRight},
                 Increment = new decimal(1),
                 Maximum = new decimal(0x10),
-                Minimum = new decimal(0)
+                Minimum = new decimal(0),
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             FontCharsGridView.Columns.Add(column);
 

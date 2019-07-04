@@ -66,7 +66,8 @@ namespace TFGame.TheMissing.Files.Txt
                 Name = "colOffset",
                 HeaderText = "Offset",
                 DefaultCellStyle = new DataGridViewCellStyle {Format = "X8", BackColor = Color.LightGray},
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
@@ -77,7 +78,8 @@ namespace TFGame.TheMissing.Files.Txt
                 HeaderText = "Original",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
                 DefaultCellStyle = new DataGridViewCellStyle {BackColor = Color.LightGray},
-                ReadOnly = true
+                ReadOnly = true,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
@@ -86,7 +88,8 @@ namespace TFGame.TheMissing.Files.Txt
                 DataPropertyName = "Translation",
                 Name = "colTranslation",
                 HeaderText = "Traducción",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
@@ -102,6 +105,7 @@ namespace TFGame.TheMissing.Files.Txt
                 Minimum = new decimal(-1),
                 Increment = new decimal(10),
                 FillWeight = 25F,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(nudColumn);
 
@@ -117,6 +121,7 @@ namespace TFGame.TheMissing.Files.Txt
                 Minimum = new decimal(-1),
                 Increment = new decimal(24),
                 FillWeight = 25F,
+                SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(nudColumn);
 
