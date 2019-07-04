@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using TF.Core.Helpers;
 
 namespace TFGame.Yakuza0
 {
@@ -35,7 +37,11 @@ namespace TFGame.Yakuza0
                 new Tuple<string, string>("¥", "\\"),
                 new Tuple<string, string>("\u266A", "¤"), // Nota musical
                 new Tuple<string, string>("\u2665", "§"), // Corazón
-                new Tuple<string, string>("\u221E", "\u00B8") // Infinito
+                new Tuple<string, string>("\u221E", "\u00B8"), // Infinito
+
+                new Tuple<string, string>("\u25B3", "tf1"), // Triángulo
+                new Tuple<string, string>("\u25CB", "tf2"), // Círculo
+                new Tuple<string, string>("\u25A1", "tf3"), // Cuadrado
             };
 
         }
@@ -73,7 +79,33 @@ namespace TFGame.Yakuza0
                 result = utf8Encoding.GetEncoder().GetBytes(chars, charIndex, charCount, bytes, byteIndex, true);
             }
 
+            if (bytes.Length < 3)
+            {
+                return result;
+            }
+
+            // Hack para los símbolos cuadrado, triángulo y círculo
+            // Triangulo = "tf1" 746631
+            // Circulo = "tf2" 746632
+            // Cuadrado = "tf3" 746633
+            FixPlaceholder(bytes, new byte[] { 0x74, 0x66, 0x31 }, new byte[] { 0xE2, 0x96, 0xB3 });
+            FixPlaceholder(bytes, new byte[] { 0x74, 0x66, 0x32 }, new byte[] { 0xE2, 0x97, 0x8B });
+            FixPlaceholder(bytes, new byte[] { 0x74, 0x66, 0x33 }, new byte[] { 0xE2, 0x96, 0xA1 });
+
             return result;
+        }
+
+        private void FixPlaceholder(byte[] input, byte[] oldBytes, byte[] newBytes)
+        {
+            var placeholder = SearchHelper.SearchPattern(input, oldBytes);
+            while (placeholder != -1)
+            {
+                input[placeholder] = newBytes[0];
+                input[placeholder + 1] = newBytes[1];
+                input[placeholder + 2] = newBytes[2];
+
+                placeholder = SearchHelper.SearchPattern(input, oldBytes);
+            }
         }
 
         public override byte[] GetBytes(string s)
