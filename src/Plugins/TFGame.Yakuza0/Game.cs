@@ -15,7 +15,7 @@ namespace TFGame.Yakuza0
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741
 
-        public override int Version => 2;
+        public override int Version => 3;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -301,9 +301,28 @@ namespace TFGame.Yakuza0
 
             par.FileSearches.Add(pocketCircuitSearch);
 
+            var dllSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "w64",
+                    SearchPattern = "cima_minigame_release_retail.dll",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(Files.Dll.File)
+                };
+
+            var module = new GameFileContainer
+            {
+                Path = @"media\data\module",
+                Type = ContainerType.Folder
+            };
+
+            module.FileSearches.Add(dllSearch);
+
             var result = new List<GameFileContainer>();
             result.Add(minigame);
             result.Add(par);
+            result.Add(module);
             return result;
         }
 

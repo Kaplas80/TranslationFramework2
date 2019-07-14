@@ -73,6 +73,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\Dll\File.cs" />
     <Compile Include="Files\Exe\File.cs" />
     <Compile Include="Files\PocketCircuit\File.cs" />
     <Compile Include="Files\Snitch\File.cs" />

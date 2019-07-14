@@ -118,6 +118,7 @@
     <Compile Include="Files\Epmb\File.cs" />
     <Compile Include="Files\Exe\CharacterInfo.cs" />
     <Compile Include="Files\Exe\ExePatch.cs" />
+    <Compile Include="Files\Exe\PEFile.cs" />
     <Compile Include="Files\Exe\File.cs" />
     <Compile Include="Files\Exe\PatchView.cs">
       <SubType>Form</SubType>
