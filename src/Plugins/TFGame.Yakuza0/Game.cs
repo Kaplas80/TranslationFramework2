@@ -15,7 +15,7 @@ namespace TFGame.Yakuza0
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741
 
-        public override int Version => 3;
+        public override int Version => 4;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -729,6 +729,16 @@ namespace TFGame.Yakuza0
                     FileType = typeof(YakuzaGame.Files.Restaurant.File)
                 };
 
+            var disposeStringSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "dispose_string.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.DisposeString.File)
+                };
+
             var snitchSearch =
                 new GameFileSearch
                 {
@@ -768,6 +778,7 @@ namespace TFGame.Yakuza0
 
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
+            wdr_par.FileSearches.Add(disposeStringSearch);
             wdr_par.FileSearches.Add(snitchSearch);
             wdr_par.FileSearches.Add(wdr_msgSearch);
 

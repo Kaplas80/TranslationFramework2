@@ -115,6 +115,7 @@
     <Compile Include="Files\CmnBin\JpnFile.cs" />
     <Compile Include="Files\CmnBin\File.cs" />
     <Compile Include="Files\CmnBin\Subtitle.cs" />
+    <Compile Include="Files\DisposeString\File.cs" />
     <Compile Include="Files\Epmb\File.cs" />
     <Compile Include="Files\Exe\CharacterInfo.cs" />
     <Compile Include="Files\Exe\ExePatch.cs" />

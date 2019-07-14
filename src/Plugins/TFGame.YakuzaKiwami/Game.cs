@@ -12,7 +12,7 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Build Id: 3645748";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-786854223
-        public override int Version => 1;
+        public override int Version => 2;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -287,9 +287,28 @@ namespace TFGame.YakuzaKiwami
 
             par.FileSearches.Add(pocketCircuitSearch);
 
+            var dllSearch =
+                new GameFileSearch
+                {
+                    RelativePath = "w64",
+                    SearchPattern = "lexus_minigame_release_retail.dll",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(Files.Dll.File)
+                };
+
+            var module = new GameFileContainer
+            {
+                Path = @"media\data\module",
+                Type = ContainerType.Folder
+            };
+
+            module.FileSearches.Add(dllSearch);
+
             var result = new List<GameFileContainer>();
             result.Add(minigame);
             result.Add(par);
+            result.Add(module);
             return result;
         }
 
@@ -549,6 +568,16 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaGame.Files.Msg.File)
                 };
 
+            var disposeStringSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "dispose_string.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.DisposeString.File)
+                };
+
             var wdr_par = new GameFileContainer
             {
                 Path = @"media\data\wdr_par_c\wdr.par",
@@ -558,6 +587,7 @@ namespace TFGame.YakuzaKiwami
             wdr_par.FileSearches.Add(wdr_barSearch);
             wdr_par.FileSearches.Add(wdr_restaurantSearch);
             wdr_par.FileSearches.Add(wdr_msgSearch);
+            wdr_par.FileSearches.Add(disposeStringSearch);
 
             result.Add(wdr_par);
 
