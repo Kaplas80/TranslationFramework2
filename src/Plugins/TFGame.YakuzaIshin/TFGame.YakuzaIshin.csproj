@@ -39,6 +39,7 @@
     <Compile Include="Encoding.cs" />
     <Compile Include="Files\AiPopup\File.cs" />
     <Compile Include="Files\Restaurant\File.cs" />
+    <Compile Include="Files\Scenario\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
