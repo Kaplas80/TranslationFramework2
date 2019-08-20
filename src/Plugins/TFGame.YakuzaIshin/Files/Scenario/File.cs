@@ -76,13 +76,18 @@ namespace TFGame.YakuzaIshin.Files.Scenario
                 }
 
                 input.Seek(0x10, SeekOrigin.Begin);
-                var count = input.ReadInt32();
-                var offset = input.ReadInt32();
+                var count1 = input.ReadInt32();
+                var offset1 = input.ReadInt32();
 
-                input.Seek(offset, SeekOrigin.Begin);
-                output.Seek(offset, SeekOrigin.Begin);
+                input.Skip(8);
 
-                for (var i = 0; i < count; i++)
+                var count2 = input.ReadInt32();
+                var offset2 = input.ReadInt32();
+
+                input.Seek(offset1, SeekOrigin.Begin);
+                output.Seek(offset1, SeekOrigin.Begin);
+
+                for (var i = 0; i < count1; i++)
                 {
                     input.Skip(4);
                     output.Skip(4);
@@ -92,6 +97,22 @@ namespace TFGame.YakuzaIshin.Files.Scenario
 
                     input.Skip(16);
                     output.Skip(16);
+                }
+
+                input.Seek(offset2, SeekOrigin.Begin);
+                output.Seek(offset2, SeekOrigin.Begin);
+
+                for (var i = 0; i < count2; i++)
+                {
+                    var stringOffset = input.ReadInt32();
+                    if (dict.ContainsKey(stringOffset))
+                    {
+                        output.Write((int)dict[stringOffset]);
+                    }
+                    else
+                    {
+                        output.Skip(4);
+                    }
                 }
             }
         }
