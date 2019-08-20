@@ -11,7 +11,7 @@ namespace TFGame.YakuzaIshin
         public override string Name => "Ryū ga Gotoku Ishin!";
         public override string Description => "BLJM61149";
         public override Image Icon => Resources.Icon; // https://en.wikipedia.org/wiki/Yakuza_Ishin
-        public override int Version => 4;
+        public override int Version => 5;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetBootpar()
@@ -36,6 +36,28 @@ namespace TFGame.YakuzaIshin
 
             bootpar.FileSearches.Add(tableSearch);
             return bootpar;
+        }
+
+        private GameFileContainer GetScenario()
+        {
+            var search =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "scenario2.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(Files.Scenario.File)
+                };
+
+            var container = new GameFileContainer
+            {
+                Path = @"data\scenario",
+                Type = ContainerType.Folder
+            };
+
+            container.FileSearches.Add(search);
+            return container;
         }
 
         private GameFileContainer GetStage()
@@ -184,6 +206,7 @@ namespace TFGame.YakuzaIshin
             var result = new List<GameFileContainer>();
 
             result.Add(GetBootpar());
+            result.Add(GetScenario());
             result.Add(GetStage());
             result.Add(GetStaypar());
             result.AddRange(GetWdrCommon());
