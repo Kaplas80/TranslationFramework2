@@ -273,7 +273,7 @@ namespace TFGame.TrailsSky
                 SearchPattern = "HBATTLE ._CH;HBATTLE2._CH;HBTLMENU._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
-                FileType = typeof(Files.Images.ImageType1)
+                FileType = typeof(Files.Images.ImageType2)
             };
 
             var dt0F = new GameFileContainer
