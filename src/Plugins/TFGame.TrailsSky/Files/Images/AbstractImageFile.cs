@@ -12,7 +12,7 @@ namespace TFGame.TrailsSky.Files.Images
         protected abstract int BytesPerPixel { get; }
         protected abstract string ImageFormat { get; }
 
-        protected override string Filter => "Ficheros de imágenes (*._CH)|*._CH";
+        protected override string Filter => "Ficheros de imágenes (*.png)|*.png";
 
         protected AbstractImageFile(string path, string changesFolder) : base(path, changesFolder)
         {
@@ -20,7 +20,8 @@ namespace TFGame.TrailsSky.Files.Images
 
         protected override void FormOnSaveImage(string filename)
         {
-            System.IO.File.WriteAllBytes(filename, _currentImage);
+            var bmp = GetBitmap(ImageWidth, _currentImage);
+            bmp.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         protected override void FormOnNewImageLoaded(string filename)
