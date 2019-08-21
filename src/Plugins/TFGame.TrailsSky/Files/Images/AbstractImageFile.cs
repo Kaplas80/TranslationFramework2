@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using TF.Core.Files;
 
 namespace TFGame.TrailsSky.Files.Images
@@ -20,13 +21,19 @@ namespace TFGame.TrailsSky.Files.Images
 
         protected override void FormOnSaveImage(string filename)
         {
-            var bmp = GetBitmap(ImageWidth, _currentImage);
-            bmp.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
+            using (var bmp = GetBitmap32bppArgb(ImageWidth, _currentImage))
+            {
+                bmp.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
+            }
         }
 
         protected override void FormOnNewImageLoaded(string filename)
         {
-            System.IO.File.Copy(filename, ChangesFile, true);
+            using (var bmp = new Bitmap(filename))
+            {
+                var image = GetBitmapOriginalFormat(bmp);
+                File.WriteAllBytes(ChangesFile, image);
+            }
 
             UpdateFormImage();
         }
@@ -36,12 +43,12 @@ namespace TFGame.TrailsSky.Files.Images
             var source = HasChanges ? ChangesFile : Path;
             _currentImage = System.IO.File.ReadAllBytes(source);
 
-            var bmp = GetBitmap(ImageWidth, _currentImage);
+            var bmp = GetBitmap32bppArgb(ImageWidth, _currentImage);
             var properties = GetProperties(bmp.Width, bmp.Height, ImageFormat);
             return new Tuple<Image, object>(bmp, properties);
         }
 
-        protected Bitmap GetBitmap(int imageWidth, byte[] imageData)
+        protected Bitmap GetBitmap32bppArgb(int imageWidth, byte[] imageData)
         {
             var imageHeight = GetImageHeight(imageData.Length, imageWidth);
 
@@ -50,14 +57,14 @@ namespace TFGame.TrailsSky.Files.Images
             var tempValues = new byte[BytesPerPixel];
 
             var outputIndex = 0;
-            for (var i = 0; i < imageWidth * imageHeight * BytesPerPixel; i = i + BytesPerPixel) 
+            for (var i = 0; i < imageWidth * imageHeight * BytesPerPixel; i += BytesPerPixel) 
             {
                 for (var j = 0; j < BytesPerPixel; j++)
                 {
                     tempValues[j] = imageData[i + j];
                 }
 
-                var resultPixels = ConvertPixel(tempValues);
+                var resultPixels = ConvertPixelToBGRA8888(tempValues);
 
                 for (var j = 0; j < resultPixels.Length; j++)
                 {
@@ -77,11 +84,48 @@ namespace TFGame.TrailsSky.Files.Images
             }
         }
 
+        protected byte[] GetBitmapOriginalFormat(Bitmap bmp)
+        {
+            var data = new byte[bmp.Width * bmp.Height * BytesPerPixel];
+
+            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            var bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+                        
+            var tempValues = new byte[4];
+
+            var outputIndex = 0;
+            unsafe
+            {
+                var imageData = (byte *)bmpData.Scan0.ToPointer();
+
+                for (var i = 0; i < bmp.Width * bmp.Height * 4; i += 4)
+                {
+                    for (var j = 0; j < 4; j++)
+                    {
+                        tempValues[j] = imageData[i + j];
+                    }
+
+                    var resultPixels = ConvertPixelToOriginalFormat(tempValues);
+
+                    for (var j = 0; j < resultPixels.Length; j++)
+                    {
+                        data[outputIndex + j] = resultPixels[j];
+                    }
+
+                    outputIndex += resultPixels.Length;
+                }
+            }
+
+            bmp.UnlockBits(bmpData);
+            return data;
+        }
+
         private int GetImageHeight(int fileLength, int imageWidth)
         {
             return fileLength / (imageWidth * BytesPerPixel);
         }
 
-        protected abstract byte[] ConvertPixel(byte[] inputValues);
+        protected abstract byte[] ConvertPixelToBGRA8888(byte[] inputValues);
+        protected abstract byte[] ConvertPixelToOriginalFormat(byte[] inputValues);
     }
 }
