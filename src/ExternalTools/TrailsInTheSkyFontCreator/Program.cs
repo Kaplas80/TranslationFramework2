@@ -51,7 +51,8 @@ namespace TrailsInTheSkyFontCreator
         {
             using (var process = new System.Diagnostics.Process())
             {
-                process.StartInfo.FileName = @"bmfont64.exe";
+                process.StartInfo.WorkingDirectory = @"C:\Apps\BMFont";
+                process.StartInfo.FileName = @"C:\Apps\BMFont\bmfont64.exe";
                 process.StartInfo.Arguments = $"-c \"{configFile}\" -o \"{outputFile}\"";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -112,8 +113,8 @@ namespace TrailsInTheSkyFontCreator
             foreach (var size in FontSizes)
             {
                 var originalChars = ReadGameFont(InputPath, size);
-                var newChars = new List<byte[]>();
-                var newChars2 = new List<byte[]>();
+                var newChars = new Dictionary<int, byte[]>();
+                
 
                 var configFilePath = GenerateConfigFile(ConfigFile, size);
                 var fontFilePath = Path.Combine(OutputPath, "FuenteTrails.fnt");
@@ -125,21 +126,30 @@ namespace TrailsInTheSkyFontCreator
 
                 var width = (int) Math.Ceiling(size / 2.0d);
 
-                for (var i = 0x21; i < 0x7F; i++)
+                var charIndexes = new int[256];
+                for (var i = 0; i < 255; i++)
                 {
-                    var chr = Convert.ToChar(i);
-                    if (font.Characters.ContainsKey(chr))
-                    {
-                        newChars.Add(DrawCharacter(font[chr], textures[font[chr].TexturePage], size, width));
-                    }
+                    charIndexes[i] = i;
                 }
+                charIndexes[0x26] = 0xC9; // É
+                charIndexes[0x27] = 0xCD; // Í
+                charIndexes[0x3B] = 0xE1; // á
+                charIndexes[0x5C] = 0xE9; // é
+                charIndexes[0x5E] = 0xED; // í
+                charIndexes[0x5F] = 0xF3; // ó
+                charIndexes[0x60] = 0xFA; // ú
+                charIndexes[0x7B] = 0xFC; // ü
+                charIndexes[0x7D] = 0xF1; // ñ
+                charIndexes[0x7E] = 0xA1; // ¡
+                charIndexes[0x7F] = 0xBF; // ¿
 
-                for (var i = 0xA1; i < 0x100; i++)
+
+                for (var i = 0x21; i < 0xFF; i++)
                 {
-                    var chr = Convert.ToChar(i);
+                    var chr = Convert.ToChar(charIndexes[i]);
                     if (font.Characters.ContainsKey(chr))
                     {
-                        newChars2.Add(DrawCharacter(font[chr], textures[font[chr].TexturePage], size, width));
+                        newChars.Add(i, DrawCharacter(font[chr], textures[font[chr].TexturePage], size, width));
                     }
                 }
 
@@ -154,24 +164,12 @@ namespace TrailsInTheSkyFontCreator
 
                 using (var bw = new BinaryWriter(new FileStream(file, FileMode.Create)))
                 {
-                    bw.Write(originalChars[0]); // El espacio
-
-                    for (var i = 0x21; i < 0x7F; i++)
+                    for (var i = 0x20; i < 0xE0; i++)
                     {
-                        bw.Write(newChars[i - 0x21]);
+                        bw.Write(newChars.ContainsKey(i) ? newChars[i] : originalChars[i - 0x20]);
                     }
 
-                    for (var i = 0x7F; i < 0xA1; i++)
-                    {
-                        bw.Write(originalChars[i - 0x20]);
-                    }
-
-                    for (var i = 0xA1; i < 0x100; i++)
-                    {
-                        bw.Write(newChars2[i - 0xA1]);
-                    }
-
-                    for (var i = 0x100; i < originalChars.Count + 0x20; i++)
+                    for (var i = 0xE0; i < originalChars.Count + 0x20; i++)
                     {
                         bw.Write(originalChars[i - 0x20]);
                     }
@@ -240,7 +238,7 @@ namespace TrailsInTheSkyFontCreator
 
             return bytes;
         }
-
+        
         private static void Exit()
         {
             Console.WriteLine();
