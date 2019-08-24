@@ -18,14 +18,16 @@ namespace TFGame.PhoenixWrightTrilogy.Files
 
             var pattern = FileEncoding.GetBytes(searchString.ToFullWidthChars());
 
-            var index1 = SearchHelper.SearchPattern(bytes, pattern, 0);
+            var searchHelper = new SearchHelper(pattern);
+            var index1 = searchHelper.Search(bytes);
 
             var index2 = -1;
             if (HasChanges)
             {
                 bytes = File.ReadAllBytes(ChangesFile);
                 pattern = System.Text.Encoding.Unicode.GetBytes(searchString);
-                index2 = SearchHelper.SearchPattern(bytes, pattern, 0);
+                searchHelper = new SearchHelper(pattern);
+                index2 = searchHelper.Search(bytes);
             }
 
             return index1 != -1 || index2 != -1;

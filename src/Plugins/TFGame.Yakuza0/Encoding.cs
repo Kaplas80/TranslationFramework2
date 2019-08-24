@@ -97,14 +97,13 @@ namespace TFGame.Yakuza0
 
         private void FixPlaceholder(byte[] input, byte[] oldBytes, byte[] newBytes)
         {
-            var placeholder = SearchHelper.SearchPattern(input, oldBytes);
-            while (placeholder != -1)
+            var searchHelper = new SearchHelper(oldBytes);
+            var placeholders = searchHelper.SearchAll(input);
+            foreach (var placeholder in placeholders)
             {
                 input[placeholder] = newBytes[0];
                 input[placeholder + 1] = newBytes[1];
                 input[placeholder + 2] = newBytes[2];
-
-                placeholder = SearchHelper.SearchPattern(input, oldBytes);
             }
         }
 

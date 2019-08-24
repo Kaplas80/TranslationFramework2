@@ -1,61 +1,113 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TF.Core.Helpers
 {
-    public static class SearchHelper
+    //https://gist.github.com/mjs3339/0772431281093f1bca1fce2f2eca527d
+    public class SearchHelper
     {
-        public static unsafe int SearchPattern(byte[] searchArray, byte[] pattern, int startIndex = 0)
+        private int[] _jumpTable;
+        private byte[] _pattern;
+        private int _patternLength;
+
+        public SearchHelper()
         {
-            // https://gist.github.com/mjs3339/0772431281093f1bca1fce2f2eca527d
-            var patternLength = pattern.Length;
-            if (pattern == null)
-            {
+        }
+
+        public SearchHelper(byte[] pattern)
+        {
+            _pattern = pattern;
+            _jumpTable = new int[256];
+            _patternLength = _pattern.Length;
+            for (var index = 0; index < 256; index++)
+                _jumpTable[index] = _patternLength;
+            for (var index = 0; index < _patternLength - 1; index++)
+                _jumpTable[_pattern[index]] = _patternLength - index - 1;
+        }
+
+        public void SetPattern(byte[] pattern)
+        {
+            _pattern = pattern;
+            _jumpTable = new int[256];
+            _patternLength = _pattern.Length;
+            for (var index = 0; index < 256; index++)
+                _jumpTable[index] = _patternLength;
+            for (var index = 0; index < _patternLength - 1; index++)
+                _jumpTable[_pattern[index]] = _patternLength - index - 1;
+        }
+
+        public unsafe int Search(byte[] searchArray, int startIndex = 0)
+        {
+            if (_pattern == null)
                 throw new Exception("Pattern has not been set.");
-            }
-
-            if (patternLength > searchArray.Length)
-            {
+            if (_patternLength > searchArray.Length)
                 throw new Exception("Search Pattern length exceeds search array length.");
-            }
-
-            var jumpTable = new int[256];
-            for (var i = 0; i < 256; i++)
-            {
-                jumpTable[i] = patternLength;
-            }
-
-            for (var i = 0; i < patternLength - 1; i++)
-            {
-                jumpTable[pattern[i]] = patternLength - i - 1;
-            }
-
             var index = startIndex;
-            var limit = searchArray.Length - patternLength;
-            var patternLengthMinusOne = patternLength - 1;
+            var limit = searchArray.Length - _patternLength;
+            var patternLengthMinusOne = _patternLength - 1;
             fixed (byte* pointerToByteArray = searchArray)
             {
                 var pointerToByteArrayStartingIndex = pointerToByteArray + startIndex;
-                fixed (byte* pointerToPattern = pattern)
+                fixed (byte* pointerToPattern = _pattern)
                 {
                     while (index <= limit)
                     {
                         var j = patternLengthMinusOne;
                         while (j >= 0 && pointerToPattern[j] == pointerToByteArrayStartingIndex[index + j])
-                        {
                             j--;
-                        }
-
                         if (j < 0)
-                        {
                             return index;
-                        }
-
-                        index += Math.Max(jumpTable[pointerToByteArrayStartingIndex[index + j]] - patternLength + 1 + j, 1);
+                        index += Math.Max(
+                            _jumpTable[pointerToByteArrayStartingIndex[index + j]] - _patternLength + 1 + j, 1);
                     }
                 }
             }
 
             return -1;
         }
+
+        public unsafe List<int> SearchAll(byte[] searchArray, int startIndex = 0)
+        {
+            var index = startIndex;
+            var limit = searchArray.Length - _patternLength;
+            var patternLengthMinusOne = _patternLength - 1;
+            var list = new List<int>();
+            fixed (byte* pointerToByteArray = searchArray)
+            {
+                var pointerToByteArrayStartingIndex = pointerToByteArray + startIndex;
+                fixed (byte* pointerToPattern = _pattern)
+                {
+                    while (index <= limit)
+                    {
+                        var j = patternLengthMinusOne;
+                        while (j >= 0 && pointerToPattern[j] == pointerToByteArrayStartingIndex[index + j])
+                            j--;
+                        if (j < 0)
+                            list.Add(index);
+                        index += Math.Max(
+                            _jumpTable[pointerToByteArrayStartingIndex[index + j]] - _patternLength + 1 + j, 1);
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        public int SuperSearch(byte[] searchArray, int nth, int start = 0)
+        {
+            var e = start;
+            var c = 0;
+            do
+            {
+                e = Search(searchArray, e);
+                if (e == -1)
+                    return -1;
+                c++;
+                e++;
+            } while (c < nth);
+
+            return e - 1;
+        }
     }
 }
+

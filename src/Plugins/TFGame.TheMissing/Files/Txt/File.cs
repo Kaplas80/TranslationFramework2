@@ -385,14 +385,16 @@ namespace TFGame.TheMissing.Files.Txt
 
             var pattern = FileEncoding.GetBytes(searchString);
 
-            var index1 = SearchHelper.SearchPattern(bytes, pattern, 0);
+            var searchHelper = new SearchHelper(pattern);
+            var index1 = searchHelper.Search(bytes);
 
             var index2 = -1;
             if (HasChanges)
             {
                 bytes = System.IO.File.ReadAllBytes(ChangesFile);
                 pattern = Encoding.Unicode.GetBytes(searchString);
-                index2 = SearchHelper.SearchPattern(bytes, pattern, 0);
+                searchHelper = new SearchHelper(pattern);
+                index2 = searchHelper.Search(bytes);
             }
 
             return index1 != -1 || index2 != -1;
