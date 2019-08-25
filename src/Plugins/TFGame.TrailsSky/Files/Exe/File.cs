@@ -21,7 +21,13 @@ namespace TFGame.TrailsSky.Files.Exe
         protected override int ChangesFileVersion => 3;
 
         protected virtual long FontTableOffset => 0x15F140;
-        
+
+        protected virtual List<Tuple<int, byte[]>> Patches => new List<Tuple<int, byte[]>>
+        {
+            new Tuple<int, byte[]>(0x07AD72, new byte[] {0xEB, 0x4C}),
+            new Tuple<int, byte[]>(0x07AF56, new byte[] {0x3C, 0xE0}),
+        };
+
         protected virtual Dictionary<int, List<int>> StringOffsets => new Dictionary<int, List<int>>()
         {
             {0x0015BFD4, new List<int>() {0x000015B0}},
@@ -948,6 +954,7 @@ namespace TFGame.TrailsSky.Files.Exe
 
             RebuildSubtitles(outputPath);
             RebuildFontTable(outputPath);
+            RebuildPatches(outputPath);
         }
 
         private void RebuildSubtitles(string outputFile)
@@ -1081,6 +1088,24 @@ namespace TFGame.TrailsSky.Files.Exe
                 for (var i = 0; i < 128; i++)
                 {
                     output.Write(data[i].Width);
+                }
+            }
+        }
+
+        private void RebuildPatches(string outputFile)
+        {
+            if (!System.IO.File.Exists(outputFile))
+            {
+                System.IO.File.Copy(Path, outputFile);
+            }
+
+            using (var fs = new FileStream(outputFile, FileMode.Open))
+            using (var output = new ExtendedBinaryWriter(fs, FileEncoding))
+            {
+                foreach (var patch in Patches)
+                {
+                    output.Seek(patch.Item1, SeekOrigin.Begin);
+                    output.Write(patch.Item2);
                 }
             }
         }

@@ -763,6 +763,12 @@ namespace TFGame.TrailsSky.Files.Exe
             {0x001202BC, new List<int>() {0x000E6D2F}},
         };
 
+        protected override List<Tuple<int, byte[]>> Patches => new List<Tuple<int, byte[]>>
+        {
+            new Tuple<int, byte[]>(0x080C12, new byte[] {0xEB, 0x4C}),
+            new Tuple<int, byte[]>(0x080DF6, new byte[] {0x3C, 0xE0}),
+        };
+
         public DX9File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
