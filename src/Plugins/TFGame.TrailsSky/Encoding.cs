@@ -108,6 +108,7 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("¡", "\u007E"), //~
                 new Tuple<string, string>("¿", "\u007F"), //DEL
 
+                new Tuple<string, string>("\u8140", "\u0020"),
                 new Tuple<string, string>("<LineBreak>", "\\n"),
             };
         }
