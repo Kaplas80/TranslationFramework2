@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ExcelDataReader;
 using OfficeOpenXml;
+using ScintillaNET;
+using TF.Core.Helpers;
 using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -33,14 +35,35 @@ namespace TF.Core.Views
         }
 
         protected IList<Subtitle> _subtitles;
+        protected Subtitle _selectedSubtitle;
 
         protected GridView()
         {
             InitializeComponent();
 
+            var font = Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             var cellStyle = new DataGridViewCellStyle();
-            cellStyle.Font = Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            cellStyle.Font = font;
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
+
+            InitScintilla(scintilla1);
+            InitScintilla(scintilla2);
+        }
+
+        private static void InitScintilla(Scintilla scintilla)
+        {
+            scintilla.StyleResetDefault();
+            scintilla.Styles[Style.Default].Font = "Noto Sans CJK JP Regular";
+            scintilla.Styles[Style.Default].Size = 11;
+            scintilla.StyleClearAll();
+
+            scintilla.Styles[Style.Xml.Tag].ForeColor = Color.Blue;
+            scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.Blue;
+            scintilla.Lexer = Lexer.Xml;
+
+            /*scintilla.Margins[1].Width = 50;
+            scintilla.Margins[1].Type = MarginType.Number;
+            scintilla.Margins[1].Mask = 0;*/
         }
 
         public GridView(ThemeBase theme) : this()
@@ -85,11 +108,14 @@ namespace TF.Core.Views
                 Name = "colTranslation",
                 HeaderText = "Traducción",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                ReadOnly = true,
                 SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
             UpdateLabel();
+
+            _selectedSubtitle = null;
         }
 
         public void DisplaySubtitle(int index)
@@ -194,7 +220,7 @@ namespace TF.Core.Views
             e.Handled = true;
         }
 
-        private void SubtitleGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        /*private void SubtitleGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             SubtitleGridView.BeginEdit(false);
         }
@@ -206,7 +232,7 @@ namespace TF.Core.Views
                 SendKeys.Send("{RIGHT}");
             }
         }
-
+        */
         private void btnExport_Click(object sender, EventArgs e)
         {
             var result = ExportFileDialog.ShowDialog(this);
@@ -318,16 +344,79 @@ namespace TF.Core.Views
             }
         }
 
-        private void SubtitleGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        /*private void SubtitleGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             UpdateLabel();
-        }
+        }*/
 
         private void UpdateLabel()
         {
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
             var totalLines = _subtitles.Count;
             lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines}";
+        }
+
+        private void SubtitleGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                if (scintilla2.Modified)
+                {
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace("\n", "\\n");
+                }
+            }
+
+            if (SubtitleGridView.SelectedCells.Count != 0)
+            {
+                _selectedSubtitle = GetSelectedSubtitle().Item2;
+
+                scintilla1.ReadOnly = false;
+                scintilla1.Text = _selectedSubtitle.Text.Replace("\\n", "\n");
+                scintilla1.ReadOnly = true;
+                scintilla2.Text = _selectedSubtitle.Translation.Replace("\\n", "\n");
+            }
+        }
+
+        private void Scintilla2_TextChanged(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                if (scintilla2.Modified)
+                {
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace("\n", "\\n");
+                    SubtitleGridView.Invalidate();
+                    UpdateLabel();
+                }
+            }
+        }
+
+        private void RestaurarTextoOriginalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                scintilla2.Text = scintilla1.Text;
+            }
+        }
+
+        private void DeshacerCambiosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                scintilla2.Text = _selectedSubtitle.Loaded.Replace("\\n", "\n");
+            }
+        }
+
+        private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            preTraducirToolStripMenuItem.Enabled = File.Exists("MicrosoftTranslator.txt");
+        }
+
+        private void PreTraducirToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                scintilla2.Text = AutomaticTranslationHelper.Translate(scintilla1.Text);
+            }
         }
     }
 }
