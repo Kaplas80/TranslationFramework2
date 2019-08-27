@@ -36,6 +36,7 @@ namespace TF.Core.Views
 
         protected IList<Subtitle> _subtitles;
         protected Subtitle _selectedSubtitle;
+        protected int _selectedSubtitleIndex;
 
         protected GridView()
         {
@@ -60,10 +61,6 @@ namespace TF.Core.Views
             scintilla.Styles[Style.Xml.Tag].ForeColor = Color.Blue;
             scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.Blue;
             scintilla.Lexer = Lexer.Xml;
-
-            /*scintilla.Margins[1].Width = 50;
-            scintilla.Margins[1].Type = MarginType.Number;
-            scintilla.Margins[1].Mask = 0;*/
         }
 
         public GridView(ThemeBase theme) : this()
@@ -116,6 +113,7 @@ namespace TF.Core.Views
             UpdateLabel();
 
             _selectedSubtitle = null;
+            _selectedSubtitleIndex = -1;
         }
 
         public void DisplaySubtitle(int index)
@@ -127,7 +125,6 @@ namespace TF.Core.Views
 
             SubtitleGridView.ClearSelection();
             SubtitleGridView.Rows[index].Cells["colTranslation"].Selected = true;
-            SubtitleGridView.FirstDisplayedScrollingRowIndex = index;
         }
 
         public Tuple<int, Subtitle> GetSelectedSubtitle()
@@ -220,19 +217,6 @@ namespace TF.Core.Views
             e.Handled = true;
         }
 
-        /*private void SubtitleGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            SubtitleGridView.BeginEdit(false);
-        }
-
-        private void SubtitleGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            if (e.Control.GetType() == typeof(DataGridViewTextBoxEditingControl))
-            {
-                SendKeys.Send("{RIGHT}");
-            }
-        }
-        */
         private void btnExport_Click(object sender, EventArgs e)
         {
             var result = ExportFileDialog.ShowDialog(this);
@@ -344,11 +328,6 @@ namespace TF.Core.Views
             }
         }
 
-        /*private void SubtitleGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            UpdateLabel();
-        }*/
-
         private void UpdateLabel()
         {
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
@@ -368,7 +347,9 @@ namespace TF.Core.Views
 
             if (SubtitleGridView.SelectedCells.Count != 0)
             {
-                _selectedSubtitle = GetSelectedSubtitle().Item2;
+                var (index, subtitle) = GetSelectedSubtitle();
+                _selectedSubtitleIndex = index;
+                _selectedSubtitle = subtitle;
 
                 scintilla1.ReadOnly = false;
                 scintilla1.Text = _selectedSubtitle.Text.Replace("\\n", "\n");
@@ -416,6 +397,18 @@ namespace TF.Core.Views
             if (_selectedSubtitle != null)
             {
                 scintilla2.Text = AutomaticTranslationHelper.Translate(scintilla1.Text);
+            }
+        }
+
+        private void Scintilla2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.Return)
+            {
+                if (_selectedSubtitleIndex < SubtitleGridView.RowCount)
+                {
+                    e.SuppressKeyPress = true;
+                    DisplaySubtitle(_selectedSubtitleIndex+1);
+                }
             }
         }
     }
