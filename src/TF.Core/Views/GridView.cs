@@ -319,7 +319,9 @@ namespace TF.Core.Views
                     }
                 }
 
+                _selectedSubtitle = null;
                 SubtitleGridView.Invalidate();
+                DisplaySubtitle(_selectedSubtitleIndex);
                 UpdateLabel();
             }
             catch (Exception e)
