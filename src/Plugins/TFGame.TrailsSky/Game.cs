@@ -14,7 +14,7 @@ namespace TFGame.TrailsSky
         public string Name => "The Legend of Heroes: Trails in the Sky";
         public string Description => "Build Id: 3675355";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-in-the-Sky-Icon-v1-586602301
-        public int Version => 1;
+        public int Version => 2;
         public System.Text.Encoding FileEncoding => new Encoding();
 
         public GameFileContainer[] GetContainers(string path)
@@ -284,6 +284,23 @@ namespace TFGame.TrailsSky
             dt0F.FileSearches.Add(imagesDT0F);
             dt0F.FileSearches.Add(imagesDT0F_2);
 
+            var msdtDT10 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "MS*._DT",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.MSDT.File)
+            };
+
+            var dt10 = new GameFileContainer
+            {
+                Path = @".\ED6_DT10.dat",
+                Type = ContainerType.CompressedFile
+            };
+            dt10.FileSearches.Add(msdtDT10);
+            
+
             var imagesDT1C_1 = new GameFileSearch
             {
                 RelativePath = ".",
@@ -311,6 +328,15 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.Images.ImageType2)
             };
 
+            var mnsnote = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "MNSNOTE2._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.MNSNOTE2.File)
+            };
+
             var dt1C = new GameFileContainer
             {
                 Path = @".\ED6_DT1C.dat",
@@ -320,6 +346,7 @@ namespace TFGame.TrailsSky
             dt1C.FileSearches.Add(imagesDT1C_1);
             dt1C.FileSearches.Add(imagesDT1C_2);
             dt1C.FileSearches.Add(imagesDT1C_3);
+            dt1C.FileSearches.Add(mnsnote);
 
             result.Add(root);
             result.Add(dt00);
@@ -327,6 +354,7 @@ namespace TFGame.TrailsSky
             result.Add(dt02);
             result.Add(dt04);
             result.Add(dt0F);
+            result.Add(dt10);
             result.Add(dt1C);
 
             return result.ToArray();
