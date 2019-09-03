@@ -11,6 +11,7 @@ namespace TFGame.YakuzaKiwami.Files.Exe
         protected override string PointerSectionName => ".data\0\0\0";
         protected override string StringsSectionName => ".rdata\0\0";
 
+        protected override int ChangesFileVersion => 2;
         protected override List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
             new Tuple<long, long>(0x00C93710, 0x00C93710),
@@ -27,6 +28,17 @@ namespace TFGame.YakuzaKiwami.Files.Exe
 
         protected override List<ExePatch> Patches => new List<ExePatch>()
         {
+            new ExePatch
+            {
+                Name = "Usar codificación ISO-8895-1",
+                Description = "Cambia la codificación de los textos a ISO-8895-1 (NO SE REPRESENTARÁN CARACTERES UTF-8)",
+                Enabled = false,
+                Patches = new List<Tuple<long, byte[]>>
+                {
+                    new Tuple<long, byte[]>(0x195007, new byte[] {0xEB, 0x1E, 0x90}),
+                },
+            },
+
             // Buscar el primer "CoInitialize". La cadena está justo antes
             new ExePatch
             {
