@@ -38,7 +38,10 @@ namespace TF.Core.Views
         protected Subtitle _selectedSubtitle;
         protected int _selectedSubtitleIndex;
 
-        protected GridView()
+        protected string _lineEnding;
+        protected string _lineEndingStr;
+
+        protected GridView(string lineEnding)
         {
             InitializeComponent();
 
@@ -47,11 +50,15 @@ namespace TF.Core.Views
             cellStyle.Font = font;
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
 
+            _lineEnding = lineEnding;
+
+            _lineEndingStr = lineEnding == "\r\n" ? "\\r\\n" : "\\n";
+
             InitScintilla(scintilla1);
             InitScintilla(scintilla2);
         }
 
-        private static void InitScintilla(Scintilla scintilla)
+        private void InitScintilla(Scintilla scintilla)
         {
             scintilla.StyleResetDefault();
             scintilla.Styles[Style.Default].Font = "Noto Sans CJK JP Regular";
@@ -61,9 +68,11 @@ namespace TF.Core.Views
             scintilla.Styles[Style.Xml.Tag].ForeColor = Color.Blue;
             scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.Blue;
             scintilla.Lexer = Lexer.Xml;
+
+            scintilla.EolMode = _lineEnding == "\r\n" ? Eol.CrLf : Eol.Lf;
         }
 
-        public GridView(ThemeBase theme) : this()
+        public GridView(ThemeBase theme, string lineEnding) : this(lineEnding)
         {
             dockPanel1.Theme = theme;
             dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
@@ -343,7 +352,7 @@ namespace TF.Core.Views
             {
                 if (scintilla2.Modified)
                 {
-                    _selectedSubtitle.Translation = scintilla2.Text.Replace("\n", "\\n");
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_lineEnding, _lineEndingStr);
                 }
             }
 
@@ -354,9 +363,9 @@ namespace TF.Core.Views
                 _selectedSubtitle = subtitle;
 
                 scintilla1.ReadOnly = false;
-                scintilla1.Text = _selectedSubtitle.Text.Replace("\\n", "\n");
+                scintilla1.Text = _selectedSubtitle.Text.Replace(_lineEndingStr, _lineEnding);
                 scintilla1.ReadOnly = true;
-                scintilla2.Text = _selectedSubtitle.Translation.Replace("\\n", "\n");
+                scintilla2.Text = _selectedSubtitle.Translation.Replace(_lineEndingStr, _lineEnding);
             }
         }
 
@@ -366,7 +375,7 @@ namespace TF.Core.Views
             {
                 if (scintilla2.Modified)
                 {
-                    _selectedSubtitle.Translation = scintilla2.Text.Replace("\n", "\\n");
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_lineEnding, _lineEndingStr);
                     SubtitleGridView.Invalidate();
                     UpdateLabel();
                 }
@@ -385,7 +394,7 @@ namespace TF.Core.Views
         {
             if (_selectedSubtitle != null)
             {
-                scintilla2.Text = _selectedSubtitle.Loaded.Replace("\\n", "\n");
+                scintilla2.Text = _selectedSubtitle.Loaded.Replace(_lineEndingStr, _lineEnding);
             }
         }
 

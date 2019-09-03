@@ -13,7 +13,7 @@ namespace TFGame.TrailsSky.Views
 {
     public class View : GridView
     {
-        public View(ThemeBase theme) : base(theme)
+        public View(ThemeBase theme, string lineEnding) : base(theme, lineEnding)
         {
         }
 

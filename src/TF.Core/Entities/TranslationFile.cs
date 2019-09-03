@@ -42,6 +42,8 @@ namespace TF.Core.Entities
 
         public virtual int SubtitleCount => 0;
 
+        public virtual string LineEnding => "\n";
+
         protected readonly Encoding FileEncoding;
 
         public TranslationFile(string path, string changesFolder, Encoding encoding = null)
