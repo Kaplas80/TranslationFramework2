@@ -41,7 +41,7 @@ namespace TF.Core.Views
         protected string _lineEnding;
         protected string _lineEndingStr;
 
-        protected GridView(string lineEnding)
+        public GridView(string lineEnding)
         {
             InitializeComponent();
 
@@ -70,12 +70,6 @@ namespace TF.Core.Views
             scintilla.Lexer = Lexer.Xml;
 
             scintilla.EolMode = _lineEnding == "\r\n" ? Eol.CrLf : Eol.Lf;
-        }
-
-        public GridView(ThemeBase theme, string lineEnding) : this(lineEnding)
-        {
-            dockPanel1.Theme = theme;
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         public void LoadData(IList<Subtitle> subtitles)

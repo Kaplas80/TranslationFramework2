@@ -38,19 +38,13 @@ namespace TFGame.TheMissing.Files.Txt
 
         protected IList<Subtitle> _subtitles;
 
-        protected GridView()
+        public GridView()
         {
             InitializeComponent();
 
             var cellStyle = new DataGridViewCellStyle();
             cellStyle.Font = TF.Core.Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
-        }
-
-        public GridView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         public void LoadData(IList<Subtitle> subtitles)

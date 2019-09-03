@@ -11,16 +11,9 @@ namespace TFGame.TrailsSky.Files.Exe
     {
         private CharacterInfo[] _data;
 
-        protected FontTableView()
+        public FontTableView()
         {
             InitializeComponent();
-        }
-
-        public FontTableView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         internal void LoadFontTable(CharacterInfo[] data)

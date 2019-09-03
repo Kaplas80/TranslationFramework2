@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -32,7 +30,7 @@ namespace YakuzaGame.Files.Msg
 
         private IList<TF.Core.TranslationEntities.Subtitle> _subtitles;
 
-        protected View()
+        public View()
         {
             InitializeComponent();
 
@@ -45,13 +43,6 @@ namespace YakuzaGame.Files.Msg
             cellStyle.SelectionForeColor = SystemColors.HighlightText;
             cellStyle.WrapMode = DataGridViewTriState.False;
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
-        }
-
-        public View(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         internal void LoadSubtitles(IList<TF.Core.TranslationEntities.Subtitle> subtitles)

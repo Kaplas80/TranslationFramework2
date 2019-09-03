@@ -15,17 +15,10 @@ namespace TF.Core.Views
 
         private Image _image;
 
-        protected ImageView()
+        public ImageView()
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 1;
-        }
-
-        public ImageView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         public void SetFileFilter(string filter)

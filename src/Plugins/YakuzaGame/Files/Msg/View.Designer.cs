@@ -53,7 +53,6 @@
             this.dockPanel1.Name = "dockPanel1";
             this.dockPanel1.Size = new System.Drawing.Size(1066, 519);
             this.dockPanel1.TabIndex = 0;
-            this.dockPanel1.Theme = null;
             // 
             // splitContainer1
             // 
