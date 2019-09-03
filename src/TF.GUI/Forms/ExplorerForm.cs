@@ -103,12 +103,6 @@ namespace TF.GUI.Forms
                 var item = e.Node.Tag as TranslationFile;
                 var result = OnFileChanged(item);
                 e.Cancel = result;
-#if DEBUG
-                if (item != null)
-                {
-                    Clipboard.SetText($"\"{item.Name}\", \n");
-                }
-#endif
             }
         }
 

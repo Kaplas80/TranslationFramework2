@@ -162,6 +162,7 @@
             this.scintilla1.Size = new System.Drawing.Size(1417, 149);
             this.scintilla1.TabIndex = 0;
             this.scintilla1.Text = "scintilla1";
+            this.scintilla1.ViewEol = true;
             // 
             // scintilla2
             // 
@@ -174,6 +175,7 @@
             this.scintilla2.Size = new System.Drawing.Size(1417, 149);
             this.scintilla2.TabIndex = 1;
             this.scintilla2.Text = "scintilla2";
+            this.scintilla2.ViewEol = true;
             this.scintilla2.TextChanged += new System.EventHandler(this.Scintilla2_TextChanged);
             this.scintilla2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Scintilla2_KeyDown);
             // 

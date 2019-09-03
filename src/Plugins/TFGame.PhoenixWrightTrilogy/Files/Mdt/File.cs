@@ -20,7 +20,9 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
         }
 
         private readonly Op[] GameOps;
-        
+
+        public override string LineEnding => "\r\n";
+
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
             GameOps = new Op[128];
@@ -260,7 +262,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
             using (var output = new ExtendedBinaryWriter(msOutput, FileEncoding))
             {
                 var outputOffset = 0u;
-                var lines = subtitles.Translation.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+                var lines = subtitles.Translation.Split(new [] {LineEnding}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var line in lines)
                 {
                     var pattern1 = "(?<op>\\w+)\\((?<params>.*)\\)\\;";
