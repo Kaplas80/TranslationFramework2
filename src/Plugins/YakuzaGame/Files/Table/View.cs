@@ -31,7 +31,7 @@ namespace YakuzaGame.Files.Table
 
         private TableData _data;
 
-        protected View()
+        public View()
         {
             InitializeComponent();
 
@@ -45,13 +45,6 @@ namespace YakuzaGame.Files.Table
             cellStyle.WrapMode = DataGridViewTriState.False;
 
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
-        }
-
-        public View(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         public void LoadData(TableData data)

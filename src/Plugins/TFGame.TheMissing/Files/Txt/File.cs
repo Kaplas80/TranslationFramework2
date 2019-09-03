@@ -68,9 +68,9 @@ namespace TFGame.TheMissing.Files.Txt
             _cellFont = new Font(_fontCollection.Families[0], 20f, FontStyle.Regular, GraphicsUnit.Pixel);
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new GridView(theme);
+            _view = new GridView();
             _view.AutoAdjustSizes += ViewOnAutoAdjustSizes;
             
             _subtitles = GetSubtitles();

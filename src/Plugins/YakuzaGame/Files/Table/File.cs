@@ -28,9 +28,9 @@ namespace YakuzaGame.Files.Table
             Type = FileType.TextFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new View(theme);
+            _view = new View();
 
             _data = GetData();
 

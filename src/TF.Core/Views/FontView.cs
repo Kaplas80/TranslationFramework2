@@ -30,18 +30,11 @@ namespace TF.Core.Views
         private PrivateFontCollection _fontCollection;
         private IntPtr _fontHandle = IntPtr.Zero;
 
-        protected FontView()
+        public FontView()
         {
             InitializeComponent();
             cbFontSize.SelectedIndex = 3;
             cbFontSize.SelectedIndexChanged += cbFontSize_SelectedIndexChanged;
-        }
-
-        public FontView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         public void SetFileFilter(string filter)

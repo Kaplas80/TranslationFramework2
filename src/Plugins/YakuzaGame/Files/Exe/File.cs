@@ -23,19 +23,19 @@ namespace YakuzaGame.Files.Exe
         {
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _patchView = new PatchView(theme);
+            _patchView = new PatchView();
             _patches = GetPatches();
             _patchView.LoadPatches(_patches);
             _patchView.Show(panel, DockState.Document);
 
-            _ftView = new FontTableView(theme);
+            _ftView = new FontTableView();
             _data = GetFontTable();
             _ftView.LoadFontTable(_data);
             _ftView.Show(panel, DockState.Document);
 
-            base.Open(panel, theme);
+            base.Open(panel);
         }
 
         protected virtual List<ExePatch> GetPatches()

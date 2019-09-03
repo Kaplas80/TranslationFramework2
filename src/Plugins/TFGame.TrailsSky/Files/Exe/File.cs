@@ -787,14 +787,14 @@ namespace TFGame.TrailsSky.Files.Exe
         {
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _ftView = new FontTableView(theme);
+            _ftView = new FontTableView();
             _charWidths = GetFontTable();
             _ftView.LoadFontTable(_charWidths);
             _ftView.Show(panel, DockState.Document);
 
-            base.Open(panel, theme);
+            base.Open(panel);
         }
 
         protected virtual CharacterInfo[] GetFontTable()

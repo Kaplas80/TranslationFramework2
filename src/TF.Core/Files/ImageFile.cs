@@ -26,9 +26,9 @@ namespace TF.Core.Files
             Type = FileType.ImageFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new ImageView(theme);
+            _view = new ImageView();
             _view.NewImageLoaded += FormOnNewImageLoaded;
             _view.SaveImage += FormOnSaveImage;
             _view.SetFileFilter(Filter);
