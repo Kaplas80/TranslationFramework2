@@ -35,9 +35,9 @@ namespace TF.Core.Files
             Type = FileType.TextFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new GridView(theme, LineEnding);
+            _view = new GridView(LineEnding);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());

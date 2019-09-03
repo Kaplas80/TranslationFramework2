@@ -29,9 +29,9 @@ namespace TF.Core.Files
             Type = FileType.TextFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new TextView(theme);
+            _view = new TextView();
 
             _text = GetText();
             _view.LoadData(_text);

@@ -46,7 +46,6 @@
             this.dockPanel1.Name = "dockPanel1";
             this.dockPanel1.Size = new System.Drawing.Size(853, 447);
             this.dockPanel1.TabIndex = 0;
-            this.dockPanel1.Theme = null;
             // 
             // btnExportImage
             // 

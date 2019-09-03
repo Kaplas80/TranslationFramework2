@@ -59,7 +59,7 @@ namespace TF.Core.Entities
             NeedSaving = false;
         }
 
-        public virtual void Open(DockPanel panel, ThemeBase theme)
+        public virtual void Open(DockPanel panel)
         {
         }
 

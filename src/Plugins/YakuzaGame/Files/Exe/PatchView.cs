@@ -8,16 +8,9 @@ namespace YakuzaGame.Files.Exe
 {
     public partial class PatchView : DockContent
     {
-        protected PatchView()
+        public PatchView()
         {
             InitializeComponent();
-        }
-
-        public PatchView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         internal void LoadPatches(IList<ExePatch> data)

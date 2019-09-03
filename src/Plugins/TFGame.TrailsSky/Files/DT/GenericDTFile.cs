@@ -19,9 +19,9 @@ namespace TFGame.TrailsSky.Files.DT
 
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new View(theme, LineEnding);
+            _view = new View(LineEnding);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrWhiteSpace(x.Text)).ToList());

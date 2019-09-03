@@ -21,9 +21,9 @@ namespace YakuzaGame.Files.Msg
 
 #if DEBUG
         private View _msgView;
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _msgView = new View(theme);
+            _msgView = new View();
 
             _subtitles = GetSubtitles();
             _msgView.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());

@@ -9,16 +9,10 @@ namespace TF.Core.Views
     {
         private PlainText _text;
 
-        protected TextView()
+        public TextView()
         {
             InitializeComponent();
             InitScintilla(scintillaTranslation);
-        }
-
-        public TextView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         private static void InitScintilla(Scintilla scintilla)

@@ -15,16 +15,9 @@ namespace YakuzaGame.Files.Exe
         private Image _originalFontImage;
         private Image _newFontImage;
 
-        protected FontTableView()
+        public FontTableView()
         {
             InitializeComponent();
-        }
-
-        public FontTableView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         internal void LoadFontTable(CharacterInfo[] data)
