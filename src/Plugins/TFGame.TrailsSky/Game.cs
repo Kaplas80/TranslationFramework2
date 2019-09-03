@@ -288,9 +288,19 @@ namespace TFGame.TrailsSky
             {
                 RelativePath = ".",
                 SearchPattern = "MS*._DT",
+                Exclusions = { "MS30100 ._DT" },
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.MSDT.File)
+            };
+
+            var msdtDT10_2 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "MS30100 ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.MSDT.File2)
             };
 
             var dt10 = new GameFileContainer
@@ -299,6 +309,7 @@ namespace TFGame.TrailsSky
                 Type = ContainerType.CompressedFile
             };
             dt10.FileSearches.Add(msdtDT10);
+            dt10.FileSearches.Add(msdtDT10_2);
             
 
             var imagesDT1C_1 = new GameFileSearch

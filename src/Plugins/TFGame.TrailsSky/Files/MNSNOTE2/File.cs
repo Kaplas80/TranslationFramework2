@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TF.Core.Files;
@@ -9,7 +10,6 @@ namespace TFGame.TrailsSky.Files.MNSNOTE2
 {
     public class File : BinaryTextFile
     {
-        private static readonly byte[] SearchPattern = { 0x00, 0x00, 0x00, 0x08 };
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
@@ -45,19 +45,27 @@ namespace TFGame.TrailsSky.Files.MNSNOTE2
             using (var fs = new MemoryStream(bytes))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding))
             {
+                var magic = input.ReadInt32();
+                var count = 0x08;
+                var searchPattern = new byte[]{ 0x00, 0x00, 0x00, 0x08 };
+                if (magic == 0x00100187)
+                {
+                    count = 0x0E;
+                    searchPattern = new byte[]{ 0x00, 0x00, 0x00, 0x0E };
+                }
                 var patternPos = new List<int>();
-                var pos = input.FindPattern(SearchPattern);
+                var pos = input.FindPattern(searchPattern);
                 while (pos != -1)
                 {
                     patternPos.Add(pos);
-                    pos = input.FindPattern(SearchPattern);
+                    pos = input.FindPattern(searchPattern);
                 }
 
                 if (patternPos.Count > 0)
                 {
                     input.Seek(patternPos[patternPos.Count - 1] + 4, SeekOrigin.Begin);
 
-                    for (var i = 0; i < 8; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         input.Skip(0x1C);
                         var txt = ReadSubtitle(input);
@@ -134,12 +142,22 @@ namespace TFGame.TrailsSky.Files.MNSNOTE2
             using (var fsOutput = new MemoryStream())
             using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding))
             {
+                var magic = input.ReadInt32();
+
+                var count = 0x08;
+                var searchPattern = new byte[]{ 0x00, 0x00, 0x00, 0x08 };
+                if (magic == 0x00100187)
+                {
+                    count = 0x0E;
+                    searchPattern = new byte[]{ 0x00, 0x00, 0x00, 0x0E };
+                }
+
                 var patternPos = new List<int>();
-                var pos = input.FindPattern(SearchPattern);
+                var pos = input.FindPattern(searchPattern);
                 while (pos != -1)
                 {
                     patternPos.Add(pos);
-                    pos = input.FindPattern(SearchPattern);
+                    pos = input.FindPattern(searchPattern);
                 }
 
                 if (patternPos.Count > 0)
@@ -147,7 +165,7 @@ namespace TFGame.TrailsSky.Files.MNSNOTE2
                     input.Seek(0, SeekOrigin.Begin);
                     output.Write(input.ReadBytes(patternPos[patternPos.Count - 1] + 4));
 
-                    for (var i = 0; i < 8; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         output.Write(input.ReadBytes(0x1C));
                         var txt = ReadSubtitle(input);

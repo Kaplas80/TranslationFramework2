@@ -9,7 +9,8 @@ namespace TFGame.TrailsSky.Files.MSDT
 {
     public class File : BinaryTextFile
     {
-        private static readonly byte[] SearchPattern = { 0x00, 0x00, 0x00, 0x08 };
+        protected virtual byte[] SearchPattern => new byte[] { 0x00, 0x00, 0x00, 0x08 };
+
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
@@ -31,9 +32,10 @@ namespace TFGame.TrailsSky.Files.MSDT
 
                 if (patternPos.Count > 0)
                 {
-                    input.Seek(patternPos[patternPos.Count - 1] + 4, SeekOrigin.Begin);
+                    input.Seek(patternPos[patternPos.Count - 1] + 3, SeekOrigin.Begin);
+                    var count = input.ReadByte();
 
-                    for (var i = 0; i < 8; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         input.Skip(0x1C);
                         var txt = ReadSubtitle(input);
@@ -96,9 +98,12 @@ namespace TFGame.TrailsSky.Files.MSDT
                 if (patternPos.Count > 0)
                 {
                     input.Seek(0, SeekOrigin.Begin);
-                    output.Write(input.ReadBytes(patternPos[patternPos.Count - 1] + 4));
+                    output.Write(input.ReadBytes(patternPos[patternPos.Count - 1] + 3));
 
-                    for (var i = 0; i < 8; i++)
+                    var count = input.ReadByte();
+                    output.Write(count);
+
+                    for (var i = 0; i < count; i++)
                     {
                         output.Write(input.ReadBytes(0x1C));
                         var txt = ReadSubtitle(input);
