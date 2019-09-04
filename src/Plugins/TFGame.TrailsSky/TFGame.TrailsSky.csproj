@@ -122,6 +122,9 @@
     <Compile Include="Files\Images\ImageType2.cs" />
     <Compile Include="Files\Images\ImageType1.cs" />
     <Compile Include="Files\Images\AbstractImageFile.cs" />
+    <Compile Include="Files\MNSNOTE2\File.cs" />
+    <Compile Include="Files\MSDT\File2.cs" />
+    <Compile Include="Files\MSDT\File.cs" />
     <Compile Include="Files\SN\File.cs" />
     <Compile Include="Views\View.cs">
       <SubType>Form</SubType>

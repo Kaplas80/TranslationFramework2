@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using TF.IO;
 
@@ -209,8 +206,6 @@ namespace TFGame.TrailsSky.Files
                         {
                             dirOutput.Write(0);
                         }
-
-                        fileOffset += file.MaxSize;
                     }
                     else
                     {
@@ -229,7 +224,7 @@ namespace TFGame.TrailsSky.Files
                             dirOutput.Write(file.TimeStamp);
                             dirOutput.Write((int)fileOffset);
 
-                            fileOffset += file.MaxSize;
+                            fileOffset += data.Length;
                         }
                         else
                         {
@@ -238,7 +233,7 @@ namespace TFGame.TrailsSky.Files
                             dirOutput.Write(file.TimeStamp);
                             dirOutput.Write((int)fileOffset);
 
-                            fileOffset += file.MaxSize * 2;
+                            fileOffset += data.Length;
                         }
                     }
                 }
