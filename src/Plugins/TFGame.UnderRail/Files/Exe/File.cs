@@ -5,6 +5,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using TF.Core.Files;
 using TF.Core.TranslationEntities;
+using TF.IO;
 
 namespace TFGame.UnderRail.Files.Exe
 {
@@ -19,36 +20,26 @@ namespace TFGame.UnderRail.Files.Exe
             var result = new List<Subtitle>();
             var module = ModuleDefMD.Load(Path);
             var usStream = module.USStream;
-            var reader = usStream.CreateReader();
-
-            reader.Position = 1;
-            while (reader.Position < reader.Length) 
+            
+            using (var ms = new MemoryStream(usStream.CreateReader().ToArray()))
+            using (var input = new ExtendedBinaryReader(ms, System.Text.Encoding.Unicode))
             {
-                var offset = (uint)reader.Position;
-                if (!reader.TryReadCompressedUInt32(out var len)) 
+                input.Skip(1);
+                while (input.Position < input.Length)
                 {
-                    if (offset == reader.Position)
+                    var offset = input.Position;
+                    var length = input.ReadCompressedUInt32();
+                    if (length > 0)
                     {
-                        reader.Position++;
+                        var str = System.Text.Encoding.Unicode.GetString(input.ReadBytes((int) length - 1));
+                        input.Skip(1);
+
+                        var subtitle = new Subtitle {Text = str, Loaded = str, Translation = str, Offset = offset};
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
                     }
-                    continue;
+                    
                 }
-
-                if (len == 0 || (ulong) reader.Position + len > reader.Length)
-                {
-                    continue;
-                }
-
-                var stringLen = (int)len / 2;
-                var str = reader.ReadUtf16String(stringLen);
-                if ((len & 1) != 0)
-                {
-                    reader.ReadByte();
-                }
-
-                var subtitle = new Subtitle {Text = str, Loaded = str, Translation = str, Offset = offset};
-                subtitle.PropertyChanged += SubtitlePropertyChanged;
-                result.Add(subtitle);
             }
 
             result.Sort();

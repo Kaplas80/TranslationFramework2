@@ -144,6 +144,23 @@ namespace TF.IO
             return BitConverter.ToSingle(Endianness == Endianness.LittleEndian ? ReadBytes(4).Reverse().ToArray() : ReadBytes(4).ToArray(), 0);
         }
 
+        public uint ReadCompressedUInt32()
+        {
+            var firstByte = ReadByte();
+
+            if ((firstByte & 0x80) == 0)
+            {
+                return firstByte;
+            }
+
+            if ((firstByte & 0x40) == 0)
+            {
+                return (uint) (((firstByte & 0x7F) << 8) | ReadByte());
+            }
+
+            return (uint) (((firstByte & 0x3F) << 0x18) | (ReadByte() << 0x10) | (ReadByte() << 0x08) | ReadByte());
+        }
+
         public string ReadString(Encoding encoding, char endChar = '\0')
         {
             var found = false;
