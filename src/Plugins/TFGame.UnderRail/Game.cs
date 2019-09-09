@@ -35,6 +35,25 @@ namespace TFGame.UnderRail
             root.FileSearches.Add(exe);
 
             result.Add(root);
+
+            var udlgs = new GameFileSearch()
+            {
+                RelativePath = @".\characters",
+                SearchPattern = "abram.udlg",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Udlg.File)
+            };
+
+            var dialogs = new GameFileContainer()
+            {
+                Path = @".\data\dialogs",
+                Type = ContainerType.Folder
+            };
+
+            dialogs.FileSearches.Add(udlgs);
+            result.Add(dialogs);
+
             return result.ToArray();
         }
 
