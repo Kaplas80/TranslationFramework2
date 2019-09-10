@@ -19,7 +19,6 @@ namespace UnderRailLib.Models
                     if (DataModelVersion.MajorVersion >= 15)
                     {
                         _dc = (info.GetValue("A3:DC", typeof(Condition)) as Condition);
-                        return;
                     }
                 }
             }
@@ -38,8 +37,14 @@ namespace UnderRailLib.Models
         {
             base.GetObjectData(info, ctx);
             info.AddValue("A3:ID", _isDefault);
-            info.AddValue("A3:D", _d);
-            info.AddValue("A3:DC", _dc);
+            if (DataModelVersion.MajorVersion >= 14)
+            {
+                info.AddValue("A3:D", _d);
+                if (DataModelVersion.MajorVersion >= 15)
+                {
+                    info.AddValue("A3:DC", _dc);
+                }
+            }
         }
 
         private bool _isDefault;

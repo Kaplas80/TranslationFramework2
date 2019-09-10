@@ -16,8 +16,8 @@ namespace UnderRailLib.Models
                 _dialogName = info.GetString("DM:DN");
                 _dialogDescription = info.GetString("DM:DD");
                 _startElement = (ConditionalElement) info.GetValue("DM:SE", typeof(ConditionalElement));
-                SerializationHelper.ReadList<string>("DM:LL", ref _localizationLanguages, info);
-                SerializationHelper.ReadList<Actor>("DM:A", ref _actors, info);
+                SerializationHelper.ReadList("DM:LL", ref _localizationLanguages, info);
+                SerializationHelper.ReadList("DM:A", ref _actors, info);
                 _isCancellable = info.GetBoolean("DM:IC");
                 if (DataModelVersion.MajorVersion >= 24)
                 {
@@ -56,10 +56,13 @@ namespace UnderRailLib.Models
             info.AddValue("DM:DN", _dialogName);
             info.AddValue("DM:DD", _dialogDescription);
             info.AddValue("DM:SE", _startElement);
-            SerializationHelper.WriteList<string>("DM:LL", _localizationLanguages, info);
-            SerializationHelper.WriteList<Actor>("DM:A", _actors, info);
+            SerializationHelper.WriteList("DM:LL", _localizationLanguages, info);
+            SerializationHelper.WriteList("DM:A", _actors, info);
             info.AddValue("DM:IC", _isCancellable);
-            info.AddValue("DM:P", _h);
+            if (DataModelVersion.MajorVersion >= 24)
+            {
+                info.AddValue("DM:P", _h);
+            }
         }
 
         public List<string> LocalizationLanguages => _localizationLanguages;

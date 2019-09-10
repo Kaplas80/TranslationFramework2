@@ -14,7 +14,7 @@ namespace UnderRailLib.Models
             if (DataModelVersion.MajorVersion != 0)
             {
                 _causingCondition = (Condition) info.GetValue("CE:CC", typeof(Condition));
-                SerializationHelper.ReadCollection<ConditionalElement>("CE:PNS", ref _possibleNextSteps, info);
+                SerializationHelper.ReadCollection("CE:PNS", ref _possibleNextSteps, info);
                 Name = info.GetString("CE:N");
                 return;
             }
@@ -37,7 +37,7 @@ namespace UnderRailLib.Models
         public virtual void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
             info.AddValue("CE:CC", _causingCondition);
-            SerializationHelper.WriteCollection<ConditionalElement>("CE:PNS", _possibleNextSteps, info);
+            SerializationHelper.WriteCollection("CE:PNS", _possibleNextSteps, info);
             info.AddValue("CE:N", Name);
         }
 

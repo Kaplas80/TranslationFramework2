@@ -23,7 +23,7 @@ namespace UnderRailLib.AssemblyResolver
                 throw new InvalidOperationException("Assembly resolver not set!");
             }
             
-            return Resolver.GetType(typeName, assemblyName, true);
+            return Resolver.GetType(typeName, assemblyName);
         }
 
         public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
@@ -38,6 +38,6 @@ namespace UnderRailLib.AssemblyResolver
 
         public static AssemblyResolver Resolver;
 
-        private static Binder _instance = null;
+        private static Binder _instance;
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnderRailLib.AssemblyResolver;
 
-namespace UnderRailLib.Models
+namespace UnderRailLib.Models.Enums
 {
     [EncodedTypeName("eVT")]
     [Serializable]

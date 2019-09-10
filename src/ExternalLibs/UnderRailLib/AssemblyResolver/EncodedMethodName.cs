@@ -2,7 +2,7 @@
 
 namespace UnderRailLib.AssemblyResolver
 {
-    [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method)]
     public sealed class EncodedMethodName : Attribute
     {
         public string GetName()

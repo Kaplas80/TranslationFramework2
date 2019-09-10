@@ -1,6 +1,6 @@
 ﻿using UnderRailLib.AssemblyResolver;
 
-namespace UnderRailLib.Models
+namespace UnderRailLib.Models.Interfaces
 {
     [EncodedTypeName("iLCPP")]
     public interface iLCPP

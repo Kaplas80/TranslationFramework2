@@ -180,12 +180,12 @@ namespace UnderRailLib.AssemblyResolver
 
         private static EncodedTypeName GetEncodedName(MemberInfo memberInfo)
         {
-            return memberInfo.GetCustomAttributes(typeof(EncodedTypeName), false).FirstOrDefault<object>() as EncodedTypeName;
+            return memberInfo.GetCustomAttributes(typeof(EncodedTypeName), false).FirstOrDefault() as EncodedTypeName;
         }
 
         private static EncodedMethodName GetEncodedName(MethodInfo methodInfo)
         {
-            return methodInfo.GetCustomAttributes(typeof(EncodedMethodName), true).FirstOrDefault<object>() as EncodedMethodName;
+            return methodInfo.GetCustomAttributes(typeof(EncodedMethodName), true).FirstOrDefault() as EncodedMethodName;
         }
 
         private void MapNetTypes()
@@ -357,7 +357,7 @@ namespace UnderRailLib.AssemblyResolver
                 }
                 else if (flag2 && num > 0)
                 {
-                    var type2 = GetType(a_, "X", true);
+                    var type2 = GetType(a_, "X");
                     if (A_1 + num >= A_0.Length)
                     {
                         throw new Exception("Cannot decode data model symbol '" + text + "'. Unexpected end of sequence.");
@@ -370,7 +370,7 @@ namespace UnderRailLib.AssemblyResolver
                 }
                 else
                 {
-                    list.Add(GetType(a_, "X", true));
+                    list.Add(GetType(a_, "X"));
                     A_1++;
                 }
             }
@@ -417,7 +417,7 @@ namespace UnderRailLib.AssemblyResolver
         }
 
         private List<Type> _typeList = new List<Type>();
-        private bool _initialized = false;
+        private bool _initialized;
         private Dictionary<string, Assembly> _simpleNameDictionary = new Dictionary<string, Assembly>();
         private Dictionary<string, Assembly> _fullNameDictionary = new Dictionary<string, Assembly>();
         private Dictionary<string, Type> _netEncodedTypes = new Dictionary<string, Type>(); //_g

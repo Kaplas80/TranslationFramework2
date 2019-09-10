@@ -31,7 +31,7 @@ namespace UnderRailLib
             Directory.CreateDirectory(directory);
             try
             {
-                SerializationManager.SerializeToBinaryFile<DialogModel>(path, dialogModel, Binder.Instance, DataModelVersion.CurrentDataModelVersion, true);
+                SerializationManager.SerializeToBinaryFile(path, dialogModel, Binder.Instance, DataModelVersion.CurrentDataModelVersion, true);
             }
             catch (Exception e)
             {

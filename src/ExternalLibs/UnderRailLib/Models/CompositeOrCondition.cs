@@ -12,7 +12,6 @@ namespace UnderRailLib.Models
         {
             if (DataModelVersion.MajorVersion != 0)
             {
-                return;
             }
         }
     }

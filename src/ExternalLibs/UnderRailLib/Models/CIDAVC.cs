@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using UnderRailLib.AssemblyResolver;
+using UnderRailLib.Models.Enums;
 
 namespace UnderRailLib.Models
 {
@@ -8,23 +9,23 @@ namespace UnderRailLib.Models
     [Serializable]
     public sealed class CIDAVC : Condition
     {
-        private CIDAVC(SerializationInfo A_0, StreamingContext A_1) : base(A_0, A_1)
+        private CIDAVC(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
-            this._id = (Guid?) A_0.GetValue("CIDAVC:I", typeof(Guid?));
-            this._a = A_0.GetString("CIDAVC:A");
-            this._n = A_0.GetBoolean("CIDAVC:N");
-            this._sf = A_0.GetString("CIDAVC:SF");
-            this._vt = (eVT?) A_0.GetValue("CIDAVC:VT", typeof(eVT));
+            _id = (Guid?) info.GetValue("CIDAVC:I", typeof(Guid?));
+            _a = info.GetString("CIDAVC:A");
+            _n = info.GetBoolean("CIDAVC:N");
+            _sf = info.GetString("CIDAVC:SF");
+            _vt = (eVT?) info.GetValue("CIDAVC:VT", typeof(eVT));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
             base.GetObjectData(info, ctx);
-            info.AddValue("CIDAVC:I", this._id);
-            info.AddValue("CIDAVC:A", this._a);
-            info.AddValue("CIDAVC:N", this._n);
-            info.AddValue("CIDAVC:SF", this._sf);
-            info.AddValue("CIDAVC:VT", this._vt);
+            info.AddValue("CIDAVC:I", _id);
+            info.AddValue("CIDAVC:A", _a);
+            info.AddValue("CIDAVC:N", _n);
+            info.AddValue("CIDAVC:SF", _sf);
+            info.AddValue("CIDAVC:VT", _vt);
         }
 
         private Guid? _id;

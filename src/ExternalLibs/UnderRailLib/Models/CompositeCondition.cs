@@ -13,7 +13,7 @@ namespace UnderRailLib.Models
         {
             if (DataModelVersion.MajorVersion != 0)
             {
-                SerializationHelper.ReadCollection<Condition>("CC:EC", ref _conditions, info);
+                SerializationHelper.ReadCollection("CC:EC", ref _conditions, info);
                 return;
             }
             
@@ -29,7 +29,7 @@ namespace UnderRailLib.Models
         public override void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
             base.GetObjectData(info, ctx);
-            SerializationHelper.WriteCollection<Condition>("CC:EC", _conditions, info);
+            SerializationHelper.WriteCollection("CC:EC", _conditions, info);
         }
 
         private Collection<Condition> _conditions = new Collection<Condition>();

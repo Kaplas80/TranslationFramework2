@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnderRailLib.AssemblyResolver;
+using UnderRailLib.Models.Enums;
 
 namespace UnderRailLib.Models
 {
@@ -12,8 +13,8 @@ namespace UnderRailLib.Models
         private Q99(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
             _an = info.GetString("Q99:AN");
-            _o = (eSPGAOP) info.GetValue("Q99:O", typeof(eSPGAOP));
-            SerializationHelper.ReadList<Guid>("Q99:S", ref _s, info);
+            _o = (SplitGateOperation) info.GetValue("Q99:O", typeof(SplitGateOperation));
+            SerializationHelper.ReadList("Q99:S", ref _s, info);
             if (DataModelVersion.MinorVersion >= 439)
             {
                 _e = info.GetBoolean("Q99:E");
@@ -25,7 +26,7 @@ namespace UnderRailLib.Models
             base.GetObjectData(info, ctx);
             info.AddValue("Q99:AN", _an);
             info.AddValue("Q99:O", _o);
-            SerializationHelper.WriteList<Guid>("Q99:S", _s, info);
+            SerializationHelper.WriteList("Q99:S", _s, info);
             if (DataModelVersion.MinorVersion >= 439)
             {
                 info.AddValue("Q99:E", _e);
@@ -36,7 +37,7 @@ namespace UnderRailLib.Models
 
         private string _an;
 
-        private eSPGAOP _o;
+        private SplitGateOperation _o;
 
         private bool _e;
     }

@@ -1,14 +1,15 @@
 ﻿using System;
 using UnderRailLib.AssemblyResolver;
 
-namespace UnderRailLib.Models
+namespace UnderRailLib.Models.Enums
 {
-    [EncodedTypeName("eSPGAOP")]
+    [EncodedTypeName("eATEQ")]
     [Serializable]
-    public enum eSPGAOP
+    public enum AutoEquip
     {
         a,
         b,
-        c
+        c,
+        d
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using UnderRailLib.AssemblyResolver;
+using UnderRailLib.Models.Interfaces;
 
 namespace UnderRailLib.Models
 {
     [EncodedTypeName("C")]
     [Serializable]
-    public abstract class Condition : ISerializable
+    public abstract class Condition : ISerializable, iSDE, iCOND
     {
         protected Condition(SerializationInfo info, StreamingContext ctx)
         {

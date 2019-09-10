@@ -19,7 +19,7 @@ namespace UnderRailLib
                 EmbedDataModelVersion(stream, currentDataModelVersion);
             }
 
-            EmbedDataModelVersion(stream, obj, binder, currentDataModelVersion);
+            SerializeToBinaryInternal(stream, obj, binder, currentDataModelVersion);
             if (resetStreamPositionAtTheEnd)
             {
                 stream.Position = 0L;
@@ -104,13 +104,13 @@ namespace UnderRailLib
             return 0L;
         }
 
-        private static void EmbedDataModelVersion(Stream stream, object obj, SerializationBinder binder, long dataModelVersion)
+        private static void SerializeToBinaryInternal(Stream stream, object obj, SerializationBinder binder, long dataModelVersion)
         {
             DataModelVersion.CurrentDataModelVersion = dataModelVersion;
-            new BinaryFormatter
-            {
-                Binder = binder
-            }.Serialize(stream, obj);
+            IFormatter formatter = new BinaryFormatter();
+            ((BinaryFormatter) formatter).AssemblyFormat = FormatterAssemblyStyle.Simple;
+            formatter.Binder = binder;
+            formatter.Serialize(stream, obj);
         }
 
         private static T DeserializeFromBinaryInternal<T>(Stream stream, SerializationBinder binder,
