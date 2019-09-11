@@ -38,10 +38,10 @@ namespace TFGame.UnderRail
 
             var udlgs = new GameFileSearch()
             {
-                RelativePath = @".\characters",
-                SearchPattern = "abram.udlg",
-                IsWildcard = false,
-                RecursiveSearch = false,
+                RelativePath = @".\",
+                SearchPattern = "intro1.udlg",
+                IsWildcard = true,
+                RecursiveSearch = true,
                 FileType = typeof(Files.Udlg.File)
             };
 
