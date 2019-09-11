@@ -120,10 +120,7 @@ namespace UnderRailLib.Models
             info.AddValue("I:N", _n);
             info.AddValue("I:Q", _q);
 
-            if (DataModelVersion.MinorVersion >= 45)
-            {
-                info.AddValue("I:L", _l);
-            }
+            info.AddValue("I:L", _l);
 
             info.AddValue("I:D", _d);
             info.AddValue("I:VM", _vm);

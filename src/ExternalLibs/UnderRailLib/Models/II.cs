@@ -9,7 +9,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("II")]
     [Serializable]
-    public abstract class II : ISerializable
+    public abstract class II : iID, iITI, ISerializable
     {
         protected II(SerializationInfo info, StreamingContext ctx)
         {

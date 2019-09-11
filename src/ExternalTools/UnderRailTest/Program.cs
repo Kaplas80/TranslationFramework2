@@ -23,7 +23,7 @@ namespace UnderRailTest
 
             foreach (var file in files)
             {
-                Debug.WriteLine(file);
+                //Debug.WriteLine(file);
                 var model = dialogManager.LoadModel(file);
 
                 if (model != null)
@@ -33,7 +33,7 @@ namespace UnderRailTest
                 }
             }
 
-            //var file = @"H:\Games\Underrail\data\dialogs\characters\abram.udlg";
+            //var file = @"H:\Games\Underrail\data\dialogs\characters\cc_vivian.udlg";
             //var model = dialogManager.LoadModel(file);
             //if (model != null)
             //{
