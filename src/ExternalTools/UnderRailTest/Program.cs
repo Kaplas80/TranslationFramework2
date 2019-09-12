@@ -12,8 +12,6 @@ namespace UnderRailTest
         {
             var assemblyResolver = new AssemblyResolver();
             assemblyResolver.Initialize();
-            var eventHandler = new ResolveEventHandler(assemblyResolver.ResolveAssembly);
-            AppDomain.CurrentDomain.AssemblyResolve += eventHandler;
             Binder.SetAssemblyResolver(assemblyResolver);
 
             var dialogManager = new DialogManager();

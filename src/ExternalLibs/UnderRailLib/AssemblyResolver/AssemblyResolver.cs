@@ -11,24 +11,6 @@ namespace UnderRailLib.AssemblyResolver
 {
     public class AssemblyResolver
     {
-        public Assembly ResolveAssembly(object sender, ResolveEventArgs args)
-        {
-            if (!_initialized)
-            {
-                Initialize();
-            }
-
-            var assemblyName = new AssemblyName(args.Name);
-
-            _fullNameDictionary.TryGetValue(args.Name, out var assembly);
-            if (assembly == null)
-            {
-                _simpleNameDictionary.TryGetValue(assemblyName.Name, out assembly);
-            }
-
-            return assembly;
-        }
-
         public Type GetType(string typeName, string assemblyName, bool throwExceptions = true)
         {
             Type type = null;
@@ -174,8 +156,6 @@ namespace UnderRailLib.AssemblyResolver
                     MapTypeMethods(type, encodedType.GetName());
                 }
             }
-
-            _initialized = true;
         }
 
         private static EncodedTypeName GetEncodedName(MemberInfo memberInfo)
@@ -417,9 +397,6 @@ namespace UnderRailLib.AssemblyResolver
         }
 
         private List<Type> _typeList = new List<Type>();
-        private bool _initialized;
-        private Dictionary<string, Assembly> _simpleNameDictionary = new Dictionary<string, Assembly>();
-        private Dictionary<string, Assembly> _fullNameDictionary = new Dictionary<string, Assembly>();
         private Dictionary<string, Type> _netEncodedTypes = new Dictionary<string, Type>(); //_g
         private Dictionary<string, Type> _customEncodedTypes = new Dictionary<string, Type>();
         private Dictionary<string, Type> _uncodedTypes = new Dictionary<string, Type>();

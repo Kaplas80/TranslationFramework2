@@ -107,9 +107,11 @@ namespace UnderRailLib
         private static void SerializeToBinaryInternal(Stream stream, object obj, SerializationBinder binder, long dataModelVersion)
         {
             DataModelVersion.CurrentDataModelVersion = dataModelVersion;
-            IFormatter formatter = new BinaryFormatter();
-            ((BinaryFormatter) formatter).AssemblyFormat = FormatterAssemblyStyle.Simple;
-            formatter.Binder = binder;
+            var formatter = new BinaryFormatter
+            {
+                AssemblyFormat = FormatterAssemblyStyle.Simple, 
+                Binder = binder
+            };
             formatter.Serialize(stream, obj);
         }
 
@@ -117,9 +119,11 @@ namespace UnderRailLib
             long dataModelVersion)
         {
             DataModelVersion.CurrentDataModelVersion = dataModelVersion;
-            IFormatter formatter = new BinaryFormatter();
-            ((BinaryFormatter) formatter).AssemblyFormat = FormatterAssemblyStyle.Simple;
-            formatter.Binder = binder;
+            var formatter = new BinaryFormatter
+            {
+                AssemblyFormat = FormatterAssemblyStyle.Simple, 
+                Binder = binder
+            };
             var t = (T) formatter.Deserialize(stream);
             return t;
         }
