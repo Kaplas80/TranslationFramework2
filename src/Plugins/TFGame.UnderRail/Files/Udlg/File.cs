@@ -15,6 +15,8 @@ namespace TFGame.UnderRail.Files.Udlg
     {
         private DialogModel _model;
 
+        public override string LineEnding => "\r\n";
+
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
@@ -73,7 +75,7 @@ namespace TFGame.UnderRail.Files.Udlg
             OnFileChanged();
         }
 
-        protected virtual void LoadChanges(IList<Subtitle> subtitles)
+        protected override void LoadChanges(IList<Subtitle> subtitles)
         {
             if (HasChanges)
             {
@@ -113,6 +115,11 @@ namespace TFGame.UnderRail.Files.Udlg
         {
             var result = new Dictionary<string, string>();
 
+            if (model == null)
+            {
+                return result;
+            }
+
             var processed = new Dictionary<string, bool>();
 
             var queue = new Queue<ConditionalElement>();
@@ -132,17 +139,15 @@ namespace TFGame.UnderRail.Files.Udlg
                     {
                         var dict = question.LocalizedTexts;
 
-                        if (!result.ContainsKey(question.Name))
+                        if (dict.Count > 0 && !result.ContainsKey(question.Name))
                         {
-                            result.Add(question.Name, dict["English"]);
+                            var str = FileEncoding.GetString(FileEncoding.GetBytes(dict["English"]));
+                            result.Add(question.Name, str);
                         }
 
                         foreach (var answer in question.PossibleAnswers)
                         {
-                            if (!processed.ContainsKey(answer.Name))
-                            {
-                                queue.Enqueue(answer);
-                            }
+                            queue.Enqueue(answer);
                         }
 
                         break;
@@ -151,9 +156,10 @@ namespace TFGame.UnderRail.Files.Udlg
                     {
                         var dict = storyElement.LocalizedTexts;
 
-                        if (!result.ContainsKey(storyElement.Name))
+                        if (dict.Count > 0 && !result.ContainsKey(storyElement.Name))
                         {
-                            result.Add(storyElement.Name, dict["English"]);
+                            var str = FileEncoding.GetString(FileEncoding.GetBytes(dict["English"]));
+                            result.Add(storyElement.Name, str);
                         }
 
                         break;
@@ -162,10 +168,7 @@ namespace TFGame.UnderRail.Files.Udlg
 
                 foreach (var step in current.PossibleNextSteps)
                 {
-                    if (!processed.ContainsKey(step.Name))
-                    {
-                        queue.Enqueue(step);
-                    }
+                    queue.Enqueue(step);
                 }
 
                 processed.Add(current.Name, true);
@@ -218,15 +221,13 @@ namespace TFGame.UnderRail.Files.Udlg
 
                         if (dictionary.ContainsKey(question.Name))
                         {
-                            dict["English"] = dictionary[question.Name];
+                            var str = FileEncoding.GetString(FileEncoding.GetBytes(dictionary[question.Name]));
+                            dict["English"] = str;
                         }
 
                         foreach (var answer in question.PossibleAnswers)
                         {
-                            if (!processed.ContainsKey(answer.Name))
-                            {
-                                queue.Enqueue(answer);
-                            }
+                            queue.Enqueue(answer);
                         }
 
                         break;
@@ -237,7 +238,8 @@ namespace TFGame.UnderRail.Files.Udlg
 
                         if (dictionary.ContainsKey(storyElement.Name))
                         {
-                            dict["English"] = dictionary[storyElement.Name];
+                            var str = FileEncoding.GetString(FileEncoding.GetBytes(dictionary[storyElement.Name]));
+                            dict["English"] = str;
                         }
 
                         break;
@@ -246,10 +248,7 @@ namespace TFGame.UnderRail.Files.Udlg
 
                 foreach (var step in current.PossibleNextSteps)
                 {
-                    if (!processed.ContainsKey(step.Name))
-                    {
-                        queue.Enqueue(step);
-                    }
+                    queue.Enqueue(step);
                 }
 
                 processed.Add(current.Name, true);
