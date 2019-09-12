@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -114,7 +118,6 @@
     <Compile Include="Models\KeyItem.cs" />
     <Compile Include="Models\MedicineItem.cs" />
     <Compile Include="Models\FoodItem.cs" />
-    <Compile Include="Models\Microsoft\Xna\Framework\Vector3.cs" />
     <Compile Include="Models\ItemGeneratorBase.cs" />
     <Compile Include="Models\STBWTGPJ.cs" />
     <Compile Include="Models\YE.cs" />
