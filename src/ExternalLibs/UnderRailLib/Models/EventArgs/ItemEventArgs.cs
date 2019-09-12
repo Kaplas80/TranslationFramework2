@@ -7,9 +7,9 @@ namespace UnderRailLib.Models.EventArgs
     [Serializable]
     public sealed class ItemEventArgs : System.EventArgs
     {
-        public II Item { get; }
+        public ItemInstance Item { get; }
 
-        public ItemEventArgs(II item)
+        public ItemEventArgs(ItemInstance item)
         {
             Item = item;
         }

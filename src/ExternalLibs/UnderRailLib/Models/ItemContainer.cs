@@ -35,22 +35,22 @@ namespace UnderRailLib.Models
                     _ix = info.GetBoolean("IC:IX");
                     _ibc =
                         (info.GetValue("IC:IBC",
-                            typeof(Dictionary<string, List<II>>)) as Dictionary<string, List<II>>);
+                            typeof(Dictionary<string, List<ItemInstance>>)) as Dictionary<string, List<ItemInstance>>);
                     _ibi =
-                        (info.GetValue("IC:IBI", typeof(Dictionary<Guid, List<II>>)) as Dictionary<Guid, List<II>>);
+                        (info.GetValue("IC:IBI", typeof(Dictionary<Guid, List<ItemInstance>>)) as Dictionary<Guid, List<ItemInstance>>);
                 }
             }
             else
             {
                 if (GetType() == typeof(ItemContainer))
                 {
-                    _items = (List<II>) info.GetValue("_Items", typeof(List<II>));
+                    _items = (List<ItemInstance>) info.GetValue("_Items", typeof(List<ItemInstance>));
                     _itemAdded = (EventHandler<ItemEventArgs>) info.GetValue("ItemAdded", typeof(EventHandler<ItemEventArgs>));
                     _itemRemoved = (EventHandler<ItemEventArgs>) info.GetValue("ItemRemoved", typeof(EventHandler<ItemEventArgs>));
                     return;
                 }
 
-                _items = (List<II>) info.GetValue("ItemContainer+_Items", typeof(List<II>));
+                _items = (List<ItemInstance>) info.GetValue("ItemContainer+_Items", typeof(List<ItemInstance>));
                 _itemAdded = (EventHandler<ItemEventArgs>) info.GetValue("ItemContainer+ItemAdded", typeof(EventHandler<ItemEventArgs>));
                 _itemRemoved = (EventHandler<ItemEventArgs>) info.GetValue("ItemContainer+ItemRemoved", typeof(EventHandler<ItemEventArgs>));
             }
@@ -66,11 +66,11 @@ namespace UnderRailLib.Models
             info.AddValue("IC:IBI", _ibi);
         }
 
-        private List<II> _items = new List<II>();
+        private List<ItemInstance> _items = new List<ItemInstance>();
 
-        private Dictionary<string, List<II>> _ibc;
+        private Dictionary<string, List<ItemInstance>> _ibc;
 
-        private Dictionary<Guid, List<II>> _ibi;
+        private Dictionary<Guid, List<ItemInstance>> _ibi;
 
         private bool _ix;
 

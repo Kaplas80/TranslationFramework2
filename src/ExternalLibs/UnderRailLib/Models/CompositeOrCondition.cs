@@ -10,9 +10,6 @@ namespace UnderRailLib.Models
     {
         protected CompositeOrCondition(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
-            if (DataModelVersion.MajorVersion != 0)
-            {
-            }
         }
     }
 }
