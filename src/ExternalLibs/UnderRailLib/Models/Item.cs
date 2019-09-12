@@ -126,15 +126,17 @@ namespace UnderRailLib.Models
             info.AddValue("I:VM", _vm);
             info.AddValue("I:MS", _ms);
             info.AddValue("I:C2", _c2);
-            info.AddValue("I:CP", _cp);
+
             if (DataModelVersion.MinorVersion >= 6)
             {
                 info.AddValue("I:CV", _cv);
+                info.AddValue("I:CP", _cp);
                 info.AddValue("I:IVF", _ivf);
             }
             else
             {
                 info.AddValue("I:CV", _cv);
+                info.AddValue("I:CP", _cp);
             }
 
             if (DataModelVersion.MinorVersion >= 55)
