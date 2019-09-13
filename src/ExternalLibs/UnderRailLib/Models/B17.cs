@@ -6,9 +6,9 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("B17")]
     [Serializable]
-    public sealed class bkh : ItemGeneratorBase
+    public sealed class B17 : ItemGeneratorBase
     {
-        private bkh(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
+        private B17(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
             if (DataModelVersion.MinorVersion >= 264)
             {
