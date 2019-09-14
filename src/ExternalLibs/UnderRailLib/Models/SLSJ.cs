@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("SLSJ")]
     [Serializable]
-    public sealed class SLSJ : Job
+    public sealed class SLSJ : LSJ
     {
         private SLSJ(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

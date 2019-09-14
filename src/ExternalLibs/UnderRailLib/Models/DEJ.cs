@@ -31,10 +31,21 @@ namespace UnderRailLib.Models
         {
             base.GetObjectData(info, ctx);
             info.AddValue("DEJ:T", _t);
-            info.AddValue("DEJ:CT", _ct);
-            info.AddValue("DEJ:D", _d);
-            info.AddValue("DEJ:S", _s);
-            info.AddValue("DEJ:MD", _md);
+            if (DataModelVersion.MinorVersion >= 32)
+            {
+                info.AddValue("DEJ:CT", _ct);
+            }
+
+            if (DataModelVersion.MinorVersion >= 208)
+            {
+                info.AddValue("DEJ:D", _d);
+                info.AddValue("DEJ:S", _s);
+            }
+
+            if (DataModelVersion.MinorVersion >= 326)
+            {
+                info.AddValue("DEJ:MD", _md);
+            }
         }
 
         private Guid? _ct;

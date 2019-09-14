@@ -38,7 +38,10 @@ namespace UnderRailLib.TimelapseVertigo.Rules.Items
         public void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
             info.AddValue("IIDP:D", _d);
-            info.AddValue("IIDP:V", _version);
+            if (DataModelVersion.MinorVersion >= 350)
+            {
+                info.AddValue("IIDP:V", _version);
+            }
         }
 
         private Item _d;

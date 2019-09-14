@@ -18,6 +18,10 @@ namespace UnderRailLib.Models
                 return;
             }
             var str = info.GetString("MPBAC:BAN");
+            if (string.IsNullOrEmpty(str))
+            {
+                _isNull = true;
+            }
             Enum.TryParse(str, true, out _ban);
         }
 
@@ -31,12 +35,21 @@ namespace UnderRailLib.Models
             }
             else
             {
-                info.AddValue("MPBAC:BAN", _ban.ToString());
+                if (_isNull)
+                {
+                    info.AddValue("MPBAC:BAN", null);
+                }
+                else
+                {
+                    var str = _ban.Description();
+                    info.AddValue("MPBAC:BAN", str);
+                }
             }
         }
 
         private int _mv;
         private BaseAbilityEnum _ban;
+        private bool _isNull = false;
     }
 
 }

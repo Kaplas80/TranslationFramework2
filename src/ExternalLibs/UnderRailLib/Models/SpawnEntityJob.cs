@@ -60,13 +60,23 @@ namespace UnderRailLib.Models
             base.GetObjectData(info, ctx);
             info.AddValue("SEJ:L", _location);
             info.AddValue("SEJ:BP", _blueprintPath);
-            info.AddValue("SEJ:PP", _pp);
+            if (DataModelVersion.MinorVersion >= 33)
+            {
+                info.AddValue("SEJ:PP", _pp);
+            }
             info.AddValue("SEJ:D", _direction);
             info.AddValue("SEJ:I", _id);
             info.AddValue("SEJ:N", _name);
-            info.AddValue("SEJ:DP", _dp);
-            info.AddValue("SEJ:CS", _characterState);
-            info.AddValue("SEJ:CF", _cf);
+            if (DataModelVersion.MinorVersion >= 348)
+            {
+                info.AddValue("SEJ:DP", _dp);
+            }
+
+            if (DataModelVersion.MinorVersion >= 484)
+            {
+                info.AddValue("SEJ:CS", _characterState);
+                info.AddValue("SEJ:CF", _cf);
+            }
         }
 
         private SpatialPointer _location;

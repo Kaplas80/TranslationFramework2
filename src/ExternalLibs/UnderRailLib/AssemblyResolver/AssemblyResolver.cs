@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -404,5 +405,20 @@ namespace UnderRailLib.AssemblyResolver
         private Dictionary<MethodInfo, string> _methodInfoToMethodName = new Dictionary<MethodInfo, string>(); //_k
         private Dictionary<string, MethodInfo> _methodNameToMethodInfo = new Dictionary<string, MethodInfo>(); //_l
         private Dictionary<Type, string> _typeEncodedName = new Dictionary<Type, string>(); //_j
+    }
+
+    public static class ReflectionHelpers
+    {
+        public static string GetCustomDescription(object objEnum)
+        {
+            var fi = objEnum.GetType().GetField(objEnum.ToString());
+            var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            return (attributes.Length > 0) ? attributes[0].Description : string.Empty;
+        }
+
+        public static string Description(this Enum value)
+        {
+            return GetCustomDescription(value);
+        }
     }
 }

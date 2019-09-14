@@ -26,7 +26,10 @@ namespace UnderRailLib.Models
             base.GetObjectData(info, ctx);
             info.AddValue("PLSJ:SCIC", _scic);
             info.AddValue("PLSJ:SWFP", _swfp);
-            info.AddValue("PLSJ:SIUP", _siup);
+            if (DataModelVersion.MinorVersion >= 41)
+            {
+                info.AddValue("PLSJ:SIUP", _siup);
+            }
         }
 
         private bool _scic;

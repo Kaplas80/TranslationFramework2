@@ -59,8 +59,8 @@ namespace UnderRailLib.Models
             if (DataModelVersion.MinorVersion >= 286)
             {
                 info.AddValue("S15:FX", _fx);
-                info.AddValue("S15:FY", _fy);
                 info.AddValue("S15:SFX", _sfx);
+                info.AddValue("S15:FY", _fy);
                 info.AddValue("S15:SFY", _sfy);
             }
             else if (DataModelVersion.MinorVersion >= 233)

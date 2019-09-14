@@ -21,7 +21,10 @@ namespace UnderRailLib.Models
         {
             base.GetObjectData(info, ctx);
             info.AddValue("R01:M", _m);
-            info.AddValue("R02:P", _p);
+            if (DataModelVersion.MajorVersion >= 545)
+            {
+                info.AddValue("R02:P", _p);
+            }
         }
         
         private int _m;

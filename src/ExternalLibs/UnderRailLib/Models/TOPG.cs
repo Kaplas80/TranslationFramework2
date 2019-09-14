@@ -19,7 +19,10 @@ namespace UnderRailLib.Models
         public override void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
             base.GetObjectData(info, ctx);
-            info.AddValue("TOPG:P", _p);
+            if (DataModelVersion.MinorVersion >= 230)
+            {
+                info.AddValue("TOPG:P", _p);
+            }
         }
 
         private Guid? _p;

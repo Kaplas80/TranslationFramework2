@@ -33,7 +33,7 @@ namespace UnderRailLib.Models
             }
             else
             {
-                var text = _skillName.ToString();
+                var text = _skillName.Description();
                 info.AddValue("MAXPUSC:SN", text);
             }
         }

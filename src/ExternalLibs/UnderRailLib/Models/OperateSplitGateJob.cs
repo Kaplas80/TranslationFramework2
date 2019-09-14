@@ -55,11 +55,18 @@ namespace UnderRailLib.Models
             info.AddValue("OSGJ:RSEI", _rightSegmentEntityId);
             info.AddValue("OSGJ:AN", _areaName);
             info.AddValue("OSGJ:O", _operation);
-            info.AddValue("OSGJ:TF", _tf);
-            info.AddValue("OSGJ:AS", _as);
-            info.AddValue("OSGJ:OS", _os);
-            info.AddValue("OSGJ:CS", _cs);
-            info.AddValue("OSGJ:E", _e);
+            if (DataModelVersion.MinorVersion >= 344)
+            {
+                info.AddValue("OSGJ:TF", _tf);
+                info.AddValue("OSGJ:AS", _as);
+                info.AddValue("OSGJ:OS", _os);
+                info.AddValue("OSGJ:CS", _cs);
+            }
+
+            if (DataModelVersion.MinorVersion >= 439)
+            {
+                info.AddValue("OSGJ:E", _e);
+            }
         }
 
         private Guid _leftSegmentEntityId;

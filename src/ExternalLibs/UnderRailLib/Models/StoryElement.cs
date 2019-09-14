@@ -16,6 +16,7 @@ namespace UnderRailLib.Models
             {
                 SerializationHelper.ReadCollection("SE:RA", ref _resultingActions, info);
                 SerializationHelper.ReadDictionary("SE:LT", ref _localizedTexts, info);
+
                 return;
             }
 
@@ -43,6 +44,6 @@ namespace UnderRailLib.Models
 
         private readonly Collection<BaseAction> _resultingActions = new Collection<BaseAction>();
 
-        private readonly Dictionary<string, string> _localizedTexts = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _localizedTexts;
     }
 }

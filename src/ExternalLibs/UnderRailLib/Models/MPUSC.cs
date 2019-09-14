@@ -38,7 +38,15 @@ namespace UnderRailLib.Models
         {
             base.GetObjectData(info, ctx);
             info.AddValue("MPUSC:MV", _minValue);
-            info.AddValue("MPUSC:SN", _skillName);
+            if (DataModelVersion.MinorVersion >= 483)
+            {
+                info.AddValue("MPUSC:SN", _skillName);
+            }
+            else
+            {
+                var text = _skillName.Description();
+                info.AddValue("MPUSC:SN", text);
+            }
         }
 
         private int _minValue;
