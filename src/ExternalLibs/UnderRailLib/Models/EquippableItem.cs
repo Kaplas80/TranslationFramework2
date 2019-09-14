@@ -60,11 +60,11 @@ namespace UnderRailLib.Models
             {
                 if (GetType() == typeof(EquippableItem))
                 {
-                    _staticEffects = (List<SE2>) info.GetValue("_StaticEffects", typeof(List<SE2>));
+                    _staticEffects = (List<StatusEffect>) info.GetValue("_StaticEffects", typeof(List<StatusEffect>));
                     return;
                 }
 
-                _staticEffects = (List<SE2>) info.GetValue("EquippableItem+_StaticEffects", typeof(List<SE2>));
+                _staticEffects = (List<StatusEffect>) info.GetValue("EquippableItem+_StaticEffects", typeof(List<StatusEffect>));
             }
         }
 
@@ -72,18 +72,37 @@ namespace UnderRailLib.Models
         {
             base.GetObjectData(info, ctx);
             SerializationHelper.WriteList("EI:SE", _staticEffects, info);
-            SerializationHelper.WriteList("EI:DE", _de, info);
-            info.AddValue("EI:E", _e);
-            SerializationHelper.WriteList("EI:QC", _qc, info);
-            info.AddValue("EI:LC", _lc);
-            info.AddValue("EI:LI", _li);
-            info.AddValue("EI:LFR", _lfr);
-            info.AddValue("EI:LR", _lr);
-            info.AddValue("EI:LN", _ln);
-            SerializationHelper.WriteList("EI:RQ", _rq, info);
+            if (DataModelVersion.MinorVersion >= 132)
+            {
+                SerializationHelper.WriteList("EI:DE", _de, info);
+            }
+
+            if (DataModelVersion.MinorVersion >= 113)
+            {
+                info.AddValue("EI:E", _e);
+            }
+
+            if (DataModelVersion.MinorVersion >= 365)
+            {
+                SerializationHelper.WriteList("EI:QC", _qc, info);
+            }
+
+            if (DataModelVersion.MinorVersion >= 444)
+            {
+                info.AddValue("EI:LC", _lc);
+                info.AddValue("EI:LI", _li);
+                info.AddValue("EI:LFR", _lfr);
+                info.AddValue("EI:LR", _lr);
+                info.AddValue("EI:LN", _ln);
+            }
+
+            if (DataModelVersion.MinorVersion >= 452)
+            {
+                SerializationHelper.WriteList("EI:RQ", _rq, info);
+            }
         }
 
-        private List<SE2> _staticEffects = new List<SE2>();
+        private List<StatusEffect> _staticEffects = new List<StatusEffect>();
 
         private List<DE2> _de = new List<DE2>();
 

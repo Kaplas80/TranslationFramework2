@@ -35,119 +35,136 @@ namespace UnderRailLib.Models
             if (DataModelVersion.MinorVersion >= 24)
             {
                 _isndm = (eISM) info.GetValue("WI:ISNDM", typeof(eISM));
-                if (DataModelVersion.MinorVersion >= 50)
-                {
-                    _p = (eWPM) info.GetValue("WI:P", typeof(eWPM));
-                    if (DataModelVersion.MinorVersion >= 51)
-                    {
-                        _ammoType = (AmmoType) info.GetValue("WI:A", typeof(AmmoType));
-                        _m = info.GetInt32("WI:M");
-                        if (DataModelVersion.MinorVersion >= 54)
-                        {
-                            _au = info.GetDouble("WI:AU");
-                        }
-                    }
-                }
+            }
 
-                if (DataModelVersion.MinorVersion >= 60)
+            if (DataModelVersion.MinorVersion >= 50)
+            {
+                _p = (eWPM) info.GetValue("WI:P", typeof(eWPM));
+            }
+
+            if (DataModelVersion.MinorVersion >= 51)
+            {
+                _ammoType = (AmmoType) info.GetValue("WI:A", typeof(AmmoType));
+                _m = info.GetInt32("WI:M");
+            }
+
+            if (DataModelVersion.MinorVersion >= 54)
+            {
+                _au = info.GetDouble("WI:AU");
+            }
+
+            if (DataModelVersion.MinorVersion >= 60)
+            {
+                _ap = info.GetInt32("WI:AP");
+            }
+            else
+            {
+                _ap = 15;
+            }
+
+            if (DataModelVersion.MinorVersion >= 66)
+            {
+                if (DataModelVersion.MinorVersion >= 131)
                 {
-                    _ap = info.GetInt32("WI:AP");
+                    _pb = info.GetDouble("WI:PB");
                 }
                 else
                 {
-                    _ap = 15;
+                    _pb = Math.Round(info.GetSingle("WI:PB"), 2);
                 }
+            }
 
-                if (DataModelVersion.MinorVersion >= 66)
-                {
-                    _pb = DataModelVersion.MinorVersion >= 131 ? info.GetDouble("WI:PB") : Math.Round(info.GetSingle("WI:PB"), 2);
-                }
+            if (DataModelVersion.MinorVersion >= 81)
+            {
+                _pp = info.GetSingle("WI:PP");
+            }
 
-                if (DataModelVersion.MinorVersion >= 81)
-                {
-                    _pp = info.GetSingle("WI:PP");
-                }
+            if (DataModelVersion.MinorVersion >= 87)
+            {
+                _fp = info.GetDouble("WI:FP");
+            }
 
-                if (DataModelVersion.MinorVersion >= 87)
-                {
-                    _fp = info.GetDouble("WI:FP");
-                }
+            if (DataModelVersion.MinorVersion >= 98)
+            {
+                _bp = info.GetDouble("WI:BP");
+            }
 
-                if (DataModelVersion.MinorVersion >= 98)
-                {
-                    _bp = info.GetDouble("WI:BP");
-                }
+            if (DataModelVersion.MinorVersion >= 175)
+            {
+                _cdb = info.GetDouble("WI:CDB");
+            }
+            else
+            {
+                _cdb = 1.0;
+            }
 
-                _cdb = DataModelVersion.MinorVersion >= 175 ? info.GetDouble("WI:CDB") : 1.0;
+            if (DataModelVersion.MinorVersion >= 181)
+            {
+                _fd = info.GetBoolean("WI:FD");
+            }
 
-                if (DataModelVersion.MinorVersion >= 181)
-                {
-                    _fd = info.GetBoolean("WI:FD");
-                }
+            if (DataModelVersion.MinorVersion >= 200)
+            {
+                _sb = (info.GetValue("WI:SB", typeof(double?)) as double?);
+            }
 
-                if (DataModelVersion.MinorVersion >= 200)
-                {
-                    _sb = (info.GetValue("WI:SB", typeof(double?)) as double?);
-                }
+            if (DataModelVersion.MinorVersion >= 223)
+            {
+                _ia = info.GetBoolean("WI:IA");
+            }
 
-                if (DataModelVersion.MinorVersion >= 223)
-                {
-                    _ia = info.GetBoolean("WI:IA");
-                }
+            if (DataModelVersion.MinorVersion >= 260)
+            {
+                _eb = info.GetInt32("WI:EB");
+            }
 
-                if (DataModelVersion.MinorVersion >= 260)
-                {
-                    _eb = info.GetInt32("WI:EB");
-                }
+            if (DataModelVersion.MinorVersion >= 360)
+            {
+                _asa = (info.GetValue("WI:ASA", typeof(int?)) as int?);
+            }
 
-                if (DataModelVersion.MinorVersion >= 360)
-                {
-                    _asa = (info.GetValue("WI:ASA", typeof(int?)) as int?);
-                }
+            if (DataModelVersion.MinorVersion >= 361 && DataModelVersion.MinorVersion < 365)
+            {
+                var sa = new List<CapabilityReference>();
+                SerializationHelper.ReadList("WI:SA", ref sa, info);
+                _qc = sa;
+            }
 
-                if (DataModelVersion.MinorVersion >= 361 && DataModelVersion.MinorVersion < 365)
-                {
-                    var sa = new List<CapabilityReference>();
-                    SerializationHelper.ReadList("WI:SA", ref sa, info);
-                    _qc = sa;
-                }
+            if (DataModelVersion.MinorVersion >= 390)
+            {
+                _wue = (eWUE) info.GetValue("WI:WUE", typeof(eWUE));
+            }
 
-                if (DataModelVersion.MinorVersion >= 390)
-                {
-                    _wue = (eWUE) info.GetValue("WI:WUE", typeof(eWUE));
-                }
+            if (DataModelVersion.MinorVersion >= 418)
+            {
+                _rac = info.GetDouble("WI:RAC");
+            }
 
-                if (DataModelVersion.MinorVersion >= 418)
-                {
-                    _rac = info.GetDouble("WI:RAC");
-                }
+            if (DataModelVersion.MinorVersion >= 458)
+            {
+                SerializationHelper.ReadList("WI:OHC", ref _ohc, info);
+            }
+            else
+            {
+                _ohc = new List<string>();
+            }
 
-                if (DataModelVersion.MinorVersion >= 458)
-                {
-                    SerializationHelper.ReadList("WI:OHC", ref _ohc, info);
-                }
-                else
-                {
-                    _ohc = new List<string>();
-                }
+            if (DataModelVersion.MinorVersion >= 471)
+            {
+                _weaponSubtype = (info.GetValue("WI:WST", typeof(WeaponSubtype?)) as WeaponSubtype?);
+                _csa = info.GetString("WI:CSA");
+                _df = info.GetBoolean("WI:DF");
+                _ctbd = (info.GetValue("WI:CTBD", typeof(int?)) as int?);
+                _caa = info.GetString("WI:CAA");
+            }
 
-                if (DataModelVersion.MinorVersion >= 471)
-                {
-                    _weaponSubtype = (info.GetValue("WI:WST", typeof(WeaponSubtype?)) as WeaponSubtype?);
-                    _csa = info.GetString("WI:CSA");
-                    _df = info.GetBoolean("WI:DF");
-                    _ctbd = (info.GetValue("WI:CTBD", typeof(int?)) as int?);
-                    _caa = info.GetString("WI:CAA");
-                }
-
-                if (DataModelVersion.MinorVersion >= 517)
-                {
-                    SerializationHelper.ReadList("WI:WAM", ref _wam, info);
-                }
-                else
-                {
-                    _wam = new List<WAM>();
-                }
+            if (DataModelVersion.MinorVersion >= 517)
+            {
+                SerializationHelper.ReadList("WI:WAM", ref _wam, info);
+            }
+            else
+            {
+                _wam = new List<WAM>();
             }
 
             if (DataModelVersion.MinorVersion >= 518)
@@ -181,20 +198,59 @@ namespace UnderRailLib.Models
             info.AddValue("WI:BP", _bp);
             info.AddValue("WI:CDB", _cdb);
             info.AddValue("WI:FD", _fd);
-            info.AddValue("WI:SB", _sb);
-            info.AddValue("WI:IA", _ia);
-            info.AddValue("WI:EB", _eb);
-            info.AddValue("WI:ASA", _asa);
-            info.AddValue("WI:WUE", _wue);
-            info.AddValue("WI:RAC", _rac);
-            SerializationHelper.WriteList("WI:OHC", _ohc, info);
-            info.AddValue("WI:WST", _weaponSubtype);
-            info.AddValue("WI:CSA", _csa);
-            info.AddValue("WI:DF", _df);
-            info.AddValue("WI:CTBD", _ctbd);
-            info.AddValue("WI:CAA", _caa);
-            SerializationHelper.WriteList("WI:WAM", _wam, info);
-            info.AddValue("WI:MRB", _mrb);
+            if (DataModelVersion.MinorVersion >= 200)
+            {
+                info.AddValue("WI:SB", _sb);
+            }
+
+            if (DataModelVersion.MinorVersion >= 223)
+            {
+                info.AddValue("WI:IA", _ia);
+            }
+
+            if (DataModelVersion.MinorVersion >= 260)
+            {
+                info.AddValue("WI:EB", _eb);
+            }
+
+            if (DataModelVersion.MinorVersion >= 360)
+            {
+                info.AddValue("WI:ASA", _asa);
+            }
+
+            if (DataModelVersion.MinorVersion >= 390)
+            {
+                info.AddValue("WI:WUE", _wue);
+            }
+
+            if (DataModelVersion.MinorVersion >= 418)
+            {
+                info.AddValue("WI:RAC", _rac);
+            }
+
+            if (DataModelVersion.MinorVersion >= 458)
+            {
+                SerializationHelper.WriteList("WI:OHC", _ohc, info);
+            }
+
+            if (DataModelVersion.MinorVersion >= 471)
+            {
+                info.AddValue("WI:WST", _weaponSubtype);
+                info.AddValue("WI:CSA", _csa);
+                info.AddValue("WI:DF", _df);
+                info.AddValue("WI:CTBD", _ctbd);
+                info.AddValue("WI:CAA", _caa);
+            }
+
+            if (DataModelVersion.MinorVersion >= 517)
+            {
+                SerializationHelper.WriteList("WI:WAM", _wam, info);
+            }
+
+            if (DataModelVersion.MinorVersion >= 518)
+            {
+                info.AddValue("WI:MRB", _mrb);
+            }
         }
 
         private WeaponType _weaponType;

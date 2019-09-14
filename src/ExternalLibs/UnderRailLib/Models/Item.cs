@@ -15,10 +15,10 @@ namespace UnderRailLib.Models
     {
         protected Item(SerializationInfo info, StreamingContext ctx)
         {
-            _c = info.GetString("I:C");
-            _n = info.GetString("I:N");
+            Code = info.GetString("I:C");
+            Name = info.GetString("I:N");
             _q = (eIQ) info.GetValue("I:Q", typeof(eIQ));
-            _d = info.GetString("I:D");
+            Description = info.GetString("I:D");
             _vm = info.GetString("I:VM");
             _ms = info.GetInt32("I:MS");
             _c2 = info.GetBoolean("I:C2");
@@ -116,13 +116,13 @@ namespace UnderRailLib.Models
 
         public virtual void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
-            info.AddValue("I:C", _c);
-            info.AddValue("I:N", _n);
+            info.AddValue("I:C", Code);
+            info.AddValue("I:N", Name);
             info.AddValue("I:Q", _q);
 
             info.AddValue("I:L", _l);
 
-            info.AddValue("I:D", _d);
+            info.AddValue("I:D", Description);
             info.AddValue("I:VM", _vm);
             info.AddValue("I:MS", _ms);
             info.AddValue("I:C2", _c2);
@@ -187,15 +187,15 @@ namespace UnderRailLib.Models
 
         public const string a = "item";
 
-        private string _c;
+        public string Code;
 
-        private string _n = "Unknown";
+        public string Name = "Unknown";
 
         private eIQ _q = eIQ.b;
 
         private int _l;
 
-        private string _d;
+        public string Description;
 
         private string _vm = "Misc.0";
 

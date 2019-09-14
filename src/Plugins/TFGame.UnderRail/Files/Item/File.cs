@@ -10,11 +10,11 @@ using UnderRailLib.AssemblyResolver;
 using UnderRailLib.Models;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace TFGame.UnderRail.Files.Knowledge
+namespace TFGame.UnderRail.Files.Item
 {
     public class File : BinaryTextFile
     {
-        private KnowledgeItem _model;
+        private UnderRailLib.Models.Item _model;
 
         public override string LineEnding => "\r\n";
 
@@ -37,27 +37,33 @@ namespace TFGame.UnderRail.Files.Knowledge
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var fileManager = new FileManager<KnowledgeItem>();
+            var fileManager = new FileManager<UnderRailLib.Models.Item>();
 
             _model = fileManager.Load(Path, true);
 
-            var dictionary = _model.Sections;
-
-            var result = new List<Subtitle>(dictionary.Count);
-            foreach (var pair in dictionary)
+            var result = new List<Subtitle>(2);
+            var name = new UnderRailSubtitle
             {
-                var sub = new UnderRailSubtitle
-                {
-                    Id = pair.Key,
-                    Text = pair.Value,
-                    Loaded = pair.Value,
-                    Translation = pair.Value,
-                    Offset = 0,
-                };
-                sub.PropertyChanged += SubtitlePropertyChanged;
+                Id = "Name",
+                Text = _model.Name,
+                Loaded = _model.Name,
+                Translation = _model.Name,
+                Offset = 0,
+            };
+            name.PropertyChanged += SubtitlePropertyChanged;
 
-                result.Add(sub);
-            }
+            var desc = new UnderRailSubtitle
+            {
+                Id = "Description",
+                Text = _model.Description,
+                Loaded = _model.Description,
+                Translation = _model.Description,
+                Offset = 0,
+            };
+            desc.PropertyChanged += SubtitlePropertyChanged;
+
+            result.Add(name);
+            result.Add(desc);
 
             LoadChanges(result);
 
@@ -130,18 +136,17 @@ namespace TFGame.UnderRail.Files.Knowledge
 
             var dictionary = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToDictionary(urSubtitle => urSubtitle.Id, urSubtitle => urSubtitle.Translation);
 
-            foreach (var subs in dictionary)
-            {
-                _model.Sections[subs.Key] = subs.Value;
-            }
+            _model.Name = dictionary["Name"];
+            _model.Description = dictionary["Description"];
 
             var assemblyResolver = new AssemblyResolver();
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var fileManager = new FileManager<KnowledgeItem>();
+            var fileManager = new FileManager<UnderRailLib.Models.Item>();
 
             fileManager.Save(_model, outputPath, true);
         }
     }
 }
+

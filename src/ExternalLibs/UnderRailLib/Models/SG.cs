@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using TimelapseVertigo.Rules.Items;
 using UnderRailLib.AssemblyResolver;
 using UnderRailLib.TimelapseVertigo.Rules.Items;
 

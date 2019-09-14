@@ -72,6 +72,24 @@ namespace TFGame.UnderRail
             knowledge.FileSearches.Add(ks);
             result.Add(knowledge);
 
+            var items = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.item",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.Item.File)
+            };
+
+            var itemfolder = new GameFileContainer()
+            {
+                Path = @".\data\rules\items",
+                Type = ContainerType.Folder
+            };
+
+            itemfolder.FileSearches.Add(items);
+            result.Add(itemfolder);
+
             return result.ToArray();
         }
 

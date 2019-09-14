@@ -1,7 +1,7 @@
 ﻿using System;
 using UnderRailLib.AssemblyResolver;
 
-namespace UnderRailLib.TimelapseVertigo.Rules.Items
+namespace TimelapseVertigo.Rules.Items
 {
     [EncodedTypeName("eBT")]
     [Serializable]

@@ -46,10 +46,21 @@ namespace UnderRailLib.Models
         {
             base.GetObjectData(info, ctx);
             info.AddValue("ASI:ASVM", _armorSuitVisualModel);
-            info.AddValue("ASI:C", _c);
-            info.AddValue("ASI:O", _o);
-            info.AddValue("ASI:BC", _bc);
-            info.AddValue("ASI:BA", _ba);
+            if (DataModelVersion.MinorVersion >= 117)
+            {
+                info.AddValue("ASI:C", _c);
+            }
+
+            if (DataModelVersion.MinorVersion >= 163)
+            {
+                info.AddValue("ASI:O", _o);
+            }
+
+            if (DataModelVersion.MinorVersion >= 164)
+            {
+                info.AddValue("ASI:BC", _bc);
+                info.AddValue("ASI:BA", _ba);
+            }
         }
 
         private string _armorSuitVisualModel;

@@ -151,6 +151,35 @@ namespace UnderRailLib
             return result;
         }
 
+        public static void Dump(string input, string output, bool tryToRetrieveDataModelVersion = false)
+        {
+            using (var fileStream = File.OpenRead(input))
+            using (var fileStream2 = File.OpenWrite(output))
+            {
+                if (tryToRetrieveDataModelVersion)
+                {
+                    var dataModelVersion = RetrieveDataModelVersion(fileStream);
+                    EmbedDataModelVersion(fileStream2, dataModelVersion);
+                }
+
+                using (var ms = new MemoryStream())
+                {
+                    using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
+                    {
+                        var buffer = new byte[4096];
+                        int count;
+                        while ((count = gzipStream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            ms.Write(buffer, 0, count);
+                        }
+                    }
+                    ms.Position = 0L;
+                    ms.CopyTo(fileStream2);
+                }
+            }
+
+        }
+
         public static void SerializeToBinaryFileCompressed<T>(string filePath, T obj, SerializationBinder binder = null,
             long currentDataModelVersion = 0L, bool embedDataModelVersion = false)
         {

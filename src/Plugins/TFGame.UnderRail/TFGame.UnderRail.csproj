@@ -53,6 +53,7 @@
     <Compile Include="Files\Exe\File.cs" />
     <Compile Include="Files\Dialog\File.cs" />
     <Compile Include="Files\Common\UnderRailSubtitle.cs" />
+    <Compile Include="Files\Item\File.cs" />
     <Compile Include="Files\Knowledge\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

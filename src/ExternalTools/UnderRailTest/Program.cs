@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using UnderRailLib;
 using UnderRailLib.AssemblyResolver;
+using UnderRailLib.Models;
 
 namespace UnderRailTest
 {
@@ -14,54 +15,33 @@ namespace UnderRailTest
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var dialogManager = new DialogManager();
+            var fileManager = new FileManager<Item>();
 
-            //var files = Directory.EnumerateFiles(@"I:\Games\UnderRail\data\dialogs", "*.udlg",
-            //    SearchOption.AllDirectories);
-
-            //foreach (var file in files)
-            //{
-            //    //Debug.WriteLine(file);
-            //    var model = dialogManager.LoadModel(file);
-
-            //    if (model != null)
-            //    {
-            //        var output = file.Replace("dialogs", "dialogs2");
-            //        dialogManager.SaveModel(model, output);
-            //    }
-            //}
-
-            //var file = @"H:\Games\Underrail\data\dialogs\support\jy1_guard.udlg";
-            //var model = dialogManager.LoadModel(file);
-            //if (model != null)
-            //{
-            //    var file2 = file.Replace("dialogs", "dialogs2");
-            //    dialogManager.SaveModel(model, file2);
-            //    //var model2 = dialogManager.LoadModel(file2);
-            //}
-
-            var files = Directory.EnumerateFiles(@"I:\Games\UnderRail\data\knowledge", "*.k",
+            var files = Directory.EnumerateFiles(@"I:\Games\Underrail\data\rules\items", "*.item",
                 SearchOption.AllDirectories);
-
             foreach (var file in files)
             {
                 //Debug.WriteLine(file);
-                var model = dialogManager.LoadKnowledgeItem(file);
+
+                var output_dump = file.Replace("items", "items_dump");
+                fileManager.Dump(file, output_dump, true);
+                
+                var model = fileManager.Load(file, true);
 
                 if (model != null)
                 {
-                    var output = file.Replace("knowledge", "knowledge2");
-                    dialogManager.SaveKnowledgeItem(model, output);
+                    var output = file.Replace("items", "items2");
+                    fileManager.Save(model, output, false);
                 }
             }
 
-            //var file = @"H:\Games\Underrail\data\knowledge\baseabilities.k";
-            //var ki = dialogManager.LoadKnowledgeItem(file);
-            //if (ki != null)
+            //var file = @"I:\Games\Underrail\data\rules\items\weapons\xpbl\reddragon.item";
+            //var model = fileManager.Load(file, true);
+
+            //if (model != null)
             //{
-            //    var file2 = file.Replace("knowledge", "knowledge2");
-            //    dialogManager.SaveKnowledgeItem(ki, file2);
-            //    //var model2 = dialogManager.LoadModel(file2);
+            //    var output = file.Replace("items", "items2");
+            //    fileManager.Save(model, output, true);
             //}
         }
     }

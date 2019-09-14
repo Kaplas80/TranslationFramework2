@@ -7,9 +7,9 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("SE2")]
     [Serializable]
-    public abstract class SE2 : ISerializable
+    public abstract class StatusEffect : ISerializable
     {
-        protected SE2(SerializationInfo info, StreamingContext ctx)
+        protected StatusEffect(SerializationInfo info, StreamingContext ctx)
         {
             _priority = info.GetInt32("SE2:P");
             if (DataModelVersion.MinorVersion >= 156)
@@ -21,7 +21,10 @@ namespace UnderRailLib.Models
         public virtual void GetObjectData(SerializationInfo info, StreamingContext ctx)
         {
             info.AddValue("SE2:P", _priority);
-            info.AddValue("SE2:C", _condition);
+            if (DataModelVersion.MinorVersion >= 156)
+            {
+                info.AddValue("SE2:C", _condition);
+            }
         }
 
         private int _priority;
