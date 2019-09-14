@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="AssemblyResolver\AssemblyResolver.cs" />
     <Compile Include="AssemblyResolver\Binder.cs" />
+    <Compile Include="Models\KnowledgeItem.cs" />
     <Compile Include="Models\PIOBSCC.cs" />
     <Compile Include="Models\XPBLMUSMSIOZ.cs" />
     <Compile Include="Models\XPBLLEDMTCJ.cs" />

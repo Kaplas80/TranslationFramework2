@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TF.Core.Files;
 using TF.Core.TranslationEntities;
 using TF.IO;
+using TFGame.UnderRail.Files.Common;
 using UnderRailLib;
 using UnderRailLib.AssemblyResolver;
 using UnderRailLib.Models;
+using WeifenLuo.WinFormsUI.Docking;
 
-namespace TFGame.UnderRail.Files.Udlg
+namespace TFGame.UnderRail.Files.Dialog
 {
     public class File : BinaryTextFile
     {
@@ -19,6 +20,15 @@ namespace TFGame.UnderRail.Files.Udlg
 
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
+        }
+
+        public override void Open(DockPanel panel)
+        {
+            _view = new GridView(LineEnding);
+
+            _subtitles = GetSubtitles();
+            _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
+            _view.Show(panel, DockState.Document);
         }
 
         protected override IList<Subtitle> GetSubtitles()
@@ -36,7 +46,7 @@ namespace TFGame.UnderRail.Files.Udlg
             var result = new List<Subtitle>(dictionary.Count);
             foreach (var pair in dictionary)
             {
-                var sub = new UdlgSubtitle
+                var sub = new UnderRailSubtitle
                 {
                     Id = pair.Key,
                     Text = pair.Value,
@@ -63,7 +73,7 @@ namespace TFGame.UnderRail.Files.Udlg
                 output.Write(_subtitles.Count);
                 foreach (var subtitle in _subtitles)
                 {
-                    var sub = subtitle as UdlgSubtitle;
+                    var sub = subtitle as UnderRailSubtitle;
                     output.WriteString(sub.Id);
                     output.WriteString(subtitle.Translation);
 
@@ -79,7 +89,7 @@ namespace TFGame.UnderRail.Files.Udlg
         {
             if (HasChanges)
             {
-                var subs = subtitles.Select(subtitle => subtitle as UdlgSubtitle).ToList();
+                var subs = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToList();
                 using (var fs = new FileStream(ChangesFile, FileMode.Open))
                 using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
                 {
@@ -186,7 +196,7 @@ namespace TFGame.UnderRail.Files.Udlg
 
             var subtitles = GetSubtitles();
 
-            var dictionary = subtitles.Select(subtitle => subtitle as UdlgSubtitle).ToDictionary(udlgSubtitle => udlgSubtitle.Id, udlgSubtitle => udlgSubtitle.Translation);
+            var dictionary = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToDictionary(udlgSubtitle => udlgSubtitle.Id, udlgSubtitle => udlgSubtitle.Translation);
 
             SetSubtitles(_model, dictionary);
 

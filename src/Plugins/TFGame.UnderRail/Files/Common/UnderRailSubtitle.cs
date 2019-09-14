@@ -1,17 +1,17 @@
 ﻿using TF.Core.TranslationEntities;
 
-namespace TFGame.UnderRail.Files.Udlg
+namespace TFGame.UnderRail.Files.Common
 {
-    public class UdlgSubtitle : Subtitle
+    public class UnderRailSubtitle : Subtitle
     {
         public string Id { get; set; }
 
-        public UdlgSubtitle() : base()
+        public UnderRailSubtitle() : base()
         {
 
         }
 
-        public UdlgSubtitle(Subtitle s) : base()
+        public UnderRailSubtitle(Subtitle s) : base()
         {
             Offset = s.Offset;
             Text = s.Text;

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace UnderRailLib
 {
@@ -48,31 +51,20 @@ namespace UnderRailLib
         public static void SerializeToBinaryFile<T>(string filePath, T obj, SerializationBinder binder = null,
             long currentDataModelVersion = 0L, bool embedDataModelVersion = false)
         {
-            var memoryStream = new MemoryStream();
-            try
+            using (var memoryStream = new MemoryStream())
             {
                 SerializeToBinary(obj, binder, memoryStream, currentDataModelVersion, embedDataModelVersion);
                 File.WriteAllBytes(filePath, memoryStream.ToArray());
-            }
-            finally
-            {
-                memoryStream.Close();
             }
         }
 
         public static T DeserializeFromBinaryFile<T>(string filePath, SerializationBinder binder = null,
             bool tryToRetrieveDataModelVersion = false)
         {
-            FileStream fileStream = null;
             T result;
-            try
+            using (var fileStream = File.OpenRead(filePath))
             {
-                fileStream = File.OpenRead(filePath);
                 result = DeserializeFromBinary<T>(fileStream, binder, tryToRetrieveDataModelVersion);
-            }
-            finally
-            {
-                fileStream?.Close();
             }
 
             return result;
@@ -126,6 +118,57 @@ namespace UnderRailLib
             };
             var t = (T) formatter.Deserialize(stream);
             return t;
+        }
+
+        public static T DeserializeFromBinaryFileCompressed<T>(string filePath, SerializationBinder binder = null, bool tryToRetrieveDataModelVersion = false)
+        {
+            T result;
+            using (var fileStream = File.OpenRead(filePath))
+            {
+                var dataModelVersion = 0L;
+                if (tryToRetrieveDataModelVersion)
+                {
+                    dataModelVersion = RetrieveDataModelVersion(fileStream);
+                }
+
+                using (var ms = new MemoryStream())
+                {
+                    using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
+                    {
+                        var buffer = new byte[4096];
+                        int count;
+                        while ((count = gzipStream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            ms.Write(buffer, 0, count);
+                        }
+                    }
+
+                    ms.Position = 0L;
+                    var t = DeserializeFromBinaryInternal<T>(ms, binder, dataModelVersion);
+                    result = t;
+                }
+            }
+            return result;
+        }
+
+        public static void SerializeToBinaryFileCompressed<T>(string filePath, T obj, SerializationBinder binder = null,
+            long currentDataModelVersion = 0L, bool embedDataModelVersion = false)
+        {
+            using (var fileStream = File.Create(filePath, 16384))
+            {
+                if (embedDataModelVersion)
+                {
+                    EmbedDataModelVersion(fileStream, currentDataModelVersion);
+                }
+
+                using (var gzipStream = new GZipStream(fileStream, CompressionMode.Compress))
+                {
+                    SerializeToBinaryInternal(gzipStream, obj, binder, currentDataModelVersion);
+                }
+                
+                //gzipStream.Flush();
+                //gzipStream.Close();
+            }
         }
 
         public static readonly Guid Id = new Guid("{838B53F9-361F-4332-BAAE-0D17865D0854}");

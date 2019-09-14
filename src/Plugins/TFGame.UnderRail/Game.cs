@@ -38,11 +38,11 @@ namespace TFGame.UnderRail
 
             var udlgs = new GameFileSearch()
             {
-                RelativePath = @".\",
+                RelativePath = @".",
                 SearchPattern = "*.udlg",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.Udlg.File)
+                FileType = typeof(Files.Dialog.File)
             };
 
             var dialogs = new GameFileContainer()
@@ -53,6 +53,24 @@ namespace TFGame.UnderRail
 
             dialogs.FileSearches.Add(udlgs);
             result.Add(dialogs);
+
+            var ks = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.k",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.Knowledge.File)
+            };
+
+            var knowledge = new GameFileContainer()
+            {
+                Path = @".\data\knowledge",
+                Type = ContainerType.Folder
+            };
+
+            knowledge.FileSearches.Add(ks);
+            result.Add(knowledge);
 
             return result.ToArray();
         }

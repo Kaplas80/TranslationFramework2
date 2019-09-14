@@ -18,7 +18,7 @@ namespace TF.Core.Views
     public partial class GridView : DockContent
     {
         // Con esta clase evito que la flechas izquierda y derecha cambien de celda al editar
-        private class TFDataGridView : DataGridView
+        protected class TFDataGridView : DataGridView
         {
             [SecurityPermission(
                 SecurityAction.LinkDemand, Flags =
@@ -72,7 +72,7 @@ namespace TF.Core.Views
             scintilla.EolMode = _lineEnding == "\r\n" ? Eol.CrLf : Eol.Lf;
         }
 
-        public void LoadData(IList<Subtitle> subtitles)
+        public virtual void LoadData(IList<Subtitle> subtitles)
         {
             _subtitles = subtitles;
 
@@ -133,8 +133,7 @@ namespace TF.Core.Views
         public Tuple<int, Subtitle> GetSelectedSubtitle()
         {
             var rowIndex = SubtitleGridView.SelectedCells[0].RowIndex;
-            var subtitles = (IList<Subtitle>) SubtitleGridView.DataSource;
-            return new Tuple<int, Subtitle>(rowIndex, subtitles[rowIndex]);
+            return new Tuple<int, Subtitle>(rowIndex, _subtitles[rowIndex]);
         }
 
         protected virtual void SubtitleGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -333,7 +332,7 @@ namespace TF.Core.Views
             }
         }
 
-        private void UpdateLabel()
+        protected void UpdateLabel()
         {
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
             var totalLines = _subtitles.Count;
