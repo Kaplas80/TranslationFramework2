@@ -65,7 +65,10 @@ namespace UnderRailLib.Models
             }
             else if (DataModelVersion.MinorVersion >= 233)
             {
-                var point = new Point(_fx, _fy);
+                var point = new Point
+                {
+                    X = _fx, Y = _fy
+                };
                 info.AddValue("S15:F", point);
                 info.AddValue("S15:SF", _sfx);
             }

@@ -4,11 +4,11 @@ using UnderRailLib.AssemblyResolver;
 
 namespace UnderRailLib.Models
 {
-    [EncodedTypeName("C55")]
+    [EncodedTypeName("LNCDLE")]
     [Serializable]
-    public sealed class C55 : ItemGeneratorBase
+    public abstract class LNCDLE : DLE
     {
-        private C55(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
+        protected LNCDLE(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
         }
     }

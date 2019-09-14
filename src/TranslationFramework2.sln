@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnderRailTest", "ExternalTo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnderRailLib", "ExternalLibs\UnderRailLib\UnderRailLib.csproj", "{828650BC-406B-4090-BDF0-A72DFB4B68E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xna.Framework", "ExternalLibs\Microsoft.Xna.Framework\Microsoft.Xna.Framework.csproj", "{C83E7AD3-9A6D-4CD8-B63A-F644FD2F21B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{828650BC-406B-4090-BDF0-A72DFB4B68E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{828650BC-406B-4090-BDF0-A72DFB4B68E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{828650BC-406B-4090-BDF0-A72DFB4B68E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C83E7AD3-9A6D-4CD8-B63A-F644FD2F21B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C83E7AD3-9A6D-4CD8-B63A-F644FD2F21B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C83E7AD3-9A6D-4CD8-B63A-F644FD2F21B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C83E7AD3-9A6D-4CD8-B63A-F644FD2F21B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +177,7 @@ Global
 		{AD08639D-0F5B-47FB-AA9D-B412E44ECFCD} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{F05D2CAF-398D-4622-B329-4CDF7D7293AB} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 		{828650BC-406B-4090-BDF0-A72DFB4B68E9} = {53972F1C-3B9C-40EA-97EA-58D898B5A027}
+		{C83E7AD3-9A6D-4CD8-B63A-F644FD2F21B2} = {53972F1C-3B9C-40EA-97EA-58D898B5A027}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}

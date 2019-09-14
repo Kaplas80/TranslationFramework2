@@ -4,11 +4,11 @@ using UnderRailLib.AssemblyResolver;
 
 namespace UnderRailLib.Models
 {
-    [EncodedTypeName("C55")]
+    [EncodedTypeName("XPBLLEMGP")]
     [Serializable]
-    public sealed class C55 : ItemGeneratorBase
+    public sealed class XPBLLEMGP : Job
     {
-        private C55(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
+        private XPBLLEMGP(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
         }
     }

@@ -16,29 +16,29 @@ namespace UnderRailTest
 
             var dialogManager = new DialogManager();
 
-            var files = Directory.EnumerateFiles(@"H:\Games\Underrail\data\dialogs", "*.udlg",
+            var files = Directory.EnumerateFiles(@"H:\Games\UnderRail\data\dialogs", "*.udlg",
                 SearchOption.AllDirectories);
 
-            foreach (var file in files)
-            {
-                //Debug.WriteLine(file);
-                var model = dialogManager.LoadModel(file);
+            //foreach (var file in files)
+            //{
+            //    //Debug.WriteLine(file);
+            //    var model = dialogManager.LoadModel(file);
 
-                if (model != null)
-                {
-                    var output = file.Replace("dialogs", "dialogs2");
-                    dialogManager.SaveModel(model, output);
-                }
-            }
+            //    if (model != null)
+            //    {
+            //        var output = file.Replace("dialogs", "dialogs2");
+            //        dialogManager.SaveModel(model, output);
+            //    }
+            //}
 
-            /*var file = @"H:\Games\Underrail\data\dialogs\characters\abram.udlg";
+            var file = @"H:\Games\Underrail\data\dialogs\characters\cc_duff.udlg";
             var model = dialogManager.LoadModel(file);
             if (model != null)
             {
                 var file2 = file.Replace("dialogs", "dialogs2");
                 dialogManager.SaveModel(model, file2);
                 var model2 = dialogManager.LoadModel(file2);
-            }*/
+            }
         }
     }
 }

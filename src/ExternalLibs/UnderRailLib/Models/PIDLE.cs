@@ -4,11 +4,11 @@ using UnderRailLib.AssemblyResolver;
 
 namespace UnderRailLib.Models
 {
-    [EncodedTypeName("C55")]
+    [EncodedTypeName("PIDLE")]
     [Serializable]
-    public sealed class C55 : ItemGeneratorBase
+    public sealed class PIDLE : LNCDLE
     {
-        private C55(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
+        private PIDLE(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
         }
     }
