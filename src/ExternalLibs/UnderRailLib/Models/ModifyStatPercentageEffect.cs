@@ -12,15 +12,15 @@ namespace UnderRailLib.Models
         {
             if (DataModelVersion.MinorVersion != 0)
             {
-                _value = info.GetInt32("MSPE:V");
+                _value = info.GetSingle("MSPE:V");
                 return;
             }
             if (GetType() == typeof(ModifyStatPercentageEffect))
             {
-                _value = info.GetInt32("_Value");
+                _value = info.GetSingle("_Value");
                 return;
             }
-            _value = info.GetInt32("ModifyStatPercentageEffect+_Value");
+            _value = info.GetSingle("ModifyStatPercentageEffect+_Value");
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext ctx)
@@ -29,6 +29,6 @@ namespace UnderRailLib.Models
             info.AddValue("MSPE:V", _value);
         }
 
-        private int _value;
+        private float _value;
     }
 }

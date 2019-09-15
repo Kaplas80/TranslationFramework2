@@ -259,7 +259,7 @@ namespace UnderRailLib.Models
 
         private int _ap = 15;
 
-        private List<DR> _damage = new List<DR>();
+        private List<DamageRange> _damage = new List<DamageRange>();
 
         private bool _fd;
 

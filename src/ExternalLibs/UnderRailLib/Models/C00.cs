@@ -11,7 +11,6 @@ namespace UnderRailLib.Models
     {
         private C00(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
-            Debug.Write("A");
         }
     }
 }
