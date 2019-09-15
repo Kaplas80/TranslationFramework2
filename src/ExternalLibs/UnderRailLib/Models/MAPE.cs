@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MAPE")]
     [Serializable]
-    public sealed class MAPE : StatusEffect
+    public sealed class MAPE : SE2
     {
         private MAPE(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

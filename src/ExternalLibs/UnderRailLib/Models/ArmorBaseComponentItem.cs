@@ -40,7 +40,7 @@ namespace UnderRailLib.Models
                     SerializationHelper.ReadList("ABCI:DE", ref _de, A_0);
                     return;
                 }
-                _se = new List<StatusEffect>();
+                _se = new List<SE2>();
                 _de = new List<DE2>();
             }
             else
@@ -75,7 +75,7 @@ namespace UnderRailLib.Models
 
         private int _s;
 
-        private List<StatusEffect> _se = new List<StatusEffect>();
+        private List<SE2> _se = new List<SE2>();
 
         private List<DE2> _de = new List<DE2>();
     }

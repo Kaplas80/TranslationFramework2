@@ -7,9 +7,9 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("SE2")]
     [Serializable]
-    public abstract class StatusEffect : ISerializable
+    public abstract class SE2 : ISerializable
     {
-        protected StatusEffect(SerializationInfo info, StreamingContext ctx)
+        protected SE2(SerializationInfo info, StreamingContext ctx)
         {
             _priority = info.GetInt32("SE2:P");
             if (DataModelVersion.MinorVersion >= 156)

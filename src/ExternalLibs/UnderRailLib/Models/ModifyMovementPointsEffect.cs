@@ -7,7 +7,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MMPE")]
     [Serializable]
-    public sealed class ModifyMovementPointsEffect : StatusEffect, iMS
+    public sealed class ModifyMovementPointsEffect : SE2, iMS
     {
         private ModifyMovementPointsEffect(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

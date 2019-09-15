@@ -8,7 +8,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MASE")]
     [Serializable]
-    public sealed class MASE : StatusEffect
+    public sealed class MASE : SE2
     {
         private MASE(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

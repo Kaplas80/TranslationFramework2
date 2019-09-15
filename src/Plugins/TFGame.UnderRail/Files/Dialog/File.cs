@@ -37,9 +37,9 @@ namespace TFGame.UnderRail.Files.Dialog
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var fileManager = new FileManager<DialogModel>();
+            var fileManager = new FileManager();
 
-            _model = fileManager.Load(Path, false);
+            _model = fileManager.Load<DialogModel>(Path, false);
 
             var dictionary = GetSubtitles(_model);
 
@@ -204,7 +204,7 @@ namespace TFGame.UnderRail.Files.Dialog
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var fileManager = new FileManager<DialogModel>();
+            var fileManager = new FileManager();
 
             fileManager.Save(_model, outputPath, false);
         }

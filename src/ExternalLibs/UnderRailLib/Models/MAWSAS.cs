@@ -7,7 +7,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MAWSAS")]
     [Serializable]
-    public sealed class MAWSAS : StatusEffect
+    public sealed class MAWSAS : SE2
     {
         private MAWSAS(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

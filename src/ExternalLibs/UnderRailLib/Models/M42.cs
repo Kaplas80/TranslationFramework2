@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("M42")]
     [Serializable]
-    public sealed class M42 : StatusEffect
+    public sealed class M42 : SE2
     {
         private M42(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

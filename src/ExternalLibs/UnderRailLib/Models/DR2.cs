@@ -35,6 +35,13 @@ namespace UnderRailLib.Models
             info.AddValue("R", _r);
         }
 
+        public DR2(DamageType damageType, int value, double r)
+        {
+            _damageType = damageType;
+            _value = value;
+            _r = r;
+        }
+
         private DamageType _damageType;
 
         private int _value;

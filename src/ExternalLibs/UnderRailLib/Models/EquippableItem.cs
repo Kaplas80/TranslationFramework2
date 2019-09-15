@@ -60,11 +60,11 @@ namespace UnderRailLib.Models
             {
                 if (GetType() == typeof(EquippableItem))
                 {
-                    _staticEffects = (List<StatusEffect>) info.GetValue("_StaticEffects", typeof(List<StatusEffect>));
+                    _staticEffects = (List<SE2>) info.GetValue("_StaticEffects", typeof(List<SE2>));
                     return;
                 }
 
-                _staticEffects = (List<StatusEffect>) info.GetValue("EquippableItem+_StaticEffects", typeof(List<StatusEffect>));
+                _staticEffects = (List<SE2>) info.GetValue("EquippableItem+_StaticEffects", typeof(List<SE2>));
             }
         }
 
@@ -102,7 +102,7 @@ namespace UnderRailLib.Models
             }
         }
 
-        private List<StatusEffect> _staticEffects = new List<StatusEffect>();
+        private List<SE2> _staticEffects = new List<SE2>();
 
         private List<DE2> _de = new List<DE2>();
 

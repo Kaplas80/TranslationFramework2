@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MSPE2")]
     [Serializable]
-    public abstract class MSPE2 : StatusEffect
+    public abstract class MSPE2 : SE2
     {
         protected MSPE2(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

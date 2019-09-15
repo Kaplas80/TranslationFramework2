@@ -7,7 +7,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("M52")]
     [Serializable]
-    public sealed class M52 : StatusEffect, iMS
+    public sealed class M52 : SE2, iMS
     {
         private M52(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

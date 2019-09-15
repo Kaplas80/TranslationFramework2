@@ -7,7 +7,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MWS")]
     [Serializable]
-    public sealed class MWS : StatusEffect
+    public sealed class MWS : SE2
     {
         private MWS(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

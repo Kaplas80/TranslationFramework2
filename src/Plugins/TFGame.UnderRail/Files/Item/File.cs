@@ -37,9 +37,9 @@ namespace TFGame.UnderRail.Files.Item
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var fileManager = new FileManager<UnderRailLib.Models.Item>();
+            var fileManager = new FileManager();
 
-            _model = fileManager.Load(Path, true);
+            _model = fileManager.Load<UnderRailLib.Models.Item>(Path, true);
 
             var result = new List<Subtitle>(2);
             var name = new UnderRailSubtitle
@@ -143,7 +143,7 @@ namespace TFGame.UnderRail.Files.Item
             assemblyResolver.Initialize();
             Binder.SetAssemblyResolver(assemblyResolver);
 
-            var fileManager = new FileManager<UnderRailLib.Models.Item>();
+            var fileManager = new FileManager();
 
             fileManager.Save(_model, outputPath, true);
         }

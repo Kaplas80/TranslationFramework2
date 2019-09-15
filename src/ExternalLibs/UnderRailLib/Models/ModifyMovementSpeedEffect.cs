@@ -7,7 +7,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MMSE")]
     [Serializable]
-    public sealed class ModifyMovementSpeedEffect : StatusEffect, iMS
+    public sealed class ModifyMovementSpeedEffect : SE2, iMS
     {
         private ModifyMovementSpeedEffect(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

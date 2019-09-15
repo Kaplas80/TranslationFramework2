@@ -8,7 +8,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("I01")]
     [Serializable]
-    public sealed class ImmuneEffect : StatusEffect, iMS
+    public sealed class ImmuneEffect : SE2, iMS
     {
         private ImmuneEffect(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

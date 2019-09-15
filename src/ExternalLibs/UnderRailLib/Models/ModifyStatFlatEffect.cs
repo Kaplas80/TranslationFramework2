@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MSFE")]
     [Serializable]
-    public abstract class ModifyStatFlatEffect : StatusEffect
+    public abstract class ModifyStatFlatEffect : SE2
     {
         protected ModifyStatFlatEffect(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

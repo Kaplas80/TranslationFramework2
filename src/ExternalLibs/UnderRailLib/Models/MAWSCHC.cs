@@ -7,7 +7,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MAWSCHC")]
     [Serializable]
-    public sealed class MAWSCHC : StatusEffect
+    public sealed class MAWSCHC : SE2
     {
         private MAWSCHC(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

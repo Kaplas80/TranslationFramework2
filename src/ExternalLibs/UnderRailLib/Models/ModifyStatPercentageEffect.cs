@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MSPE")]
     [Serializable]
-    public abstract class ModifyStatPercentageEffect : StatusEffect
+    public abstract class ModifyStatPercentageEffect : SE2
     {
         protected ModifyStatPercentageEffect(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

@@ -6,7 +6,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MQSNE")]
     [Serializable]
-    public sealed class ModifyQuickSlotsNumberEffect : StatusEffect
+    public sealed class ModifyQuickSlotsNumberEffect : SE2
     {
         private ModifyQuickSlotsNumberEffect(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

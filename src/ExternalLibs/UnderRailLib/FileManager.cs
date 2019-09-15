@@ -5,9 +5,9 @@ using UnderRailLib.AssemblyResolver;
 
 namespace UnderRailLib
 {
-    public class FileManager<T>
+    public class FileManager
     {
-        public T Load(string path, bool isCompressed)
+        public T Load<T>(string path, bool isCompressed)
         {
             if (File.Exists(path))
             {
@@ -24,7 +24,7 @@ namespace UnderRailLib
             return default;
         }
 
-        public void Save(T model, string path, bool isCompressed)
+        public void Save<T>(T model, string path, bool isCompressed)
         {
             var directory = Path.GetDirectoryName(path);
             Directory.CreateDirectory(directory);
@@ -46,7 +46,7 @@ namespace UnderRailLib
             }
         }
 
-        public void Dump(string inputPath, string outputPath, bool isCompressed)
+        public void Dump(string inputPath, string outputPath)
         {
             var directory = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(directory);
@@ -54,18 +54,20 @@ namespace UnderRailLib
             {
                 try
                 {
-                    if (!isCompressed)
-                    {
-                        File.Copy(inputPath, outputPath, true);
-                    }
-                    else
-                    {
-                        SerializationManager.Dump(inputPath, outputPath, true);
-                    }
+                    SerializationManager.Dump(inputPath, outputPath, true);
+                    
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
+                    try
+                    {
+                        File.Copy(inputPath, outputPath, true);
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.WriteLine(e.Message);
+                        //throw;
+                    }
                 }
             }
         }

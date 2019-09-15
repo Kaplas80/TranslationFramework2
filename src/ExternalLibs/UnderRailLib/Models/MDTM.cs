@@ -8,7 +8,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("MDTM")]
     [Serializable]
-    public sealed class MDTM : StatusEffect, iMS
+    public sealed class MDTM : SE2, iMS
     {
         private MDTM(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {
