@@ -11,9 +11,13 @@ namespace TFGame.PhoenixWrightTrilogy.Files
         {
         }
 
-        public override bool Search(string searchString)
+        public override bool Search(string searchString, string path = "")
         {
-            var encryptedBytes = File.ReadAllBytes(Path);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path;
+            }
+            var encryptedBytes = File.ReadAllBytes(path);
             var bytes = EncryptionManager.DecryptData(encryptedBytes);
 
             var pattern = FileEncoding.GetBytes(searchString.ToFullWidthChars());

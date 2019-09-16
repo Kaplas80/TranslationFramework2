@@ -144,5 +144,23 @@ namespace TFGame.UnderRail.Files.Common
 
             System.IO.File.Delete(tempFile);
         }
+
+        public override bool Search(string searchString, string path = "")
+        {
+            if (Path.EndsWith(".udlg"))
+            {
+                return base.Search(searchString);
+            }
+
+            var tempFile = System.IO.Path.GetTempFileName();
+
+            UnderRailTool.Run("d", Path, tempFile, string.Empty);
+
+            var result = base.Search(searchString, tempFile);
+
+            System.IO.File.Delete(tempFile);
+
+            return result;
+        }
     }
 }

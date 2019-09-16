@@ -87,7 +87,7 @@ namespace TF.Core.Entities
             OnFileChanged();
         }
 
-        public virtual bool Search(string searchString)
+        public virtual bool Search(string searchString, string path = "")
         {
             return false;
         }

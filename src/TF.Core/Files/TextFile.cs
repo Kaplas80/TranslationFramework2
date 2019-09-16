@@ -59,9 +59,13 @@ namespace TF.Core.Files
             OnFileChanged();
         }
 
-        public override bool Search(string searchString)
+        public override bool Search(string searchString, string path = "")
         {
-            var bytes = File.ReadAllBytes(Path);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path;
+            }
+            var bytes = File.ReadAllBytes(path);
 
             var pattern = FileEncoding.GetBytes(searchString);
 
