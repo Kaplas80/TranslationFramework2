@@ -37,6 +37,9 @@ Cuando el usuario termina la traducción, la aplicación reconstruye los fichero
   - Traducción de textos.
   - Reemplazo de texturas.
   - Reemplazo de fuentes.
+* UnderRail
+  - Traducción de textos.
+  (NOTA: Para que funcione, hay que copiar los ficheros underrail.exe, GalaxyCSharp.dll, sfmlnet-audio-2.dll, sfmlnet-window-2.dll, Microsoft.Xna.Framework.dll y Microsoft.Xna.Framework.Graphics.dll en la carpeta "plugins")
 
 ## Agradecimientos
 * Malaquito y Hazardous de [ClanDLAN](http://clandlan.net/foros/forum/3-traducciones-academia-de-sundabar/) por atreverse a hacer traducciones con mis herramientas xD
@@ -45,5 +48,5 @@ Cuando el usuario termina la traducción, la aplicación reconstruye los fichero
 * [flamethrower](https://heroesoflegend.org/forums/viewtopic.php?f=38&t=289) por el algoritmo de compresión Falcom.
 * [Zhenjian Yang](https://github.com/ZhenjianYang) por su estudio de los scripts del The Legend of Heroes: Trails in the Sky
 * [DragonZH](https://forum.zoneofgames.ru/topic/36240-unityex/) por la herramienta UnityEX
+* [0xd4d](https://github.com/0xd4d) por dnlib y dnSpy. Son una maravilla!!!
 * Y a toda la gente que se me olvida nombrar.
-
