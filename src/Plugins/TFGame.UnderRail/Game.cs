@@ -42,7 +42,7 @@ namespace TFGame.UnderRail
                 SearchPattern = "*.udlg",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.Dialog.File)
+                FileType = typeof(Files.Common.File)
             };
 
             var dialogs = new GameFileContainer()
@@ -60,7 +60,7 @@ namespace TFGame.UnderRail
                 SearchPattern = "*.k",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.Knowledge.File)
+                FileType = typeof(Files.Common.File)
             };
 
             var knowledge = new GameFileContainer()
@@ -78,7 +78,7 @@ namespace TFGame.UnderRail
                 SearchPattern = "*.item",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.Item.File)
+                FileType = typeof(Files.Common.File)
             };
 
             var itemfolder = new GameFileContainer()

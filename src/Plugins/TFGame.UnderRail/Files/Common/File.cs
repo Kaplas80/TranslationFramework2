@@ -1,21 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TF.Core.Files;
 using TF.Core.TranslationEntities;
 using TF.IO;
 using TFGame.UnderRail.Files.Common;
-using UnderRailLib;
-using UnderRailLib.AssemblyResolver;
-using UnderRailLib.Models;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace TFGame.UnderRail.Files.Item
+namespace TFGame.UnderRail.Files.Common
 {
     public class File : BinaryTextFile
     {
-        private UnderRailLib.Models.Item _model;
-
         public override string LineEnding => "\r\n";
 
         public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
@@ -33,39 +30,40 @@ namespace TFGame.UnderRail.Files.Item
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            var assemblyResolver = new AssemblyResolver();
-            assemblyResolver.Initialize();
-            Binder.SetAssemblyResolver(assemblyResolver);
+            var tempFile = System.IO.Path.GetTempFileName();
 
-            var fileManager = new FileManager();
+            UnderRailTool.Run("r", Path, tempFile, string.Empty);
 
-            _model = fileManager.Load<UnderRailLib.Models.Item>(Path, true);
+            var result = new List<Subtitle>();
 
-            var result = new List<Subtitle>(2);
-            var name = new UnderRailSubtitle
+            if (System.IO.File.Exists(tempFile))
             {
-                Id = "Name",
-                Text = _model.Name,
-                Loaded = _model.Name,
-                Translation = _model.Name,
-                Offset = 0,
-            };
-            name.PropertyChanged += SubtitlePropertyChanged;
+                var lines = System.IO.File.ReadAllLines(tempFile);
+                System.IO.File.Delete(tempFile);
 
-            var desc = new UnderRailSubtitle
-            {
-                Id = "Description",
-                Text = _model.Description,
-                Loaded = _model.Description,
-                Translation = _model.Description,
-                Offset = 0,
-            };
-            desc.PropertyChanged += SubtitlePropertyChanged;
+                if (lines.Length > 0)
+                {
+                    var dictionary = lines.Select(line => line.Split(new[] {"<Split>"}, StringSplitOptions.None))
+                        .ToDictionary(split => split[0], split => split[1]);
 
-            result.Add(name);
-            result.Add(desc);
+                    foreach (var pair in dictionary)
+                    {
+                        var sub = new UnderRailSubtitle
+                        {
+                            Id = pair.Key,
+                            Text = pair.Value,
+                            Loaded = pair.Value,
+                            Translation = pair.Value,
+                            Offset = 0,
+                        };
+                        sub.PropertyChanged += SubtitlePropertyChanged;
 
-            LoadChanges(result);
+                        result.Add(sub);
+                    }
+
+                    LoadChanges(result);
+                }
+            }
 
             return result;
         }
@@ -134,19 +132,17 @@ namespace TFGame.UnderRail.Files.Item
 
             var subtitles = GetSubtitles();
 
-            var dictionary = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToDictionary(urSubtitle => urSubtitle.Id, urSubtitle => urSubtitle.Translation);
+            var dictionary = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToDictionary(udlgSubtitle => udlgSubtitle.Id, udlgSubtitle => udlgSubtitle.Translation);
 
-            _model.Name = dictionary["Name"];
-            _model.Description = dictionary["Description"];
+            var tempFile = System.IO.Path.GetTempFileName();
+            var lines = new List<string>(dictionary.Count);
+            lines.AddRange(dictionary.Select(text => $"{text.Key}<Split>{text.Value}"));
 
-            var assemblyResolver = new AssemblyResolver();
-            assemblyResolver.Initialize();
-            Binder.SetAssemblyResolver(assemblyResolver);
+            System.IO.File.WriteAllLines(tempFile, lines);
 
-            var fileManager = new FileManager();
+            UnderRailTool.Run("w", Path, tempFile, outputPath);
 
-            fileManager.Save(_model, outputPath, true);
+            System.IO.File.Delete(tempFile);
         }
     }
 }
-
