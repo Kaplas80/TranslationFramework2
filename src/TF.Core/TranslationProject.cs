@@ -346,12 +346,15 @@ namespace TF.Core
                             worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                             var foundFiles = fileSearch.GetFiles(extractionContainerPath);
 
-                            foreach (var f in foundFiles)
+                            //foreach (var f in foundFiles)
+                            Parallel.ForEach(foundFiles, f =>
                             {
-                                var relativePath = PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
+                                var relativePath =
+                                    PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
                                 var type = fileSearch.FileType;
 
-                                var translationFile = translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
+                                var translationFile =
+                                    translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
 
                                 if (translationFile == null)
                                 {
@@ -386,7 +389,7 @@ namespace TF.Core
                                         addedFiles++;
                                     }
                                 }
-                            }
+                            });
                         }
 
                         project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
@@ -407,11 +410,13 @@ namespace TF.Core
                         worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                         var foundFiles = fileSearch.GetFiles(containerPath);
 
-                        foreach (var f in foundFiles)
+                        //foreach (var f in foundFiles)
+                        Parallel.ForEach(foundFiles, f =>
                         {
                             var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
 
-                            var destinationFileName = Path.GetFullPath(Path.Combine(extractionContainerPath, relativePath));
+                            var destinationFileName =
+                                Path.GetFullPath(Path.Combine(extractionContainerPath, relativePath));
                             var destPath = Path.GetDirectoryName(destinationFileName);
                             Directory.CreateDirectory(destPath);
 
@@ -422,7 +427,8 @@ namespace TF.Core
 
                             var type = fileSearch.FileType;
 
-                            var translationFile = translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
+                            var translationFile =
+                                translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
 
                             if (translationFile == null)
                             {
@@ -458,7 +464,7 @@ namespace TF.Core
                                     addedFiles++;
                                 }
                             }
-                        }
+                        });
 
                         project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
                         worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");
