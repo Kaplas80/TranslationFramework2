@@ -102,9 +102,13 @@ namespace YakuzaGame.Files.Table
             OnFileChanged();
         }
 
-        public override bool Search(string searchString)
+        public override bool Search(string searchString, string path = "")
         {
-            var bytes = System.IO.File.ReadAllBytes(Path);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path;
+            }
+            var bytes = System.IO.File.ReadAllBytes(path);
 
             var pattern = FileEncoding.GetBytes(searchString);
 

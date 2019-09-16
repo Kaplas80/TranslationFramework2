@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -275,7 +276,8 @@ namespace TF.Core
 
         public IList<Tuple<TranslationFileContainer, TranslationFile>> SearchInFiles(string searchString, BackgroundWorker worker)
         {
-            var result = new List<Tuple<TranslationFileContainer, TranslationFile>>();
+            var result = new ConcurrentBag<Tuple<TranslationFileContainer, TranslationFile>>();
+            var parallelOptions = new ParallelOptions {MaxDegreeOfParallelism = 4};
 
             foreach (var container in FileContainers)
             {
@@ -287,7 +289,8 @@ namespace TF.Core
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
-                foreach (var file in container.Files)
+                //foreach (var file in container.Files)
+                Parallel.ForEach(container.Files, parallelOptions, file =>
                 {
                     var found = file.Search(searchString);
 
@@ -295,15 +298,16 @@ namespace TF.Core
                     {
                         result.Add(new Tuple<TranslationFileContainer, TranslationFile>(container, file));
                     }
-                }
+                });
 
             }
 
-            return result;
+            return result.ToList();
         }
 
         private static void UpdateTranslationFiles(TranslationProject project, BackgroundWorker worker)
         {
+            var parallelOptions = new ParallelOptions {MaxDegreeOfParallelism = 4};
             var containers = project.Game.GetContainers(project.InstallationPath);
             foreach (var container in containers)
             {
@@ -346,12 +350,15 @@ namespace TF.Core
                             worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                             var foundFiles = fileSearch.GetFiles(extractionContainerPath);
 
-                            foreach (var f in foundFiles)
+                            //foreach (var f in foundFiles)
+                            Parallel.ForEach(foundFiles, parallelOptions, f =>
                             {
-                                var relativePath = PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
+                                var relativePath =
+                                    PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
                                 var type = fileSearch.FileType;
 
-                                var translationFile = translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
+                                var translationFile =
+                                    translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
 
                                 if (translationFile == null)
                                 {
@@ -386,7 +393,7 @@ namespace TF.Core
                                         addedFiles++;
                                     }
                                 }
-                            }
+                            });
                         }
 
                         project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
@@ -407,11 +414,13 @@ namespace TF.Core
                         worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                         var foundFiles = fileSearch.GetFiles(containerPath);
 
-                        foreach (var f in foundFiles)
+                        //foreach (var f in foundFiles)
+                        Parallel.ForEach(foundFiles, parallelOptions,f =>
                         {
                             var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
 
-                            var destinationFileName = Path.GetFullPath(Path.Combine(extractionContainerPath, relativePath));
+                            var destinationFileName =
+                                Path.GetFullPath(Path.Combine(extractionContainerPath, relativePath));
                             var destPath = Path.GetDirectoryName(destinationFileName);
                             Directory.CreateDirectory(destPath);
 
@@ -422,7 +431,8 @@ namespace TF.Core
 
                             var type = fileSearch.FileType;
 
-                            var translationFile = translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
+                            var translationFile =
+                                translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
 
                             if (translationFile == null)
                             {
@@ -458,7 +468,7 @@ namespace TF.Core
                                     addedFiles++;
                                 }
                             }
-                        }
+                        });
 
                         project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
                         worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");

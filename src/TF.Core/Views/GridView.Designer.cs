@@ -314,7 +314,7 @@
         private System.Windows.Forms.OpenFileDialog ImportFileDialog;
         private System.Windows.Forms.Label lblChangedLinesCount;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private TFDataGridView SubtitleGridView;
+        protected TFDataGridView SubtitleGridView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ScintillaNET.Scintilla scintilla1;
         private ScintillaNET.Scintilla scintilla2;
