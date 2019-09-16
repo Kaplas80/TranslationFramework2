@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -275,7 +276,8 @@ namespace TF.Core
 
         public IList<Tuple<TranslationFileContainer, TranslationFile>> SearchInFiles(string searchString, BackgroundWorker worker)
         {
-            var result = new List<Tuple<TranslationFileContainer, TranslationFile>>();
+            var result = new ConcurrentBag<Tuple<TranslationFileContainer, TranslationFile>>();
+            var parallelOptions = new ParallelOptions {MaxDegreeOfParallelism = 4};
 
             foreach (var container in FileContainers)
             {
@@ -287,7 +289,8 @@ namespace TF.Core
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
-                foreach (var file in container.Files)
+                //foreach (var file in container.Files)
+                Parallel.ForEach(container.Files, parallelOptions, file =>
                 {
                     var found = file.Search(searchString);
 
@@ -295,15 +298,16 @@ namespace TF.Core
                     {
                         result.Add(new Tuple<TranslationFileContainer, TranslationFile>(container, file));
                     }
-                }
+                });
 
             }
 
-            return result;
+            return result.ToList();
         }
 
         private static void UpdateTranslationFiles(TranslationProject project, BackgroundWorker worker)
         {
+            var parallelOptions = new ParallelOptions {MaxDegreeOfParallelism = 4};
             var containers = project.Game.GetContainers(project.InstallationPath);
             foreach (var container in containers)
             {
@@ -347,7 +351,7 @@ namespace TF.Core
                             var foundFiles = fileSearch.GetFiles(extractionContainerPath);
 
                             //foreach (var f in foundFiles)
-                            Parallel.ForEach(foundFiles, f =>
+                            Parallel.ForEach(foundFiles, parallelOptions, f =>
                             {
                                 var relativePath =
                                     PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
@@ -411,7 +415,7 @@ namespace TF.Core
                         var foundFiles = fileSearch.GetFiles(containerPath);
 
                         //foreach (var f in foundFiles)
-                        Parallel.ForEach(foundFiles, f =>
+                        Parallel.ForEach(foundFiles, parallelOptions,f =>
                         {
                             var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
 
