@@ -81,14 +81,41 @@ namespace TFGame.UnderRail
                 FileType = typeof(Files.Common.File)
             };
 
-            var itemfolder = new GameFileContainer()
+            var itemFolder = new GameFileContainer()
             {
                 Path = @".\data\rules\items",
                 Type = ContainerType.Folder
             };
 
-            itemfolder.FileSearches.Add(items);
-            result.Add(itemfolder);
+            itemFolder.FileSearches.Add(items);
+            result.Add(itemFolder);
+
+            var zones = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.uz",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.Common.File)
+            };
+            var zoneLayers = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.uzl",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.Common.File)
+            };
+
+            var zonesFolder = new GameFileContainer()
+            {
+                Path = @".\data\maps\locale\static",
+                Type = ContainerType.Folder
+            };
+
+            zonesFolder.FileSearches.Add(zones);
+            zonesFolder.FileSearches.Add(zoneLayers);
+            result.Add(zonesFolder);
 
             return result.ToArray();
         }

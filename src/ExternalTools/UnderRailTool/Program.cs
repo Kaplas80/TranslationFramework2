@@ -18,6 +18,11 @@ namespace UnderRailTool
             {
                 Write(args[1], args[2], args[3]);
             }
+
+            if (args[0] == "d")
+            {
+                Dump(args[1], args[2]);
+            }
         }
 
         private static void Initialize()
@@ -55,6 +60,20 @@ namespace UnderRailTool
                 case ".item":
                 {
                     var texts = Items.GetSubtitles(gameFile);
+
+                    WriteTexts(texts, outputFile);
+                    break;
+                }
+                case ".uz":
+                {
+                    var texts = Zone.GetSubtitles(gameFile);
+
+                    WriteTexts(texts, outputFile);
+                    break;
+                }
+                case ".uzl":
+                {
+                    var texts = ZoneLayer.GetSubtitles(gameFile);
 
                     WriteTexts(texts, outputFile);
                     break;
@@ -102,6 +121,20 @@ namespace UnderRailTool
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
+                case ".uz":
+                {
+                    var texts = ReadTexts(textsFile);
+                    var model = Zone.SetSubtitles(gameFile, texts);
+                    FileManager.Save(model, outputFile, true);
+                    break;
+                }
+                case ".uzl":
+                {
+                    var texts = ReadTexts(textsFile);
+                    var model = ZoneLayer.SetSubtitles(gameFile, texts);
+                    FileManager.Save(model, outputFile, true);
+                    break;
+                }
             }
         }
 
@@ -118,6 +151,11 @@ namespace UnderRailTool
             }
 
             return result;
+        }
+
+        private static void Dump(string gameFile, string outputFile)
+        {
+            SerializationManager.Dump(gameFile, outputFile, true);
         }
     }
 }
