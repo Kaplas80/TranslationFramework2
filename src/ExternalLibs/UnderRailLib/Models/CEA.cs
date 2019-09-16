@@ -12,7 +12,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("CEA")]
     [Serializable]
-    public sealed class CEA : Aspect<LE2>, iMVH, iMOB, iINA, iSHOP, iSA, iTBCEA, iLSTA
+    public sealed class CEA : Aspect<LE2>, IMovementHandler, IMobile, iINA, iSHOP, iSA, iTBCEA, iLSTA
     {
         private CEA(SerializationInfo info, StreamingContext ctx) : base(info, ctx)
         {

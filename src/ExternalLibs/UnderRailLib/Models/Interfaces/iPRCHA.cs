@@ -2,8 +2,8 @@
 
 namespace UnderRailLib.Models.Interfaces
 {
-    [EncodedTypeName("iITC")]
-    public interface iITC
+    [EncodedTypeName("iPRCHA")]
+    public interface iPRCHA : iACT
     {
     }
 }

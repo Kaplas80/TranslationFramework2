@@ -18,12 +18,12 @@ namespace UnderRailTest
             var fileManager = new FileManager();
 
             var files = Directory.EnumerateFiles(@"I:\Games\UnderRail\data\maps\locale\static", "*.uz", SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                Debug.WriteLine(file);
+            //foreach (var file in files)
+            //{
+            //    Debug.WriteLine(file);
 
-                Process<Zone>(file, fileManager);
-            }
+            //    Process<Zone>(file, fileManager);
+            //}
 
             files = Directory.EnumerateFiles(@"I:\Games\UnderRail\data\maps\locale\static", "*.uzl", SearchOption.AllDirectories);
             foreach (var file in files)

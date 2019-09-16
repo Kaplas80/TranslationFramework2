@@ -5,7 +5,7 @@ namespace UnderRailLib.Models.Enums
 {
     [EncodedTypeName("ST")]
     [Serializable]
-    public enum ST
+    public enum SoundType
     {
         a,
         b,

@@ -2,8 +2,8 @@
 
 namespace UnderRailLib.Models.Interfaces
 {
-    [EncodedTypeName("iMOB")]
-    public interface iMOB
+    [EncodedTypeName("iITEXT")]
+    public interface iITEXT
     {
     }
 }

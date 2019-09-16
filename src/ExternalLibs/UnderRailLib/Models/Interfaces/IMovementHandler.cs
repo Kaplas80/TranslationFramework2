@@ -3,7 +3,7 @@
 namespace UnderRailLib.Models.Interfaces
 {
     [EncodedTypeName("iMVH")]
-    public interface iMVH
+    public interface IMovementHandler
     {
     }
 }

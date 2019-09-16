@@ -9,7 +9,7 @@ namespace UnderRailLib.Models
 {
     [EncodedTypeName("IC")]
     [Serializable]
-    public sealed class ItemContainer : iITC, ISerializable
+    public sealed class ItemContainer : IItemContainer, ISerializable
     {
         public ItemContainer()
         {
