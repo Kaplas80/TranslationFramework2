@@ -3,15 +3,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using NLog;
 using TF.IO;
 
 namespace ParTool
 {
     public partial class ParFile
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private ParFile()
         {
@@ -35,7 +35,7 @@ namespace ParTool
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
 
-            ParFile.Pack(inputFolder, outputPath, useCompression);
+            Pack(inputFolder, outputPath, useCompression);
         }
     }
 
@@ -46,7 +46,7 @@ namespace ParTool
         private enum FileFlags : uint
         {
             None = 0u,
-            IsCompressed = 1u << 31,
+            IsCompressed = 1u << 31
         }
 
         private uint Magic { get; set; }    // 0x50415243 (PARC)
@@ -98,7 +98,7 @@ namespace ParTool
             public uint UnknownE { get; set; }
             public uint UnknownF { get; set; }
             public uint UnknownG { get; set; }
-            public uint UnknownH { get; set; }
+            public uint Date { get; set; }
 
             public bool IsCompressed()
             {
@@ -199,7 +199,7 @@ namespace ParTool
             f.UnknownE = input.ReadUInt32();
             f.UnknownF = input.ReadUInt32();
             f.UnknownG = input.ReadUInt32();
-            f.UnknownH = input.ReadUInt32();
+            f.Date = input.ReadUInt32();
 
             return f;
         }
@@ -209,7 +209,7 @@ namespace ParTool
             using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var input = new ExtendedBinaryReader(fs, Encoding.GetEncoding(1252), Endianness.BigEndian))
             {
-                var logFile = System.IO.Path.Combine(outputFolder, "Extract_Data.tf");
+                var logFile = Path.Combine(outputFolder, "Extract_Data.tf");
                 Dump(input, Root, outputFolder, logFile);
             }
         }
@@ -270,7 +270,7 @@ namespace ParTool
                 log.Write(file.UnknownE);
                 log.Write(file.UnknownF);
                 log.Write(file.UnknownG);
-                log.Write(file.UnknownH);
+                log.Write(file.Date);
             }
 
             Directory.CreateDirectory(outputFolder);
@@ -291,10 +291,11 @@ namespace ParTool
             }
 
             File.WriteAllBytes(name, data);
-
+            File.SetCreationTime(name, new DateTime(1970,1,1).AddSeconds(file.Date));
+            
             if (Path.GetExtension(name) == ".par")
             {
-                ParFile.Extract(name, $"{name}.unpack");
+                Extract(name, $"{name}.unpack");
             }
             else if (Path.GetExtension(name) == ".bin" && Path.GetFileNameWithoutExtension(name).StartsWith("pac_"))
             {
@@ -422,7 +423,7 @@ namespace ParTool
             {
                 if (Directory.Exists($"{newPath}.unpack"))
                 {
-                    ParFile.Repack($"{newPath}.unpack", newPath, useCompression);
+                    Repack($"{newPath}.unpack", newPath, useCompression);
                 }
             }
             else if (Path.GetExtension(newPath) == ".bin" && Path.GetFileNameWithoutExtension(newPath).StartsWith("pac_"))
@@ -496,7 +497,7 @@ namespace ParTool
             output.Write(file.UnknownE);
             output.Write(file.UnknownF);
             output.Write(file.UnknownG);
-            output.Write(file.UnknownH);
+            output.Write(file.Date);
 
             output.Seek(dataOffset, SeekOrigin.Begin);
 
@@ -527,7 +528,7 @@ namespace ParTool
                             UnknownE = log.ReadUInt32(),
                             UnknownF = log.ReadUInt32(),
                             UnknownG = log.ReadUInt32(),
-                            UnknownH = log.ReadUInt32(),
+                            UnknownH = log.ReadUInt32()
                         };
 
                         for (var i = 0u; i < folder.FolderCount; i++)
@@ -546,7 +547,7 @@ namespace ParTool
                     }
                     else
                     {
-                        var file = new ParFileInfo()
+                        var file = new ParFileInfo
                         {
                             Name = log.ReadString(),
                             Index = log.ReadUInt32(),
@@ -557,7 +558,7 @@ namespace ParTool
                             UnknownE = log.ReadUInt32(),
                             UnknownF = log.ReadUInt32(),
                             UnknownG = log.ReadUInt32(),
-                            UnknownH = log.ReadUInt32(),
+                            Date = log.ReadUInt32()
                         };
 
                         fileDict.Add(file.Index, file);
