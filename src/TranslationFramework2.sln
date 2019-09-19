@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.YakuzaKiwami2", "Plu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParCreator", "ExternalTools\ParCreator\ParCreator.csproj", "{DA41E73A-0DD5-4A33-BF8E-84246E17417F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParLib", "ExternalLibs\ParLib\ParLib.csproj", "{32DD1ED3-3721-448A-A950-358B58215A5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,10 @@ Global
 		{DA41E73A-0DD5-4A33-BF8E-84246E17417F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA41E73A-0DD5-4A33-BF8E-84246E17417F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA41E73A-0DD5-4A33-BF8E-84246E17417F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32DD1ED3-3721-448A-A950-358B58215A5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32DD1ED3-3721-448A-A950-358B58215A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32DD1ED3-3721-448A-A950-358B58215A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32DD1ED3-3721-448A-A950-358B58215A5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +170,7 @@ Global
 		{A8AD1518-06A4-4744-BE9D-7B55E5196FDB} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 		{28BB0B85-2455-4CAE-BB6A-FCC6B726C823} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{DA41E73A-0DD5-4A33-BF8E-84246E17417F} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
+		{32DD1ED3-3721-448A-A950-358B58215A5B} = {53972F1C-3B9C-40EA-97EA-58D898B5A027}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}

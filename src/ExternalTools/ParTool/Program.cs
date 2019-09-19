@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using McMaster.Extensions.CommandLineUtils;
 using NLog.Layouts;
+using ParLib;
 
 namespace ParTool
 {
@@ -15,8 +16,14 @@ namespace ParTool
         [Required]
         public string Input { get; }
 
-        [Option("-nc|--no-compression")]
-        public bool NotUseCompression { get; }
+        [Option("-fc|--force-compression")]
+        public (bool hasValue, int value) ForceCompression { get; set; }
+
+        [Option("-r|--recursive")]
+        public bool Recursive { get; }
+
+        [Option("-lm|--low-memory")]
+        public bool LowMemory { get; }
 
         [Option("-v|--verbose")]
         public bool Verbose { get; }
@@ -27,18 +34,17 @@ namespace ParTool
         {
             ConfigureNLog();
 
-            var useCompression = !NotUseCompression;
-
             var sw = new Stopwatch();
 
             var isFile = File.Exists(Input);
             if (isFile)
             {
-                _logger.Info("MODE: EXTRACT");
+                _logger.Info(Recursive ? "MODE: EXTRACT (Recursive)" : "MODE: EXTRACT");
                 _logger.Info("INPUT: {0}", Input);
 
                 sw.Start();
-                ParFile.Extract(Input, $"{Input}.unpack");
+                var parFile = ParFile.ReadPar(Input);
+                parFile.Extract($"{Input}.unpack", Recursive);
                 sw.Stop();
 
                 _logger.Info("Time elapsed: {0}ms", sw.ElapsedMilliseconds);
@@ -51,40 +57,31 @@ namespace ParTool
 
             if (isDirectory)
             {
-                var extractDataPath = Path.Combine(Input, "Extract_Data.tf");
-                if (File.Exists(extractDataPath))
+                _logger.Info(Recursive ? "MODE: REPACK (Recursive)" : "MODE: REPACK");
+                _logger.Info("INPUT: {0}", Input);
+
+                var compression = CompressionType.Default;
+                
+                if (ForceCompression.hasValue)
                 {
-                    _logger.Info("MODE: REPACK");
-                    _logger.Info("INPUT: {0}", Input);
-                    _logger.Info("USE COMPRESSION: {0}", useCompression);
-
-                    var filename = Input.Replace(".unpack", string.Empty);
-
-                    sw.Start();
-                    ParFile.Repack(Input, filename, useCompression);
-
-                    sw.Stop();
-
-                    _logger.Info("Time elapsed: {0}ms", sw.ElapsedMilliseconds);
-                    Console.WriteLine("Press any key to exit...");
-                    Console.ReadKey();
-                    return;
+                    compression = (CompressionType) (ForceCompression.value + 1);
                 }
 
-                _logger.Error("{0} not found", extractDataPath);
+                _logger.Info("USE COMPRESSION: {0}", compression);
+                _logger.Info("LOW MEMORY USAGE: {0}", LowMemory);
 
+                var filename = Input.Replace(".unpack", string.Empty);
+
+                sw.Start();
+                var parFile = ParFile.ReadFolder(Input);
+                parFile.Save(Input, $"{filename}2", compression, Recursive, LowMemory);
+                
+                sw.Stop();
+
+                _logger.Info("Time elapsed: {0}ms", sw.ElapsedMilliseconds);
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
                 return;
-                /*else
-                {
-                    var parFiles = Directory.GetFiles(Input, "*.par", SearchOption.AllDirectories);
-
-                    foreach (var file in parFiles)
-                    {
-                        ParFile.Extract(file, $"{file}.unpack");
-                    }
-                }*/
             }
 
             _logger.Error("{0} not found", Input);

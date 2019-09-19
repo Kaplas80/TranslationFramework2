@@ -5,9 +5,9 @@ using System.Text;
 using ComponentAce.Compression.Libs.zlib;
 using TF.IO;
 
-namespace ParTool
+namespace ParLib
 {
-    class SllzCompressor
+    public class SllzCompressor
     {
         private const int SEARCH_SIZE = 4096;
         private const int MAX_LENGTH = 18;

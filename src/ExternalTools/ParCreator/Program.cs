@@ -46,7 +46,9 @@ namespace ParCreator
                 _logger.Info("INPUT: {0}", Input);
                 _logger.Info("USE COMPRESSION: {0}", useCompression);
 
-                var filename = Input.Replace(".unpack", string.Empty);
+                var filename = Input.EndsWith(".unpack")
+                    ? Input.Replace(".unpack", string.Empty)
+                    : string.Concat(Input, ".par");
 
                 sw.Start();
                 CreateParFile(Input, filename, useCompression);
