@@ -133,18 +133,27 @@ namespace TF.Core
                         var typeString = input.ReadString();
 
                         var type = GetType(typeString, types);
+
                         TranslationFile file;
-                        try
+
+                        var constructorInfo =
+                            type.GetConstructor(new[] {typeof(string), typeof(string), typeof(Encoding)});
+
+                        if (constructorInfo != null)
                         {
-                            file = (TranslationFile)Activator.CreateInstance(type, filePath, result.ChangesFolder, result.Game.FileEncoding);
+                            file = (TranslationFile)constructorInfo.Invoke(new object[]{filePath, result.ChangesFolder, result.Game.FileEncoding});
                         }
-                        catch (MissingMethodException e)
+                        else
                         {
-                            file = (TranslationFile)Activator.CreateInstance(type, filePath, result.ChangesFolder);
-                        }
-                        catch (Exception e)
-                        {
-                            file = new TranslationFile(filePath, result.ChangesFolder);
+                            constructorInfo = type.GetConstructor(new[] {typeof(string), typeof(string)});
+                            if (constructorInfo != null)
+                            {
+                                file = (TranslationFile)constructorInfo.Invoke(new object[]{filePath, result.ChangesFolder});
+                            }
+                            else
+                            {
+                                file = new TranslationFile(filePath, result.ChangesFolder);
+                            }
                         }
 
                         file.Id = fileId;
