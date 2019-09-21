@@ -1,5 +1,5 @@
 # TranslationFramework2
-Translation Framework 2 é um aplicativo para facilitar a tradução de jogos diferentes.
+Translation Framework 2 é um aplicativo que facilita a tradução de vários jogos.
 
 ## Baixar
 Se não sabe (ou não quer) compilar o código fonte, você pode baixar a versão estável compilada por [esse link](https://mega.nz/#F!GZNQWSBQ!JA42-HIGTy79O0I7is0FGw).
