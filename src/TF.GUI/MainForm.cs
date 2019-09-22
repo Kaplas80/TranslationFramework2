@@ -95,6 +95,11 @@ namespace TF.GUI
                     SearchText(1);
                 }
             }
+
+            if (e.KeyCode == Keys.F4)
+            {
+                _explorer.SelectNext();
+            }
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -109,6 +114,11 @@ namespace TF.GUI
                 {
                     SearchText(1);
                 }
+            }
+
+            if (e.KeyCode == Keys.F4)
+            {
+                _explorer.SelectNext();
             }
         }
     }

@@ -124,5 +124,19 @@ namespace TF.GUI.Forms
         {
             RestoreItem?.Invoke(selectedNode);
         }
+
+        public void SelectNext()
+        {
+            var tn = tvGameFiles.SelectedNode;
+            if (tn?.Parent == null)
+            {
+                return;
+            }
+
+            if (tn.Index < tn.Parent.Nodes.Count - 1) 
+            {
+                tvGameFiles.SelectedNode = tn.Parent.Nodes[tn.Index + 1];
+            }
+        }
     }
 }
