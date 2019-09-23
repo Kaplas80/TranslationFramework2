@@ -45,10 +45,16 @@ namespace TF.Core.Entities
             }
             else
             {
-                var excluded = Exclusions.Any(x => fullPath.Contains(x));
-                if (!excluded && File.Exists(Path.Combine(fullPath, SearchPattern)))
+                var files = Directory.GetFiles(fullPath, SearchPattern,
+                    RecursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+
+                foreach (var file in files)
                 {
-                    result.Add(Path.Combine(fullPath, SearchPattern));
+                    var excluded = Exclusions.Any(x => file.Contains(x));
+                    if (!excluded)
+                    {
+                        result.Add(file);
+                    }
                 }
             }
 
