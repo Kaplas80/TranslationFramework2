@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using TF.Core;
 
@@ -96,7 +95,12 @@ namespace TF.GUI
                 }
             }
 
-            if (e.KeyCode == Keys.F4)
+            if (e.KeyCode == Keys.F8)
+            {
+                _explorer.SelectPrevious();
+            }
+
+            if (e.KeyCode == Keys.F9)
             {
                 _explorer.SelectNext();
             }
@@ -116,7 +120,12 @@ namespace TF.GUI
                 }
             }
 
-            if (e.KeyCode == Keys.F4)
+            if (e.KeyCode == Keys.F8)
+            {
+                _explorer.SelectPrevious();
+            }
+
+            if (e.KeyCode == Keys.F9)
             {
                 _explorer.SelectNext();
             }

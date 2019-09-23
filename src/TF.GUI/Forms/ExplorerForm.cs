@@ -125,6 +125,20 @@ namespace TF.GUI.Forms
             RestoreItem?.Invoke(selectedNode);
         }
 
+        public void SelectPrevious()
+        {
+            var tn = tvGameFiles.SelectedNode;
+            if (tn?.Parent == null)
+            {
+                return;
+            }
+
+            if (tn.Index > 0) 
+            {
+                tvGameFiles.SelectedNode = tn.Parent.Nodes[tn.Index - 1];
+            }
+        }
+
         public void SelectNext()
         {
             var tn = tvGameFiles.SelectedNode;
