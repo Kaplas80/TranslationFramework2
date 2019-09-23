@@ -359,6 +359,7 @@ namespace TF.Core.Views
                 scintilla1.Text = _selectedSubtitle.Text.Replace(_lineEndingStr, _lineEnding);
                 scintilla1.ReadOnly = true;
                 scintilla2.Text = _selectedSubtitle.Translation.Replace(_lineEndingStr, _lineEnding);
+                scintilla2.SelectAll();
             }
         }
 
