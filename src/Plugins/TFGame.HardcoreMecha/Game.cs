@@ -13,7 +13,7 @@ namespace TFGame.HardcoreMecha
     {
         public override string Id => "201fd831-c546-4022-be11-e5e9493d0c8b";
         public override string Name => "HARDCORE MECHA";
-        public override string Description => "Build Id: ";
+        public override string Description => "Build Id: 4086834";
         public override Image Icon => Resources.Icon;
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
