@@ -21,7 +21,7 @@ namespace TFGame.HardcoreMecha.Files.Language
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding))
             {
-                input.Skip(0x19C);
+                input.Skip(0x1A0);
                 var length = input.ReadInt32();
                 var sub = input.ReadBytes(length);
                 var str = FileEncoding.GetString(sub);
@@ -55,7 +55,7 @@ namespace TFGame.HardcoreMecha.Files.Language
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
             using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding))
             {
-                output.Write(input.ReadBytes(0x19C));
+                output.Write(input.ReadBytes(0x1A0));
                 
                 var length = input.ReadInt32();
                 input.ReadBytes(length);

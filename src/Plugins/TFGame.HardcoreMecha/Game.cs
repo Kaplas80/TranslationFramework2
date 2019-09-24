@@ -27,6 +27,15 @@ namespace TFGame.HardcoreMecha
         {
             var result = new List<GameFileContainer>();
 
+            var fontSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.ttf",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(TrueTypeFontFile)
+            };
+
             var textSearch = new GameFileSearch()
             {
                 RelativePath = @".",
@@ -41,6 +50,7 @@ namespace TFGame.HardcoreMecha
                 Path = @"CHC_Data\resources.assets",
                 Type = ContainerType.CompressedFile
             };
+            main.FileSearches.Add(fontSearch);
             main.FileSearches.Add(textSearch);
 
             result.Add(main);
@@ -62,16 +72,7 @@ namespace TFGame.HardcoreMecha
             level2.FileSearches.Add(languageSearch);
 
             result.Add(level2);
-
-            var fontSearch = new GameFileSearch()
-            {
-                RelativePath = @".",
-                SearchPattern = "Nairi-Normal.ttf",
-                IsWildcard = false,
-                RecursiveSearch = true,
-                FileType = typeof(TrueTypeFontFile)
-            };
-
+            
             var sharedAssets = new GameFileContainer
             {
                 Path = @"CHC_Data\sharedAssets0.assets",
