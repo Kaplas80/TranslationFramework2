@@ -769,7 +769,7 @@ namespace TFGame.TrailsSky.Files.Exe
             new Tuple<int, byte[]>(0x080DF6, new byte[] {0x3C, 0xE0}),
         };
 
-        public DX9File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public DX9File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
     }

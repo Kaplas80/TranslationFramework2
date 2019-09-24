@@ -783,7 +783,7 @@ namespace TFGame.TrailsSky.Files.Exe
             {0x001669BC, new List<int>() {0x000E0C48}},
             {0x001669C8, new List<int>() {0x000E0C4F}},
         };
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
