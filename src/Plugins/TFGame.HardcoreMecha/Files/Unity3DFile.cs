@@ -34,33 +34,7 @@ namespace TFGame.HardcoreMecha.Files
             {
                 process.StartInfo.FileName = unityExPath;
                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t -110";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                process.StartInfo.CreateNoWindow = true; //not diplay a windows
-                process.Start();
-                process.WaitForExit();
-            }
-
-            using (var process = new System.Diagnostics.Process())
-            {
-                process.StartInfo.FileName = unityExPath;
-                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t -12";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                process.StartInfo.CreateNoWindow = true; //not diplay a windows
-                process.Start();
-                process.WaitForExit();
-            }
-
-            using (var process = new System.Diagnostics.Process())
-            {
-                process.StartInfo.FileName = unityExPath;
-                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t ttf";
+                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t -110,-12,ttf,crn,dds";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
