@@ -29,18 +29,23 @@ namespace TF.Core.Views
         private byte[] _font;
         private PrivateFontCollection _fontCollection;
         private IntPtr _fontHandle = IntPtr.Zero;
+		
+		private string _fileName;
 
-        public FontView()
+        public FontView(string fileName)
         {
             InitializeComponent();
             cbFontSize.SelectedIndex = 3;
             cbFontSize.SelectedIndexChanged += cbFontSize_SelectedIndexChanged;
+            _fileName = fileName;
         }
 
         public void SetFileFilter(string filter)
         {
             openFileDialog1.Filter = filter;
+            openFileDialog1.FileName = _fileName;
             saveFileDialog1.Filter = filter;
+            saveFileDialog1.FileName = _fileName;
         }
 
         public void LoadFont(byte[] font)

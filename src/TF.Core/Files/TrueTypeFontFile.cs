@@ -18,7 +18,7 @@ namespace TF.Core.Files
 
         public override void Open(DockPanel panel)
         {
-            _view = new FontView();
+            _view = new FontView(System.IO.Path.GetFileName(Path));
             _view.NewFontLoaded += FormOnNewFontLoaded;
             _view.SaveFont += FormOnSaveFont;
             _view.SetFileFilter(Filter);

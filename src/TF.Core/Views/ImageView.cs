@@ -15,16 +15,21 @@ namespace TF.Core.Views
 
         private Image _image;
 
-        public ImageView()
+        private string _fileName;
+
+        public ImageView(string fileName)
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 1;
+            _fileName = fileName;
         }
 
         public void SetFileFilter(string filter)
         {
             openFileDialog1.Filter = filter;
+            openFileDialog1.FileName = _fileName;
             saveFileDialog1.Filter = filter;
+            saveFileDialog1.FileName = _fileName;
         }
 
         public void LoadImage(Image image, object properties)

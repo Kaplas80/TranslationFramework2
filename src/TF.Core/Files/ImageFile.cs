@@ -28,7 +28,7 @@ namespace TF.Core.Files
 
         public override void Open(DockPanel panel)
         {
-            _view = new ImageView();
+            _view = new ImageView(System.IO.Path.GetFileName(Path));
             _view.NewImageLoaded += FormOnNewImageLoaded;
             _view.SaveImage += FormOnSaveImage;
             _view.SetFileFilter(Filter);
