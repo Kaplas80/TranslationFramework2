@@ -34,7 +34,7 @@ namespace TFGame.AITheSomniumFiles.Files
             {
                 process.StartInfo.FileName = unityExPath;
                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t *-us.txt";
+                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t txt";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;

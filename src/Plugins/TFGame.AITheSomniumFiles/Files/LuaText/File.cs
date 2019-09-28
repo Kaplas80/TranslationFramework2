@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using TF.Core.Files;
 using TF.Core.TranslationEntities;
@@ -31,21 +29,16 @@ namespace TFGame.AITheSomniumFiles.Files.LuaText
 
         protected override IList<Subtitle> GetSubtitles()
         {
-            var tempFile1 = System.IO.Path.GetTempFileName();
-            var tempFile2 = System.IO.Path.GetTempFileName();
-            Decrypt(Path, tempFile1);
-
-            Debug.WriteLine($"Decompiling: {Path}");
-            LuaTool.Decompile(tempFile1, tempFile2);
-            Debug.WriteLine($"Decompiled");
-
-            System.IO.File.Delete(tempFile1);
+            var tempFile = System.IO.Path.GetTempFileName();
+            
+            LuaTool.Decompile(Path, tempFile);
+            
             var result = new List<Subtitle>();
 
-            if (System.IO.File.Exists(tempFile2))
+            if (System.IO.File.Exists(tempFile))
             {
-                var lines = System.IO.File.ReadAllLines(tempFile2);
-                System.IO.File.Delete(tempFile2);
+                var lines = System.IO.File.ReadAllLines(tempFile);
+                System.IO.File.Delete(tempFile);
 
                 foreach (var line in lines)
                 {
@@ -85,113 +78,126 @@ namespace TFGame.AITheSomniumFiles.Files.LuaText
             return result;
         }
 
-        //public override void SaveChanges()
-        //{
-        //    using (var fs = new FileStream(ChangesFile, FileMode.Create))
-        //    using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
-        //    {
-        //        output.Write(ChangesFileVersion);
-        //        output.Write(_subtitles.Count);
-        //        foreach (var subtitle in _subtitles)
-        //        {
-        //            var sub = subtitle as UnderRailSubtitle;
-        //            output.WriteString(sub.Id);
-        //            output.WriteString(subtitle.Translation);
-
-        //            subtitle.Loaded = subtitle.Translation;
-        //        }
-        //    }
-
-        //    NeedSaving = false;
-        //    OnFileChanged();
-        //}
-
-        //protected override void LoadChanges(IList<Subtitle> subtitles)
-        //{
-        //    if (HasChanges)
-        //    {
-        //        var subs = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToList();
-        //        using (var fs = new FileStream(ChangesFile, FileMode.Open))
-        //        using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
-        //        {
-        //            var version = input.ReadInt32();
-
-        //            if (version != ChangesFileVersion)
-        //            {
-        //                //File.Delete(ChangesFile);
-        //                return;
-        //            }
-
-        //            var subtitleCount = input.ReadInt32();
-
-        //            for (var i = 0; i < subtitleCount; i++)
-        //            {
-        //                var id = input.ReadString();
-        //                var text = input.ReadString();
-
-        //                var subtitle = subs.FirstOrDefault(x => x.Id == id);
-        //                if (subtitle != null)
-        //                {
-        //                    subtitle.PropertyChanged -= SubtitlePropertyChanged;
-        //                    subtitle.Translation = text;
-        //                    subtitle.Loaded = subtitle.Translation;
-        //                    subtitle.PropertyChanged += SubtitlePropertyChanged;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public override void Rebuild(string outputFolder)
-        //{
-        //    var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
-        //    Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
-
-        //    var subtitles = GetSubtitles();
-
-        //    var dictionary = subtitles.Select(subtitle => subtitle as UnderRailSubtitle).ToDictionary(udlgSubtitle => udlgSubtitle.Id, udlgSubtitle => udlgSubtitle.Translation);
-
-        //    var tempFile = System.IO.Path.GetTempFileName();
-        //    var lines = new List<string>(dictionary.Count);
-        //    lines.AddRange(dictionary.Select(text => $"{text.Key}<Split>{text.Value}"));
-
-        //    System.IO.File.WriteAllLines(tempFile, lines);
-
-        //    UnderRailTool.Run("w", Path, tempFile, outputPath);
-
-        //    System.IO.File.Delete(tempFile);
-        //}
-
-        //public override bool Search(string searchString, string path = "")
-        //{
-        //    if (Path.EndsWith(".udlg"))
-        //    {
-        //        return base.Search(searchString);
-        //    }
-
-        //    var tempFile = System.IO.Path.GetTempFileName();
-
-        //    UnderRailTool.Run("d", Path, tempFile, string.Empty);
-
-        //    var result = base.Search(searchString, tempFile);
-
-        //    System.IO.File.Delete(tempFile);
-
-        //    return result;
-        //}
-
-        private static void Decrypt(string inputFile, string outputFile)
+        public override void SaveChanges()
         {
-            var data = System.IO.File.ReadAllBytes(inputFile);
-
-            for (var i = 4; i < data.Length; i++)
+            using (var fs = new FileStream(ChangesFile, FileMode.Create))
+            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
             {
-                data[i] ^= (byte) i;
+                output.Write(ChangesFileVersion);
+                output.Write(_subtitles.Count);
+                foreach (var subtitle in _subtitles)
+                {
+                    var sub = subtitle as LuaSubtitle;
+                    output.WriteString(sub.Id);
+                    output.WriteString(subtitle.Translation);
+
+                    subtitle.Loaded = subtitle.Translation;
+                }
             }
 
-            System.IO.File.WriteAllBytes(outputFile, data);
+            NeedSaving = false;
+            OnFileChanged();
         }
 
+        protected override void LoadChanges(IList<Subtitle> subtitles)
+        {
+            if (HasChanges)
+            {
+                var subs = subtitles.Select(subtitle => subtitle as LuaSubtitle).ToList();
+                using (var fs = new FileStream(ChangesFile, FileMode.Open))
+                using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
+                {
+                    var version = input.ReadInt32();
+
+                    if (version != ChangesFileVersion)
+                    {
+                        //File.Delete(ChangesFile);
+                        return;
+                    }
+
+                    var subtitleCount = input.ReadInt32();
+
+                    for (var i = 0; i < subtitleCount; i++)
+                    {
+                        var id = input.ReadString();
+                        var text = input.ReadString();
+
+                        var subtitle = subs.FirstOrDefault(x => x.Id == id);
+                        if (subtitle != null)
+                        {
+                            subtitle.PropertyChanged -= SubtitlePropertyChanged;
+                            subtitle.Translation = text;
+                            subtitle.Loaded = subtitle.Translation;
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        }
+                    }
+                }
+            }
+        }
+
+        public override void Rebuild(string outputFolder)
+        {
+            var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
+
+            var subtitles = GetSubtitles();
+
+            var inputTempFile = System.IO.Path.GetTempFileName();
+            
+            LuaTool.Decompile(Path, inputTempFile);
+            
+            var lines = System.IO.File.ReadAllLines(inputTempFile);
+            System.IO.File.Delete(inputTempFile);
+
+            var output = new List<string>(lines.Length);
+
+            foreach (var line in lines)
+            {
+                if (!line.StartsWith("text = {"))
+                {
+                    output.Add(line);
+                    continue;
+                }
+
+                var strings = new List<string>();
+
+                var regex = new Regex(
+                    @"\[\""(?<Tag>[^""]+)\""\]\s=\s\""(?<Text>[^""]*)\""");
+                var match = regex.Match(line);
+
+                while (match.Success)
+                {
+                    var tag = match.Groups["Tag"].Value;
+                    
+                    var sub = subtitles.First(x => (x as LuaSubtitle)?.Id == tag);
+
+                    strings.Add($"[\"{tag}\"] = \"{EncodeText(sub.Translation)}\"");
+                    match = match.NextMatch();
+                }
+
+                output.Add($"text = {{{string.Join(", ", strings)}}}");
+            }
+
+            var outputTempFile = System.IO.Path.GetTempFileName();
+            System.IO.File.WriteAllLines(outputTempFile, output);
+
+            LuaTool.Compile(outputTempFile, outputPath);
+            System.IO.File.Delete(outputTempFile);
+        }
+
+        public override bool Search(string searchString, string path = "")
+        {
+            var tempFile = System.IO.Path.GetTempFileName();
+
+            LuaTool.Decompile(Path, tempFile);
+
+            var result = base.Search(EncodeText(searchString), tempFile);
+
+            System.IO.File.Delete(tempFile);
+
+            return result;
+        }
+        
         private static readonly Tuple<string, string>[] Replacements = new Tuple<string, string>[]
         {
             new Tuple<string, string>("\\'", "'"),
