@@ -14,7 +14,7 @@ namespace TFGame.AITheSomniumFiles
     {
         public override string Id => "a7af21f8-4ce3-4c1f-887e-ab9a8dce772f";
         public override string Name => "AI - The Somnium Files";
-        public override string Description => "Build Id: ";
+        public override string Description => "Build Id: 4031380";
         public override Image Icon => Resources.Icon;
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => Encoding.UTF8;
