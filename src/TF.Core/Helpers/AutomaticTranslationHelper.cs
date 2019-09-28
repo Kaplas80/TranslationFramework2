@@ -83,11 +83,17 @@ namespace TF.Core.Helpers
 
             const string route = "/translate?api-version=3.0&to=es";
 
-            var results = TranslateTextRequest(lines[0], lines[1], route, text);
-            results.Wait();
+            try
+            {
+                var results = TranslateTextRequest(lines[0], lines[1], route, text);
+                results.Wait();
 
-            return results.Result[0].Translations[0].Text;
+                return results.Result[0].Translations[0].Text;
+            }
+            catch (Exception e)
+            {
+                return text;
+            }
         }
-
     }
 }
