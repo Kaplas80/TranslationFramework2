@@ -11,6 +11,7 @@ namespace TFGame.AITheSomniumFiles.Files
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
 
+            RunUnityEx("exportbundle", copyPath);
             RunUnityEx("export", copyPath);
         }
 
@@ -34,7 +35,7 @@ namespace TFGame.AITheSomniumFiles.Files
             {
                 process.StartInfo.FileName = unityExPath;
                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t txt";
+                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t dds,txt,ttf";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;

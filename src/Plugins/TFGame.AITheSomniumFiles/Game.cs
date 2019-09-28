@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TF.Core.Entities;
+using TF.Core.Files;
 using TFGame.AITheSomniumFiles.Files;
 
 
@@ -20,12 +21,40 @@ namespace TFGame.AITheSomniumFiles
 
         protected override string[] AllowedExtensions => new[]
         {
-            ""
+            ".assets", ""
         };
 
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
+
+            var ttfFonts = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.ttf",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(TrueTypeFontFile)
+            };
+
+            var textures = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "SpriteAtlasTexture*.tex.dds;*_en.tex.dds;*_us.tex.dds;",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(DDSFile)
+            };
+
+            var resources = new GameFileContainer
+            {
+                Path = @".\AI_TheSomniumFiles_Data\resources.assets",
+                Type = ContainerType.CompressedFile
+            };
+            resources.FileSearches.Add(ttfFonts);
+            resources.FileSearches.Add(textures);
+
+            result.Add(resources);
 
             var textSearch = new GameFileSearch()
             {
@@ -38,13 +67,44 @@ namespace TFGame.AITheSomniumFiles
 
             var luaByteCode = new GameFileContainer
             {
-                Path = @"AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64\luabytecode",
+                Path = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64\luabytecode",
                 Type = ContainerType.CompressedFile
             };
             luaByteCode.FileSearches.Add(textSearch);
 
             result.Add(luaByteCode);
 
+            var textSearch2 = new GameFileSearch()
+            {
+                RelativePath = @"Unity_Assets_Files\scene_dance\BuildPlayer-Dance.sharedAssets\",
+                SearchPattern = "lyrics-us.txt;lyrics-us2.txt",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(TextFile)
+            };
+
+            var scene_dance = new GameFileContainer
+            {
+                Path = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64\scene_dance",
+                Type = ContainerType.CompressedFile
+            };
+            scene_dance.FileSearches.Add(textSearch2);
+            scene_dance.FileSearches.Add(textures);
+            result.Add(scene_dance);
+            
+            var streamingAssets = new GameFileContainerSearch
+            {
+                RelativePath = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64",
+                SearchPattern =
+                    @"clue_image;etc;image;item;item_ii011;item_ii027;operation_guide;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
+                RecursiveSearch = false,
+                TypeSearch = ContainerType.CompressedFile
+            };
+
+            streamingAssets.FileSearches.Add(ttfFonts);
+            streamingAssets.FileSearches.Add(textures);
+
+            result.AddRange(streamingAssets.GetContainers(path));
             return result.ToArray();
         }
 
