@@ -7,6 +7,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -15,22 +16,13 @@ namespace TF.Core.Views
 {
     public partial class FontView : DockContent
     {
-        [DllImport("gdi32.dll")]
-        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
-
-        [DllImport("gdi32.dll")]
-        private static extern bool RemoveFontMemResourceEx(IntPtr handle);
-
         public event NewFontLoadedEventHandler NewFontLoaded;
         public delegate void NewFontLoadedEventHandler(string fileName);
         public event SaveFontEventHandler SaveFont;
         public delegate void SaveFontEventHandler(string fileName);
 
-        private byte[] _font;
-        private PrivateFontCollection _fontCollection;
-        private IntPtr _fontHandle = IntPtr.Zero;
-		
 		private string _fileName;
+        private FontFamily _fontFamily;
 
         public FontView(string fileName)
         {
@@ -48,31 +40,23 @@ namespace TF.Core.Views
             saveFileDialog1.FileName = _fileName;
         }
 
-        public void LoadFont(byte[] font)
+        public unsafe void LoadFont(byte[] fontData)
         {
-            if (_fontHandle != IntPtr.Zero)
+            var fonts = new PrivateFontCollection();
+            fixed (byte* fontPtr = fontData)
             {
-                RemoveFontMemResourceEx(_fontHandle);
+                fonts.AddMemoryFont((IntPtr) fontPtr, fontData.Length);
+                _fontFamily = fonts.Families[0];
+                RenderLabel();
             }
 
-            _font = font;
-            _fontCollection = new PrivateFontCollection();
-
-            var fontPtr = Marshal.AllocCoTaskMem(_font.Length);
-            Marshal.Copy(_font, 0, fontPtr, _font.Length);
-            uint dummy = 0;
-            _fontCollection.AddMemoryFont(fontPtr, _font.Length);
-            _fontHandle = AddFontMemResourceEx(fontPtr, (uint)_font.Length, IntPtr.Zero, ref dummy);
-
-            Marshal.FreeCoTaskMem(fontPtr);
-
-            RenderLabel();
+            fonts.Dispose();
         }
 
         private void RenderLabel()
         {
             var size = cbFontSize.SelectedItem.ToString();
-            label1.Font = new Font(_fontCollection.Families[0], float.Parse(size), FontStyle.Regular, GraphicsUnit.Pixel, ((byte) (0)));
+            label1.Font = new Font(_fontFamily, float.Parse(size), FontStyle.Regular, GraphicsUnit.Pixel, ((byte) (0)));
             label1.Text = txtSample.Text;
         }
 
@@ -116,10 +100,6 @@ namespace TF.Core.Views
 
         private void FontView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_fontHandle != IntPtr.Zero)
-            {
-                RemoveFontMemResourceEx(_fontHandle);
-            }
             GC.Collect();
         }
     }
