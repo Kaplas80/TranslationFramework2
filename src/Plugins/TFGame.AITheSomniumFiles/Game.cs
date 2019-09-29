@@ -56,6 +56,24 @@ namespace TFGame.AITheSomniumFiles
 
             result.Add(resources);
 
+            var texturesAll = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.tex.dds;",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(DDSFile)
+            };
+
+            var imageNameUs = new GameFileContainer
+            {
+                Path = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64\image_name_us",
+                Type = ContainerType.CompressedFile
+            };
+            imageNameUs.FileSearches.Add(texturesAll);
+
+            result.Add(imageNameUs);
+
             var textSearch = new GameFileSearch()
             {
                 RelativePath = @"Unity_Assets_Files\luabytecode\CAB-0670e8eb4b419284c6de5d2d82066179\",

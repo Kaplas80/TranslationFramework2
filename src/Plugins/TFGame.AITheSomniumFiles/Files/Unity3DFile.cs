@@ -11,15 +11,15 @@ namespace TFGame.AITheSomniumFiles.Files
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
 
-            RunUnityEx("exportbundle", copyPath);
-            RunUnityEx("export", copyPath);
+            RunUnityEx("exportbundle", string.Empty, copyPath);
+            RunUnityEx("export", "-t dds,txt,ttf", copyPath);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
             var copyPath = Path.Combine(inputFolder, Path.GetFileName(outputPath));
 
-            RunUnityEx("import", copyPath);
+            RunUnityEx("import", string.Empty, copyPath);
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
@@ -27,7 +27,7 @@ namespace TFGame.AITheSomniumFiles.Files
             File.Copy(copyPath, outputPath);
         }
 
-        private static void RunUnityEx(string operation, string unityFile)
+        private static void RunUnityEx(string operation, string parameters, string unityFile)
         {
             var unityExPath = Path.Combine(GetExecutingDirectoryName(), "plugins", "UnityEX.exe");
 
@@ -35,7 +35,7 @@ namespace TFGame.AITheSomniumFiles.Files
             {
                 process.StartInfo.FileName = unityExPath;
                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t dds,txt,ttf";
+                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" {parameters}";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
