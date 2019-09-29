@@ -23,7 +23,7 @@ namespace YakuzaGame.Files.Table
             }
         }
 
-        public File(string path, string changesFolder, Encoding encoding = null) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding = null) : base(path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
         }

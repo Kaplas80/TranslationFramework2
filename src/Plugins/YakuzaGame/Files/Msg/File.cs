@@ -15,7 +15,7 @@ namespace YakuzaGame.Files.Msg
     {
         public override string LineEnding => "\r\n";
 
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 

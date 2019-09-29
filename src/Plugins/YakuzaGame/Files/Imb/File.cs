@@ -9,7 +9,7 @@ namespace YakuzaGame.Files.Imb
 {
     public class File : BinaryTextFileWithOffsetTable
     {
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 

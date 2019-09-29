@@ -7,7 +7,7 @@ namespace TFGame.YakuzaIshin.Files.AiPopup
     {
         protected override int StartOffset => 0x60C;
 
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
     }

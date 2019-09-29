@@ -19,7 +19,7 @@ namespace YakuzaGame.Files.Exe
 
         public override int SubtitleCount => 1;
 
-        protected PEFile(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        protected PEFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 

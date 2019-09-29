@@ -30,7 +30,7 @@ namespace TF.Core.Files
             }
         }
 
-        public BinaryTextFile(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public BinaryTextFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
         }

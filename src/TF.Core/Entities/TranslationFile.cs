@@ -46,7 +46,7 @@ namespace TF.Core.Entities
 
         protected readonly Encoding FileEncoding;
 
-        public TranslationFile(string path, string changesFolder, Encoding encoding = null)
+        public TranslationFile(string path, string changesFolder, System.Text.Encoding encoding = null)
         {
             _changesFolder = changesFolder;
             Id = Guid.NewGuid().ToString();

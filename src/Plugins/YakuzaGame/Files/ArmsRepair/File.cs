@@ -7,7 +7,7 @@ namespace YakuzaGame.Files.ArmsRepair
     {
         protected override int StartOffset => 0x00;
 
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
     }

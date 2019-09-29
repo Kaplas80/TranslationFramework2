@@ -9,7 +9,7 @@ namespace TFGame.Yakuza0.Files.PocketCircuit
 {
     public class File : YakuzaGame.Files.PocketCircuit.File
     {
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 

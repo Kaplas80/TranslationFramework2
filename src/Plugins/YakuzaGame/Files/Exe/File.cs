@@ -19,7 +19,7 @@ namespace YakuzaGame.Files.Exe
         protected virtual long FontTableOffset => 0;
         protected virtual List<ExePatch> Patches => new List<ExePatch>();
 
-        protected File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        protected File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
         {
         }
 
