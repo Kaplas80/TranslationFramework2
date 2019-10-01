@@ -53,6 +53,10 @@ namespace TFGame.HardcoreMecha.Files.CrunchDDS
             {
                 return new Tuple<Image, object>(null, null);
             }
+            finally
+            {
+                decompressed.Dispose();
+            }
         }
 
         public override void Rebuild(string outputFolder)

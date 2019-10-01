@@ -34,6 +34,11 @@ namespace TF.Core.Files
         {
         }
 
+        ~DDSFile()
+        {
+            _currentDDS?.Dispose();
+        }
+
         protected override void FormOnSaveImage(string filename)
         {
             _currentDDS.SaveToDDSFile(DDS_FLAGS.NONE, filename);
@@ -61,6 +66,9 @@ namespace TF.Core.Files
             try
             {
                 var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+
+                decompressed.Dispose();
+
                 var image = Image.FromStream(imageStream);
 
                 var properties = new TexMetadataView(metadata);
