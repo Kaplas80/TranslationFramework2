@@ -9,9 +9,7 @@ namespace TFGame.HardcoreMecha.Files.Language
 {
     public class File : BinaryTextFile
     {
-        public override string LineEnding => "\n";
-
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

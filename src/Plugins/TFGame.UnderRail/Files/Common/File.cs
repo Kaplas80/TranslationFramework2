@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TF.Core.Files;
+using TF.Core.POCO;
 using TF.Core.TranslationEntities;
 using TF.IO;
 using TFGame.UnderRail.Files.Common;
@@ -13,15 +14,21 @@ namespace TFGame.UnderRail.Files.Common
 {
     public class File : BinaryTextFile
     {
-        public override string LineEnding => "\r\n";
+        public override LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\r\n",
+            ShownLineEnding = "\\r\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.CrLf,
+        };
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
         public override void Open(DockPanel panel)
         {
-            _view = new GridView(LineEnding);
+            _view = new GridView(this);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
@@ -161,6 +168,11 @@ namespace TFGame.UnderRail.Files.Common
             System.IO.File.Delete(tempFile);
 
             return result;
+        }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return (subtitle as UnderRailSubtitle).Id.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);;
         }
     }
 }

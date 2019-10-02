@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TF.Core.Entities;
 using TF.Core.TranslationEntities;
 
 namespace TFGame.AITheSomniumFiles.Files
 {
     public class GridView : TF.Core.Views.GridView
     {
-        public GridView(string lineEnding) : base(lineEnding)
+        public GridView(TranslationFile file) : base(file)
         {
         }
 

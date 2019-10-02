@@ -12,15 +12,13 @@ namespace TFGame.AITheSomniumFiles.Files.LuaText
 {
     public class File : BinaryTextFile
     {
-        public override string LineEnding => "\n";
-
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
         public override void Open(DockPanel panel)
         {
-            _view = new GridView(LineEnding);
+            _view = new GridView(this);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
@@ -223,6 +221,11 @@ namespace TFGame.AITheSomniumFiles.Files.LuaText
             }
 
             return result;
+        }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return (subtitle as LuaSubtitle).Id.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
         }
     }
 }

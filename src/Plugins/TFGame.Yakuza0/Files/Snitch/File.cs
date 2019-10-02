@@ -8,7 +8,7 @@ namespace TFGame.Yakuza0.Files.Snitch
 {
     public class File : BinaryTextFileWithOffsetTable
     {
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

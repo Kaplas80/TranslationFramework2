@@ -14,7 +14,7 @@ namespace TFGame.TrailsSky.Files.FONT
 
         protected override string Filter => "Ficheros de fuente (FONT*._DA)|FONT*._DA";
 
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
             var fileName = System.IO.Path.GetFileNameWithoutExtension(path);
             var match = Regex.Match(fileName, @"FONT(?<height>[\d]+)");

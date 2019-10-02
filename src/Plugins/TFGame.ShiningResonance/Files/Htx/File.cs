@@ -10,7 +10,7 @@ namespace TFGame.ShiningResonance.Files.Htx
 {
     class File : DDSFile
     {
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 

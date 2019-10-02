@@ -7,7 +7,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files
 {
     public class EncryptedTextFile : TextFile
     {
-        protected EncryptedTextFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        protected EncryptedTextFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

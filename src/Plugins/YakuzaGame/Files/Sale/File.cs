@@ -7,7 +7,7 @@ namespace YakuzaGame.Files.Sale
     {
         protected override int StartOffset => 4;
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
     }

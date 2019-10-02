@@ -9,9 +9,13 @@ using System.Windows.Forms;
 using ExcelDataReader;
 using OfficeOpenXml;
 using ScintillaNET;
+using TF.Core.Entities;
 using TF.Core.Helpers;
+using TF.Core.POCO;
 using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
+using Yarhl.IO;
+using Yarhl.Media.Text;
 
 namespace TF.Core.Views
 {
@@ -38,21 +42,18 @@ namespace TF.Core.Views
         protected Subtitle _selectedSubtitle;
         protected int _selectedSubtitleIndex;
 
-        protected string _lineEnding;
-        protected string _lineEndingStr;
+        protected TranslationFile _file;
 
-        public GridView(string lineEnding)
+        public GridView(TranslationFile file)
         {
+            _file = file;
+
             InitializeComponent();
 
             var font = Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             var cellStyle = new DataGridViewCellStyle();
             cellStyle.Font = font;
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
-
-            _lineEnding = lineEnding;
-
-            _lineEndingStr = lineEnding == "\r\n" ? "\\r\\n" : "\\n";
 
             InitScintilla(scintilla1);
             InitScintilla(scintilla2);
@@ -69,7 +70,7 @@ namespace TF.Core.Views
             scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.Blue;
             scintilla.Lexer = Lexer.Xml;
 
-            scintilla.EolMode = _lineEnding == "\r\n" ? Eol.CrLf : Eol.Lf;
+            scintilla.EolMode = (Eol)_file.LineEnding.ScintillaLineEnding;
         }
 
         public virtual void LoadData(IList<Subtitle> subtitles)
@@ -221,6 +222,8 @@ namespace TF.Core.Views
 
         private void btnExport_Click(object sender, EventArgs e)
         {
+            ExportFileDialog.Filter = "Archivos Excel|*.xlsx";
+            ExportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");
             var result = ExportFileDialog.ShowDialog(this);
 
             if (result != DialogResult.OK)
@@ -266,6 +269,8 @@ namespace TF.Core.Views
 
         private void Import(bool useOffset)
         {
+            ImportFileDialog.Filter = "Archivos Excel|*.xlsx";
+            ImportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");
             var result = ImportFileDialog.ShowDialog(this);
 
             if (result != DialogResult.OK)
@@ -345,7 +350,7 @@ namespace TF.Core.Views
             {
                 if (scintilla2.Modified)
                 {
-                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_lineEnding, _lineEndingStr);
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_file.LineEnding.RealLineEnding, _file.LineEnding.ShownLineEnding);
                 }
             }
 
@@ -356,9 +361,9 @@ namespace TF.Core.Views
                 _selectedSubtitle = subtitle;
 
                 scintilla1.ReadOnly = false;
-                scintilla1.Text = _selectedSubtitle.Text.Replace(_lineEndingStr, _lineEnding);
+                scintilla1.Text = _selectedSubtitle.Text.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.RealLineEnding);
                 scintilla1.ReadOnly = true;
-                scintilla2.Text = _selectedSubtitle.Translation.Replace(_lineEndingStr, _lineEnding);
+                scintilla2.Text = _selectedSubtitle.Translation.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.RealLineEnding);
                 scintilla2.SelectAll();
             }
         }
@@ -369,7 +374,7 @@ namespace TF.Core.Views
             {
                 if (scintilla2.Modified)
                 {
-                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_lineEnding, _lineEndingStr);
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_file.LineEnding.RealLineEnding, _file.LineEnding.ShownLineEnding);
                     SubtitleGridView.Invalidate();
                     UpdateLabel();
                 }
@@ -388,7 +393,7 @@ namespace TF.Core.Views
         {
             if (_selectedSubtitle != null)
             {
-                scintilla2.Text = _selectedSubtitle.Loaded.Replace(_lineEndingStr, _lineEnding);
+                scintilla2.Text = _selectedSubtitle.Loaded.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.RealLineEnding);
             }
         }
 
@@ -415,6 +420,39 @@ namespace TF.Core.Views
                     DisplaySubtitle(_selectedSubtitleIndex+1);
                 }
             }
+        }
+
+        private void btnExportPo_Click(object sender, EventArgs e)
+        {
+            ExportFileDialog.Filter = "Archivos Po|*.po";
+            ExportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".po");
+            var result = ExportFileDialog.ShowDialog(this);
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            _file.ExportPo(ExportFileDialog.FileName);
+        }
+
+        private void btnImportPo_Click(object sender, EventArgs e)
+        {
+            ImportFileDialog.Filter = "Archivos Po|*.po";
+            ImportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".po");
+            var result = ImportFileDialog.ShowDialog(this);
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            _file.ImportPo(ImportFileDialog.FileName, false);
+
+            _selectedSubtitle = null;
+            SubtitleGridView.Invalidate();
+            DisplaySubtitle(_selectedSubtitleIndex);
+            UpdateLabel();
         }
     }
 }

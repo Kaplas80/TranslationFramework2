@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using ScintillaNET;
+using TF.Core.POCO;
+using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.Core.Entities
@@ -42,17 +45,27 @@ namespace TF.Core.Entities
 
         public virtual int SubtitleCount => 0;
 
-        public virtual string LineEnding => "\n";
+        public virtual POCO.LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\n",
+            ShownLineEnding = "\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.Lf
+        };
+
+        public virtual string GameName { get; private set; }
 
         protected readonly Encoding FileEncoding;
 
-        public TranslationFile(string path, string changesFolder, System.Text.Encoding encoding = null)
+        public TranslationFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding = null)
         {
             _changesFolder = changesFolder;
             Id = Guid.NewGuid().ToString();
             Path = path;
             Name = System.IO.Path.GetFileName(path);
             Type = FileType.Unknown;
+
+            GameName = gameName;
 
             FileEncoding = encoding;
 
@@ -100,6 +113,21 @@ namespace TF.Core.Entities
         protected virtual void OnFileChanged()
         {
             FileChanged?.Invoke();
+        }
+
+        public virtual void ExportPo(string path)
+        {
+            
+        }
+
+        public virtual void ImportPo(string path, bool save = true)
+        {
+
+        }
+
+        protected virtual string GetContext(Subtitle subtitle)
+        {
+            return string.Empty;
         }
     }
 }

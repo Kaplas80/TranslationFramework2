@@ -12,7 +12,7 @@ namespace TF.Core.Files
         
         protected virtual string Filter => "Fuentes (*.ttf)|*.ttf";
 
-        public TrueTypeFontFile(string path, string changesFolder) : base(path, changesFolder, null)
+        public TrueTypeFontFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder, null)
         {
         }
 

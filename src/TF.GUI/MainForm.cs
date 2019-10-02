@@ -130,5 +130,15 @@ namespace TF.GUI
                 _explorer.SelectNext();
             }
         }
+
+        private void PoExportAll_Click(object sender, EventArgs e)
+        {
+            ExportToPoFiles();
+        }
+
+        private void PoImportAll_Click(object sender, EventArgs e)
+        {
+            ImportFromPoFiles();
+        }
     }
 }

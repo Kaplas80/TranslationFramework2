@@ -11,7 +11,7 @@ namespace YakuzaGame.Files.Mfpb
     {
         private readonly int MAX_SIZE = 0xC0;
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

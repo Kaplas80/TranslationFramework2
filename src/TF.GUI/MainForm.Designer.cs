@@ -32,16 +32,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tlsMain = new System.Windows.Forms.ToolStrip();
-            this.tsExtender = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
-            this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.dockTheme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
-            this.LoadFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.tsbNewFile = new System.Windows.Forms.ToolStripButton();
             this.tsbOpenFile = new System.Windows.Forms.ToolStripButton();
             this.tsbSaveFile = new System.Windows.Forms.ToolStripButton();
             this.tsbExportProject = new System.Windows.Forms.ToolStripButton();
             this.tsbSearch = new System.Windows.Forms.ToolStripButton();
             this.tsbSearchInFiles = new System.Windows.Forms.ToolStripButton();
+            this.tsExtender = new WeifenLuo.WinFormsUI.Docking.VisualStudioToolStripExtender(this.components);
+            this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.dockTheme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
+            this.LoadFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mniFileNew = new System.Windows.Forms.ToolStripMenuItem();
             this.mniFileOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +58,10 @@
             this.mniHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mniHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMain = new System.Windows.Forms.MenuStrip();
+            this.mniPoFormat = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniPoExportAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniPoImportAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tlsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel)).BeginInit();
             this.mnuMain.SuspendLayout();
@@ -71,6 +75,7 @@
             // tlsMain
             // 
             resources.ApplyResources(this.tlsMain, "tlsMain");
+            this.tlsMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tlsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbNewFile,
             this.tsbOpenFile,
@@ -80,23 +85,6 @@
             this.tsbSearch,
             this.tsbSearchInFiles});
             this.tlsMain.Name = "tlsMain";
-            // 
-            // tsExtender
-            // 
-            this.tsExtender.DefaultRenderer = null;
-            // 
-            // dockPanel
-            // 
-            this.dockPanel.AllowEndUserDocking = false;
-            this.dockPanel.AllowEndUserNestedDocking = false;
-            resources.ApplyResources(this.dockPanel, "dockPanel");
-            this.dockPanel.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
-            this.dockPanel.Name = "dockPanel";
-            this.dockPanel.Theme = null;
-            // 
-            // LoadFileDialog
-            // 
-            resources.ApplyResources(this.LoadFileDialog, "LoadFileDialog");
             // 
             // tsbNewFile
             // 
@@ -145,6 +133,23 @@
             this.tsbSearchInFiles.Image = global::TF.GUI.Icons.searchfiles;
             this.tsbSearchInFiles.Name = "tsbSearchInFiles";
             this.tsbSearchInFiles.Click += new System.EventHandler(this.SearchInFiles_Click);
+            // 
+            // tsExtender
+            // 
+            this.tsExtender.DefaultRenderer = null;
+            // 
+            // dockPanel
+            // 
+            this.dockPanel.AllowEndUserDocking = false;
+            this.dockPanel.AllowEndUserNestedDocking = false;
+            resources.ApplyResources(this.dockPanel, "dockPanel");
+            this.dockPanel.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
+            this.dockPanel.Name = "dockPanel";
+            this.dockPanel.Theme = null;
+            // 
+            // LoadFileDialog
+            // 
+            resources.ApplyResources(this.LoadFileDialog, "LoadFileDialog");
             // 
             // mniFile
             // 
@@ -252,12 +257,34 @@
             // 
             // mnuMain
             // 
+            this.mnuMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniFile,
             this.mniEdit,
+            this.mniPoFormat,
             this.mniHelp});
             resources.ApplyResources(this.mnuMain, "mnuMain");
             this.mnuMain.Name = "mnuMain";
+            // 
+            // mniPoFormat
+            // 
+            this.mniPoFormat.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniPoExportAll,
+            this.mniPoImportAll});
+            this.mniPoFormat.Name = "mniPoFormat";
+            resources.ApplyResources(this.mniPoFormat, "mniPoFormat");
+            // 
+            // mniPoExportAll
+            // 
+            resources.ApplyResources(this.mniPoExportAll, "mniPoExportAll");
+            this.mniPoExportAll.Name = "mniPoExportAll";
+            this.mniPoExportAll.Click += new System.EventHandler(this.PoExportAll_Click);
+            // 
+            // mniPoImportAll
+            // 
+            resources.ApplyResources(this.mniPoImportAll, "mniPoImportAll");
+            this.mniPoImportAll.Name = "mniPoImportAll";
+            this.mniPoImportAll.Click += new System.EventHandler(this.PoImportAll_Click);
             // 
             // MainForm
             // 
@@ -313,6 +340,10 @@
         private System.Windows.Forms.ToolStripMenuItem mniHelp;
         private System.Windows.Forms.ToolStripMenuItem mniHelpAbout;
         private System.Windows.Forms.MenuStrip mnuMain;
+        private System.Windows.Forms.ToolStripMenuItem mniPoFormat;
+        private System.Windows.Forms.ToolStripMenuItem mniPoExportAll;
+        private System.Windows.Forms.ToolStripMenuItem mniPoImportAll;
+        private System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog;
     }
 }
 

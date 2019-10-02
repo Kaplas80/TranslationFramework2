@@ -30,7 +30,7 @@ namespace TF.Core.Files
 
         protected ScratchImage _currentDDS;
 
-        public DDSFile(string path, string changesFolder) : base(path, changesFolder)
+        public DDSFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 

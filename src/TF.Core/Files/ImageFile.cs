@@ -21,7 +21,7 @@ namespace TF.Core.Files
 
         protected virtual string Filter => "Todos los ficheros (*.*)|*.*";
 
-        public ImageFile(string path, string changesFolder) : base(path, changesFolder, null)
+        public ImageFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder, null)
         {
             Type = FileType.ImageFile;
         }

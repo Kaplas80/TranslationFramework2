@@ -7,7 +7,7 @@ namespace YakuzaGame.Files.DisposeString
     {
         protected override int StartOffset => 0x08;
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
     }
