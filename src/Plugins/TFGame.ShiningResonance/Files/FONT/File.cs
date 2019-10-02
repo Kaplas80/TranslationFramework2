@@ -12,7 +12,7 @@ namespace TFGame.ShiningResonance.Files.FONT
 
         protected override string Filter => "Ficheros de fuente (*.ufn)|*.ufn";
 
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 

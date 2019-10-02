@@ -15,7 +15,7 @@ namespace TFGame.Yakuza0.Files.Dll
             new Tuple<long, long>(0x175158, 0x1936E8),
         };
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
     }

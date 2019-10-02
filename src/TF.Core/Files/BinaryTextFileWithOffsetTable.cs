@@ -9,7 +9,7 @@ namespace TF.Core.Files
 {
     public class BinaryTextFileWithOffsetTable : BinaryTextFile
     {
-        public BinaryTextFileWithOffsetTable(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public BinaryTextFileWithOffsetTable(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TF.Core.Entities;
 using TF.Core.TranslationEntities;
 
 namespace TFGame.AITheSomniumFiles.Files
 {
     public class GridView : TF.Core.Views.GridView
     {
-        public GridView(string lineEnding) : base(lineEnding)
+        public GridView(TranslationFile file) : base(file)
         {
         }
 
@@ -64,6 +65,11 @@ namespace TFGame.AITheSomniumFiles.Files
 
             _selectedSubtitle = null;
             _selectedSubtitleIndex = -1;
+        }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return (subtitle as LuaSubtitle).Id;
         }
     }
 }

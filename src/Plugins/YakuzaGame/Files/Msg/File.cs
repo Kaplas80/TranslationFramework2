@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TF.Core.Files;
+using TF.Core.POCO;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -13,9 +14,15 @@ namespace YakuzaGame.Files.Msg
 {
     public class File : BinaryTextFile
     {
-        public override string LineEnding => "\r\n";
+        public override LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\r\n",
+            ShownLineEnding = "\\r\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.CrLf,
+        };
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

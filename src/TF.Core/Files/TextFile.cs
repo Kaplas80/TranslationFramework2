@@ -24,7 +24,7 @@ namespace TF.Core.Files
             }
         }
 
-        public TextFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public TextFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
         }

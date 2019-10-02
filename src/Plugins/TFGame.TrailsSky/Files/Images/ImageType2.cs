@@ -4,7 +4,7 @@
     {
         protected override int ImageWidth => 512;
 
-        public ImageType2(string path, string changesFolder) : base(path, changesFolder)
+        public ImageType2(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
     }

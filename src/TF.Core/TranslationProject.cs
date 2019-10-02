@@ -137,22 +137,22 @@ namespace TF.Core
                         TranslationFile file;
 
                         var constructorInfo =
-                            type.GetConstructor(new[] {typeof(string), typeof(string), typeof(Encoding)});
+                            type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
 
                         if (constructorInfo != null)
                         {
-                            file = (TranslationFile)constructorInfo.Invoke(new object[]{filePath, result.ChangesFolder, result.Game.FileEncoding});
+                            file = (TranslationFile)constructorInfo.Invoke(new object[]{game.Name, filePath, result.ChangesFolder, result.Game.FileEncoding});
                         }
                         else
                         {
-                            constructorInfo = type.GetConstructor(new[] {typeof(string), typeof(string)});
+                            constructorInfo = type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string)});
                             if (constructorInfo != null)
                             {
-                                file = (TranslationFile)constructorInfo.Invoke(new object[]{filePath, result.ChangesFolder});
+                                file = (TranslationFile)constructorInfo.Invoke(new object[]{game.Name, filePath, result.ChangesFolder});
                             }
                             else
                             {
-                                file = new TranslationFile(filePath, result.ChangesFolder);
+                                file = new TranslationFile(game.Name, filePath, result.ChangesFolder);
                             }
                         }
 
@@ -369,19 +369,24 @@ namespace TF.Core
 
                                 if (translationFile == null)
                                 {
-                                    try
+                                    var constructorInfo =
+                                        type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
+
+                                    if (constructorInfo != null)
                                     {
-                                        translationFile = (TranslationFile) Activator.CreateInstance(type, f,
-                                            project.ChangesFolder, project.Game.FileEncoding);
+                                        translationFile = (TranslationFile)constructorInfo.Invoke(new object[]{project.Game.Name, f, project.ChangesFolder, project.Game.FileEncoding});
                                     }
-                                    catch (MissingMethodException e)
+                                    else
                                     {
-                                        translationFile =
-                                            (TranslationFile) Activator.CreateInstance(type, f, project.ChangesFolder);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        translationFile = new TranslationFile(f, project.ChangesFolder);
+                                        constructorInfo = type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string)});
+                                        if (constructorInfo != null)
+                                        {
+                                            translationFile = (TranslationFile)constructorInfo.Invoke(new object[]{project.Game.Name, f, project.ChangesFolder});
+                                        }
+                                        else
+                                        {
+                                            translationFile = new TranslationFile(project.Game.Name, f, project.ChangesFolder);
+                                        }
                                     }
 
                                     translationFile.RelativePath = relativePath;
@@ -443,20 +448,24 @@ namespace TF.Core
 
                             if (translationFile == null)
                             {
-                                try
+                                var constructorInfo =
+                                    type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
+
+                                if (constructorInfo != null)
                                 {
-                                    translationFile = (TranslationFile) Activator.CreateInstance(type,
-                                        destinationFileName, project.ChangesFolder, project.Game.FileEncoding);
+                                    translationFile = (TranslationFile)constructorInfo.Invoke(new object[]{project.Game.Name, destinationFileName, project.ChangesFolder, project.Game.FileEncoding});
                                 }
-                                catch (MissingMethodException e)
+                                else
                                 {
-                                    translationFile =
-                                        (TranslationFile) Activator.CreateInstance(type, destinationFileName,
-                                            project.ChangesFolder);
-                                }
-                                catch (Exception e)
-                                {
-                                    translationFile = new TranslationFile(destinationFileName, project.ChangesFolder);
+                                    constructorInfo = type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string)});
+                                    if (constructorInfo != null)
+                                    {
+                                        translationFile = (TranslationFile)constructorInfo.Invoke(new object[]{project.Game.Name, destinationFileName, project.ChangesFolder});
+                                    }
+                                    else
+                                    {
+                                        translationFile = new TranslationFile(project.Game.Name, destinationFileName, project.ChangesFolder);
+                                    }
                                 }
 
                                 translationFile.RelativePath = relativePath;

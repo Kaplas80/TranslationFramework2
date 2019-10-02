@@ -11,7 +11,7 @@ namespace YakuzaGame.Files.CmnBin
     {
         private static readonly byte[] SearchPattern = { 0x8E, 0x9A, 0x96, 0x8B };
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 

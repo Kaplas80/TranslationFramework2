@@ -15,7 +15,7 @@ namespace TFGame.TrailsSky.Files.Images
 
         protected override string Filter => "Ficheros de imágenes (*.png)|*.png";
 
-        protected AbstractImageFile(string path, string changesFolder) : base(path, changesFolder)
+        protected AbstractImageFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 

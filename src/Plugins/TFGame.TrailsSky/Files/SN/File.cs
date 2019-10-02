@@ -31,13 +31,13 @@ namespace TFGame.TrailsSky.Files.SN
             }
         }
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
         public override void Open(DockPanel panel)
         {
-            _view = new View(LineEnding);
+            _view = new View(this);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());

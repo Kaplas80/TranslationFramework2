@@ -30,14 +30,14 @@ namespace TF.Core.Files
             }
         }
 
-        public BinaryTextFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public BinaryTextFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
         }
 
         public override void Open(DockPanel panel)
         {
-            _view = new GridView(LineEnding);
+            _view = new GridView(this);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
