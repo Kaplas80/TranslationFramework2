@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using ScintillaNET;
 using TF.Core.POCO;
+using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.Core.Entities
@@ -112,6 +113,21 @@ namespace TF.Core.Entities
         protected virtual void OnFileChanged()
         {
             FileChanged?.Invoke();
+        }
+
+        public virtual void ExportPo(string path)
+        {
+            
+        }
+
+        public virtual void ImportPo(string path, bool save = true)
+        {
+
+        }
+
+        protected virtual string GetContext(Subtitle subtitle)
+        {
+            return string.Empty;
         }
     }
 }

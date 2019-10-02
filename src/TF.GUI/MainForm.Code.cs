@@ -113,6 +113,9 @@ namespace TF.GUI
             mniFileExport.Enabled = true;
             tsbSearchInFiles.Enabled = true;
             mniEditSearchInFiles.Enabled = true;
+
+            mniPoExportAll.Enabled = true;
+            mniPoImportAll.Enabled = true;
         }
 
         private void LoadTranslation()
@@ -168,6 +171,9 @@ namespace TF.GUI
                 mniFileExport.Enabled = true;
                 tsbSearchInFiles.Enabled = true;
                 mniEditSearchInFiles.Enabled = true;
+
+                mniPoExportAll.Enabled = true;
+                mniPoImportAll.Enabled = true;
             }
         }
 
@@ -332,6 +338,113 @@ namespace TF.GUI
                             MessageBoxIcon.Exclamation);
                     }
                 }
+            }
+        }
+
+        private void ExportToPoFiles()
+        {
+            if (_project != null)
+            {
+                if (_currentFile != null)
+                {
+                    if (_currentFile.NeedSaving)
+                    {
+                        var result = MessageBox.Show(
+                            "Es necesario guardar los cambios antes de continuar.\n¿Quieres guardarlos?",
+                            "Guardar cambios", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (result == DialogResult.No)
+                        {
+                            return;
+                        }
+
+                        if (result == DialogResult.Yes)
+                        {
+                            _currentFile.SaveChanges();
+                        }
+                    }
+                }
+
+                FolderBrowserDialog.Description = "Selecciona la carpeta en la que se guardarán los ficheros Po";
+                FolderBrowserDialog.ShowNewFolderButton = true;
+
+                var formResult = FolderBrowserDialog.ShowDialog(this);
+
+                if (formResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                var workForm = new WorkingForm(dockTheme, "Exportar a Po");
+
+                workForm.DoWork += (sender, args) =>
+                {
+                    var worker = sender as BackgroundWorker;
+
+                    try
+                    {
+                        _project.ExportPo(FolderBrowserDialog.SelectedPath, worker);
+
+                        worker.ReportProgress(-1, "FINALIZADO");
+                        worker.ReportProgress(-1, string.Empty);
+                        worker.ReportProgress(-1, $"Los ficheros exportados están en {FolderBrowserDialog.SelectedPath}");
+                    }
+                    catch (UserCancelException e)
+                    {
+                        args.Cancel = true;
+                    }
+#if !DEBUG
+                    catch (Exception e)
+                    {
+                        worker.ReportProgress(0, $"ERROR: {e.Message}");
+                    }
+#endif
+                };
+
+                workForm.ShowDialog(this);
+            }
+        }
+
+        private void ImportFromPoFiles()
+        {
+            if (_project != null)
+            {
+                FolderBrowserDialog.Description = "Selecciona la carpeta raiz con los ficheros Po";
+                FolderBrowserDialog.ShowNewFolderButton = false;
+
+                var formResult = FolderBrowserDialog.ShowDialog(this);
+
+                if (formResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                var workForm = new WorkingForm(dockTheme, "Importar Po");
+
+                workForm.DoWork += (sender, args) =>
+                {
+                    var worker = sender as BackgroundWorker;
+
+                    try
+                    {
+                        _project.ImportPo(FolderBrowserDialog.SelectedPath, worker);
+
+                        worker.ReportProgress(-1, "FINALIZADO");
+                        worker.ReportProgress(-1, string.Empty);
+                    }
+                    catch (UserCancelException e)
+                    {
+                        args.Cancel = true;
+                    }
+#if !DEBUG
+                    catch (Exception e)
+                    {
+                        worker.ReportProgress(0, $"ERROR: {e.Message}");
+                    }
+#endif
+                };
+
+                workForm.ShowDialog(this);
             }
         }
     }

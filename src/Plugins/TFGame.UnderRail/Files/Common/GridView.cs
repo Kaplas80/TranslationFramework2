@@ -66,10 +66,5 @@ namespace TFGame.UnderRail.Files.Common
             _selectedSubtitle = null;
             _selectedSubtitleIndex = -1;
         }
-
-        protected override string GetContext(Subtitle subtitle)
-        {
-            return (subtitle as UnderRailSubtitle).Id;
-        }
     }
 }

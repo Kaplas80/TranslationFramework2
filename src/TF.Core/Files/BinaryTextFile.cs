@@ -10,6 +10,8 @@ using TF.Core.TranslationEntities;
 using TF.Core.Views;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
+using Yarhl.IO;
+using Yarhl.Media.Text;
 
 namespace TF.Core.Files
 {
@@ -281,6 +283,81 @@ namespace TF.Core.Files
             }
 
             return result;
+        }
+
+        public override void ExportPo(string path)
+        {
+            var directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+            
+            var po = new Po()
+            {
+                Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+            };
+
+            var subtitles = GetSubtitles();
+            foreach (var subtitle in subtitles)
+            {
+                var entry = new PoEntry();
+                var tmp = subtitle.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                if (string.IsNullOrEmpty(tmp))
+                {
+                    tmp = "<!empty>";
+                }
+                entry.Original = tmp;
+                entry.Context = GetContext(subtitle);
+
+                if (subtitle.Text != subtitle.Translation)
+                {
+                    tmp = subtitle.Translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                    if (string.IsNullOrEmpty(tmp))
+                    {
+                        tmp = "<!empty>";
+                    }
+                    entry.Translated = tmp;
+                }
+
+                po.Add(entry);
+            }
+
+            var po2binary = new Yarhl.Media.Text.Po2Binary();
+            var binary = po2binary.Convert(po);
+            
+            binary.Stream.WriteTo(path);
+        }
+
+        public override void ImportPo(string inputFile, bool save = true)
+        {
+            var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
+            var binary = new BinaryFormat(dataStream);
+            var binary2Po = new Yarhl.Media.Text.Po2Binary();
+            var po = binary2Po.Convert(binary);
+
+            _subtitles = GetSubtitles();
+            foreach (var subtitle in _subtitles)
+            {
+                var tmp = subtitle.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                if (string.IsNullOrEmpty(tmp))
+                {
+                    tmp = "<!empty>";
+                }
+                var entry = po.FindEntry(tmp, GetContext(subtitle));
+
+                if (!string.IsNullOrEmpty(entry.Translated))
+                {
+                    subtitle.Translation = entry.Translated.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                }
+            }
+
+            if (save)
+            {
+                SaveChanges();
+            }
+        }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return subtitle.Offset.ToString();
         }
     }
 }

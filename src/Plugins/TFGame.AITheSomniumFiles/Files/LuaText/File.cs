@@ -222,5 +222,10 @@ namespace TFGame.AITheSomniumFiles.Files.LuaText
 
             return result;
         }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return (subtitle as LuaSubtitle).Id.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+        }
     }
 }

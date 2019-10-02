@@ -169,5 +169,10 @@ namespace TFGame.UnderRail.Files.Common
 
             return result;
         }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return (subtitle as UnderRailSubtitle).Id.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);;
+        }
     }
 }

@@ -433,44 +433,7 @@ namespace TF.Core.Views
                 return;
             }
 
-            var po = new Po()
-            {
-                Header = new PoHeader(_file.GameName, "dummy@dummy.com", "es-ES")
-            };
-
-            foreach (var subtitle in _subtitles)
-            {
-                var entry = new PoEntry();
-                var tmp = subtitle.Text.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.PoLineEnding);
-                if (string.IsNullOrEmpty(tmp))
-                {
-                    tmp = "<!empty>";
-                }
-                entry.Original = tmp;
-                entry.Context = GetContext(subtitle);
-
-                if (subtitle.Text != subtitle.Translation)
-                {
-                    tmp = subtitle.Translation.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.PoLineEnding);
-                    if (string.IsNullOrEmpty(tmp))
-                    {
-                        tmp = "<!empty>";
-                    }
-                    entry.Translated = tmp;
-                }
-
-                po.Add(entry);
-            }
-
-            var po2binary = new Yarhl.Media.Text.Po2Binary();
-            var binary = po2binary.Convert(po);
-            
-            binary.Stream.WriteTo(ExportFileDialog.FileName);
-        }
-
-        protected virtual string GetContext(Subtitle subtitle)
-        {
-            return subtitle.Offset.ToString();
+            _file.ExportPo(ExportFileDialog.FileName);
         }
 
         private void btnImportPo_Click(object sender, EventArgs e)
@@ -484,25 +447,7 @@ namespace TF.Core.Views
                 return;
             }
 
-            var dataStream = DataStreamFactory.FromFile(ImportFileDialog.FileName, FileOpenMode.Read);
-            var binary = new BinaryFormat(dataStream);
-            var binary2Po = new Yarhl.Media.Text.Po2Binary();
-            var po = binary2Po.Convert(binary);
-
-            foreach (var subtitle in _subtitles)
-            {
-                var tmp = subtitle.Text.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.PoLineEnding);
-                if (string.IsNullOrEmpty(tmp))
-                {
-                    tmp = "<!empty>";
-                }
-                var entry = po.FindEntry(tmp, GetContext(subtitle));
-
-                if (!string.IsNullOrEmpty(entry.Translated))
-                {
-                    subtitle.Translation = entry.Translated.Replace(_file.LineEnding.PoLineEnding, _file.LineEnding.ShownLineEnding);
-                }
-            }
+            _file.ImportPo(ImportFileDialog.FileName, false);
 
             _selectedSubtitle = null;
             SubtitleGridView.Invalidate();

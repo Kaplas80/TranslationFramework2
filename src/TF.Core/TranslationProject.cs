@@ -497,5 +497,52 @@ namespace TF.Core
                 }
             }
         }
+
+        public void ExportPo(string path, BackgroundWorker worker)
+        {
+            foreach (var container in FileContainers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+
+                //foreach (var file in container.Files)
+                Parallel.ForEach(container.Files, file =>
+                {
+                    var filePath = Path.Combine(path, file.RelativePath);
+                    var fileName = Path.GetFileNameWithoutExtension(filePath);
+                    var outputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    file.ExportPo(outputPath);
+                });
+            }
+        }
+
+        public void ImportPo(string path, BackgroundWorker worker)
+        {
+            foreach (var container in FileContainers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+
+                //foreach (var file in container.Files)
+                Parallel.ForEach(container.Files, file =>
+                {
+                    var filePath = Path.Combine(path, file.RelativePath);
+                    var fileName = Path.GetFileNameWithoutExtension(filePath);
+                    var inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    Debug.WriteLine(inputPath);
+                    file.ImportPo(inputPath);
+                });
+            }
+        }
     }
 }
