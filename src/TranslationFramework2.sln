@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.HardcoreMecha", "Plu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.AITheSomniumFiles", "Plugins\TFGame.AITheSomniumFiles\TFGame.AITheSomniumFiles.csproj", "{A7AF21F8-4CE3-4C1F-887E-AB9A8DCE772F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDSConverter", "ExternalTools\DDSConverter\DDSConverter.csproj", "{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,10 @@ Global
 		{A7AF21F8-4CE3-4C1F-887E-AB9A8DCE772F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7AF21F8-4CE3-4C1F-887E-AB9A8DCE772F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7AF21F8-4CE3-4C1F-887E-AB9A8DCE772F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -178,6 +184,7 @@ Global
 		{82A9B66A-F2B3-4AF8-AB08-293BC5AE81F1} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 		{201FD831-C546-4022-BE11-E5E9493D0C8B} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
 		{A7AF21F8-4CE3-4C1F-887E-AB9A8DCE772F} = {B4EF83D1-7D6F-449E-8FC3-46AE381039D1}
+		{ECC82C0A-3D74-44B3-9F41-A4BE9997D855} = {7E18623E-5F2C-435F-AB6C-297273CE7CB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7517169-6658-41AC-B87B-9257549EFB51}
