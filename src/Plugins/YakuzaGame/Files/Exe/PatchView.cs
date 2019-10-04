@@ -25,12 +25,14 @@ namespace YakuzaGame.Files.Exe
                 var chk = new CheckBox
                 {
                     Name = $"chk_{i}",
-                    Text = patch.Name,
                     Checked = patch.Enabled,
                     Location = new Point(x, y),
-                    AutoSize = true,
-                    Tag = patch
+                    Tag = patch,
+                    Text = patch.Name,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Size = new Size(dockPanel1.Width, 25)
                 };
+
                 chk.CheckedChanged += OnCheckedChanged;
                 y += chk.Height + 6;
 
