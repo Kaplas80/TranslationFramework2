@@ -1109,5 +1109,11 @@ namespace TFGame.TrailsSky.Files.Exe
                 }
             }
         }
+
+        protected override void LoadBeforeImport()
+        {
+            _charWidths = GetFontTable();
+            base.LoadBeforeImport();
+        }
     }
 }

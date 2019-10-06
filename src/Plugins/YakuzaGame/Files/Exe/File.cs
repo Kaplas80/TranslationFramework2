@@ -309,5 +309,12 @@ namespace YakuzaGame.Files.Exe
                 }
             }
         }
+
+        protected override void LoadBeforeImport()
+        {
+            _patches = GetPatches();
+            _data = GetFontTable();
+            base.LoadBeforeImport();
+        }
     }
 }

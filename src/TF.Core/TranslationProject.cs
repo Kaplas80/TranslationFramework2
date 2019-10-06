@@ -510,14 +510,24 @@ namespace TF.Core
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
-                //foreach (var file in container.Files)
+#if DEBUG
+                foreach (var file in container.Files)
+                {
+                    Debug.WriteLine($"Exporting {Path.Combine(path, container.Path, file.RelativePath)}");
+#else
                 Parallel.ForEach(container.Files, file =>
                 {
-                    var filePath = Path.Combine(path, file.RelativePath);
+#endif
+                    var filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    //var filePath = Path.Combine(path, file.RelativePath);
                     var fileName = Path.GetFileNameWithoutExtension(filePath);
                     var outputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
                     file.ExportPo(outputPath);
+#if DEBUG
+                }
+#else
                 });
+#endif
             }
         }
 
@@ -533,15 +543,31 @@ namespace TF.Core
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
-                //foreach (var file in container.Files)
+#if DEBUG
+                foreach (var file in container.Files)
+#else
                 Parallel.ForEach(container.Files, file =>
+#endif
                 {
-                    var filePath = Path.Combine(path, file.RelativePath);
+                    var filePath = Path.Combine(path, container.Path, file.RelativePath);
                     var fileName = Path.GetFileNameWithoutExtension(filePath);
                     var inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
-                    Debug.WriteLine(inputPath);
-                    file.ImportPo(inputPath);
+
+                    if (!File.Exists(inputPath))
+                    {
+                        filePath = Path.Combine(path, file.RelativePath);
+                        inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    }
+
+                    if (File.Exists(inputPath))
+                    {
+                        file.ImportPo(inputPath);
+                    }
+#if DEBUG
+                }
+#else
                 });
+#endif
             }
         }
     }

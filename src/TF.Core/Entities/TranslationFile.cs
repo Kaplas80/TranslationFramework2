@@ -125,6 +125,11 @@ namespace TF.Core.Entities
 
         }
 
+        protected virtual void LoadBeforeImport()
+        {
+            
+        }
+
         protected virtual string GetContext(Subtitle subtitle)
         {
             return string.Empty;

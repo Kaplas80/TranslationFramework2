@@ -381,19 +381,22 @@ namespace TF.GUI
                 {
                     var worker = sender as BackgroundWorker;
 
+#if !DEBUG
                     try
                     {
+#endif
                         _project.ExportPo(FolderBrowserDialog.SelectedPath, worker);
 
                         worker.ReportProgress(-1, "FINALIZADO");
                         worker.ReportProgress(-1, string.Empty);
                         worker.ReportProgress(-1, $"Los ficheros exportados están en {FolderBrowserDialog.SelectedPath}");
+#if !DEBUG
                     }
                     catch (UserCancelException e)
                     {
                         args.Cancel = true;
                     }
-#if !DEBUG
+
                     catch (Exception e)
                     {
                         worker.ReportProgress(0, $"ERROR: {e.Message}");

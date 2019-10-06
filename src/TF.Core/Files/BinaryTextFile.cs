@@ -199,13 +199,13 @@ namespace TF.Core.Files
             var step = direction < 0 ? -1 : 1;
 
             var result = -1;
-            while (i >= 0  && i < _subtitles.Count)
+            while (i >= 0 && i < _subtitles.Count)
             {
                 var subtitle = _subtitles[i];
                 var original = subtitle.Text;
                 var translation = subtitle.Translation;
 
-                if (!string.IsNullOrEmpty(original))
+                if (!string.IsNullOrWhiteSpace(original))
                 {
                     if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
                     {
@@ -216,15 +216,16 @@ namespace TF.Core.Files
                     rowIndex += step;
                 }
 
-                i+=step;
+                i += step;
             }
 
-            if (result != -1)
+            var found = i >= 0 && i < _subtitles.Count;
+            if (found)
             {
                 _view.DisplaySubtitle(rowIndex);
             }
 
-            return result != -1;
+            return found;
         }
 
         protected virtual void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -299,22 +300,23 @@ namespace TF.Core.Files
             foreach (var subtitle in subtitles)
             {
                 var entry = new PoEntry();
-                var tmp = subtitle.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                var tmp = subtitle.Text;
                 if (string.IsNullOrEmpty(tmp))
                 {
                     tmp = "<!empty>";
                 }
-                entry.Original = tmp;
+                
+                entry.Original = tmp.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
                 entry.Context = GetContext(subtitle);
 
                 if (subtitle.Text != subtitle.Translation)
                 {
-                    tmp = subtitle.Translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                    tmp = subtitle.Translation;
                     if (string.IsNullOrEmpty(tmp))
                     {
                         tmp = "<!empty>";
                     }
-                    entry.Translated = tmp;
+                    entry.Translated = tmp.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
                 }
 
                 po.Add(entry);
@@ -333,26 +335,43 @@ namespace TF.Core.Files
             var binary2Po = new Yarhl.Media.Text.Po2Binary();
             var po = binary2Po.Convert(binary);
 
-            _subtitles = GetSubtitles();
+            LoadBeforeImport();
             foreach (var subtitle in _subtitles)
             {
-                var tmp = subtitle.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                var tmp = subtitle.Text;
                 if (string.IsNullOrEmpty(tmp))
                 {
                     tmp = "<!empty>";
                 }
-                var entry = po.FindEntry(tmp, GetContext(subtitle));
+                var entry = po.FindEntry(tmp.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding), GetContext(subtitle));
 
-                if (!string.IsNullOrEmpty(entry.Translated))
+                if (entry.Text == "<!empty>")
                 {
-                    subtitle.Translation = entry.Translated.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                    subtitle.Translation = subtitle.Text;
+                }
+                else
+                {
+                    var tmp1 = entry.Translated;
+                    if (string.IsNullOrEmpty(tmp1))
+                    {
+                        subtitle.Translation = subtitle.Text;
+                    }
+                    else
+                    {
+                        subtitle.Translation = tmp1.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                    }
                 }
             }
 
-            if (save)
+            if (save && NeedSaving)
             {
                 SaveChanges();
             }
+        }
+
+        protected override void LoadBeforeImport()
+        {
+            _subtitles = GetSubtitles();
         }
 
         protected override string GetContext(Subtitle subtitle)

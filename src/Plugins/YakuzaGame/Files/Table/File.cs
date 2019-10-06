@@ -1,11 +1,17 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using TF.Core.Entities;
 using TF.Core.Helpers;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
+using Yarhl.IO;
+using Yarhl.Media.Text;
 
 namespace YakuzaGame.Files.Table
 {
@@ -246,6 +252,117 @@ namespace YakuzaGame.Files.Table
             }
 
             return result != -1;
+        }
+
+        public override void ExportPo(string path)
+        {
+            var directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+
+            var po = new Po()
+            {
+                Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+            };
+
+            var data = GetData();
+
+            foreach (var dataColumn in data.Columns)
+            {
+                if (dataColumn.GetType().Name != nameof(Column) && dataColumn.DataCount > 0 && dataColumn.Size > 0)
+                {
+                    var values = dataColumn.GetUniqueValues();
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        var value = values[i];
+                        var original = value.Item1;
+                        var translated = value.Item2;
+                        var entry = new PoEntry();
+                        
+                        if (string.IsNullOrEmpty(original))
+                        {
+                            original = "<!empty>";
+                            translated = "<!empty>";
+                        }
+
+                        if (string.IsNullOrEmpty(translated))
+                        {
+                            translated = "<!empty>";
+                        }
+
+                        var tmp = original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                        
+                        entry.Original = tmp;
+                        entry.Context = $"{dataColumn.Name}_{i}";
+
+                        if (original != translated)
+                        {
+                            tmp = translated.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                            entry.Translated = tmp;
+                        }
+
+                        po.Add(entry);
+                    }
+                }
+            }
+
+            var po2binary = new Yarhl.Media.Text.Po2Binary();
+            var binary = po2binary.Convert(po);
+
+            binary.Stream.WriteTo(path);
+        }
+
+        public override void ImportPo(string inputFile, bool save = true)
+        {
+            var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
+            var binary = new BinaryFormat(dataStream);
+            var binary2Po = new Yarhl.Media.Text.Po2Binary();
+            var po = binary2Po.Convert(binary);
+
+            LoadBeforeImport();
+            foreach (var dataColumn in _data.Columns)
+            {
+                if (dataColumn.GetType().Name != nameof(Column) && dataColumn.DataCount > 0 && dataColumn.Size > 0)
+                {
+                    var values = dataColumn.GetUniqueValues();
+                    var newValues = new Dictionary<string, string>();
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        var value = values[i];
+                        var original = value.Item1;
+                        
+                        if (string.IsNullOrEmpty(original))
+                        {
+                            original = "<!empty>";
+                        }
+
+                        var tmp = original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                        var entry = po.FindEntry(tmp, $"{dataColumn.Name}_{i}");
+
+                        if (entry.Text == "<!empty>")
+                        {
+                            newValues.Add($"{dataColumn.Name}|{i}", value.Item1); 
+                        }
+                        else
+                        {
+                            var tmp1 = entry.Translated;
+                            tmp1 = string.IsNullOrEmpty(tmp1) ? value.Item1 : tmp1.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                            newValues.Add($"{dataColumn.Name}|{i}", tmp1); 
+                        }
+                    }
+
+                    dataColumn.SetUniqueValues(newValues, true);
+                }
+            }
+
+            if (save && NeedSaving)
+            {
+                SaveChanges();
+            }
+        }
+
+        protected override void LoadBeforeImport()
+        {
+            _data = GetData();
         }
     }
 }
