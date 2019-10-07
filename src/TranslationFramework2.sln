@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.HardcoreMecha", "Plu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFGame.AITheSomniumFiles", "Plugins\TFGame.AITheSomniumFiles\TFGame.AITheSomniumFiles.csproj", "{A7AF21F8-4CE3-4C1F-887E-AB9A8DCE772F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDSConverter", "ExternalTools\DDSConverter\DDSConverter.csproj", "{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDSConverter", "ExternalTools\DDSConverter\DDSConverter.csproj", "{ECC82C0A-3D74-44B3-9F41-A4BE9997D855}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -300,23 +300,21 @@ namespace TF.Core.Files
             foreach (var subtitle in subtitles)
             {
                 var entry = new PoEntry();
-                var tmp = subtitle.Text;
-                if (string.IsNullOrEmpty(tmp))
+
+                var original = subtitle.Text;
+                var translation = subtitle.Translation;
+                if (string.IsNullOrEmpty(original))
                 {
-                    tmp = "<!empty>";
+                    original = "<!empty>";
+                    translation = "<!empty>";
                 }
-                
-                entry.Original = tmp.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+
+                entry.Original = original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
                 entry.Context = GetContext(subtitle);
 
-                if (subtitle.Text != subtitle.Translation)
+                if (original != translation)
                 {
-                    tmp = subtitle.Translation;
-                    if (string.IsNullOrEmpty(tmp))
-                    {
-                        tmp = "<!empty>";
-                    }
-                    entry.Translated = tmp.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                    entry.Translated = translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
                 }
 
                 po.Add(entry);
@@ -338,28 +336,25 @@ namespace TF.Core.Files
             LoadBeforeImport();
             foreach (var subtitle in _subtitles)
             {
-                var tmp = subtitle.Text;
-                if (string.IsNullOrEmpty(tmp))
+                var original = subtitle.Text;
+                if (string.IsNullOrEmpty(original))
                 {
-                    tmp = "<!empty>";
+                    original = "<!empty>";
                 }
-                var entry = po.FindEntry(tmp.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding), GetContext(subtitle));
 
-                if (entry.Text == "<!empty>")
+                var entry = po.FindEntry(original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding),
+                    GetContext(subtitle));
+
+                if (entry == null || entry.Text == "<!empty>" || original == "<!empty>")
                 {
                     subtitle.Translation = subtitle.Text;
                 }
                 else
                 {
-                    var tmp1 = entry.Translated;
-                    if (string.IsNullOrEmpty(tmp1))
-                    {
-                        subtitle.Translation = subtitle.Text;
-                    }
-                    else
-                    {
-                        subtitle.Translation = tmp1.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
-                    }
+                    var translation = entry.Translated;
+                    subtitle.Translation = string.IsNullOrEmpty(translation)
+                        ? subtitle.Text
+                        : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
                 }
             }
 

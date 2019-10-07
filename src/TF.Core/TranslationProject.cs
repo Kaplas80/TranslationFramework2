@@ -545,10 +545,13 @@ namespace TF.Core
 
 #if DEBUG
                 foreach (var file in container.Files)
+                {
+                    Debug.WriteLine($"Importing {Path.Combine(path, container.Path, file.RelativePath)}");
 #else
                 Parallel.ForEach(container.Files, file =>
-#endif
                 {
+#endif
+                
                     var filePath = Path.Combine(path, container.Path, file.RelativePath);
                     var fileName = Path.GetFileNameWithoutExtension(filePath);
                     var inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
