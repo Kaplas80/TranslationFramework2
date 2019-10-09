@@ -32,13 +32,13 @@ namespace TFGame.Yakuza0
                 new Tuple<string, string>("\\n", "\n"),
                 new Tuple<string, string>("\\r", "\r"),
                 new Tuple<string, string>("™", "~"),
-                new Tuple<string, string>("^", "%"),
+                //new Tuple<string, string>("^", "%"),
                 new Tuple<string, string>("®", "\u007F"),
                 new Tuple<string, string>("¥", "\\"),
                 new Tuple<string, string>("\u266A", "¤"), // Nota musical
                 new Tuple<string, string>("\u2665", "§"), // Corazón
                 new Tuple<string, string>("\u221E", "\u00B8"), // Infinito
-
+                new Tuple<string, string>("\uFF05", "^"), // Porcentaje
                 new Tuple<string, string>("\u25B3", "tf1"), // Triángulo
                 new Tuple<string, string>("\u25CB", "tf2"), // Círculo
                 new Tuple<string, string>("\u25A1", "tf3"), // Cuadrado
