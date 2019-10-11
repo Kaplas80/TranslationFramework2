@@ -15,7 +15,7 @@ namespace TFGame.Yakuza0
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741
 
-        public override int Version => 4;
+        public override int Version => 5;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -424,6 +424,16 @@ namespace TFGame.Yakuza0
                 Type = ContainerType.CompressedFile
             };
 
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "extra.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Table.File)
+                };
+
             ddsSearch =
                 new GameFileSearch
                 {
@@ -434,6 +444,7 @@ namespace TFGame.Yakuza0
                     FileType = typeof(DDSFile)
                 };
 
+            pause.FileSearches.Add(tableSearch);
             pause.FileSearches.Add(ddsSearch);
 
             ddsSearch =
@@ -575,6 +586,16 @@ namespace TFGame.Yakuza0
                     FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
+            var enemyNameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "enemy_name_all.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.EnemyName.File)
+                };
+
             var par = new GameFileContainer
             {
                 Path = @"media\data\staypar\stay.par",
@@ -582,6 +603,7 @@ namespace TFGame.Yakuza0
             };
 
             par.FileSearches.Add(tableSearch);
+            par.FileSearches.Add(enemyNameSearch);
             return par;
         }
 
