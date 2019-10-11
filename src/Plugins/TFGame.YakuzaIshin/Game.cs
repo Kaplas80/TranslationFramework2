@@ -11,7 +11,7 @@ namespace TFGame.YakuzaIshin
         public override string Name => "Ryū ga Gotoku Ishin!";
         public override string Description => "BLJM61149";
         public override Image Icon => Resources.Icon; // https://en.wikipedia.org/wiki/Yakuza_Ishin
-        public override int Version => 5;
+        public override int Version => 6;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetBootpar()
@@ -36,6 +36,29 @@ namespace TFGame.YakuzaIshin
 
             bootpar.FileSearches.Add(tableSearch);
             return bootpar;
+        }
+
+        private GameFileContainer GetPause()
+        {
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "extra.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Table.File)
+                };
+
+            var pause = new GameFileContainer
+            {
+                Path = @"data\pausepar\pause.par",
+                Type = ContainerType.CompressedFile
+            };
+
+            pause.FileSearches.Add(tableSearch);
+            
+            return pause;
         }
 
         private GameFileContainer GetScenario()
@@ -94,6 +117,16 @@ namespace TFGame.YakuzaIshin
                     FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
+            var enemyNameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "enemy_name_all.bin",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.EnemyName.File)
+                };
+
             var par = new GameFileContainer
             {
                 Path = @"data\staypar\stay.par",
@@ -101,6 +134,7 @@ namespace TFGame.YakuzaIshin
             };
 
             par.FileSearches.Add(tableSearch);
+            par.FileSearches.Add(enemyNameSearch);
             return par;
         }
 
@@ -206,6 +240,7 @@ namespace TFGame.YakuzaIshin
             var result = new List<GameFileContainer>();
 
             result.Add(GetBootpar());
+            result.Add(GetPause());
             result.Add(GetScenario());
             result.Add(GetStage());
             result.Add(GetStaypar());
