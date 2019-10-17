@@ -40,7 +40,7 @@ namespace TFGame.AITheSomniumFiles
             var textures = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "SpriteAtlasTexture*.tex.dds;*_en.tex.dds;*_us.tex.dds;",
+                SearchPattern = "SpriteAtlasTexture*.tex.dds;*_en.tex.dds;*_us.tex.dds;locked*.tex.dds;md_ii006.tex.dds;saveload_a.tex.dds;ui_option_text.tex.dds;ui_somnium_maphelp_02.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(DDSFile)
@@ -114,7 +114,7 @@ namespace TFGame.AITheSomniumFiles
             {
                 RelativePath = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64",
                 SearchPattern =
-                    @"clue_image;etc;image;item;item_ii011;item_ii027;operation_guide;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
+                    @"clue_image;etc;image;item;item_ii006;item_ii011;item_ii027;operation_guide;saveload;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
                 RecursiveSearch = false,
                 TypeSearch = ContainerType.CompressedFile
             };
