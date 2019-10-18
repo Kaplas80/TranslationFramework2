@@ -223,6 +223,37 @@ namespace TF.IO
             return ReadString(Encoding);
         }
 
+        public string ReadStringSerialized()
+        {
+            int length = ReadInt32();
+            if (length == 0)
+            {
+                return string.Empty;
+            }
+
+            var data = ReadBytes(length);
+            return Encoding.GetString(data);
+        }
+
+        public string ReadStringSerialized(int padding)
+        {
+            var value = ReadStringSerialized();
+            if (!string.IsNullOrEmpty(value))
+            {
+                SkipPadding(padding);
+            }
+
+            return value;
+        }
+
+        public byte[] ReadBytes(int length, int padding)
+        {
+            var data = ReadBytes(length);
+            SkipPadding(padding);
+
+            return data;
+        }
+
         #endregion
 
         #region Peek Methods

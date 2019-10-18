@@ -241,6 +241,34 @@ namespace TF.IO
             }
         }
 
+        public void Write(byte[] data, int padding)
+        {
+            Write(data);
+            WritePadding(padding);
+        }
+
+        public void WriteStringSerialized(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                Write(0);
+            }
+            else
+            {
+                byte[] data = Encoding.GetBytes(value);
+                Write(data.Length);
+                Write(data);
+            }
+        }
+
+        public void WriteStringSerialized(string value, int padding)
+        {
+            WriteStringSerialized(value);
+            if (!string.IsNullOrEmpty(value))
+            {
+                WritePadding(padding);
+            }
+        }
         #endregion
     }
 }
