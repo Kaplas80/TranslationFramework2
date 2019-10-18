@@ -117,6 +117,12 @@ namespace TF.Core.Files
         {
             if (HasChanges)
             {
+                var dictionary = new Dictionary<long, Subtitle>(subtitles.Count);
+                foreach (Subtitle subtitle in subtitles)
+                {
+                    dictionary.Add(subtitle.Offset, subtitle);
+                }
+
                 using (var fs = new FileStream(ChangesFile, FileMode.Open))
                 using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
                 {
@@ -135,8 +141,7 @@ namespace TF.Core.Files
                         var offset = input.ReadInt64();
                         var text = input.ReadString();
 
-                        var subtitle = subtitles.FirstOrDefault(x => x.Offset == offset);
-                        if (subtitle != null)
+                        if (dictionary.TryGetValue(offset, out Subtitle subtitle))
                         {
                             subtitle.PropertyChanged -= SubtitlePropertyChanged;
                             subtitle.Translation = text;

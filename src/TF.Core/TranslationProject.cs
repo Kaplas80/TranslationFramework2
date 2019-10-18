@@ -356,9 +356,11 @@ namespace TF.Core
                         {
                             worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                             var foundFiles = fileSearch.GetFiles(extractionContainerPath);
-
-                            //foreach (var f in foundFiles)
+#if DEBUG
+                            foreach (var f in foundFiles)
+#else
                             Parallel.ForEach(foundFiles, f =>
+#endif
                             {
                                 var relativePath =
                                     PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
@@ -370,22 +372,27 @@ namespace TF.Core
                                 if (translationFile == null)
                                 {
                                     var constructorInfo =
-                                        type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
+                                        type.GetConstructor(new[]
+                                            {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
 
                                     if (constructorInfo != null)
                                     {
-                                        translationFile = (TranslationFile)constructorInfo.Invoke(new object[]{project.Game.Name, f, project.ChangesFolder, project.Game.FileEncoding});
+                                        translationFile = (TranslationFile) constructorInfo.Invoke(new object[]
+                                            {project.Game.Name, f, project.ChangesFolder, project.Game.FileEncoding});
                                     }
                                     else
                                     {
-                                        constructorInfo = type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string)});
+                                        constructorInfo = type.GetConstructor(new[]
+                                            {typeof(string), typeof(string), typeof(string)});
                                         if (constructorInfo != null)
                                         {
-                                            translationFile = (TranslationFile)constructorInfo.Invoke(new object[]{project.Game.Name, f, project.ChangesFolder});
+                                            translationFile = (TranslationFile) constructorInfo.Invoke(new object[]
+                                                {project.Game.Name, f, project.ChangesFolder});
                                         }
                                         else
                                         {
-                                            translationFile = new TranslationFile(project.Game.Name, f, project.ChangesFolder);
+                                            translationFile = new TranslationFile(project.Game.Name, f,
+                                                project.ChangesFolder);
                                         }
                                     }
 
@@ -405,7 +412,11 @@ namespace TF.Core
                                         addedFiles++;
                                     }
                                 }
+#if DEBUG
+                            }
+#else
                             });
+#endif
                         }
 
                         project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
@@ -426,8 +437,11 @@ namespace TF.Core
                         worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
                         var foundFiles = fileSearch.GetFiles(containerPath);
 
-                        //foreach (var f in foundFiles)
+#if DEBUG
+                        foreach (var f in foundFiles)
+#else
                         Parallel.ForEach(foundFiles, f =>
+#endif
                         {
                             var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
 
@@ -484,7 +498,11 @@ namespace TF.Core
                                     addedFiles++;
                                 }
                             }
+#if DEBUG
+                        }
+#else
                         });
+#endif
 
                         project.Game.PostprocessContainer(translationContainer, containerPath, extractionContainerPath);
                         worker.ReportProgress(0, $"{addedFiles} ficheros encontrados y añadidos");
