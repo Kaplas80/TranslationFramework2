@@ -34,12 +34,23 @@
                 FileType = typeof(Files.I2Text.File)
             };
 
+            var textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "buyable?.tex.dds;button*.tex.dds;continue-tight.tex.dds;furies.tex.dds;loading-panel.tex.dds",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDSFile),
+                Exclusions = { "-ru", "-zh" }
+            };
+
             var resources = new GameFileContainer
             {
                 Path = @"disco_Data\resources.assets",
                 Type = ContainerType.CompressedFile
             };
             resources.FileSearches.Add(textSearch);
+            resources.FileSearches.Add(textureSearch);
 
             result.Add(resources);
 
