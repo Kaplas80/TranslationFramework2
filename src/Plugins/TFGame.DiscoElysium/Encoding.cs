@@ -14,13 +14,14 @@ namespace TFGame.DiscoElysium
         {
             DecodingReplacements = new List<Tuple<string, string>>
             {
+                new Tuple<string, string>("\\n", "<NewLine>"),
                 new Tuple<string, string>("\n", "\\n"),
-                
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("\\n", "\n"),
+                new Tuple<string, string>("<NewLine>", "\\n"),
             };
 
         }

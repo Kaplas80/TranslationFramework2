@@ -58,24 +58,25 @@
                         fields.Add(field.Title, field);
                     }
 
-                    if (fields.ContainsKey("Name") && fields.ContainsKey("Technical Name"))
+                    var translatableFields = new string[] { "Name", "LongDescription", "short_description" };
+                    foreach (string translatableField in translatableFields)
                     {
-                        string name = fields["Name"].Value;
-                        string technicalName = fields["Technical Name"].Value;
-
-                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(technicalName))
+                        if (fields.TryGetValue(translatableField, out Field field))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            if (!string.IsNullOrEmpty(field.Value))
                             {
-                                Id = $"Actor_{technicalName}",
-                                Offset = 0,
-                                Text = name,
-                                Loaded = name,
-                                Translation = name
-                            };
+                                var subtitle = new DiscoElysiumSubtitle
+                                {
+                                    Id = $"Actor_{id}_{translatableField}",
+                                    Offset = 0,
+                                    Text = field.Value,
+                                    Loaded = field.Value,
+                                    Translation = field.Value
+                                };
 
-                            subtitle.PropertyChanged += SubtitlePropertyChanged;
-                            result.Add(subtitle);
+                                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                                result.Add(subtitle);
+                            }
                         }
                     }
 
@@ -101,28 +102,24 @@
                         fields.Add(field.Title, field);
                     }
 
-                    if (fields.ContainsKey("Name"))
+                    var translatableFields = new string[] { "Description", "displayname", "description", "fixtureBonus", "requirement", "bonus", "fixtureDescription" };
+                    foreach (string translatableField in translatableFields)
                     {
-                        string name = fields["Name"].Value;
-                        var translatableFields = new string[] { "Description", "displayname", "description", "fixtureBonus", "requirement", "bonus", "fixtureDescription" };
-                        foreach (string translatableField in translatableFields)
+                        if (fields.TryGetValue(translatableField, out Field field))
                         {
-                            if (fields.TryGetValue(translatableField, out Field field))
+                            if (!string.IsNullOrEmpty(field.Value))
                             {
-                                if (!string.IsNullOrEmpty(field.Value))
+                                var subtitle = new DiscoElysiumSubtitle
                                 {
-                                    var subtitle = new DiscoElysiumSubtitle
-                                    {
-                                        Id = $"Item_{name}_{translatableField}",
-                                        Offset = 0,
-                                        Text = field.Value,
-                                        Loaded = field.Value,
-                                        Translation = field.Value
-                                    };
+                                    Id = $"Item_{id}_{translatableField}",
+                                    Offset = 0,
+                                    Text = field.Value,
+                                    Loaded = field.Value,
+                                    Translation = field.Value
+                                };
 
-                                    subtitle.PropertyChanged += SubtitlePropertyChanged;
-                                    result.Add(subtitle);
-                                }
+                                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                                result.Add(subtitle);
                             }
                         }
                     }
@@ -146,24 +143,25 @@
                         fields.Add(field.Title, field);
                     }
 
-                    if (fields.ContainsKey("Name") && fields.ContainsKey("Technical Name"))
+                    var translatableFields = new string[] { "Name" };
+                    foreach (string translatableField in translatableFields)
                     {
-                        string name = fields["Name"].Value;
-                        string technicalName = fields["Technical Name"].Value;
-
-                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(technicalName))
+                        if (fields.TryGetValue(translatableField, out Field field))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            if (!string.IsNullOrEmpty(field.Value))
                             {
-                                Id = $"Location_{technicalName}",
-                                Offset = 0,
-                                Text = name,
-                                Loaded = name,
-                                Translation = name
-                            };
+                                var subtitle = new DiscoElysiumSubtitle
+                                {
+                                    Id = $"Location_{id}_{translatableField}",
+                                    Offset = 0,
+                                    Text = field.Value,
+                                    Loaded = field.Value,
+                                    Translation = field.Value
+                                };
 
-                            subtitle.PropertyChanged += SubtitlePropertyChanged;
-                            result.Add(subtitle);
+                                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                                result.Add(subtitle);
+                            }
                         }
                     }
                 }
@@ -186,24 +184,25 @@
                         fields.Add(field.Title, field);
                     }
 
-                    if (fields.ContainsKey("Name") && fields.ContainsKey("Description"))
+                    var translatableFields = new string[] { "Description" };
+                    foreach (string translatableField in translatableFields)
                     {
-                        string name = fields["Name"].Value;
-                        string desc = fields["Description"].Value;
-
-                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(desc))
+                        if (fields.TryGetValue(translatableField, out Field field))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            if (!string.IsNullOrEmpty(field.Value))
                             {
-                                Id = $"Variable_{name}",
-                                Offset = 0,
-                                Text = desc,
-                                Loaded = desc,
-                                Translation = desc
-                            };
+                                var subtitle = new DiscoElysiumSubtitle
+                                {
+                                    Id = $"Variable_{id}_{translatableField}",
+                                    Offset = 0,
+                                    Text = field.Value,
+                                    Loaded = field.Value,
+                                    Translation = field.Value
+                                };
 
-                            subtitle.PropertyChanged += SubtitlePropertyChanged;
-                            result.Add(subtitle);
+                                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                                result.Add(subtitle);
+                            }
                         }
                     }
                 }
@@ -224,8 +223,28 @@
                         field.TypeString = input.ReadStringSerialized(0x04);
 
                         fields.Add(field.Title, field);
+                    }
 
-                        // TODO: Comprobar si hay que traducir el "Name"
+                    var translatableFields = new string[] { "Title", "Description" }; //, "subtask_title_01", "subtask_title_02", "subtask_title_03", "subtask_title_04", "subtask_title_05", "subtask_title_06", "subtask_title_07", "subtask_title_08", "subtask_title_09", "subtask_title_10" };
+                    foreach (string translatableField in translatableFields)
+                    {
+                        if (fields.TryGetValue(translatableField, out Field field))
+                        {
+                            if (!string.IsNullOrEmpty(field.Value))
+                            {
+                                var subtitle = new DiscoElysiumSubtitle
+                                {
+                                    Id = $"Conversation_{id}_{translatableField}",
+                                    Offset = 0,
+                                    Text = field.Value,
+                                    Loaded = field.Value,
+                                    Translation = field.Value
+                                };
+
+                                subtitle.PropertyChanged += SubtitlePropertyChanged;
+                                result.Add(subtitle);
+                            }
+                        }
                     }
 
                     // ConversationOverrideDisplaySettings
@@ -258,24 +277,25 @@
                             fields2.Add($"{field.Title}", field);
                         }
 
-                        if (fields2.ContainsKey("Title") && fields2.ContainsKey("Dialogue Text"))
+                        var translatableFields2 = new string[] { "Dialogue Text", "Alternate1", "Alternate2", "Alternate3", "Alternate4", "tooltip1", "tooltip2", "tooltip3", "tooltip4", "tooltip5", "tooltip6", "tooltip7", "tooltip8", "tooltip9", "tooltip10"};
+                        foreach (string translatableField in translatableFields2)
                         {
-                            string name = fields2["Title"].Value;
-                            string desc = fields2["Dialogue Text"].Value;
-
-                            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(desc))
+                            if (fields2.TryGetValue(translatableField, out Field field))
                             {
-                                var subtitle = new DiscoElysiumSubtitle
+                                if (!string.IsNullOrEmpty(field.Value))
                                 {
-                                    Id = $"DialogueEntry_{name}_{id}_{dialogueEntryId}",
-                                    Offset = 0,
-                                    Text = desc,
-                                    Loaded = desc,
-                                    Translation = desc
-                                };
+                                    var subtitle = new DiscoElysiumSubtitle
+                                    {
+                                        Id = $"Conversation_{id}_Entry_{dialogueEntryId}_{translatableField}",
+                                        Offset = 0,
+                                        Text = field.Value,
+                                        Loaded = field.Value,
+                                        Translation = field.Value
+                                    };
 
-                                subtitle.PropertyChanged += SubtitlePropertyChanged;
-                                result.Add(subtitle);
+                                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                                    result.Add(subtitle);
+                                }
                             }
                         }
 
@@ -423,14 +443,14 @@
                         fields.Add(field.Title, field);
                     }
 
-                    string technicalName = fields["Technical Name"].Value;
-
+                    var translatableFields = new string[] { "Name", "LongDescription", "short_description" };
                     foreach (var kvp in fields)
                     {
                         output.WriteStringSerialized(kvp.Value.Title, 0x04);
-                        if (kvp.Value.Title == "Name")
+                        if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                         {
-                            var subtitle = dictionary[$"Actor_{technicalName}"];
+                            var key = $"Actor_{id}_{kvp.Value.Title}";
+                            var subtitle = dictionary[key];
                             output.WriteStringSerialized(subtitle.Translation, 0x04);
                         }
                         else
@@ -466,14 +486,13 @@
                         fields.Add(field.Title, field);
                     }
                     
-                    string name = fields["Name"].Value;
                     var translatableFields = new string[] { "Description", "displayname", "description", "fixtureBonus", "requirement", "bonus", "fixtureDescription" };
                     foreach (var kvp in fields)
                     {
                         output.WriteStringSerialized(kvp.Value.Title, 0x04);
                         if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                         {
-                            var key = $"Item_{name}_{kvp.Value.Title}";
+                            var key = $"Item_{id}_{kvp.Value.Title}";
                             var subtitle = dictionary[key];
                             output.WriteStringSerialized(subtitle.Translation, 0x04);
                         }
@@ -507,14 +526,14 @@
                         fields.Add(field.Title, field);
                     }
 
-                    string technicalName = fields["Technical Name"].Value;
-
+                    var translatableFields = new string[] { "Name" };
                     foreach (var kvp in fields)
                     {
                         output.WriteStringSerialized(kvp.Value.Title, 0x04);
-                        if (kvp.Value.Title == "Name")
+                        if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                         {
-                            var subtitle = dictionary[$"Location_{technicalName}"];
+                            var key = $"Location_{id}_{kvp.Value.Title}";
+                            var subtitle = dictionary[key];
                             output.WriteStringSerialized(subtitle.Translation, 0x04);
                         }
                         else
@@ -547,14 +566,14 @@
                         fields.Add(field.Title, field);
                     }
 
-                    string name = fields["Name"].Value;
-
+                    var translatableFields = new string[] { "Description" };
                     foreach (var kvp in fields)
                     {
                         output.WriteStringSerialized(kvp.Value.Title, 0x04);
-                        if (kvp.Value.Title == "Description")
+                        if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                         {
-                            var subtitle = dictionary[$"Variable_{name}"];
+                            var key = $"Variable_{id}_{kvp.Value.Title}";
+                            var subtitle = dictionary[key];
                             output.WriteStringSerialized(subtitle.Translation, 0x04);
                         }
                         else
@@ -580,17 +599,29 @@
                     {
                         var field = new Field();
                         field.Title = input.ReadStringSerialized(0x04);
-                        output.WriteStringSerialized(field.Title, 0x04);
                         field.Value = input.ReadStringSerialized(0x04);
-                        output.WriteStringSerialized(field.Value, 0x04);
                         field.Type = input.ReadInt32();
-                        output.Write(field.Type);
                         field.TypeString = input.ReadStringSerialized(0x04);
-                        output.WriteStringSerialized(field.TypeString, 0x04);
 
                         fields.Add(field.Title, field);
+                    }
 
-                        // TODO: Comprobar si hay que traducir el "Name"
+                    var translatableFields = new string[] { "Title", "Description" }; //, "subtask_title_01", "subtask_title_02", "subtask_title_03", "subtask_title_04", "subtask_title_05", "subtask_title_06", "subtask_title_07", "subtask_title_08", "subtask_title_09", "subtask_title_10" };
+                    foreach (var kvp in fields)
+                    {
+                        output.WriteStringSerialized(kvp.Value.Title, 0x04);
+                        if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
+                        {
+                            var key = $"Conversation_{id}_{kvp.Value.Title}";
+                            var subtitle = dictionary[key];
+                            output.WriteStringSerialized(subtitle.Translation, 0x04);
+                        }
+                        else
+                        {
+                            output.WriteStringSerialized(kvp.Value.Value, 0x04);
+                        }
+                        output.Write(kvp.Value.Type);
+                        output.WriteStringSerialized(kvp.Value.TypeString, 0x04);
                     }
 
                     // ConversationOverrideDisplaySettings
@@ -626,14 +657,14 @@
                             fields2.Add($"{field.Title}", field);
                         }
 
-                        string name = fields2[$"Title"].Value;
-
+                        var translatableFields2 = new string[] { "Dialogue Text", "Alternate1", "Alternate2", "Alternate3", "Alternate4", "tooltip1", "tooltip2", "tooltip3", "tooltip4", "tooltip5", "tooltip6", "tooltip7", "tooltip8", "tooltip9", "tooltip10"};
                         foreach (var kvp in fields2)
                         {
                             output.WriteStringSerialized(kvp.Value.Title, 0x04);
-                            if (kvp.Value.Title == "Dialogue Text" && !string.IsNullOrEmpty(kvp.Value.Value))
+                            if (translatableFields2.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                             {
-                                var subtitle = dictionary[$"DialogueEntry_{name}_{id}_{dialogueEntryId}"];
+                                var key = $"Conversation_{id}_Entry_{dialogueEntryId}_{kvp.Value.Title}";
+                                var subtitle = dictionary[key];
                                 output.WriteStringSerialized(subtitle.Translation, 0x04);
                             }
                             else

@@ -187,8 +187,14 @@
                         }
                         else
                         {
-                            var translated = dictionary[term];
-                            output.WriteStringSerialized(translated.Translation, 0x04);
+                            if (dictionary.TryGetValue(term, out DiscoElysiumSubtitle subtitle))
+                            {
+                                output.WriteStringSerialized(subtitle.Translation, 0x04);
+                            }
+                            else
+                            {
+                                output.WriteStringSerialized(sub, 0x04);
+                            }
                         }
                     }
 
