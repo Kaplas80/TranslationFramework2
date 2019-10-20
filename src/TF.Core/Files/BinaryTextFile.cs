@@ -15,6 +15,9 @@ using Yarhl.Media.Text;
 
 namespace TF.Core.Files
 {
+    using System.Collections.Concurrent;
+    using System.Threading.Tasks;
+
     public class BinaryTextFile : TranslationFile
     {
         protected virtual int StartOffset => 0;
@@ -333,34 +336,40 @@ namespace TF.Core.Files
 
         public override void ImportPo(string inputFile, bool save = true)
         {
-            var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
-            var binary = new BinaryFormat(dataStream);
-            var binary2Po = new Yarhl.Media.Text.Po2Binary();
-            var po = binary2Po.Convert(binary);
-
-            LoadBeforeImport();
-            foreach (var subtitle in _subtitles)
+            using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
             {
-                var original = subtitle.Text;
-                if (string.IsNullOrEmpty(original))
+                var binary = new BinaryFormat(dataStream);
+                var binary2Po = new Yarhl.Media.Text.Po2Binary();
+                Po po = binary2Po.Convert(binary);
+
+                LoadBeforeImport();
+                var dictionary = new ConcurrentDictionary<string, Subtitle>();
+                foreach (Subtitle subtitle in _subtitles)
                 {
-                    original = "<!empty>";
+                    dictionary[GetContext(subtitle)] = subtitle;
                 }
 
-                var entry = po.FindEntry(original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding),
-                    GetContext(subtitle));
+                //foreach (PoEntry entry in po.Entries)
+                Parallel.ForEach(po.Entries, entry =>
+                {
+                    string context = entry.Context;
+                    if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                    {
+                        return;
+                    }
 
-                if (entry == null || entry.Text == "<!empty>" || original == "<!empty>")
-                {
-                    subtitle.Translation = subtitle.Text;
-                }
-                else
-                {
-                    var translation = entry.Translated;
-                    subtitle.Translation = string.IsNullOrEmpty(translation)
-                        ? subtitle.Text
-                        : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
-                }
+                    if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                    {
+                        subtitle.Translation = subtitle.Text;
+                    }
+                    else
+                    {
+                        string translation = entry.Translated;
+                        subtitle.Translation = string.IsNullOrEmpty(translation)
+                            ? subtitle.Text
+                            : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                    }
+                });
             }
 
             if (save && NeedSaving)
