@@ -71,6 +71,23 @@
             sharedAssets1.FileSearches.Add(dialogueSearch);
             result.Add(sharedAssets1);
 
+            dialogueSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "Disco Elysium_SELFNAME.*",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.DialogueSystemBundle.File)
+            };
+
+            var dialoguebundle = new GameFileContainer
+            {
+                Path = @"disco_Data\StreamingAssets\AssetBundles\Windows\dialoguebundle",
+                Type = ContainerType.CompressedFile
+            };
+            dialoguebundle.FileSearches.Add(dialogueSearch);
+            result.Add(dialoguebundle);
+
             return result.ToArray();
         }
 
@@ -79,7 +96,11 @@
             var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
-            if (AllowedExtensions.Contains(extension))
+            if (fileName == "dialoguebundle")
+            {
+                UnityFsFile.Extract(inputFile, outputPath);
+            }
+            else if (AllowedExtensions.Contains(extension))
             {
                 Unity3DFile.Extract(inputFile, outputPath);
             }
@@ -90,7 +111,11 @@
             var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
-            if (AllowedExtensions.Contains(extension))
+            if (fileName == "dialoguebundle")
+            {
+                UnityFsFile.Repack(inputPath, outputFile, compress);
+            }
+            else if (AllowedExtensions.Contains(extension))
             {
                 Unity3DFile.Repack(inputPath, outputFile, compress);
             }
@@ -99,10 +124,9 @@
         public override void PreprocessContainer(TranslationFileContainer container, string containerPath,
             string extractionPath)
         {
-            if (container.Type == ContainerType.CompressedFile)
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
+            if (fileNameWithoutExtension != "dialoguebundle")
             {
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
-
                 var inputFolder = Path.GetDirectoryName(containerPath);
                 var files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
                 foreach (var file in files)
@@ -131,16 +155,13 @@
         public override void PostprocessContainer(TranslationFileContainer container, string containerPath,
             string extractionPath)
         {
-            if (container.Type == ContainerType.CompressedFile)
+            var extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*",
+                SearchOption.AllDirectories);
+            foreach (var file in extractedFiles)
             {
-                var extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*",
-                    SearchOption.AllDirectories);
-                foreach (var file in extractedFiles)
+                if (container.Files.All(x => x.Path != file))
                 {
-                    if (container.Files.All(x => x.Path != file))
-                    {
-                        File.Delete(file);
-                    }
+                    File.Delete(file);
                 }
             }
         }

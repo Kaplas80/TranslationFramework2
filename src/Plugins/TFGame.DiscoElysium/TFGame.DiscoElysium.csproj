@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AssetsTools.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\AssetsTools.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -41,12 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoding.cs" />
+    <Compile Include="Files\DialogueSystemBundle\File.cs" />
     <Compile Include="Files\DialogueSystem\File.cs" />
     <Compile Include="Files\I2Text\File.cs" />
     <Compile Include="Files\Common\GridView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Files\Common\DiscoElysiumSubtitle.cs" />
+    <Compile Include="Files\UnityFsFile.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +83,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="DiscoElysiumDatabase.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Resources\Icon.png" />
   </ItemGroup>
