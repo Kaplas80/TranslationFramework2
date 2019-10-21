@@ -334,7 +334,7 @@ namespace TF.Core.Files
             binary.Stream.WriteTo(path);
         }
 
-        public override void ImportPo(string inputFile, bool save = true)
+        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
         {
             using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
             {
@@ -349,27 +349,52 @@ namespace TF.Core.Files
                     dictionary[GetContext(subtitle)] = subtitle;
                 }
 
-                //foreach (PoEntry entry in po.Entries)
-                Parallel.ForEach(po.Entries, entry =>
+                if (parallel)
                 {
-                    string context = entry.Context;
-                    if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                    Parallel.ForEach(po.Entries, entry =>
                     {
-                        return;
-                    }
+                        string context = entry.Context;
+                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                        {
+                            return;
+                        }
 
-                    if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                        if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                        {
+                            subtitle.Translation = subtitle.Text;
+                        }
+                        else
+                        {
+                            string translation = entry.Translated;
+                            subtitle.Translation = string.IsNullOrEmpty(translation)
+                                ? subtitle.Text
+                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                        }
+                    });
+                }
+                else
+                {
+                    foreach (PoEntry entry in po.Entries)
                     {
-                        subtitle.Translation = subtitle.Text;
+                        string context = entry.Context;
+                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                        {
+                            return;
+                        }
+
+                        if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                        {
+                            subtitle.Translation = subtitle.Text;
+                        }
+                        else
+                        {
+                            string translation = entry.Translated;
+                            subtitle.Translation = string.IsNullOrEmpty(translation)
+                                ? subtitle.Text
+                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                        }
                     }
-                    else
-                    {
-                        string translation = entry.Translated;
-                        subtitle.Translation = string.IsNullOrEmpty(translation)
-                            ? subtitle.Text
-                            : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
-                    }
-                });
+                }
             }
 
             if (save && NeedSaving)
@@ -380,7 +405,10 @@ namespace TF.Core.Files
 
         protected override void LoadBeforeImport()
         {
-            _subtitles = GetSubtitles();
+            if (_subtitles == null)
+            {
+                _subtitles = GetSubtitles();
+            }
         }
 
         protected override string GetContext(Subtitle subtitle)

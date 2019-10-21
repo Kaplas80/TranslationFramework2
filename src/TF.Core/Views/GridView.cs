@@ -447,7 +447,7 @@ namespace TF.Core.Views
                 return;
             }
 
-            _file.ImportPo(ImportFileDialog.FileName, false);
+            _file.ImportPo(ImportFileDialog.FileName, false, false);
 
             _selectedSubtitle = null;
             SubtitleGridView.Invalidate();

@@ -186,7 +186,7 @@ namespace TF.Core.Files
             binary.Stream.WriteTo(path);
         }
 
-        public override void ImportPo(string inputFile, bool save = true)
+        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
         {
             var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
             var binary = new BinaryFormat(dataStream);
