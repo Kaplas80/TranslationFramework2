@@ -63,13 +63,50 @@
                 FileType = typeof(Files.DialogueSystem.File)
             };
 
+            var skillTextSearch = new GameFileSearch
+            {
+                RelativePath = @".",
+                SearchPattern = "SkillNameText*.Text",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.UnityUIText.File)
+            };
+
+            textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "button_close_small_dark.tex.dds;charsheet_v5.tex.dds;container_back.tex.dds;disco-build-tutorial.tex.dds;INV_equipped.tex.dds;label_church.tex.dds;label_shacks.tex.dds;label_waterfront.tex.dds;map_label.tex.dds;notify-level-up.tex.dds;no-truce-loading-screen.tex.dds;saving-panel.tex.dds;skill_crown.tex.dds;skill_levelup.tex.dds;THC-menu-v6-7-normalfix.tex.dds",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDSFile),
+            };
+
             var sharedAssets1 = new GameFileContainer
             {
                 Path = @"disco_Data\sharedassets1.assets",
                 Type = ContainerType.CompressedFile
             };
             sharedAssets1.FileSearches.Add(dialogueSearch);
+            sharedAssets1.FileSearches.Add(skillTextSearch);
+            sharedAssets1.FileSearches.Add(textureSearch);
             result.Add(sharedAssets1);
+
+            textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "VISCAL-fence.tex.dds;viscal-fencecrash.tex.dds;viscal-footprints-label_8PAIRS.tex.dds;viscal-footprintsl-label-FOOTPRINTS.tex.dds",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDSFile),
+            };
+
+            var sharedAssets8 = new GameFileContainer
+            {
+                Path = @"disco_Data\sharedassets8.assets",
+                Type = ContainerType.CompressedFile
+            };
+            sharedAssets8.FileSearches.Add(textureSearch);
+            result.Add(sharedAssets8);
 
             dialogueSearch = new GameFileSearch()
             {

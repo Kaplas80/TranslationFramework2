@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoding.cs" />
+    <Compile Include="Files\Common\DiscoElysiumTextFile.cs" />
     <Compile Include="Files\DialogueSystemBundle\File.cs" />
     <Compile Include="Files\DialogueSystem\File.cs" />
     <Compile Include="Files\I2Text\File.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Files\Common\DiscoElysiumSubtitle.cs" />
     <Compile Include="Files\UnityFsFile.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
+    <Compile Include="Files\UnityUIText\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">

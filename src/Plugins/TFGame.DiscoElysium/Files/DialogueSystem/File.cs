@@ -1,29 +1,16 @@
 ﻿namespace TFGame.DiscoElysium.Files.DialogueSystem
 {
-    using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using TF.Core.Files;
     using TF.Core.TranslationEntities;
     using TF.IO;
     using TFGame.DiscoElysium.Files.Common;
-    using WeifenLuo.WinFormsUI.Docking;
 
-    public class File : BinaryTextFile
+    public class File : DiscoElysiumTextFile
     {
         public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
-        }
-
-        public override void Open(DockPanel panel)
-        {
-            _view = new GridView(this);
-
-            _subtitles = GetSubtitles();
-            _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
-            _view.Show(panel, DockState.Document);
         }
 
         protected override IList<Subtitle> GetSubtitles()
@@ -344,68 +331,6 @@
             LoadChanges(result);
 
             return result;
-        }
-
-        public override void SaveChanges()
-        {
-            using (var fs = new FileStream(ChangesFile, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fs, System.Text.Encoding.Unicode))
-            {
-                output.Write(ChangesFileVersion);
-                output.Write(_subtitles.Count);
-                foreach (var subtitle in _subtitles)
-                {
-                    var sub = subtitle as DiscoElysiumSubtitle;
-                    output.WriteString(sub.Id);
-                    output.WriteString(subtitle.Translation);
-
-                    subtitle.Loaded = subtitle.Translation;
-                }
-            }
-
-            NeedSaving = false;
-            OnFileChanged();
-        }
-
-        protected override void LoadChanges(IList<Subtitle> subtitles)
-        {
-            if (HasChanges)
-            {
-                var subs = subtitles.Select(subtitle => subtitle as DiscoElysiumSubtitle).ToList();
-                var dictionary = new Dictionary<string, DiscoElysiumSubtitle>(subs.Count);
-                foreach (DiscoElysiumSubtitle subtitle in subs)
-                {
-                    dictionary.Add(subtitle.Id, subtitle);
-                }
-
-                using (var fs = new FileStream(ChangesFile, FileMode.Open))
-                using (var input = new ExtendedBinaryReader(fs, System.Text.Encoding.Unicode))
-                {
-                    var version = input.ReadInt32();
-
-                    if (version != ChangesFileVersion)
-                    {
-                        //File.Delete(ChangesFile);
-                        return;
-                    }
-
-                    var subtitleCount = input.ReadInt32();
-
-                    for (var i = 0; i < subtitleCount; i++)
-                    {
-                        var id = input.ReadString();
-                        var text = input.ReadString();
-
-                        if (dictionary.TryGetValue(id, out DiscoElysiumSubtitle subtitle))
-                        {
-                            subtitle.PropertyChanged -= SubtitlePropertyChanged;
-                            subtitle.Translation = text;
-                            subtitle.Loaded = subtitle.Translation;
-                            subtitle.PropertyChanged += SubtitlePropertyChanged;
-                        }
-                    }
-                }
-            }
         }
 
         public override void Rebuild(string outputFolder)
@@ -745,11 +670,6 @@
             var remainderLength = (int) (input.Length - input.Position);
             var remainder = input.ReadBytes(remainderLength);
             output.Write(remainder);
-        }
-
-        protected override string GetContext(Subtitle subtitle)
-        {
-            return (subtitle as DiscoElysiumSubtitle).Id.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
         }
 
         private class Field
