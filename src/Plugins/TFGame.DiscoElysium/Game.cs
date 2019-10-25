@@ -18,7 +18,7 @@
 
         protected override string[] AllowedExtensions => new[]
         {
-            ".assets"
+            ".assets", ""
         };
 
         public override GameFileContainer[] GetContainers(string path)
@@ -142,6 +142,24 @@
             };
             dialoguebundle.FileSearches.Add(dialogueSearch);
             result.Add(dialoguebundle);
+
+            var closeTextSearch = new GameFileSearch
+            {
+                RelativePath = @".",
+                SearchPattern = "Close Button.Text_00001",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(Files.UnityUIText.File)
+            };
+
+            var level1 = new GameFileContainer
+            {
+                Path = @"disco_Data\level1",
+                Type = ContainerType.CompressedFile
+            };
+
+            level1.FileSearches.Add(closeTextSearch);
+            result.Add(level1);
 
             return result.ToArray();
         }

@@ -36,9 +36,21 @@
                 input.ReadStringSerialized(0x04);
 
                 // FontData
-                input.Skip(0x38);
+                input.Skip(0x04);
+                input.Skip(0x08);
+                input.Skip(0x04); // Font size
+                input.Skip(0x04); // Font style
+                input.Skip(0x04); // Best Fit
+                input.Skip(0x04); // Min size
+                input.Skip(0x04); // Max size
+                input.Skip(0x04); // Alignment
+                input.Skip(0x04); // Align by geometry
+                input.Skip(0x04); // Rich Text
+                input.Skip(0x04); // Horizontal Overflow
+                input.Skip(0x04); // Vertical Overflow
+                input.Skip(0x04); // Line spacing
 
-                var sub = input.ReadStringSerialized(0x04);
+                string sub = input.ReadStringSerialized(0x04);
 
                 var subtitle = new DiscoElysiumSubtitle
                 {
@@ -93,7 +105,21 @@
                 output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04);
 
                 // FontData
-                output.Write(input.ReadBytes(0x38));
+                output.Write(input.ReadBytes(0x04));
+                output.Write(input.ReadBytes(0x08));
+                int fontSize = input.ReadInt32();
+                output.Write(fontSize <= 0x00000012 ? 0x00000011 : fontSize);
+                output.Write(input.ReadBytes(0x04)); // Font style
+                input.ReadBytes(0x04);
+                output.Write(0x00000001); // Best Fit
+                output.Write(input.ReadBytes(0x04)); // Min size
+                output.Write(input.ReadBytes(0x04)); // Max size
+                output.Write(input.ReadBytes(0x04)); // Alignment
+                output.Write(input.ReadBytes(0x04)); // Align by geometry
+                output.Write(input.ReadBytes(0x04)); // Rich Text
+                output.Write(input.ReadBytes(0x04)); // Horizontal Overflow
+                output.Write(input.ReadBytes(0x04)); // Vertical Overflow
+                output.Write(input.ReadBytes(0x04)); // Line spacing
 
                 string sub = input.ReadStringSerialized(0x04);
 
