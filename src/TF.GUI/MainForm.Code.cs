@@ -412,6 +412,26 @@ namespace TF.GUI
         {
             if (_project != null)
             {
+                if (_currentFile != null)
+                {
+                    if (_currentFile.NeedSaving)
+                    {
+                        var result = MessageBox.Show(
+                            "Es necesario guardar los cambios antes de continuar.\n¿Quieres guardarlos?",
+                            "Guardar cambios", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (result == DialogResult.No)
+                        {
+                            return;
+                        }
+
+                        if (result == DialogResult.Yes)
+                        {
+                            _currentFile.SaveChanges();
+                        }
+                    }
+                }
+
                 FolderBrowserDialog.Description = "Selecciona la carpeta raiz con los ficheros Po";
                 FolderBrowserDialog.ShowNewFolderButton = false;
 
@@ -422,6 +442,9 @@ namespace TF.GUI
                     return;
                 }
 
+                var openFile = _currentFile;
+                ExplorerOnFileChanged(null);
+                
                 var workForm = new WorkingForm(dockTheme, "Importar Po");
 
                 workForm.DoWork += (sender, args) =>
@@ -448,6 +471,8 @@ namespace TF.GUI
                 };
 
                 workForm.ShowDialog(this);
+
+                ExplorerOnFileChanged(openFile);
             }
         }
     }
