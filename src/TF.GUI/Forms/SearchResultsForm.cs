@@ -51,7 +51,7 @@ namespace TF.GUI.Forms
         public void LoadItems(string searchString, IList<Tuple<TranslationFileContainer, TranslationFile>> filesFound)
         {
             lbSearchResult.Items.Clear();
-            if (filesFound.Count > 0)
+            if (filesFound != null && filesFound.Count > 0)
             {
                 lbSearchResult.Items.Add($"El texto \"{searchString}\" aparece en {filesFound.Count} ficheros del proyecto");
                 foreach (var tuple in filesFound)

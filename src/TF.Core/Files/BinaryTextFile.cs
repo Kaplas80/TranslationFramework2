@@ -15,6 +15,9 @@ using Yarhl.Media.Text;
 
 namespace TF.Core.Files
 {
+    using System.Collections.Concurrent;
+    using System.Threading.Tasks;
+
     public class BinaryTextFile : TranslationFile
     {
         protected virtual int StartOffset => 0;
@@ -331,35 +334,66 @@ namespace TF.Core.Files
             binary.Stream.WriteTo(path);
         }
 
-        public override void ImportPo(string inputFile, bool save = true)
+        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
         {
-            var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
-            var binary = new BinaryFormat(dataStream);
-            var binary2Po = new Yarhl.Media.Text.Po2Binary();
-            var po = binary2Po.Convert(binary);
-
-            LoadBeforeImport();
-            foreach (var subtitle in _subtitles)
+            using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
             {
-                var original = subtitle.Text;
-                if (string.IsNullOrEmpty(original))
+                var binary = new BinaryFormat(dataStream);
+                var binary2Po = new Yarhl.Media.Text.Po2Binary();
+                Po po = binary2Po.Convert(binary);
+
+                LoadBeforeImport();
+                var dictionary = new ConcurrentDictionary<string, Subtitle>();
+                foreach (Subtitle subtitle in _subtitles)
                 {
-                    original = "<!empty>";
+                    dictionary[GetContext(subtitle)] = subtitle;
                 }
 
-                var entry = po.FindEntry(original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding),
-                    GetContext(subtitle));
-
-                if (entry == null || entry.Text == "<!empty>" || original == "<!empty>")
+                if (parallel)
                 {
-                    subtitle.Translation = subtitle.Text;
+                    Parallel.ForEach(po.Entries, entry =>
+                    {
+                        string context = entry.Context;
+                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                        {
+                            return;
+                        }
+
+                        if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                        {
+                            subtitle.Translation = subtitle.Text;
+                        }
+                        else
+                        {
+                            string translation = entry.Translated;
+                            subtitle.Translation = string.IsNullOrEmpty(translation)
+                                ? subtitle.Text
+                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                        }
+                    });
                 }
                 else
                 {
-                    var translation = entry.Translated;
-                    subtitle.Translation = string.IsNullOrEmpty(translation)
-                        ? subtitle.Text
-                        : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                    foreach (PoEntry entry in po.Entries)
+                    {
+                        string context = entry.Context;
+                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                        {
+                            return;
+                        }
+
+                        if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                        {
+                            subtitle.Translation = subtitle.Text;
+                        }
+                        else
+                        {
+                            string translation = entry.Translated;
+                            subtitle.Translation = string.IsNullOrEmpty(translation)
+                                ? subtitle.Text
+                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                        }
+                    }
                 }
             }
 
@@ -371,7 +405,10 @@ namespace TF.Core.Files
 
         protected override void LoadBeforeImport()
         {
-            _subtitles = GetSubtitles();
+            if (_subtitles == null)
+            {
+                _subtitles = GetSubtitles();
+            }
         }
 
         protected override string GetContext(Subtitle subtitle)

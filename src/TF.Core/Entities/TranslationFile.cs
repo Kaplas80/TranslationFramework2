@@ -120,7 +120,7 @@ namespace TF.Core.Entities
             
         }
 
-        public virtual void ImportPo(string path, bool save = true)
+        public virtual void ImportPo(string path, bool save = true, bool parallel = true)
         {
 
         }
