@@ -11,7 +11,7 @@
     {
         public override string Id => "111967dd-effc-47bc-a8cb-bf3e11d61439";
         public override string Name => "Disco Elysium";
-        public override string Description => "Build Id: 4297737";
+        public override string Description => "Build Id: 4313083";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/m-1618/art/Disco-Elysium-Game-Icon-512x512--748478143
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -24,6 +24,24 @@
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
+
+            var dllSearch = new GameFileSearch
+            {
+                RelativePath = @".",
+                SearchPattern = "Assembly-CSharp.dll",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.AssemblyCSharp.File)
+            };
+
+            var managed = new GameFileContainer
+            {
+                Path = @"disco_Data\Managed",
+                Type = ContainerType.Folder
+            };
+            managed.FileSearches.Add(dllSearch);
+
+            result.Add(managed);
 
             var textSearch = new GameFileSearch()
             {
@@ -130,8 +148,8 @@
 
         public override void ExtractFile(string inputFile, string outputPath)
         {
-            var fileName = Path.GetFileName(inputFile);
-            var extension = Path.GetExtension(inputFile);
+            string fileName = Path.GetFileName(inputFile);
+            string extension = Path.GetExtension(inputFile);
 
             if (fileName == "dialoguebundle")
             {
@@ -145,8 +163,8 @@
 
         public override void RepackFile(string inputPath, string outputFile, bool compress)
         {
-            var fileName = Path.GetFileName(outputFile);
-            var extension = Path.GetExtension(outputFile);
+            string fileName = Path.GetFileName(outputFile);
+            string extension = Path.GetExtension(outputFile);
 
             if (fileName == "dialoguebundle")
             {
@@ -161,40 +179,52 @@
         public override void PreprocessContainer(TranslationFileContainer container, string containerPath,
             string extractionPath)
         {
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
-            if (fileNameWithoutExtension != "dialoguebundle")
+            if (container.Type != ContainerType.CompressedFile)
             {
-                var inputFolder = Path.GetDirectoryName(containerPath);
-                var files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
-                foreach (var file in files)
-                {
-                    var outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
-                    File.Copy(file, outputFilePath);
-                }
+                return;
+            }
 
-                files = Directory.EnumerateFiles(inputFolder, "globalgamemanagers.*");
-                foreach (var file in files)
-                {
-                    var outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
-                    File.Copy(file, outputFilePath);
-                }
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
+            if (fileNameWithoutExtension == "dialoguebundle")
+            {
+                return;
+            }
 
-                Directory.CreateDirectory(Path.Combine(extractionPath, "Resources"));
-                files = Directory.EnumerateFiles(Path.Combine(inputFolder, "Resources"), "*.*");
-                foreach (var file in files)
-                {
-                    var outputFilePath = Path.Combine(extractionPath, "Resources", Path.GetFileName(file));
-                    File.Copy(file, outputFilePath);
-                }
+            string inputFolder = Path.GetDirectoryName(containerPath);
+            IEnumerable<string> files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
+            foreach (string file in files)
+            {
+                string outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
+                File.Copy(file, outputFilePath);
+            }
+
+            files = Directory.EnumerateFiles(inputFolder, "globalgamemanagers.*");
+            foreach (string file in files)
+            {
+                string outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
+                File.Copy(file, outputFilePath);
+            }
+
+            Directory.CreateDirectory(Path.Combine(extractionPath, "Resources"));
+            files = Directory.EnumerateFiles(Path.Combine(inputFolder, "Resources"), "*.*");
+            foreach (string file in files)
+            {
+                string outputFilePath = Path.Combine(extractionPath, "Resources", Path.GetFileName(file));
+                File.Copy(file, outputFilePath);
             }
         }
 
         public override void PostprocessContainer(TranslationFileContainer container, string containerPath,
             string extractionPath)
         {
-            var extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*",
+            if (container.Type != ContainerType.CompressedFile)
+            {
+                return;
+            }
+
+            string[] extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*",
                 SearchOption.AllDirectories);
-            foreach (var file in extractedFiles)
+            foreach (string file in extractedFiles)
             {
                 if (container.Files.All(x => x.Path != file))
                 {
