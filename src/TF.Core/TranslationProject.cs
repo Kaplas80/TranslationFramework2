@@ -566,6 +566,24 @@ namespace TF.Core
                     {
                         file.ImportPo(inputPath);
                     }
+                    else
+                    {
+                        // Comprobamos si el fichero está partido
+                        string directory = Path.GetDirectoryName(Path.Combine(path, container.Path, file.RelativePath));
+                        if (Directory.Exists(directory))
+                        {
+                            string[] files = Directory.GetFiles(directory,
+                                string.Concat(fileName, ".*.po"));
+
+                            if (files.Length > 0)
+                            {
+                                foreach (string s in files)
+                                {
+                                    file.ImportPo(s);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
