@@ -51,7 +51,7 @@ namespace PoSplit
                         };
 
                     }
-                    else if (tag0 == "Conversation" && tag1 != previousTag1 && outputPo.Entries.Count >= 2500)
+                    else if (tag0 == "Conversation" && tag1 != previousTag1 && outputPo.Entries.Count >= 1000)
                     {
                         var outputBinary = po2binary.Convert(outputPo);
                         var path = Path.Combine(outputFolder, $"{fileName}.{previousTag0}_{index}.po");
