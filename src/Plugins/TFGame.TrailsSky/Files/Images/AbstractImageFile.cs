@@ -19,38 +19,27 @@ namespace TFGame.TrailsSky.Files.Images
         {
         }
 
-        protected override void FormOnSaveImage(string filename)
+        public override void ImportImage(string path)
         {
-            using (var bmp = GetBitmap32bppArgb(ImageWidth, _currentImage))
+            using (var bmp = new Bitmap(path))
             {
-                bmp.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-            }
-        }
-
-        protected override void FormOnNewImageLoaded(string filename)
-        {
-            using (var bmp = new Bitmap(filename))
-            {
-                var image = GetBitmapOriginalFormat(bmp);
+                byte[] image = GetBitmapOriginalFormat(bmp);
                 File.WriteAllBytes(ChangesFile, image);
             }
-
-            UpdateFormImage();
         }
 
-        protected override Tuple<Image, object> GetImage()
+        protected override Image GetDrawingImage()
         {
-            var source = HasChanges ? ChangesFile : Path;
-            _currentImage = System.IO.File.ReadAllBytes(source);
+            string source = HasChanges ? ChangesFile : Path;
+            byte[] imageData = System.IO.File.ReadAllBytes(source);
 
-            var bmp = GetBitmap32bppArgb(ImageWidth, _currentImage);
-            var properties = GetProperties(bmp.Width, bmp.Height, ImageFormat);
-            return new Tuple<Image, object>(bmp, properties);
+            Bitmap bmp = GetBitmap32BppArgb(ImageWidth, imageData);
+            return bmp;
         }
 
-        protected Bitmap GetBitmap32bppArgb(int imageWidth, byte[] imageData)
+        protected Bitmap GetBitmap32BppArgb(int imageWidth, byte[] imageData)
         {
-            var imageHeight = GetImageHeight(imageData.Length, imageWidth);
+            int imageHeight = GetImageHeight(imageData.Length, imageWidth);
 
             var data = new byte[imageWidth * imageHeight * 4];
 
@@ -64,7 +53,7 @@ namespace TFGame.TrailsSky.Files.Images
                     tempValues[j] = imageData[i + j];
                 }
 
-                var resultPixels = ConvertPixelToBGRA8888(tempValues);
+                byte[] resultPixels = ConvertPixelToBGRA8888(tempValues);
 
                 for (var j = 0; j < resultPixels.Length; j++)
                 {
@@ -89,7 +78,7 @@ namespace TFGame.TrailsSky.Files.Images
             var data = new byte[bmp.Width * bmp.Height * BytesPerPixel];
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            var bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
                         
             var tempValues = new byte[4];
 
@@ -105,7 +94,7 @@ namespace TFGame.TrailsSky.Files.Images
                         tempValues[j] = imageData[i + j];
                     }
 
-                    var resultPixels = ConvertPixelToOriginalFormat(tempValues);
+                    byte[] resultPixels = ConvertPixelToOriginalFormat(tempValues);
 
                     for (var j = 0; j < resultPixels.Length; j++)
                     {

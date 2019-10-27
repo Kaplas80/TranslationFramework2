@@ -6,6 +6,8 @@ using TF.Core.Files;
 
 namespace TFGame.ShiningResonance.Files.FONT
 {
+    using System.Collections.Generic;
+
     public class File : ImageFile
     {
         private byte[] _currentFont;
@@ -16,45 +18,45 @@ namespace TFGame.ShiningResonance.Files.FONT
         {
         }
 
-        protected override void FormOnSaveImage(string filename)
+        protected override void FormOnExportImage(string filename)
         {
             System.IO.File.WriteAllBytes(filename, _currentFont);
         }
 
-        protected override void FormOnNewImageLoaded(string filename)
+        protected override void FormOnImportImage(string filename)
         {
             System.IO.File.Copy(filename, ChangesFile, true);
 
             UpdateFormImage();
         }
 
-        protected override Tuple<Image, object> GetImage()
+        protected override Image GetDrawingImage()
         {
-            var source = HasChanges ? ChangesFile : Path;
+            string source = HasChanges ? ChangesFile : Path;
             _currentFont = System.IO.File.ReadAllBytes(source);
 
-            var bmp = GetBitmap(_currentFont);
+            Bitmap bmp = GetBitmap(_currentFont);
 
-            return new Tuple<Image, object>(bmp, null);
+            return bmp;
         }
 
         private static Bitmap GetBitmap(byte[] imageData)
         {
-            var chars = UfnFileHelper.ReadGameFont(imageData);
+            IDictionary<int, Character> chars = UfnFileHelper.ReadGameFont(imageData);
 
-            var charHeight = chars.Select(c => c.Value.Height).Max();
-            var width = 16 * charHeight;
-            var height = (int) Math.Ceiling(chars.Count / 16.0) * charHeight;
+            int charHeight = chars.Select(c => c.Value.Height).Max();
+            int width = 16 * charHeight;
+            int height = (int) Math.Ceiling(chars.Count / 16.0) * charHeight;
 
             var bmp = new Bitmap(width, height, PixelFormat.Format32bppRgb);
-            using (var canvas = Graphics.FromImage(bmp))
+            using (Graphics canvas = Graphics.FromImage(bmp))
             {
                 var x = 0;
                 var y = 0;
-                foreach (var c in chars)
+                foreach (KeyValuePair<int, Character> c in chars)
                 {
-                    var aux = c.Value.ToBitmap();
-                    var xPos = (x * charHeight) + charHeight / 2 - c.Value.Width / 2;
+                    Bitmap aux = c.Value.ToBitmap();
+                    int xPos = (x * charHeight) + charHeight / 2 - c.Value.Width / 2;
                     canvas.DrawImage(aux,
                         new Rectangle(xPos,
                             y * charHeight,

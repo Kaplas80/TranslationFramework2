@@ -58,9 +58,13 @@
             this.mniHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mniHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMain = new System.Windows.Forms.MenuStrip();
-            this.mniPoFormat = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniPoExportAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniPoImportAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulk = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkTexts = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkTextsExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkTextsImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkImagesExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkImagesImport = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tlsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel)).BeginInit();
@@ -261,30 +265,58 @@
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniFile,
             this.mniEdit,
-            this.mniPoFormat,
+            this.mniBulk,
             this.mniHelp});
             resources.ApplyResources(this.mnuMain, "mnuMain");
             this.mnuMain.Name = "mnuMain";
             // 
-            // mniPoFormat
+            // mniBulk
             // 
-            this.mniPoFormat.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniPoExportAll,
-            this.mniPoImportAll});
-            this.mniPoFormat.Name = "mniPoFormat";
-            resources.ApplyResources(this.mniPoFormat, "mniPoFormat");
+            this.mniBulk.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniBulkTexts,
+            this.mniBulkImages});
+            this.mniBulk.Name = "mniBulk";
+            resources.ApplyResources(this.mniBulk, "mniBulk");
             // 
-            // mniPoExportAll
+            // mniBulkTexts
             // 
-            resources.ApplyResources(this.mniPoExportAll, "mniPoExportAll");
-            this.mniPoExportAll.Name = "mniPoExportAll";
-            this.mniPoExportAll.Click += new System.EventHandler(this.PoExportAll_Click);
+            this.mniBulkTexts.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniBulkTextsExport,
+            this.mniBulkTextsImport});
+            this.mniBulkTexts.Name = "mniBulkTexts";
+            resources.ApplyResources(this.mniBulkTexts, "mniBulkTexts");
             // 
-            // mniPoImportAll
+            // mniBulkTextsExport
             // 
-            resources.ApplyResources(this.mniPoImportAll, "mniPoImportAll");
-            this.mniPoImportAll.Name = "mniPoImportAll";
-            this.mniPoImportAll.Click += new System.EventHandler(this.PoImportAll_Click);
+            resources.ApplyResources(this.mniBulkTextsExport, "mniBulkTextsExport");
+            this.mniBulkTextsExport.Name = "mniBulkTextsExport";
+            this.mniBulkTextsExport.Click += new System.EventHandler(this.mniBulkTextsExport_Click);
+            // 
+            // mniBulkTextsImport
+            // 
+            resources.ApplyResources(this.mniBulkTextsImport, "mniBulkTextsImport");
+            this.mniBulkTextsImport.Name = "mniBulkTextsImport";
+            this.mniBulkTextsImport.Click += new System.EventHandler(this.mniBulkTextsImport_Click);
+            // 
+            // mniBulkImages
+            // 
+            this.mniBulkImages.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniBulkImagesExport,
+            this.mniBulkImagesImport});
+            this.mniBulkImages.Name = "mniBulkImages";
+            resources.ApplyResources(this.mniBulkImages, "mniBulkImages");
+            // 
+            // mniBulkImagesExport
+            // 
+            resources.ApplyResources(this.mniBulkImagesExport, "mniBulkImagesExport");
+            this.mniBulkImagesExport.Name = "mniBulkImagesExport";
+            this.mniBulkImagesExport.Click += new System.EventHandler(this.mniBulkImagesExport_Click);
+            // 
+            // mniBulkImagesImport
+            // 
+            resources.ApplyResources(this.mniBulkImagesImport, "mniBulkImagesImport");
+            this.mniBulkImagesImport.Name = "mniBulkImagesImport";
+            this.mniBulkImagesImport.Click += new System.EventHandler(this.mniBulkImagesImport_Click);
             // 
             // MainForm
             // 
@@ -340,10 +372,14 @@
         private System.Windows.Forms.ToolStripMenuItem mniHelp;
         private System.Windows.Forms.ToolStripMenuItem mniHelpAbout;
         private System.Windows.Forms.MenuStrip mnuMain;
-        private System.Windows.Forms.ToolStripMenuItem mniPoFormat;
-        private System.Windows.Forms.ToolStripMenuItem mniPoExportAll;
-        private System.Windows.Forms.ToolStripMenuItem mniPoImportAll;
+        private System.Windows.Forms.ToolStripMenuItem mniBulk;
         private System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTexts;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsExport;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsImport;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkImages;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkImagesExport;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkImagesImport;
     }
 }
 

@@ -131,14 +131,24 @@ namespace TF.GUI
             }
         }
 
-        private void PoExportAll_Click(object sender, EventArgs e)
+        private void mniBulkTextsExport_Click(object sender, EventArgs e)
         {
-            ExportToPoFiles();
+            ExportTexts();
         }
 
-        private void PoImportAll_Click(object sender, EventArgs e)
+        private void mniBulkTextsImport_Click(object sender, EventArgs e)
         {
-            ImportFromPoFiles();
+            ImportTexts();
+        }
+
+        private void mniBulkImagesExport_Click(object sender, EventArgs e)
+        {
+            ExportImages();
+        }
+
+        private void mniBulkImagesImport_Click(object sender, EventArgs e)
+        {
+            ImportImages();
         }
     }
 }

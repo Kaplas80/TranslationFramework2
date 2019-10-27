@@ -1,6 +1,7 @@
 ﻿namespace TF.Core.Files
 {
     using System;
+    using System.IO;
     using DirectXTexNet;
     using Views;
     using WeifenLuo.WinFormsUI.Docking;
@@ -19,15 +20,15 @@
             string filename = System.IO.Path.GetFileNameWithoutExtension(Path);
 
             _view = new ImageView($"{filename}.png");
-            _view.NewImageLoaded += FormOnNewImageLoaded;
-            _view.SaveImage += FormOnSaveImage;
+            _view.ImportImage += FormOnImportImage;
+            _view.ExportImage += FormOnExportImage;
             _view.SetFileFilter(Filter);
 
             UpdateFormImage();
             _view.Show(panel, DockState.Document);
         }
 
-        protected override void FormOnNewImageLoaded(string filename)
+        public override void ImportImage(string filename)
         {
             // Import
             // Se le va a pasar un png y hay que convertirlo al formato de la DDS
@@ -65,14 +66,21 @@
             
                 png?.Dispose();
             }
-            
-            UpdateFormImage();
         }
 
-        protected override void FormOnSaveImage(string filename)
+        public override void ExportImage(string filename)
         {
             // Export
             // Hay que guardarlo como PNG
+            if (_currentDDS != null && !_currentDDS.IsDisposed)
+            {
+                _currentDDS.Dispose();
+            }
+        
+            _currentDDS = GetScratchImage();
+
+            string directory = System.IO.Path.GetDirectoryName(filename);
+            Directory.CreateDirectory(directory);
 
             Guid codec = DirectXTexNet.TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
             TexMetadata metadata = _currentDDS.GetMetadata();
@@ -81,7 +89,6 @@
             {
                 using (ScratchImage decompressed = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN))
                 {
-                    TexMetadata metadata2 = decompressed.GetMetadata();
                     decompressed.SaveToWICFile(0, WIC_FLAGS.NONE, codec, filename);
                 }
             }
@@ -89,6 +96,11 @@
             {
                 _currentDDS.SaveToWICFile(0, WIC_FLAGS.NONE, codec, filename);
             }
+        }
+
+        public override string GetExportFilename()
+        {
+            return $"{System.IO.Path.GetFileNameWithoutExtension(Path)}.png";
         }
     }
 }

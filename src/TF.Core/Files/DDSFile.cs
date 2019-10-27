@@ -40,29 +40,51 @@
             _currentDDS?.Dispose();
         }
 
-        protected override void FormOnSaveImage(string filename)
+        public override void ExportImage(string filename)
         {
+            if (_currentDDS != null && !_currentDDS.IsDisposed)
+            {
+                _currentDDS.Dispose();
+            }
+        
+            _currentDDS = GetScratchImage();
+            
+            string directory = System.IO.Path.GetDirectoryName(filename);
+            Directory.CreateDirectory(directory);
+
             _currentDDS.SaveToDDSFile(DDS_FLAGS.NONE, filename);
         }
 
-        protected override Tuple<Image, object> GetImage()
+        protected virtual ScratchImage GetScratchImage()
         {
             string source = HasChanges ? ChangesFile : Path;
-            _currentDDS = TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
+            ScratchImage img = TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
 
-            Guid codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
-
-            TexMetadata metadata = _currentDDS.GetMetadata();
+            TexMetadata metadata = img.GetMetadata();
 
             if (IsCompressed(metadata.Format))
             {
-                ScratchImage tmp = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
-                _currentDDS.Dispose();
-                _currentDDS = tmp;
+                ScratchImage tmp = img.Decompress(DXGI_FORMAT.UNKNOWN);
+                img.Dispose();
+                img = tmp;
             }
+
+            return img;
+        }
+
+        protected override Image GetDrawingImage()
+        {
+            if (_currentDDS != null && !_currentDDS.IsDisposed)
+            {
+                _currentDDS.Dispose();
+            }
+        
+            _currentDDS = GetScratchImage();
 
             try
             {
+                Guid codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+
                 UnmanagedMemoryStream imageStream = _currentDDS.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
 
                 Image image = Image.FromStream(imageStream);
@@ -70,14 +92,26 @@
                 imageStream.Close();
                 imageStream?.Dispose();
 
-                var properties = new TexMetadataView(metadata);
-
-                return new Tuple<Image, object>(image, properties);
+                return image;
+                
             }
             catch (Exception)
             {
-                return new Tuple<Image, object>(null, null);
+                return null;
             }
+        }
+
+        protected override object GetImageProperties(object genericImage)
+        {
+            if (!(genericImage is ScratchImage scratchImage))
+            {
+                return null;
+            }
+
+            TexMetadata metadata = scratchImage.GetMetadata();
+            var properties = new TexMetadataView(metadata);
+
+            return properties;
         }
 
         protected static bool IsCompressed(DXGI_FORMAT format)

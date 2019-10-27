@@ -128,6 +128,31 @@
   <data name="tlsMain.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
+  <data name="tlsMain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 28</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tlsMain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>8, 0, 0, 0</value>
+  </data>
+  <data name="tlsMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1067, 31</value>
+  </data>
+  <data name="tlsMain.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tlsMain.Name" xml:space="preserve">
+    <value>tlsMain</value>
+  </data>
+  <data name="&gt;&gt;tlsMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tlsMain.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tlsMain.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="tsbNewFile.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
@@ -197,31 +222,6 @@
   <data name="tsbSearchInFiles.Text" xml:space="preserve">
     <value>B&amp;uscar en archivos</value>
   </data>
-  <data name="tlsMain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 28</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tlsMain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>8, 0, 0, 0</value>
-  </data>
-  <data name="tlsMain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1067, 31</value>
-  </data>
-  <data name="tlsMain.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;tlsMain.Name" xml:space="preserve">
-    <value>tlsMain</value>
-  </data>
-  <data name="&gt;&gt;tlsMain.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tlsMain.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;tlsMain.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <metadata name="tsExtender.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>385, 17</value>
   </metadata>
@@ -264,6 +264,12 @@
   <data name="LoadFileDialog.Filter" xml:space="preserve">
     <value>Proyectos de traducción (*.tf)|*.tf</value>
   </data>
+  <data name="mniFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 24</value>
+  </data>
+  <data name="mniFile.Text" xml:space="preserve">
+    <value>&amp;Archivo</value>
+  </data>
   <data name="mniFileNew.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
@@ -271,7 +277,7 @@
     <value>Ctrl+N</value>
   </data>
   <data name="mniFileNew.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>195, 26</value>
   </data>
   <data name="mniFileNew.Text" xml:space="preserve">
     <value>&amp;Nuevo</value>
@@ -283,13 +289,13 @@
     <value>Ctrl+O</value>
   </data>
   <data name="mniFileOpen.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>195, 26</value>
   </data>
   <data name="mniFileOpen.Text" xml:space="preserve">
     <value>&amp;Abrir</value>
   </data>
   <data name="toolStripSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+    <value>192, 6</value>
   </data>
   <data name="mniFileSave.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -301,37 +307,37 @@
     <value>Ctrl+S</value>
   </data>
   <data name="mniFileSave.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>195, 26</value>
   </data>
   <data name="mniFileSave.Text" xml:space="preserve">
     <value>&amp;Guardar</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+    <value>192, 6</value>
   </data>
   <data name="mniFileExport.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="mniFileExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>195, 26</value>
   </data>
   <data name="mniFileExport.Text" xml:space="preserve">
     <value>Exportar...</value>
   </data>
   <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+    <value>192, 6</value>
   </data>
   <data name="mniFileExit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
+    <value>195, 26</value>
   </data>
   <data name="mniFileExit.Text" xml:space="preserve">
     <value>&amp;Salir</value>
   </data>
-  <data name="mniFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 24</value>
+  <data name="mniEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 24</value>
   </data>
-  <data name="mniFile.Text" xml:space="preserve">
-    <value>&amp;Archivo</value>
+  <data name="mniEdit.Text" xml:space="preserve">
+    <value>&amp;Editar</value>
   </data>
   <data name="mniEditSearch.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -360,56 +366,59 @@
   <data name="mniEditSearchInFiles.Text" xml:space="preserve">
     <value>B&amp;uscar en archivos</value>
   </data>
-  <data name="mniEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 24</value>
-  </data>
-  <data name="mniEdit.Text" xml:space="preserve">
-    <value>&amp;Editar</value>
-  </data>
-  <data name="mniHelpAbout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 26</value>
-  </data>
-  <data name="mniHelpAbout.Text" xml:space="preserve">
-    <value>&amp;Acerca de...</value>
-  </data>
   <data name="mniHelp.Size" type="System.Drawing.Size, System.Drawing">
     <value>65, 24</value>
   </data>
   <data name="mniHelp.Text" xml:space="preserve">
     <value>Ay&amp;uda</value>
   </data>
+  <data name="mniHelpAbout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>167, 26</value>
+  </data>
+  <data name="mniHelpAbout.Text" xml:space="preserve">
+    <value>&amp;Acerca de...</value>
+  </data>
   <metadata name="mnuMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="mniPoExportAll.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="mniPoExportAll.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mniBulkTexts.Size" type="System.Drawing.Size, System.Drawing">
     <value>224, 26</value>
   </data>
-  <data name="mniPoExportAll.Text" xml:space="preserve">
-    <value>Exportar Todo</value>
+  <data name="mniBulkTexts.Text" xml:space="preserve">
+    <value>Textos</value>
   </data>
-  <data name="mniPoImportAll.Enabled" type="System.Boolean, mscorlib">
+  <data name="mniBulkImagesExport.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="mniPoImportAll.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mniBulkImagesExport.Size" type="System.Drawing.Size, System.Drawing">
     <value>224, 26</value>
   </data>
-  <data name="mniPoImportAll.Text" xml:space="preserve">
-    <value>Importar Todo</value>
+  <data name="mniBulkImagesExport.Text" xml:space="preserve">
+    <value>Exportar</value>
   </data>
-  <data name="mniPoFormat.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 24</value>
+  <data name="mniBulkImagesImport.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
-  <data name="mniPoFormat.Text" xml:space="preserve">
-    <value>Po</value>
+  <data name="mniBulkImagesImport.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 26</value>
+  </data>
+  <data name="mniBulkImagesImport.Text" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="mniBulkImages.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 26</value>
+  </data>
+  <data name="mniBulkImages.Text" xml:space="preserve">
+    <value>Imágenes</value>
+  </data>
+  <data name="mniBulk.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 24</value>
+  </data>
+  <data name="mniBulk.Text" xml:space="preserve">
+    <value>Masivo</value>
   </data>
   <data name="mnuMain.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
-  </data>
-  <data name="mnuMain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>8, 2, 0, 2</value>
   </data>
   <data name="mnuMain.Size" type="System.Drawing.Size, System.Drawing">
     <value>1067, 28</value>
@@ -428,6 +437,24 @@
   </data>
   <data name="&gt;&gt;mnuMain.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="mniBulkTextsExport.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="mniBulkTextsExport.Size" type="System.Drawing.Size, System.Drawing">
+    <value>150, 26</value>
+  </data>
+  <data name="mniBulkTextsExport.Text" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="mniBulkTextsImport.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="mniBulkTextsImport.Size" type="System.Drawing.Size, System.Drawing">
+    <value>150, 26</value>
+  </data>
+  <data name="mniBulkTextsImport.Text" xml:space="preserve">
+    <value>Importar</value>
   </data>
   <metadata name="FolderBrowserDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>766, 17</value>
@@ -600,22 +627,46 @@
   <data name="&gt;&gt;mniHelpAbout.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mniPoFormat.Name" xml:space="preserve">
-    <value>mniPoFormat</value>
+  <data name="&gt;&gt;mniBulk.Name" xml:space="preserve">
+    <value>mniBulk</value>
   </data>
-  <data name="&gt;&gt;mniPoFormat.Type" xml:space="preserve">
+  <data name="&gt;&gt;mniBulk.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mniPoExportAll.Name" xml:space="preserve">
-    <value>mniPoExportAll</value>
+  <data name="&gt;&gt;mniBulkTexts.Name" xml:space="preserve">
+    <value>mniBulkTexts</value>
   </data>
-  <data name="&gt;&gt;mniPoExportAll.Type" xml:space="preserve">
+  <data name="&gt;&gt;mniBulkTexts.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mniPoImportAll.Name" xml:space="preserve">
-    <value>mniPoImportAll</value>
+  <data name="&gt;&gt;mniBulkTextsExport.Name" xml:space="preserve">
+    <value>mniBulkTextsExport</value>
   </data>
-  <data name="&gt;&gt;mniPoImportAll.Type" xml:space="preserve">
+  <data name="&gt;&gt;mniBulkTextsExport.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mniBulkTextsImport.Name" xml:space="preserve">
+    <value>mniBulkTextsImport</value>
+  </data>
+  <data name="&gt;&gt;mniBulkTextsImport.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mniBulkImages.Name" xml:space="preserve">
+    <value>mniBulkImages</value>
+  </data>
+  <data name="&gt;&gt;mniBulkImages.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mniBulkImagesExport.Name" xml:space="preserve">
+    <value>mniBulkImagesExport</value>
+  </data>
+  <data name="&gt;&gt;mniBulkImagesExport.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mniBulkImagesImport.Name" xml:space="preserve">
+    <value>mniBulkImagesImport</value>
+  </data>
+  <data name="&gt;&gt;mniBulkImagesImport.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;FolderBrowserDialog.Name" xml:space="preserve">

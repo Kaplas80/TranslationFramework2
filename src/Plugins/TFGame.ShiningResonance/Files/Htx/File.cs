@@ -1,20 +1,20 @@
-﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using DirectXTexNet;
-using TF.Core.Files;
-using TF.IO;
-using Image = System.Drawing.Image;
-
-namespace TFGame.ShiningResonance.Files.Htx
+﻿namespace TFGame.ShiningResonance.Files.Htx
 {
-    class File : DDSFile
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+    using DirectXTexNet;
+    using TF.Core.Files;
+    using TF.IO;
+    using Image = System.Drawing.Image;
+
+    public class File : DDSFile
     {
         public File(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 
-        protected override void FormOnNewImageLoaded(string filename)
+        protected override void FormOnImportImage(string filename)
         {
             var data = AddHeaders(filename);
 
@@ -23,38 +23,29 @@ namespace TFGame.ShiningResonance.Files.Htx
             UpdateFormImage();
         }
 
-        protected override Tuple<Image, object> GetImage()
+        protected override ScratchImage GetScratchImage()
         {
-            var source = HasChanges ? ChangesFile : Path;
+            string source = HasChanges ? ChangesFile : Path;
 
-            var data = RemoveHeaders(source);
+            byte[] data = RemoveHeaders(source);
 
-            var unmanagedPointer = Marshal.AllocHGlobal(data.Length);
+            IntPtr unmanagedPointer = Marshal.AllocHGlobal(data.Length);
             Marshal.Copy(data, 0, unmanagedPointer, data.Length);
 
-            _currentDDS = TexHelper.Instance.LoadFromDDSMemory(unmanagedPointer, data.Length, DDS_FLAGS.NONE);
-            
+            ScratchImage img = TexHelper.Instance.LoadFromDDSMemory(unmanagedPointer, data.Length, DDS_FLAGS.NONE);
+
             Marshal.FreeHGlobal(unmanagedPointer);
 
-            var codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+            TexMetadata metadata = img.GetMetadata();
 
-            var metadata = _currentDDS.GetMetadata();
-
-            ScratchImage decompressed;
-            try
+            if (IsCompressed(metadata.Format))
             {
-                decompressed = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
-            }
-            catch (ArgumentException e)
-            {
-                decompressed = _currentDDS;
+                ScratchImage tmp = img.Decompress(DXGI_FORMAT.UNKNOWN);
+                img.Dispose();
+                img = tmp;
             }
 
-            var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
-            var image = Image.FromStream(imageStream);
-
-            var properties = new TexMetadataView(metadata);
-            return new Tuple<Image, object>(image, properties);
+            return img;
         }
 
         private static byte[] AddHeaders(string filename)
@@ -96,7 +87,6 @@ namespace TFGame.ShiningResonance.Files.Htx
                     output.Write(0x00000000);
                     output.Write(0x00000000);
                     output.Write(0x00000000);
-
                 }
 
                 return ms.ToArray();

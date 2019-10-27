@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -54,7 +53,7 @@ namespace TF.Core
 
         public void Save()
         {
-            var saveFile = Path.Combine(WorkPath, "project.tf");
+            string saveFile = Path.Combine(WorkPath, "project.tf");
             using (var fs = new FileStream(saveFile, FileMode.Create))
             using (var output = new ExtendedBinaryWriter(fs, Encoding.UTF8))
             {
@@ -62,13 +61,13 @@ namespace TF.Core
                 output.Write(Game.Version);
                 output.WriteString(InstallationPath);
                 output.Write(FileContainers.Count);
-                foreach (var container in FileContainers)
+                foreach (TranslationFileContainer container in FileContainers)
                 {
                     output.WriteString(container.Id);
                     output.WriteString(container.Path);
                     output.Write((int)container.Type);
                     output.Write(container.Files.Count);
-                    foreach (var file in container.Files)
+                    foreach (TranslationFile file in container.Files)
                     {
                         output.WriteString(file.Id);
                         output.WriteString(file.Path);
@@ -91,11 +90,11 @@ namespace TF.Core
             {
                 var result = new TranslationProject();
 
-                var gameId = input.ReadString();
-                var game = pluginManager.GetGame(gameId);
+                string gameId = input.ReadString();
+                IGame game = pluginManager.GetGame(gameId);
                 result.Game = game ?? throw new Exception("No existe un plugin para cargar este fichero.");
 
-                var pluginVersion = input.ReadInt32();
+                int pluginVersion = input.ReadInt32();
                 if (pluginVersion > game.Version)
                 {
                     throw new Exception("No coincide la versión del plugin instalado con la versión del que creó esta traducción.");
@@ -106,7 +105,7 @@ namespace TF.Core
                     searchNewFiles = true;
                 }
 
-                var installPath = input.ReadString();
+                string installPath = input.ReadString();
                 if (!Directory.Exists(installPath))
                 {
                     throw new Exception($"No se encuentra la carpeta de instalación: {installPath}");
@@ -115,28 +114,28 @@ namespace TF.Core
                 result.InstallationPath = installPath;
                 result.WorkPath = Path.GetDirectoryName(path);
 
-                var containersCount = input.ReadInt32();
+                int containersCount = input.ReadInt32();
                 for (var i = 0; i < containersCount; i++)
                 {
-                    var containerId = input.ReadString();
-                    var containerPath = input.ReadString();
+                    string containerId = input.ReadString();
+                    string containerPath = input.ReadString();
                     var containerType = (ContainerType)input.ReadInt32();
                     var container = new TranslationFileContainer(containerId, containerPath, containerType);
 
-                    var fileCount = input.ReadInt32();
+                    int fileCount = input.ReadInt32();
                     for (var j = 0; j < fileCount; j++)
                     {
-                        var fileId = input.ReadString();
-                        var filePath = input.ReadString();
-                        var fileRelativePath = input.ReadString();
-                        var fileName = input.ReadString();
-                        var typeString = input.ReadString();
+                        string fileId = input.ReadString();
+                        string filePath = input.ReadString();
+                        string fileRelativePath = input.ReadString();
+                        string fileName = input.ReadString();
+                        string typeString = input.ReadString();
 
-                        var type = GetType(typeString, types);
+                        Type type = GetType(typeString, types);
 
                         TranslationFile file;
 
-                        var constructorInfo =
+                        ConstructorInfo constructorInfo =
                             type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
 
                         if (constructorInfo != null)
@@ -181,7 +180,7 @@ namespace TF.Core
                 return types[typeName];
             }
 
-            var type = Type.GetType(typeName);
+            Type type = Type.GetType(typeName);
 
             if (type != null)
             {
@@ -189,7 +188,7 @@ namespace TF.Core
                 return type;
             }
 
-            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {
                 type = a.GetType(typeName);
                 if (type != null)
@@ -206,7 +205,7 @@ namespace TF.Core
         {
             PathHelper.DeleteDirectory(TempFolder);
 
-            foreach (var container in containers)
+            foreach (TranslationFileContainer container in containers)
             {
                 if (worker.CancellationPending)
                 {
@@ -218,9 +217,9 @@ namespace TF.Core
 
                 if (container.Type == ContainerType.Folder)
                 {
-                    var outputFolder = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
+                    string outputFolder = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
 
-                    foreach (var translationFile in container.Files)
+                    foreach (TranslationFile translationFile in container.Files)
                     {
                         if (translationFile.HasChanges || options.ForceRebuild)
                         {
@@ -228,8 +227,8 @@ namespace TF.Core
                         }
                         else
                         {
-                            var outputFile = Path.Combine(outputFolder, translationFile.RelativePath);
-                            var dir = Path.GetDirectoryName(outputFile);
+                            string outputFile = Path.Combine(outputFolder, translationFile.RelativePath);
+                            string dir = Path.GetDirectoryName(outputFile);
                             Directory.CreateDirectory(dir);
 
                             File.Copy(translationFile.Path, outputFile, true);
@@ -238,7 +237,7 @@ namespace TF.Core
                 }
                 else
                 {
-                    var outputFile = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
+                    string outputFile = Path.GetFullPath(Path.Combine(ExportFolder, container.Path));
                     if (File.Exists(outputFile))
                     {
                         File.Delete(outputFile);
@@ -246,15 +245,15 @@ namespace TF.Core
 
                     worker.ReportProgress(0, "Preparando para empaquetar...");
                     // 1. Copiar todos los ficheros del contenedor a una carpeta temporal
-                    var source = Path.Combine(ContainersFolder, container.Id);
-                    var dest = Path.Combine(TempFolder, container.Id);
+                    string source = Path.Combine(ContainersFolder, container.Id);
+                    string dest = Path.Combine(TempFolder, container.Id);
                     Directory.CreateDirectory(dest);
 
                     PathHelper.CloneDirectory(source, dest);
 
                     // 2. Crear los ficheros traducidos en esa carpeta temporal
                     worker.ReportProgress(0, "Generando ficheros traducidos...");
-                    foreach (var translationFile in container.Files)
+                    foreach (TranslationFile translationFile in container.Files)
                     {
                         if (translationFile.HasChanges || options.ForceRebuild)
                         {
@@ -287,7 +286,7 @@ namespace TF.Core
         {
             var result = new ConcurrentBag<Tuple<TranslationFileContainer, TranslationFile>>();
 
-            foreach (var container in FileContainers)
+            foreach (TranslationFileContainer container in FileContainers)
             {
                 if (worker.CancellationPending)
                 {
@@ -300,7 +299,7 @@ namespace TF.Core
                 //foreach (var file in container.Files)
                 Parallel.ForEach(container.Files, file =>
                 {
-                    var found = file.Search(searchString);
+                    bool found = file.Search(searchString);
 
                     if (found)
                     {
@@ -315,8 +314,8 @@ namespace TF.Core
 
         private static void UpdateTranslationFiles(TranslationProject project, BackgroundWorker worker)
         {
-            var containers = project.Game.GetContainers(project.InstallationPath);
-            foreach (var container in containers)
+            GameFileContainer[] containers = project.Game.GetContainers(project.InstallationPath);
+            foreach (GameFileContainer container in containers)
             {
                 if (worker.CancellationPending)
                 {
@@ -324,7 +323,7 @@ namespace TF.Core
                     throw new UserCancelException();
                 }
 
-                var translationContainer =
+                TranslationFileContainer translationContainer =
                     project.FileContainers.FirstOrDefault(x => x.Path == container.Path && x.Type == container.Type);
 
                 var addNewContainer = false;
@@ -336,10 +335,10 @@ namespace TF.Core
                     addNewContainer = true;
                 }
 
-                var extractionContainerPath = Path.Combine(project.ContainersFolder, translationContainer.Id);
+                string extractionContainerPath = Path.Combine(project.ContainersFolder, translationContainer.Id);
                 Directory.CreateDirectory(extractionContainerPath);
 
-                var containerPath = Path.GetFullPath(Path.Combine(project.InstallationPath, container.Path));
+                string containerPath = Path.GetFullPath(Path.Combine(project.InstallationPath, container.Path));
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
                 if (container.Type == ContainerType.CompressedFile)
@@ -352,26 +351,26 @@ namespace TF.Core
                             project.Game.ExtractFile(containerPath, extractionContainerPath);
                         }
 
-                        foreach (var fileSearch in container.FileSearches)
+                        foreach (GameFileSearch fileSearch in container.FileSearches)
                         {
                             worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
-                            var foundFiles = fileSearch.GetFiles(extractionContainerPath);
+                            string[] foundFiles = fileSearch.GetFiles(extractionContainerPath);
 #if DEBUG
-                            foreach (var f in foundFiles)
+                            foreach (string f in foundFiles)
 #else
                             Parallel.ForEach(foundFiles, f =>
 #endif
                             {
-                                var relativePath =
+                                string relativePath =
                                     PathHelper.GetRelativePath(extractionContainerPath, Path.GetFullPath(f));
-                                var type = fileSearch.FileType;
+                                Type type = fileSearch.FileType;
 
-                                var translationFile =
+                                TranslationFile translationFile =
                                     translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
 
                                 if (translationFile == null)
                                 {
-                                    var constructorInfo =
+                                    ConstructorInfo constructorInfo =
                                         type.GetConstructor(new[]
                                             {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
 
@@ -432,22 +431,22 @@ namespace TF.Core
                 else
                 {
                     project.Game.PreprocessContainer(translationContainer, containerPath, extractionContainerPath);
-                    foreach (var fileSearch in container.FileSearches)
+                    foreach (GameFileSearch fileSearch in container.FileSearches)
                     {
                         worker.ReportProgress(0, $"Buscando {fileSearch.RelativePath}\\{fileSearch.SearchPattern}...");
-                        var foundFiles = fileSearch.GetFiles(containerPath);
+                        string[] foundFiles = fileSearch.GetFiles(containerPath);
 
 #if DEBUG
-                        foreach (var f in foundFiles)
+                        foreach (string f in foundFiles)
 #else
                         Parallel.ForEach(foundFiles, f =>
 #endif
                         {
-                            var relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
+                            string relativePath = PathHelper.GetRelativePath(containerPath, Path.GetFullPath(f));
 
-                            var destinationFileName =
+                            string destinationFileName =
                                 Path.GetFullPath(Path.Combine(extractionContainerPath, relativePath));
-                            var destPath = Path.GetDirectoryName(destinationFileName);
+                            string destPath = Path.GetDirectoryName(destinationFileName);
                             Directory.CreateDirectory(destPath);
 
                             if (!File.Exists(destinationFileName))
@@ -455,14 +454,14 @@ namespace TF.Core
                                 File.Copy(f, destinationFileName);
                             }
 
-                            var type = fileSearch.FileType;
+                            Type type = fileSearch.FileType;
 
-                            var translationFile =
+                            TranslationFile translationFile =
                                 translationContainer.Files.FirstOrDefault(x => x.RelativePath == relativePath);
 
                             if (translationFile == null)
                             {
-                                var constructorInfo =
+                                ConstructorInfo constructorInfo =
                                     type.GetConstructor(new[] {typeof(string), typeof(string), typeof(string), typeof(Encoding)});
 
                                 if (constructorInfo != null)
@@ -518,7 +517,7 @@ namespace TF.Core
 
         public void ExportPo(string path, BackgroundWorker worker)
         {
-            foreach (var container in FileContainers)
+            foreach (TranslationFileContainer container in FileContainers)
             {
                 if (worker.CancellationPending)
                 {
@@ -528,19 +527,19 @@ namespace TF.Core
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
-                foreach (var file in container.Files)
+                foreach (TranslationFile file in container.Files)
                 {
-                    var filePath = Path.Combine(path, container.Path, file.RelativePath);
-                    var fileName = Path.GetFileNameWithoutExtension(filePath);
-                    var outputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    string filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string outputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
                     file.ExportPo(outputPath);
                 }
             }
         }
 
-        public void ImportPo(string path, BackgroundWorker worker)
+        public void ExportImages(string path, BackgroundWorker worker)
         {
-            foreach (var container in FileContainers)
+            foreach (TranslationFileContainer container in FileContainers)
             {
                 if (worker.CancellationPending)
                 {
@@ -550,11 +549,33 @@ namespace TF.Core
 
                 worker.ReportProgress(0, $"Procesando {container.Path}...");
 
-                foreach (var file in container.Files)
+                foreach (TranslationFile file in container.Files)
                 {
-                    var filePath = Path.Combine(path, container.Path, file.RelativePath);
-                    var fileName = Path.GetFileNameWithoutExtension(filePath);
-                    var inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    string filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    string fileName = file.GetExportFilename();
+                    string outputPath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
+                    file.ExportImage(outputPath);
+                }
+            }
+        }
+        
+        public void ImportPo(string path, BackgroundWorker worker)
+        {
+            foreach (TranslationFileContainer container in FileContainers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+
+                foreach (TranslationFile file in container.Files)
+                {
+                    string filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
 
                     if (!File.Exists(inputPath))
                     {
@@ -583,6 +604,32 @@ namespace TF.Core
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        public void ImportImages(string path, BackgroundWorker worker)
+        {
+            foreach (TranslationFileContainer container in FileContainers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+
+                foreach (TranslationFile file in container.Files)
+                {
+                    string filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    string fileName = file.GetExportFilename();
+                    string inputPath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
+
+                    if (File.Exists(inputPath))
+                    {
+                        file.ImportImage(inputPath);
                     }
                 }
             }

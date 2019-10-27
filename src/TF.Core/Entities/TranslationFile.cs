@@ -125,6 +125,16 @@ namespace TF.Core.Entities
 
         }
 
+        public virtual void ExportImage(string path)
+        {
+            
+        }
+
+        public virtual void ImportImage(string path)
+        {
+
+        }
+
         protected virtual void LoadBeforeImport()
         {
             
@@ -133,6 +143,11 @@ namespace TF.Core.Entities
         protected virtual string GetContext(Subtitle subtitle)
         {
             return string.Empty;
+        }
+
+        public virtual string GetExportFilename()
+        {
+            return System.IO.Path.GetFileName(Path);
         }
     }
 }

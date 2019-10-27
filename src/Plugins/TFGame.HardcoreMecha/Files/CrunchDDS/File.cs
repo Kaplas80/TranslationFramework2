@@ -14,55 +14,23 @@ namespace TFGame.HardcoreMecha.Files.CrunchDDS
         {
         }
 
-        protected override Tuple<Image, object> GetImage()
+        protected override ScratchImage GetScratchImage()
         {
             if (!HasChanges)
             {
-                var crunchedData = System.IO.File.ReadAllBytes(Path);
-                var data = CrnDecompress(crunchedData);
+                byte[] crunchedData = System.IO.File.ReadAllBytes(Path);
+                byte[] data = CrnDecompress(crunchedData);
 
                 System.IO.File.WriteAllBytes(ChangesFile, data);
             }
 
-            _currentDDS = TexHelper.Instance.LoadFromDDSFile(ChangesFile, DDS_FLAGS.NONE);
-
-            var codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
-
-            var metadata = _currentDDS.GetMetadata();
-
-            ScratchImage decompressed;
-            try
-            {
-                decompressed = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
-            }
-            catch (ArgumentException e)
-            {
-                decompressed = _currentDDS;
-            }
-
-            try
-            {
-                var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
-                var image = Image.FromStream(imageStream);
-
-                var properties = new TexMetadataView(metadata);
-
-                return new Tuple<Image, object>(image, properties);
-            }
-            catch (Exception e)
-            {
-                return new Tuple<Image, object>(null, null);
-            }
-            finally
-            {
-                decompressed.Dispose();
-            }
+            return base.GetScratchImage();
         }
 
         public override void Rebuild(string outputFolder)
         {
-            var outputFile = System.IO.Path.Combine(outputFolder, RelativePath);
-            var dir = System.IO.Path.GetDirectoryName(outputFile);
+            string outputFile = System.IO.Path.Combine(outputFolder, RelativePath);
+            string dir = System.IO.Path.GetDirectoryName(outputFile);
             Directory.CreateDirectory(dir);
 
             if (System.IO.File.Exists(outputFile))
@@ -79,19 +47,19 @@ namespace TFGame.HardcoreMecha.Files.CrunchDDS
             IntPtr uncompressedData = default;
             try
             {
-                var width = data[0x0C] << 8 | data[0x0D];
-                var height = data[0x0E] << 8 | data[0x0F];
-                var mipmaps = data[0x10];
-                var format = data[0x12];
+                int width = data[0x0C] << 8 | data[0x0D];
+                int height = data[0x0E] << 8 | data[0x0F];
+                byte mipmaps = data[0x10];
+                byte format = data[0x12];
 
-                var result = DecompressUnityCRN(data, data.Length, out uncompressedData, out var uncompressedSize);
+                bool result = DecompressUnityCRN(data, data.Length, out uncompressedData, out int uncompressedSize);
                     
                 if (result)
                 {
                     var uncompressedBytes = new byte[uncompressedSize];
                     Marshal.Copy(uncompressedData, uncompressedBytes, 0, uncompressedSize);
 
-                    var dds = InsertDdsHeader(uncompressedBytes, width, height, mipmaps, format);
+                    byte[] dds = InsertDdsHeader(uncompressedBytes, width, height, mipmaps, format);
 
                     return dds;
                 }

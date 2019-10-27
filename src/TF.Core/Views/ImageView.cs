@@ -8,9 +8,9 @@ namespace TF.Core.Views
 {
     public partial class ImageView : DockContent
     {
-        public event NewImageLoadedEventHandler NewImageLoaded;
+        public event NewImageLoadedEventHandler ImportImage;
         public delegate void NewImageLoadedEventHandler(string fileName);
-        public event SaveImageEventHandler SaveImage;
+        public event SaveImageEventHandler ExportImage;
         public delegate void SaveImageEventHandler(string fileName);
 
         private Image _image;
@@ -43,12 +43,12 @@ namespace TF.Core.Views
 
         protected virtual void OnNewImageLoaded(string selectedFile)
         {
-            NewImageLoaded?.Invoke(selectedFile);
+            ImportImage?.Invoke(selectedFile);
         }
 
         protected virtual void OnSaveImage(string selectedFile)
         {
-            SaveImage?.Invoke(selectedFile);
+            ExportImage?.Invoke(selectedFile);
         }
 
         protected virtual void btnExportImage_Click(object sender, EventArgs e)
