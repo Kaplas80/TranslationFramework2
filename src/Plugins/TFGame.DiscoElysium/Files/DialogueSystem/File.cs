@@ -6,6 +6,8 @@
     using TF.Core.TranslationEntities;
     using TF.IO;
     using TFGame.DiscoElysium.Files.Common;
+    using Yarhl.IO;
+    using Yarhl.Media.Text;
 
     public class File : DiscoElysiumTextFile
     {
@@ -26,19 +28,19 @@
         {
             var result = new List<Subtitle>();
 
-            var version = input.ReadStringSerialized(0x04);
-            var author = input.ReadStringSerialized(0x04);
-            var description = input.ReadStringSerialized(0x04);
-            var globalUserScript = input.ReadStringSerialized(0x04);
+            string version = input.ReadStringSerialized(0x04);
+            string author = input.ReadStringSerialized(0x04);
+            string description = input.ReadStringSerialized(0x04);
+            string globalUserScript = input.ReadStringSerialized(0x04);
 
-            var emphasisSettingCount = input.ReadInt32();
+            int emphasisSettingCount = input.ReadInt32();
             input.Skip(emphasisSettingCount * 0x04 * 0x07);
 
-            var actorCount = input.ReadInt32();
+            int actorCount = input.ReadInt32();
             for (var i = 0; i < actorCount; i++)
             {
-                var id = input.ReadInt32();
-                var fieldCount = input.ReadInt32();
+                int id = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
                 for (var j = 0; j < fieldCount; j++)
@@ -78,11 +80,11 @@
                 input.Skip(0x04); // alternatePortraits
             }
 
-            var itemCount = input.ReadInt32();
+            int itemCount = input.ReadInt32();
             for (var i = 0; i < itemCount; i++)
             {
-                var id = input.ReadInt32();
-                var fieldCount = input.ReadInt32();
+                int id = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
                 for (var j = 0; j < fieldCount; j++)
@@ -123,11 +125,11 @@
                 }
             }
 
-            var locationCount = input.ReadInt32();
+            int locationCount = input.ReadInt32();
             for (var i = 0; i < locationCount; i++)
             {
-                var id = input.ReadInt32();
-                var fieldCount = input.ReadInt32();
+                int id = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
                 for (var j = 0; j < fieldCount; j++)
@@ -164,11 +166,11 @@
                 }
             }
 
-            var variableCount = input.ReadInt32();
+            int variableCount = input.ReadInt32();
             for (var i = 0; i < variableCount; i++)
             {
-                var id = input.ReadInt32();
-                var fieldCount = input.ReadInt32();
+                int id = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
                 for (var j = 0; j < fieldCount; j++)
@@ -205,11 +207,11 @@
                 }
             }
 
-            var conversationCount = input.ReadInt32();
+            int conversationCount = input.ReadInt32();
             for (var i = 0; i < conversationCount; i++)
             {
-                var id = input.ReadInt32();
-                var fieldCount = input.ReadInt32();
+                int id = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
                 for (var j = 0; j < fieldCount; j++)
@@ -260,11 +262,11 @@
                 input.ReadStringSerialized(0x04); // nodeColor
 
                 // DialogueEntry
-                var dialogueEntryCount = input.ReadInt32();
+                int dialogueEntryCount = input.ReadInt32();
                 for (var j = 0; j < dialogueEntryCount; j++)
                 {
-                    var dialogueEntryId = input.ReadInt32();
-                    var fieldCount2 = input.ReadInt32();
+                    int dialogueEntryId = input.ReadInt32();
+                    int fieldCount2 = input.ReadInt32();
 
                     var fields2 = new Dictionary<string, Field>(fieldCount2);
                     for (var k = 0; k < fieldCount2; k++)
@@ -309,11 +311,11 @@
                     input.Skip(0x04);
                     input.ReadStringSerialized(0x04); // falseConditionAction
                     input.Skip(0x04);
-                    var outgoingLinksCount = input.ReadInt32();
+                    int outgoingLinksCount = input.ReadInt32();
                     input.Skip(outgoingLinksCount * 0x04 * 0x06);
 
                     input.ReadStringSerialized(0x04); // conditionsString
-                    var userScript = input.ReadStringSerialized(0x04); // userScript
+                    string userScript = input.ReadStringSerialized(0x04); // userScript
 
                     // TODO: Comprobar si hay que traducir el userScript
 
@@ -335,11 +337,11 @@
 
         public override void Rebuild(string outputFolder)
         {
-            var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
+            string outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
-            var subtitles = GetSubtitles();
-            var subs = subtitles.Select(subtitle => subtitle as DiscoElysiumSubtitle).ToList();
+            IList<Subtitle> subtitles = GetSubtitles();
+            List<DiscoElysiumSubtitle> subs = subtitles.Select(subtitle => subtitle as DiscoElysiumSubtitle).ToList();
             var dictionary = new Dictionary<string, DiscoElysiumSubtitle>(subs.Count);
             foreach (DiscoElysiumSubtitle subtitle in subs)
             {
@@ -358,26 +360,26 @@
         protected void Rebuild(ExtendedBinaryReader input, ExtendedBinaryWriter output,
             Dictionary<string, DiscoElysiumSubtitle> dictionary)
         {
-            var version = input.ReadStringSerialized(0x04);
+            string version = input.ReadStringSerialized(0x04);
             output.WriteStringSerialized(version, 0x04);
-            var author = input.ReadStringSerialized(0x04);
+            string author = input.ReadStringSerialized(0x04);
             output.WriteStringSerialized(author, 0x04);
-            var description = input.ReadStringSerialized(0x04);
+            string description = input.ReadStringSerialized(0x04);
             output.WriteStringSerialized(description, 0x04);
-            var globalUserScript = input.ReadStringSerialized(0x04);
+            string globalUserScript = input.ReadStringSerialized(0x04);
             output.WriteStringSerialized(globalUserScript, 0x04);
 
-            var emphasisSettingCount = input.ReadInt32();
+            int emphasisSettingCount = input.ReadInt32();
             output.Write(emphasisSettingCount);
             output.Write(input.ReadBytes(emphasisSettingCount * 0x04 * 0x07));
 
-            var actorCount = input.ReadInt32();
+            int actorCount = input.ReadInt32();
             output.Write(actorCount);
             for (var i = 0; i < actorCount; i++)
             {
-                var id = input.ReadInt32();
+                int id = input.ReadInt32();
                 output.Write(id);
-                var fieldCount = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
@@ -393,13 +395,13 @@
                 }
 
                 var translatableFields = new string[] {"Name", "LongDescription", "short_description"};
-                foreach (var kvp in fields)
+                foreach (KeyValuePair<string, Field> kvp in fields)
                 {
                     output.WriteStringSerialized(kvp.Value.Title, 0x04);
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
-                        var key = $"Actor_{id}_{kvp.Value.Title}";
-                        var subtitle = dictionary[key];
+                        string key = $"Actor_{id}_{kvp.Value.Title}";
+                        DiscoElysiumSubtitle subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -415,13 +417,13 @@
                 output.Write(input.ReadBytes(0x04)); // alternatePortraits
             }
 
-            var itemCount = input.ReadInt32();
+            int itemCount = input.ReadInt32();
             output.Write(itemCount);
             for (var i = 0; i < itemCount; i++)
             {
-                var id = input.ReadInt32();
+                int id = input.ReadInt32();
                 output.Write(id);
-                var fieldCount = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
@@ -441,13 +443,13 @@
                     "Description", "displayname", "description", "fixtureBonus", "requirement", "bonus",
                     "fixtureDescription"
                 };
-                foreach (var kvp in fields)
+                foreach (KeyValuePair<string, Field> kvp in fields)
                 {
                     output.WriteStringSerialized(kvp.Value.Title, 0x04);
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
-                        var key = $"Item_{id}_{kvp.Value.Title}";
-                        var subtitle = dictionary[key];
+                        string key = $"Item_{id}_{kvp.Value.Title}";
+                        DiscoElysiumSubtitle subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -460,13 +462,13 @@
                 }
             }
 
-            var locationCount = input.ReadInt32();
+            int locationCount = input.ReadInt32();
             output.Write(locationCount);
             for (var i = 0; i < locationCount; i++)
             {
-                var id = input.ReadInt32();
+                int id = input.ReadInt32();
                 output.Write(id);
-                var fieldCount = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
@@ -482,13 +484,13 @@
                 }
 
                 var translatableFields = new string[] {"Name"};
-                foreach (var kvp in fields)
+                foreach (KeyValuePair<string, Field> kvp in fields)
                 {
                     output.WriteStringSerialized(kvp.Value.Title, 0x04);
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
-                        var key = $"Location_{id}_{kvp.Value.Title}";
-                        var subtitle = dictionary[key];
+                        string key = $"Location_{id}_{kvp.Value.Title}";
+                        DiscoElysiumSubtitle subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -501,13 +503,13 @@
                 }
             }
 
-            var variableCount = input.ReadInt32();
+            int variableCount = input.ReadInt32();
             output.Write(variableCount);
             for (var i = 0; i < variableCount; i++)
             {
-                var id = input.ReadInt32();
+                int id = input.ReadInt32();
                 output.Write(id);
-                var fieldCount = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
@@ -523,13 +525,13 @@
                 }
 
                 var translatableFields = new string[] {"Description"};
-                foreach (var kvp in fields)
+                foreach (KeyValuePair<string, Field> kvp in fields)
                 {
                     output.WriteStringSerialized(kvp.Value.Title, 0x04);
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
-                        var key = $"Variable_{id}_{kvp.Value.Title}";
-                        var subtitle = dictionary[key];
+                        string key = $"Variable_{id}_{kvp.Value.Title}";
+                        DiscoElysiumSubtitle subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -542,13 +544,13 @@
                 }
             }
 
-            var conversationCount = input.ReadInt32();
+            int conversationCount = input.ReadInt32();
             output.Write(conversationCount);
             for (var i = 0; i < conversationCount; i++)
             {
-                var id = input.ReadInt32();
+                int id = input.ReadInt32();
                 output.Write(id);
-                var fieldCount = input.ReadInt32();
+                int fieldCount = input.ReadInt32();
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
@@ -567,13 +569,13 @@
                 {
                     "Title", "Description"
                 }; //, "subtask_title_01", "subtask_title_02", "subtask_title_03", "subtask_title_04", "subtask_title_05", "subtask_title_06", "subtask_title_07", "subtask_title_08", "subtask_title_09", "subtask_title_10" };
-                foreach (var kvp in fields)
+                foreach (KeyValuePair<string, Field> kvp in fields)
                 {
                     output.WriteStringSerialized(kvp.Value.Title, 0x04);
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
-                        var key = $"Conversation_{id}_{kvp.Value.Title}";
-                        var subtitle = dictionary[key];
+                        string key = $"Conversation_{id}_{kvp.Value.Title}";
+                        DiscoElysiumSubtitle subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -597,13 +599,13 @@
                 output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04); // nodeColor
 
                 // DialogueEntry
-                var dialogueEntryCount = input.ReadInt32();
+                int dialogueEntryCount = input.ReadInt32();
                 output.Write(dialogueEntryCount);
                 for (var j = 0; j < dialogueEntryCount; j++)
                 {
-                    var dialogueEntryId = input.ReadInt32();
+                    int dialogueEntryId = input.ReadInt32();
                     output.Write(dialogueEntryId);
-                    var fieldCount2 = input.ReadInt32();
+                    int fieldCount2 = input.ReadInt32();
                     output.Write(fieldCount2);
 
                     var fields2 = new Dictionary<string, Field>(fieldCount2);
@@ -623,13 +625,13 @@
                         "Dialogue Text", "Alternate1", "Alternate2", "Alternate3", "Alternate4", "tooltip1", "tooltip2",
                         "tooltip3", "tooltip4", "tooltip5", "tooltip6", "tooltip7", "tooltip8", "tooltip9", "tooltip10"
                     };
-                    foreach (var kvp in fields2)
+                    foreach (KeyValuePair<string, Field> kvp in fields2)
                     {
                         output.WriteStringSerialized(kvp.Value.Title, 0x04);
                         if (translatableFields2.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                         {
-                            var key = $"Conversation_{id}_Entry_{dialogueEntryId}_{kvp.Value.Title}";
-                            var subtitle = dictionary[key];
+                            string key = $"Conversation_{id}_Entry_{dialogueEntryId}_{kvp.Value.Title}";
+                            DiscoElysiumSubtitle subtitle = dictionary[key];
                             output.WriteStringSerialized(subtitle.Translation, 0x04);
                         }
                         else
@@ -647,12 +649,12 @@
                     output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04); // falseConditionAction
                     output.Write(input.ReadBytes(0x04));
 
-                    var outgoingLinksCount = input.ReadInt32();
+                    int outgoingLinksCount = input.ReadInt32();
                     output.Write(outgoingLinksCount);
                     output.Write(input.ReadBytes(outgoingLinksCount * 0x04 * 0x06));
 
                     output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04); // conditionsString
-                    var userScript = input.ReadStringSerialized(0x04); // userScript
+                    string userScript = input.ReadStringSerialized(0x04); // userScript
                     output.WriteStringSerialized(userScript, 0x04);
                     // TODO: Comprobar si hay que traducir el userScript
 
@@ -668,8 +670,92 @@
             }
 
             var remainderLength = (int) (input.Length - input.Position);
-            var remainder = input.ReadBytes(remainderLength);
+            byte[] remainder = input.ReadBytes(remainderLength);
             output.Write(remainder);
+        }
+
+        public override void ExportPo(string path)
+        {
+            string directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+            
+            var po = new Po()
+            {
+                Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+            };
+
+            IList<Subtitle> subtitles = GetSubtitles();
+
+            string ctx = GetContext(subtitles[0]);
+            string[] tags = ctx.Split('_');
+            string previousTag0 = tags[0];
+            string previousTag1 = tags[1];
+
+            int index = 1;
+
+            var po2binary = new Yarhl.Media.Text.Po2Binary();
+
+            string outputFolder = System.IO.Path.GetDirectoryName(path);
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
+
+            foreach (Subtitle subtitle in subtitles)
+            {
+                var entry = new PoEntry();
+
+                string original = subtitle.Text;
+                string translation = subtitle.Translation;
+                if (string.IsNullOrEmpty(original))
+                {
+                    original = "<!empty>";
+                    translation = "<!empty>";
+                }
+
+                entry.Original = original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                entry.Context = GetContext(subtitle);
+
+                if (original != translation)
+                {
+                    entry.Translated = translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                }
+
+                tags = entry.Context.Split('_');
+                string tag0 = tags[0];
+                string tag1 = tags[1];
+                if (tag0 != previousTag0)
+                {
+                    BinaryFormat outputBinary = po2binary.Convert(po);
+                    string outputPath = System.IO.Path.Combine(outputFolder, $"{fileName}.{previousTag0}.po");
+                    outputBinary.Stream.WriteTo(outputPath);
+
+                    po = new Po()
+                    {
+                        Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+                    };
+
+                }
+                else if (tag0 == "Conversation" && tag1 != previousTag1 && po.Entries.Count >= 1000)
+                {
+                    BinaryFormat outputBinary = po2binary.Convert(po);
+                    string outputPath = System.IO.Path.Combine(outputFolder, $"{fileName}.{previousTag0}_{index}.po");
+                    outputBinary.Stream.WriteTo(outputPath);
+
+                    po = new Po()
+                    {
+                        Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+                    };
+
+                    index++;
+                }
+
+                po.Add(entry);
+
+                previousTag0 = tag0;
+                previousTag1 = tag1;
+            }
+
+            BinaryFormat binary = po2binary.Convert(po);
+            string path1 = System.IO.Path.Combine(outputFolder, $"{fileName}.{previousTag0}_{index}.po");
+            binary.Stream.WriteTo(path1);
         }
 
         private class Field
