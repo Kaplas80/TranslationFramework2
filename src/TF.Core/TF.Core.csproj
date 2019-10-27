@@ -164,6 +164,7 @@
     <Compile Include="Entities\TranslationFileContainer.cs" />
     <Compile Include="Exceptions\UserCancelException.cs" />
     <Compile Include="Files\BinaryTextFileWithOffsetTable.cs" />
+    <Compile Include="Files\DDS2File.cs" />
     <Compile Include="Files\ImageFile.cs" />
     <Compile Include="Files\TextFile.cs" />
     <Compile Include="Files\DDSFile.cs" />

@@ -11,7 +11,7 @@
     {
         public override string Id => "111967dd-effc-47bc-a8cb-bf3e11d61439";
         public override string Name => "Disco Elysium";
-        public override string Description => "Build Id: 4313083";
+        public override string Description => "Build Id: 4324006";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/m-1618/art/Disco-Elysium-Game-Icon-512x512--748478143
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -58,7 +58,7 @@
                 SearchPattern = "buyable?.tex.dds;button*.tex.dds;continue-tight.tex.dds;furies.tex.dds;loading-panel.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(TF.Core.Files.DDSFile),
+                FileType = typeof(TF.Core.Files.DDS2File),
                 Exclusions = { "-ru", "-zh" }
             };
 
@@ -96,7 +96,7 @@
                 SearchPattern = "button_close_small_dark.tex.dds;charsheet_v5.tex.dds;container_back.tex.dds;disco-build-tutorial.tex.dds;INV_equipped.tex.dds;label_church.tex.dds;label_shacks.tex.dds;label_waterfront.tex.dds;map_label.tex.dds;notify-level-up.tex.dds;no-truce-loading-screen.tex.dds;saving-panel.tex.dds;skill_crown.tex.dds;skill_levelup.tex.dds;THC-menu-v6-7-normalfix.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(TF.Core.Files.DDSFile),
+                FileType = typeof(TF.Core.Files.DDS2File),
             };
 
             var sharedAssets1 = new GameFileContainer
@@ -115,7 +115,7 @@
                 SearchPattern = "VISCAL-fence.tex.dds;viscal-fencecrash.tex.dds;viscal-footprints-label_8PAIRS.tex.dds;viscal-footprintsl-label-FOOTPRINTS.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(TF.Core.Files.DDSFile),
+                FileType = typeof(TF.Core.Files.DDS2File),
             };
 
             var sharedAssets8 = new GameFileContainer

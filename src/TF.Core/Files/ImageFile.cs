@@ -16,7 +16,7 @@ namespace TF.Core.Files
 
     public class ImageFile : TranslationFile
     {
-        private ImageView _view;
+        protected ImageView _view;
         private Image _currentImage;
 
         protected virtual string Filter => "Todos los ficheros (*.*)|*.*";

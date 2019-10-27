@@ -1,9 +1,10 @@
-﻿using System;
-using DirectXTexNet;
-using Image = System.Drawing.Image;
-
-namespace TF.Core.Files
+﻿namespace TF.Core.Files
 {
+    using System;
+    using System.IO;
+    using DirectXTexNet;
+    using Image = System.Drawing.Image;
+
     public class DDSFile : ImageFile
     {
         protected class TexMetadataView
@@ -46,38 +47,68 @@ namespace TF.Core.Files
 
         protected override Tuple<Image, object> GetImage()
         {
-            var source = HasChanges ? ChangesFile : Path;
+            string source = HasChanges ? ChangesFile : Path;
             _currentDDS = TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
 
-            var codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+            Guid codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
 
-            var metadata = _currentDDS.GetMetadata();
+            TexMetadata metadata = _currentDDS.GetMetadata();
 
-            ScratchImage decompressed;
-            try
+            if (IsCompressed(metadata.Format))
             {
-                decompressed = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
-            }
-            catch (ArgumentException e)
-            {
-                decompressed = _currentDDS;
+                ScratchImage tmp = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
+                _currentDDS.Dispose();
+                _currentDDS = tmp;
             }
 
             try
             {
-                var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+                UnmanagedMemoryStream imageStream = _currentDDS.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
 
-                decompressed.Dispose();
+                Image image = Image.FromStream(imageStream);
 
-                var image = Image.FromStream(imageStream);
+                imageStream.Close();
+                imageStream?.Dispose();
 
                 var properties = new TexMetadataView(metadata);
 
                 return new Tuple<Image, object>(image, properties);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new Tuple<Image, object>(null, null);
+            }
+        }
+
+        protected static bool IsCompressed(DXGI_FORMAT format)
+        {
+            switch (format)
+            {
+                case DXGI_FORMAT.BC1_TYPELESS:
+                case DXGI_FORMAT.BC1_UNORM:
+                case DXGI_FORMAT.BC1_UNORM_SRGB:
+                case DXGI_FORMAT.BC2_TYPELESS:
+                case DXGI_FORMAT.BC2_UNORM:
+                case DXGI_FORMAT.BC2_UNORM_SRGB:
+                case DXGI_FORMAT.BC3_TYPELESS:
+                case DXGI_FORMAT.BC3_UNORM:
+                case DXGI_FORMAT.BC3_UNORM_SRGB:
+                case DXGI_FORMAT.BC4_TYPELESS:
+                case DXGI_FORMAT.BC4_UNORM:
+                case DXGI_FORMAT.BC4_SNORM:
+                case DXGI_FORMAT.BC5_TYPELESS:
+                case DXGI_FORMAT.BC5_UNORM:
+                case DXGI_FORMAT.BC5_SNORM:
+                case DXGI_FORMAT.BC6H_TYPELESS:
+                case DXGI_FORMAT.BC6H_UF16:
+                case DXGI_FORMAT.BC6H_SF16:
+                case DXGI_FORMAT.BC7_TYPELESS:
+                case DXGI_FORMAT.BC7_UNORM:
+                case DXGI_FORMAT.BC7_UNORM_SRGB:
+                    return true;
+
+                default:
+                    return false;
             }
         }
     }
