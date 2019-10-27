@@ -43,7 +43,7 @@ namespace TFGame.AITheSomniumFiles
                 SearchPattern = "SpriteAtlasTexture*.tex.dds;*_en.tex.dds;*_us.tex.dds;locked*.tex.dds;md_ii006.tex.dds;saveload_a.tex.dds;ui_option_text.tex.dds;ui_somnium_maphelp_02.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(DDS2File)
             };
 
             var resources = new GameFileContainer
@@ -62,7 +62,7 @@ namespace TFGame.AITheSomniumFiles
                 SearchPattern = "*.tex.dds;",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(DDS2File)
             };
 
             var imageNameUs = new GameFileContainer
