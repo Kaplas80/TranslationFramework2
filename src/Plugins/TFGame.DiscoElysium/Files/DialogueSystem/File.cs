@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using TF.Core.TranslationEntities;
     using TF.IO;
     using TFGame.DiscoElysium.Files.Common;
@@ -37,13 +38,13 @@
             input.Skip(emphasisSettingCount * 0x04 * 0x07);
 
             int actorCount = input.ReadInt32();
-            for (var i = 0; i < actorCount; i++)
+            for (int i = 0; i < actorCount; i++)
             {
                 int id = input.ReadInt32();
                 int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -81,13 +82,13 @@
             }
 
             int itemCount = input.ReadInt32();
-            for (var i = 0; i < itemCount; i++)
+            for (int i = 0; i < itemCount; i++)
             {
                 int id = input.ReadInt32();
                 int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -126,13 +127,13 @@
             }
 
             int locationCount = input.ReadInt32();
-            for (var i = 0; i < locationCount; i++)
+            for (int i = 0; i < locationCount; i++)
             {
                 int id = input.ReadInt32();
                 int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -167,13 +168,13 @@
             }
 
             int variableCount = input.ReadInt32();
-            for (var i = 0; i < variableCount; i++)
+            for (int i = 0; i < variableCount; i++)
             {
                 int id = input.ReadInt32();
                 int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -208,13 +209,13 @@
             }
 
             int conversationCount = input.ReadInt32();
-            for (var i = 0; i < conversationCount; i++)
+            for (int i = 0; i < conversationCount; i++)
             {
                 int id = input.ReadInt32();
                 int fieldCount = input.ReadInt32();
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -252,7 +253,7 @@
 
                 // ConversationOverrideDisplaySettings
                 input.Skip(0x28);
-                for (var j = 0; j < 3; j++)
+                for (int j = 0; j < 3; j++)
                 {
                     input.ReadStringSerialized(0x04);
                 }
@@ -263,13 +264,13 @@
 
                 // DialogueEntry
                 int dialogueEntryCount = input.ReadInt32();
-                for (var j = 0; j < dialogueEntryCount; j++)
+                for (int j = 0; j < dialogueEntryCount; j++)
                 {
                     int dialogueEntryId = input.ReadInt32();
                     int fieldCount2 = input.ReadInt32();
 
                     var fields2 = new Dictionary<string, Field>(fieldCount2);
-                    for (var k = 0; k < fieldCount2; k++)
+                    for (int k = 0; k < fieldCount2; k++)
                     {
                         var field = new Field();
                         field.Title = input.ReadStringSerialized(0x04);
@@ -317,7 +318,45 @@
                     input.ReadStringSerialized(0x04); // conditionsString
                     string userScript = input.ReadStringSerialized(0x04); // userScript
 
-                    // TODO: Comprobar si hay que traducir el userScript
+                    if (userScript.StartsWith("NewspaperEndgame("))
+                    {
+                        var regex = new Regex(@"NewspaperEndgame\(""(?<Id>[^""]+)"",""(?<Headline>[^""]+)"",""(?<Text>[^""\\]*(?:\\.[^""\\]*)*)""\)");
+                        Match match = regex.Match(userScript);
+
+                        while (match.Success)
+                        {
+                            string endId = match.Groups["Id"].Value;
+                            string headline = match.Groups["Headline"].Value;
+                            string text = match.Groups["Text"].Value;
+                        
+                            var subtitle = new DiscoElysiumSubtitle
+                            {
+                                Id = $"Conversation_{id}_Entry_{dialogueEntryId}_EndHeadline",
+                                Offset = 0,
+                                Text = headline,
+                                Loaded = headline,
+                                Translation = headline
+                            };
+
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                            result.Add(subtitle);
+
+                            text = text.Replace("<NewLine>", "\\n").Replace("\\\"", "\"");
+                            subtitle = new DiscoElysiumSubtitle
+                            {
+                                Id = $"Conversation_{id}_Entry_{dialogueEntryId}_EndText",
+                                Offset = 0,
+                                Text = text,
+                                Loaded = text,
+                                Translation = text
+                            };
+
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                            result.Add(subtitle);    
+
+                            match = match.NextMatch();
+                        }
+                    }
 
                     // onExecute
                     input.Skip(0x04);
@@ -375,7 +414,7 @@
 
             int actorCount = input.ReadInt32();
             output.Write(actorCount);
-            for (var i = 0; i < actorCount; i++)
+            for (int i = 0; i < actorCount; i++)
             {
                 int id = input.ReadInt32();
                 output.Write(id);
@@ -383,7 +422,7 @@
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -419,7 +458,7 @@
 
             int itemCount = input.ReadInt32();
             output.Write(itemCount);
-            for (var i = 0; i < itemCount; i++)
+            for (int i = 0; i < itemCount; i++)
             {
                 int id = input.ReadInt32();
                 output.Write(id);
@@ -427,7 +466,7 @@
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -464,7 +503,7 @@
 
             int locationCount = input.ReadInt32();
             output.Write(locationCount);
-            for (var i = 0; i < locationCount; i++)
+            for (int i = 0; i < locationCount; i++)
             {
                 int id = input.ReadInt32();
                 output.Write(id);
@@ -472,7 +511,7 @@
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -505,7 +544,7 @@
 
             int variableCount = input.ReadInt32();
             output.Write(variableCount);
-            for (var i = 0; i < variableCount; i++)
+            for (int i = 0; i < variableCount; i++)
             {
                 int id = input.ReadInt32();
                 output.Write(id);
@@ -513,7 +552,7 @@
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -546,7 +585,7 @@
 
             int conversationCount = input.ReadInt32();
             output.Write(conversationCount);
-            for (var i = 0; i < conversationCount; i++)
+            for (int i = 0; i < conversationCount; i++)
             {
                 int id = input.ReadInt32();
                 output.Write(id);
@@ -554,7 +593,7 @@
                 output.Write(fieldCount);
 
                 var fields = new Dictionary<string, Field>(fieldCount);
-                for (var j = 0; j < fieldCount; j++)
+                for (int j = 0; j < fieldCount; j++)
                 {
                     var field = new Field();
                     field.Title = input.ReadStringSerialized(0x04);
@@ -589,7 +628,7 @@
 
                 // ConversationOverrideDisplaySettings
                 output.Write(input.ReadBytes(0x28));
-                for (var j = 0; j < 3; j++)
+                for (int j = 0; j < 3; j++)
                 {
                     output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04);
                 }
@@ -601,7 +640,7 @@
                 // DialogueEntry
                 int dialogueEntryCount = input.ReadInt32();
                 output.Write(dialogueEntryCount);
-                for (var j = 0; j < dialogueEntryCount; j++)
+                for (int j = 0; j < dialogueEntryCount; j++)
                 {
                     int dialogueEntryId = input.ReadInt32();
                     output.Write(dialogueEntryId);
@@ -609,7 +648,7 @@
                     output.Write(fieldCount2);
 
                     var fields2 = new Dictionary<string, Field>(fieldCount2);
-                    for (var k = 0; k < fieldCount2; k++)
+                    for (int k = 0; k < fieldCount2; k++)
                     {
                         var field = new Field();
                         field.Title = input.ReadStringSerialized(0x04);
@@ -655,8 +694,39 @@
 
                     output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04); // conditionsString
                     string userScript = input.ReadStringSerialized(0x04); // userScript
-                    output.WriteStringSerialized(userScript, 0x04);
-                    // TODO: Comprobar si hay que traducir el userScript
+
+                    if (userScript.StartsWith("NewspaperEndgame("))
+                    {
+                        var regex = new Regex(@"NewspaperEndgame\(""(?<Id>[^""]+)"",""(?<Headline>[^""]+)"",""(?<Text>[^""\\]*(?:\\.[^""\\]*)*)""\)");
+                        Match match = regex.Match(userScript);
+
+                        while (match.Success)
+                        {
+                            string endId = match.Groups["Id"].Value;
+                        
+                            string headlineKey = $"Conversation_{id}_Entry_{dialogueEntryId}_EndHeadline";
+                            string textKey = $"Conversation_{id}_Entry_{dialogueEntryId}_EndText";
+
+                            if (!dictionary.ContainsKey(headlineKey) || !dictionary.ContainsKey(textKey))
+                            {
+                                output.WriteStringSerialized(userScript, 0x04);
+                            }
+                            else
+                            {
+                                DiscoElysiumSubtitle headline = dictionary[headlineKey];
+                                DiscoElysiumSubtitle text = dictionary[textKey];
+
+                                string escapedText = text.Translation.Replace("\"", "\\\"").Replace("\\n", "<NewLine>");
+                                output.WriteStringSerialized($@"NewspaperEndgame(""{endId}"",""{headline}"",""{escapedText}"")");
+                            }
+
+                            match = match.NextMatch();
+                        }
+                    }
+                    else
+                    {
+                        output.WriteStringSerialized(userScript, 0x04);
+                    }
 
                     // onExecute
                     output.Write(input.ReadBytes(0x04));
@@ -669,7 +739,7 @@
                 output.Write(input.ReadBytes(0x04)); // canvasZoom
             }
 
-            var remainderLength = (int) (input.Length - input.Position);
+            int remainderLength = (int) (input.Length - input.Position);
             byte[] remainder = input.ReadBytes(remainderLength);
             output.Write(remainder);
         }
