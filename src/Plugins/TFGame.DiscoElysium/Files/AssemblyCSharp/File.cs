@@ -35,13 +35,17 @@
                     continue;
                 }
 
-                var str = (string) instr.Operand;
+                string str = (string) instr.Operand;
 
                 var subtitle = new Subtitle {Text = str, Loaded = str, Translation = str, Offset = i};
                 subtitle.PropertyChanged += SubtitlePropertyChanged;
                 result.Add(subtitle);
                 i++;
             }
+
+            var agentSubtitle = new Subtitle {Text = "Tutorial Agent", Loaded = "Tutorial Agent", Translation = "Tutorial Agent", Offset = i};
+            agentSubtitle.PropertyChanged += SubtitlePropertyChanged;
+            result.Add(agentSubtitle);
 
             result.Sort();
             LoadChanges(result);
@@ -75,7 +79,7 @@
                             continue;
                         }
 
-                        var str = (string) instr.Operand;
+                        string str = (string) instr.Operand;
 
                         if (dict.TryGetValue(str, out string translation))
                         {
