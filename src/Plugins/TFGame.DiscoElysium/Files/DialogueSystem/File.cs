@@ -703,7 +703,7 @@
                         while (match.Success)
                         {
                             string endId = match.Groups["Id"].Value;
-                        
+
                             string headlineKey = $"Conversation_{id}_Entry_{dialogueEntryId}_EndHeadline";
                             string textKey = $"Conversation_{id}_Entry_{dialogueEntryId}_EndText";
 
@@ -717,7 +717,7 @@
                                 DiscoElysiumSubtitle text = dictionary[textKey];
 
                                 string escapedText = text.Translation.Replace("\"", "\\\"").Replace("\\n", "<NewLine>");
-                                output.WriteStringSerialized($@"NewspaperEndgame(""{endId}"",""{headline}"",""{escapedText}"")");
+                                output.WriteStringSerialized($@"NewspaperEndgame(""{endId}"",""{headline}"",""{escapedText}"")", 0x04);
                             }
 
                             match = match.NextMatch();
