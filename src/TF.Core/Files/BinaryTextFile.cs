@@ -349,18 +349,24 @@ namespace TF.Core.Files
                     dictionary[GetContext(subtitle)] = subtitle;
                 }
 
-                if (parallel)
+                void UpdateSubtitleFromPoEntry(PoEntry entry)
                 {
-                    Parallel.ForEach(po.Entries, entry =>
+                    string context = entry.Context;
+                    if (!dictionary.TryGetValue(context, out Subtitle subtitle))
                     {
-                        string context = entry.Context;
-                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                    if (entry.Original == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                    {
+                        subtitle.Translation = subtitle.Text;
+                    }
+                    else
+                    {
+                        if (entry.Original.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding) !=
+                            subtitle.Text)
                         {
+                            // El texto original de la entrada no coincide con el del subtítulo, así que no podemos aplicar la traducción
                             subtitle.Translation = subtitle.Text;
                         }
                         else
@@ -370,29 +376,18 @@ namespace TF.Core.Files
                                 ? subtitle.Text
                                 : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
                         }
-                    });
+                    }
+                }
+
+                if (parallel)
+                {
+                    Parallel.ForEach(po.Entries, UpdateSubtitleFromPoEntry);
                 }
                 else
                 {
                     foreach (PoEntry entry in po.Entries)
                     {
-                        string context = entry.Context;
-                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
-                        {
-                            return;
-                        }
-
-                        if (entry.Text == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
-                        {
-                            subtitle.Translation = subtitle.Text;
-                        }
-                        else
-                        {
-                            string translation = entry.Translated;
-                            subtitle.Translation = string.IsNullOrEmpty(translation)
-                                ? subtitle.Text
-                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
-                        }
+                        UpdateSubtitleFromPoEntry(entry);
                     }
                 }
             }

@@ -11,7 +11,7 @@
     {
         public override string Id => "111967dd-effc-47bc-a8cb-bf3e11d61439";
         public override string Name => "Disco Elysium";
-        public override string Description => "Build Id: 4335117";
+        public override string Description => "Build Id: 4341685";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/m-1618/art/Disco-Elysium-Game-Icon-512x512--748478143
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
