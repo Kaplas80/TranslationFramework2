@@ -163,6 +163,7 @@
     <Compile Include="Entities\TranslationFile.cs" />
     <Compile Include="Entities\TranslationFileContainer.cs" />
     <Compile Include="Exceptions\UserCancelException.cs" />
+    <Compile Include="Files\BinaryTextFileWithIds.cs" />
     <Compile Include="Files\BinaryTextFileWithOffsetTable.cs" />
     <Compile Include="Files\DDS2File.cs" />
     <Compile Include="Files\ImageFile.cs" />
@@ -179,9 +180,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TranslationEntities\FixedLengthSubtitle.cs" />
+    <Compile Include="Views\GridViewWithId.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="TranslationEntities\PlainText.cs" />
     <Compile Include="TranslationEntities\Subtitle.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="TranslationEntities\SubtitleWithId.cs" />
     <Compile Include="Views\FontView.cs">
       <SubType>Form</SubType>
     </Compile>

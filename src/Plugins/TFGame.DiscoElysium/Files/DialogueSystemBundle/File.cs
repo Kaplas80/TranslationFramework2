@@ -5,7 +5,6 @@
     using System.Linq;
     using TF.Core.TranslationEntities;
     using TF.IO;
-    using TFGame.DiscoElysium.Files.Common;
 
     public class File : DialogueSystem.File
     {
@@ -35,9 +34,9 @@
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
             var subtitles = GetSubtitles();
-            var subs = subtitles.Select(subtitle => subtitle as DiscoElysiumSubtitle).ToList();
-            var dictionary = new Dictionary<string, DiscoElysiumSubtitle>(subs.Count);
-            foreach (DiscoElysiumSubtitle subtitle in subs)
+            var subs = subtitles.Select(subtitle => subtitle as SubtitleWithId).ToList();
+            var dictionary = new Dictionary<string, SubtitleWithId>(subs.Count);
+            foreach (SubtitleWithId subtitle in subs)
             {
                 dictionary.Add(subtitle.Id, subtitle);
             }

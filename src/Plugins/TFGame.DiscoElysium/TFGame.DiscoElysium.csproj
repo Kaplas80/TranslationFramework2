@@ -41,10 +41,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DockPanelSuite.3.1.0-beta3\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-    </Reference>
     <Reference Include="Yarhl, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Yarhl.3.0.0-alpha08\lib\net461\Yarhl.dll</HintPath>
     </Reference>
@@ -55,14 +51,9 @@
   <ItemGroup>
     <Compile Include="Encoding.cs" />
     <Compile Include="Files\AssemblyCSharp\File.cs" />
-    <Compile Include="Files\Common\DiscoElysiumTextFile.cs" />
     <Compile Include="Files\DialogueSystemBundle\File.cs" />
     <Compile Include="Files\DialogueSystem\File.cs" />
     <Compile Include="Files\I2Text\File.cs" />
-    <Compile Include="Files\Common\GridView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Files\Common\DiscoElysiumSubtitle.cs" />
     <Compile Include="Files\UnityFsFile.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
     <Compile Include="Files\UnityUIText\File.cs" />

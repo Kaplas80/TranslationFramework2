@@ -4,13 +4,13 @@
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using TF.Core.Files;
     using TF.Core.TranslationEntities;
     using TF.IO;
-    using TFGame.DiscoElysium.Files.Common;
     using Yarhl.IO;
     using Yarhl.Media.Text;
 
-    public class File : DiscoElysiumTextFile
+    public class File : BinaryTextFileWithIds
     {
         public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
@@ -62,7 +62,7 @@
                     {
                         if (!string.IsNullOrEmpty(field.Value))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            var subtitle = new SubtitleWithId
                             {
                                 Id = $"Actor_{id}_{translatableField}",
                                 Offset = 0,
@@ -110,7 +110,7 @@
                     {
                         if (!string.IsNullOrEmpty(field.Value))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            var subtitle = new SubtitleWithId
                             {
                                 Id = $"Item_{id}_{translatableField}",
                                 Offset = 0,
@@ -151,7 +151,7 @@
                     {
                         if (!string.IsNullOrEmpty(field.Value))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            var subtitle = new SubtitleWithId
                             {
                                 Id = $"Location_{id}_{translatableField}",
                                 Offset = 0,
@@ -192,7 +192,7 @@
                     {
                         if (!string.IsNullOrEmpty(field.Value))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            var subtitle = new SubtitleWithId
                             {
                                 Id = $"Variable_{id}_{translatableField}",
                                 Offset = 0,
@@ -236,7 +236,7 @@
                     {
                         if (!string.IsNullOrEmpty(field.Value))
                         {
-                            var subtitle = new DiscoElysiumSubtitle
+                            var subtitle = new SubtitleWithId
                             {
                                 Id = $"Conversation_{id}_{translatableField}",
                                 Offset = 0,
@@ -292,7 +292,7 @@
                         {
                             if (!string.IsNullOrEmpty(field.Value))
                             {
-                                var subtitle = new DiscoElysiumSubtitle
+                                var subtitle = new SubtitleWithId
                                 {
                                     Id = $"Conversation_{id}_Entry_{dialogueEntryId}_{translatableField}",
                                     Offset = 0,
@@ -329,7 +329,7 @@
                             string headline = match.Groups["Headline"].Value;
                             string text = match.Groups["Text"].Value;
                         
-                            var subtitle = new DiscoElysiumSubtitle
+                            var subtitle = new SubtitleWithId
                             {
                                 Id = $"Conversation_{id}_Entry_{dialogueEntryId}_EndHeadline",
                                 Offset = 0,
@@ -342,7 +342,7 @@
                             result.Add(subtitle);
 
                             text = text.Replace("<NewLine>", "\\n").Replace("\\\"", "\"");
-                            subtitle = new DiscoElysiumSubtitle
+                            subtitle = new SubtitleWithId
                             {
                                 Id = $"Conversation_{id}_Entry_{dialogueEntryId}_EndText",
                                 Offset = 0,
@@ -380,9 +380,9 @@
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
             IList<Subtitle> subtitles = GetSubtitles();
-            List<DiscoElysiumSubtitle> subs = subtitles.Select(subtitle => subtitle as DiscoElysiumSubtitle).ToList();
-            var dictionary = new Dictionary<string, DiscoElysiumSubtitle>(subs.Count);
-            foreach (DiscoElysiumSubtitle subtitle in subs)
+            List<SubtitleWithId> subs = subtitles.Select(subtitle => subtitle as SubtitleWithId).ToList();
+            var dictionary = new Dictionary<string, SubtitleWithId>(subs.Count);
+            foreach (SubtitleWithId subtitle in subs)
             {
                 dictionary.Add(subtitle.Id, subtitle);
             }
@@ -397,7 +397,7 @@
         }
 
         protected void Rebuild(ExtendedBinaryReader input, ExtendedBinaryWriter output,
-            Dictionary<string, DiscoElysiumSubtitle> dictionary)
+            Dictionary<string, SubtitleWithId> dictionary)
         {
             string version = input.ReadStringSerialized(0x04);
             output.WriteStringSerialized(version, 0x04);
@@ -440,7 +440,7 @@
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
                         string key = $"Actor_{id}_{kvp.Value.Title}";
-                        DiscoElysiumSubtitle subtitle = dictionary[key];
+                        SubtitleWithId subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -488,7 +488,7 @@
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
                         string key = $"Item_{id}_{kvp.Value.Title}";
-                        DiscoElysiumSubtitle subtitle = dictionary[key];
+                        SubtitleWithId subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -529,7 +529,7 @@
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
                         string key = $"Location_{id}_{kvp.Value.Title}";
-                        DiscoElysiumSubtitle subtitle = dictionary[key];
+                        SubtitleWithId subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -570,7 +570,7 @@
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
                         string key = $"Variable_{id}_{kvp.Value.Title}";
-                        DiscoElysiumSubtitle subtitle = dictionary[key];
+                        SubtitleWithId subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -614,7 +614,7 @@
                     if (translatableFields.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                     {
                         string key = $"Conversation_{id}_{kvp.Value.Title}";
-                        DiscoElysiumSubtitle subtitle = dictionary[key];
+                        SubtitleWithId subtitle = dictionary[key];
                         output.WriteStringSerialized(subtitle.Translation, 0x04);
                     }
                     else
@@ -670,7 +670,7 @@
                         if (translatableFields2.Contains(kvp.Value.Title) && !string.IsNullOrEmpty(kvp.Value.Value))
                         {
                             string key = $"Conversation_{id}_Entry_{dialogueEntryId}_{kvp.Value.Title}";
-                            DiscoElysiumSubtitle subtitle = dictionary[key];
+                            SubtitleWithId subtitle = dictionary[key];
                             output.WriteStringSerialized(subtitle.Translation, 0x04);
                         }
                         else
@@ -713,8 +713,8 @@
                             }
                             else
                             {
-                                DiscoElysiumSubtitle headline = dictionary[headlineKey];
-                                DiscoElysiumSubtitle text = dictionary[textKey];
+                                SubtitleWithId headline = dictionary[headlineKey];
+                                SubtitleWithId text = dictionary[textKey];
 
                                 string escapedText = text.Translation.Replace("\"", "\\\"").Replace("\\n", "<NewLine>");
                                 output.WriteStringSerialized($@"NewspaperEndgame(""{endId}"",""{headline}"",""{escapedText}"")", 0x04);

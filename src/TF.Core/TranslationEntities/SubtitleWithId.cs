@@ -1,17 +1,15 @@
-﻿using TF.Core.TranslationEntities;
-
-namespace TFGame.DiscoElysium.Files.Common
+﻿namespace TF.Core.TranslationEntities
 {
-    public class DiscoElysiumSubtitle : Subtitle
+    public class SubtitleWithId : Subtitle
     {
         public string Id { get; set; }
 
-        public DiscoElysiumSubtitle() : base()
+        public SubtitleWithId() : base()
         {
 
         }
 
-        public DiscoElysiumSubtitle(Subtitle s) : base()
+        public SubtitleWithId(Subtitle s) : base()
         {
             Offset = s.Offset;
             Text = s.Text;

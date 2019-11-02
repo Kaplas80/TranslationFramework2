@@ -84,7 +84,9 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\I2Text\File.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
+    <Compile Include="Files\UnityUIText\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -93,13 +95,16 @@
       <Project>{14bb172a-b3d4-4237-82ab-8fef4e9ab8cd}</Project>
       <Name>TF.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
+      <Project>{4f0d7226-fa20-4fe3-a523-336702654e02}</Project>
+      <Name>TF.IO</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="UnityEX.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

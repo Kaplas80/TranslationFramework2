@@ -358,7 +358,7 @@
     <value>False</value>
   </data>
   <data name="mniEditSearchInFiles.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Mayús.+F</value>
+    <value>Ctrl+Shift+F</value>
   </data>
   <data name="mniEditSearchInFiles.Size" type="System.Drawing.Size, System.Drawing">
     <value>317, 26</value>
