@@ -10,9 +10,11 @@ namespace TFGame.TrailsSky.Files.MSDT
     public class File : BinaryTextFile
     {
         protected virtual byte[] SearchPattern => new byte[] { 0x00, 0x00, 0x00, 0x08 };
+        private System.Text.Encoding customEncoding;
 
         public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
+            customEncoding = new Encoding();
         }
 
         protected override IList<Subtitle> GetSubtitles()
@@ -20,10 +22,10 @@ namespace TFGame.TrailsSky.Files.MSDT
             var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fs, FileEncoding))
+            using (var input = new ExtendedBinaryReader(fs, customEncoding))
             {
                 var patternPos = new List<int>();
-                var pos = input.FindPattern(SearchPattern);
+                int pos = input.FindPattern(SearchPattern);
                 while (pos != -1)
                 {
                     patternPos.Add(pos);
@@ -33,12 +35,12 @@ namespace TFGame.TrailsSky.Files.MSDT
                 if (patternPos.Count > 0)
                 {
                     input.Seek(patternPos[patternPos.Count - 1] + 3, SeekOrigin.Begin);
-                    var count = input.ReadByte();
+                    byte count = input.ReadByte();
 
-                    for (var i = 0; i < count; i++)
+                    for (int i = 0; i < count; i++)
                     {
                         input.Skip(0x1C);
-                        var txt = ReadSubtitle(input);
+                        Subtitle txt = ReadSubtitle(input);
                         if (!string.IsNullOrWhiteSpace(txt.Text))
                         {
                             txt.PropertyChanged += SubtitlePropertyChanged;
@@ -54,7 +56,7 @@ namespace TFGame.TrailsSky.Files.MSDT
                     }
 
                     input.Skip(4);
-                    var subtitle = ReadSubtitle(input);
+                    Subtitle subtitle = ReadSubtitle(input);
                     if (!string.IsNullOrWhiteSpace(subtitle.Text))
                     {
                         subtitle.PropertyChanged += SubtitlePropertyChanged;
@@ -77,18 +79,18 @@ namespace TFGame.TrailsSky.Files.MSDT
 
         public override void Rebuild(string outputFolder)
         {
-            var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
+            string outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
-            var subtitles = GetSubtitles();
+            IList<Subtitle> subtitles = GetSubtitles();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
-            using (var input = new ExtendedBinaryReader(fsInput, FileEncoding))
+            using (var input = new ExtendedBinaryReader(fsInput, customEncoding))
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
-            using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding))
+            using (var output = new ExtendedBinaryWriter(fsOutput, customEncoding))
             {
                 var patternPos = new List<int>();
-                var pos = input.FindPattern(SearchPattern);
+                int pos = input.FindPattern(SearchPattern);
                 while (pos != -1)
                 {
                     patternPos.Add(pos);
@@ -100,15 +102,15 @@ namespace TFGame.TrailsSky.Files.MSDT
                     input.Seek(0, SeekOrigin.Begin);
                     output.Write(input.ReadBytes(patternPos[patternPos.Count - 1] + 3));
 
-                    var count = input.ReadByte();
+                    byte count = input.ReadByte();
                     output.Write(count);
 
-                    for (var i = 0; i < count; i++)
+                    for (int i = 0; i < count; i++)
                     {
                         output.Write(input.ReadBytes(0x1C));
-                        var txt = ReadSubtitle(input);
+                        Subtitle txt = ReadSubtitle(input);
 
-                        var sub = subtitles.FirstOrDefault(x => x.Offset == txt.Offset);
+                        Subtitle sub = subtitles.FirstOrDefault(x => x.Offset == txt.Offset);
                         output.WriteString(sub != null ? sub.Translation : txt.Text);
 
                         txt = ReadSubtitle(input);
@@ -117,8 +119,8 @@ namespace TFGame.TrailsSky.Files.MSDT
                     }
 
                     output.Write(input.ReadBytes(4));
-                    var subtitle = ReadSubtitle(input);
-                    var sub2 = subtitles.FirstOrDefault(x => x.Offset == subtitle.Offset);
+                    Subtitle subtitle = ReadSubtitle(input);
+                    Subtitle sub2 = subtitles.FirstOrDefault(x => x.Offset == subtitle.Offset);
                     output.WriteString(sub2 != null ? sub2.Translation : subtitle.Text);
 
                     subtitle = ReadSubtitle(input);
@@ -127,6 +129,5 @@ namespace TFGame.TrailsSky.Files.MSDT
                 }
             }
         }
-
     }
 }
