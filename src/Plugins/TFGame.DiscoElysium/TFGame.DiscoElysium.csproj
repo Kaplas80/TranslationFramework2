@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AssetsTools.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\AssetsTools.NET.dll</HintPath>
-    </Reference>
     <Reference Include="dnlib, Version=3.2.0.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
       <HintPath>..\..\packages\dnlib.3.2.0\lib\net45\dnlib.dll</HintPath>
     </Reference>
@@ -75,6 +71,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ExternalLibs\AssetsToolsWrapper\AssetsToolsWrapper.vcxproj">
+      <Project>{568043f3-6180-4926-bd29-4d44a08ecc22}</Project>
+      <Name>AssetsToolsWrapper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">
       <Project>{14bb172a-b3d4-4237-82ab-8fef4e9ab8cd}</Project>
       <Name>TF.Core</Name>
@@ -95,12 +95,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DiscoElysiumDatabase.dat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Resources\Icon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="AssetsTools.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
