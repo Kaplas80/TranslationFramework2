@@ -11,14 +11,14 @@ namespace TFGame.HardcoreMecha.Files
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
 
-            RunUnityEx("export", "-t -110,-12,ttf,crn,dds", copyPath);
+            RunUnityEx("export", "-mb_new -t -111,-12,ttf,crn,dds", copyPath);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
             var copyPath = Path.Combine(inputFolder, Path.GetFileName(outputPath));
 
-            RunUnityEx("import", string.Empty, copyPath);
+            RunUnityEx("import", "-mb_new", copyPath);
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);

@@ -1,4 +1,4 @@
-﻿namespace TFGame.DiscoElysium.Files.Common
+﻿namespace TF.Core.Views
 {
     using System.Collections.Generic;
     using System.Drawing;
@@ -7,9 +7,9 @@
     using TF.Core.Entities;
     using TF.Core.TranslationEntities;
 
-    public class GridView : TF.Core.Views.GridView
+    public class GridViewWithId : GridView
     {
-        public GridView(TranslationFile file) : base(file)
+        public GridViewWithId(TranslationFile file) : base(file)
         {
         }
 
@@ -19,8 +19,8 @@
 
             SubtitleGridView.AutoGenerateColumns = false;
 
-            var subs = new List<DiscoElysiumSubtitle>(_subtitles.Count);
-            subs.AddRange(_subtitles.Select(subtitle => subtitle as DiscoElysiumSubtitle));
+            var subs = new List<SubtitleWithId>(_subtitles.Count);
+            subs.AddRange(_subtitles.Select(subtitle => subtitle as SubtitleWithId));
 
             SubtitleGridView.DataSource = subs;
 

@@ -13,7 +13,7 @@ namespace TFGame.HardcoreMecha
     {
         public override string Id => "201fd831-c546-4022-be11-e5e9493d0c8b";
         public override string Name => "HARDCORE MECHA";
-        public override string Description => "Build Id: 4086834";
+        public override string Description => "Build Id: 4297470";
         public override Image Icon => Resources.Icon;
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -39,27 +39,18 @@ namespace TFGame.HardcoreMecha
             var ddsSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "*SDF*.dds;CrimsonFlame_Melee?_*.dds;Cuirassier_Melee?_*.dds;Deca-Destry-*.tex.dds;Enigma_*.tex.dds;Geier_Melee?_*.tex.dds;Haldberd_Melee?_*.tex.dds;JumpInTip_*.tex.dds;KnellA3_Melee?_*.tex.dds;Mech_*.tex.dds;MecSelectionTips_*.tex.dds;Melee_*.tex.dds;NvLiu_*.tex.dds;Penta-Destroy-*.tex.dds;Pilot_*.tex.dds;PilotFragMech_*.tex.dds;Ready_*.tex.dds;RoundHammer_Melee?_*.tex.dds;SafehouseReached_*.tex.dds;Select Menu Info*.tex.dds;TakehitoSoeda_*.tex.dds;Team?icon.tex.dds;Thanks*.tex.dds;ThunderBolt_Melee?_*.tex.dds;Title_LOGO*.tex.dds;Viperid_Melee?_*.tex.dds;WeaponTips_*.tex.dds;Wpn_*.tex.dds;You.tex.dds",
+                SearchPattern = "Begin.tex.crn.dds;BossBattle.tex.dds;CrimsonFlame_Melee?_*.dds;Cuirassier_Melee?_*.dds;Deca-Destroy-*.tex.dds;Enigma_*.tex.dds;Geier_Melee?_*.tex.dds;Halberd_Melee?_*.tex.dds;JumpInTip_*.tex.dds;KnellA3_Melee?_*.tex.dds;LouikyMu_*.tex.dds;Mech_*.tex.dds;MecSelectionTips_*.tex.dds;Melee_*.tex.dds;NvLiu_*.tex.dds;Penta-Destroy-*.tex.dds;Pilot_*.tex.dds;PilotFragMech_*.tex.dds;Ready_*.tex.dds;RoundHammer_Melee?_*.tex.dds;SafehouseReached_*.tex.dds;Select Menu Info*.tex.dds;TakehitoSoeda_*.tex.dds;Team?icon.tex.dds;Thanks*.tex.dds;ThunderBolt_Melee?_*.tex.dds;Title_LOGO*.tex.dds;Triple-Destroy_*.tex.dds;Viperid_Melee?_*.tex.dds;WeaponTips_*.tex.dds;Wpn_*.tex.dds;You.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
-            };
-
-            var crnSearch = new GameFileSearch()
-            {
-                RelativePath = @".",
-                SearchPattern = "Begin.tex.crn",
-                IsWildcard = false,
-                RecursiveSearch = true,
-                FileType = typeof(Files.CrunchDDS.File)
+                FileType = typeof(UnityGame.Files.Texture2D.File)
             };
 
             var textSearch = new GameFileSearch()
             {
-                RelativePath = @".",
-                SearchPattern = "resources_00001.-110",
+                RelativePath = @"Unity_Assets_Files\resources\Mono\Assembly-CSharp\I2.Loc",
+                SearchPattern = "I2Languages_SELFNAME.LanguageSourceAsset",
                 IsWildcard = false,
-                RecursiveSearch = true,
+                RecursiveSearch = false,
                 FileType = typeof(Files.I2Text.File)
             };
 
@@ -70,17 +61,16 @@ namespace TFGame.HardcoreMecha
             };
             resources.FileSearches.Add(fontSearch);
             resources.FileSearches.Add(ddsSearch);
-            resources.FileSearches.Add(crnSearch);
             resources.FileSearches.Add(textSearch);
 
             result.Add(resources);
 
             var languageSearch = new GameFileSearch()
             {
-                RelativePath = @".",
-                SearchPattern = "level2_00002.-12",
+                RelativePath = @"Unity_Assets_Files\level2\Mono\Assembly-CSharp\CHC.Utilities.UI",
+                SearchPattern = "LanguageSelector.CHCLanguageSelector",
                 IsWildcard = false,
-                RecursiveSearch = true,
+                RecursiveSearch = false,
                 FileType = typeof(Files.Language.File)
             };
 
@@ -96,21 +86,12 @@ namespace TFGame.HardcoreMecha
             ddsSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "comingsoon.tex.dds;*SDF*.dds;RPlogo.tex.dds;UnityWwiseLogo.tex.dds",
+                SearchPattern = "comingsoon.tex.dds;Loading.tex.crn.dds;RPlogo.tex.dds;UnityWwiseLogo.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(UnityGame.Files.Texture2D.File)
             };
 
-            crnSearch = new GameFileSearch
-            {
-                RelativePath = @".",
-                SearchPattern = "Loading.tex.crn",
-                IsWildcard = false,
-                RecursiveSearch = true,
-                FileType = typeof(Files.CrunchDDS.File)
-            };
-            
             var sharedAssets0 = new GameFileContainer
             {
                 Path = @"CHC_Data\sharedAssets0.assets",
@@ -118,7 +99,6 @@ namespace TFGame.HardcoreMecha
             };
             sharedAssets0.FileSearches.Add(fontSearch);
             sharedAssets0.FileSearches.Add(ddsSearch);
-            sharedAssets0.FileSearches.Add(crnSearch);
 
             result.Add(sharedAssets0);
 
@@ -128,7 +108,7 @@ namespace TFGame.HardcoreMecha
                 SearchPattern = "Ctrl_*.tex.dds;Keyboard_*.tex.dds;Xbox_*.tex.dds;",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(UnityGame.Files.Texture2D.File)
             };
 
             var sharedAssets5 = new GameFileContainer
@@ -146,7 +126,7 @@ namespace TFGame.HardcoreMecha
                 SearchPattern = "Storage.tex.dds",
                 IsWildcard = false,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(UnityGame.Files.Texture2D.File)
             };
 
             var sharedAssets7 = new GameFileContainer
@@ -161,56 +141,46 @@ namespace TFGame.HardcoreMecha
             ddsSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "Settlement?.tex.dds",
+                SearchPattern = "LevelUp.tex.crn.dds;Settlement?.tex.dds;Settlement?.tex.crn.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(UnityGame.Files.Texture2D.File)
             };
 
-            crnSearch = new GameFileSearch
+            var sharedAssets15 = new GameFileContainer
+            {
+                Path = @"CHC_Data\sharedAssets15.assets",
+                Type = ContainerType.CompressedFile
+            };
+            sharedAssets15.FileSearches.Add(ddsSearch);
+
+            result.Add(sharedAssets15);
+
+            ddsSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "Settlement?.tex.crn",
+                SearchPattern = "BigComputer.tex.crn.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.CrunchDDS.File)
+                FileType = typeof(UnityGame.Files.Texture2D.File)
             };
-            
-            var sharedAssets14 = new GameFileContainer
+
+            var sharedAssets70 = new GameFileContainer
             {
-                Path = @"CHC_Data\sharedAssets14.assets",
+                Path = @"CHC_Data\sharedAssets70.assets",
                 Type = ContainerType.CompressedFile
             };
-            sharedAssets14.FileSearches.Add(ddsSearch);
-            sharedAssets14.FileSearches.Add(crnSearch);
+            sharedAssets70.FileSearches.Add(ddsSearch);
 
-            result.Add(sharedAssets14);
-
-            crnSearch = new GameFileSearch
-            {
-                RelativePath = @".",
-                SearchPattern = "BigComputer.tex.crn",
-                IsWildcard = false,
-                RecursiveSearch = true,
-                FileType = typeof(Files.CrunchDDS.File)
-            };
-            
-            var sharedAssets68 = new GameFileContainer
-            {
-                Path = @"CHC_Data\sharedAssets68.assets",
-                Type = ContainerType.CompressedFile
-            };
-            sharedAssets68.FileSearches.Add(crnSearch);
-
-            result.Add(sharedAssets68);
+            result.Add(sharedAssets70);
 
             return result.ToArray();
         }
 
         public override void ExtractFile(string inputFile, string outputPath)
         {
-            var fileName = Path.GetFileName(inputFile);
-            var extension = Path.GetExtension(inputFile);
+            string fileName = Path.GetFileName(inputFile);
+            string extension = Path.GetExtension(inputFile);
 
             if (AllowedExtensions.Contains(extension))
             {
@@ -220,8 +190,8 @@ namespace TFGame.HardcoreMecha
 
         public override void RepackFile(string inputPath, string outputFile, bool compress)
         {
-            var fileName = Path.GetFileName(outputFile);
-            var extension = Path.GetExtension(outputFile);
+            string fileName = Path.GetFileName(outputFile);
+            string extension = Path.GetExtension(outputFile);
 
             if (AllowedExtensions.Contains(extension))
             {
@@ -231,31 +201,50 @@ namespace TFGame.HardcoreMecha
 
         public override void PreprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
         {
-            if (container.Type == ContainerType.CompressedFile)
+            if (container.Type != ContainerType.CompressedFile)
             {
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
+                return;
+            }
 
-                var inputFolder = Path.GetDirectoryName(containerPath);
-                var files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
-                foreach (var file in files)
-                {
-                    var outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
-                    File.Copy(file, outputFilePath);
-                }
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(containerPath);
+
+            string inputFolder = Path.GetDirectoryName(containerPath);
+            IEnumerable<string> files = Directory.EnumerateFiles(inputFolder, $"{fileNameWithoutExtension}.*");
+            foreach (string file in files)
+            {
+                string outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
+                File.Copy(file, outputFilePath);
+            }
+
+            files = Directory.EnumerateFiles(inputFolder, "globalgamemanagers.*");
+            foreach (string file in files)
+            {
+                string outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
+                File.Copy(file, outputFilePath);
+            }
+
+            Directory.CreateDirectory(Path.Combine(extractionPath, "Resources"));
+            files = Directory.EnumerateFiles(Path.Combine(inputFolder, "Resources"), "*.*");
+            foreach (string file in files)
+            {
+                string outputFilePath = Path.Combine(extractionPath, "Resources", Path.GetFileName(file));
+                File.Copy(file, outputFilePath);
             }
         }
 
         public override void PostprocessContainer(TranslationFileContainer container, string containerPath, string extractionPath)
         {
-            if (container.Type == ContainerType.CompressedFile)
+            if (container.Type != ContainerType.CompressedFile)
             {
-                var extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*", SearchOption.AllDirectories);
-                foreach (var file in extractedFiles)
+                return;
+            }
+
+            string[] extractedFiles = Directory.GetFiles(Path.Combine(extractionPath, "Unity_Assets_Files"), "*.*", SearchOption.AllDirectories);
+            foreach (string file in extractedFiles)
+            {
+                if (container.Files.All(x => x.Path != file))
                 {
-                    if (container.Files.All(x => x.Path != file) && !file.EndsWith("mplus-1m-regular.ttf") && !file.EndsWith("resources_00001.-13"))
-                    {
-                        File.Delete(file);
-                    }
+                    File.Delete(file);
                 }
             }
         }

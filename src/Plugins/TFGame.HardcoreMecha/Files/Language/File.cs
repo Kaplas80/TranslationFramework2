@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TF.Core.Files;
-using TF.Core.TranslationEntities;
-using TF.IO;
-
-namespace TFGame.HardcoreMecha.Files.Language
+﻿namespace TFGame.HardcoreMecha.Files.Language
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using TF.Core.Files;
+    using TF.Core.TranslationEntities;
+    using TF.IO;
+
     public class File : BinaryTextFile
     {
         public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
@@ -19,14 +19,13 @@ namespace TFGame.HardcoreMecha.Files.Language
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding))
             {
-                input.Skip(0x1A0);
-                var length = input.ReadInt32();
-                var sub = input.ReadBytes(length);
-                var str = FileEncoding.GetString(sub);
+                input.Skip(0x180);
+
+                string str = input.ReadStringSerialized(0x04);
 
                 var subtitle = new Subtitle
                 {
-                    Offset = 0x1A0,
+                    Offset = 0x180,
                     Text = str,
                     Loaded = str,
                     Translation = str
@@ -43,30 +42,26 @@ namespace TFGame.HardcoreMecha.Files.Language
 
         public override void Rebuild(string outputFolder)
         {
-            var outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
+            string outputPath = System.IO.Path.Combine(outputFolder, RelativePath);
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outputPath));
 
-            var subtitles = GetSubtitles();
+            IList<Subtitle> subtitles = GetSubtitles();
 
             using (var fsInput = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fsInput, FileEncoding))
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
             using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding))
             {
-                output.Write(input.ReadBytes(0x1A0));
+                output.Write(input.ReadBytes(0x180));
                 
-                var length = input.ReadInt32();
-                input.ReadBytes(length);
-                input.SkipPadding(0x04);
+                string str = input.ReadStringSerialized(0x04);
                 
-                var sub = subtitles.First(x => x.Offset == 0x1A0);
-                var data = FileEncoding.GetBytes(sub.Translation);
-                output.Write(data.Length);
-                output.Write(data);
-                output.WritePadding(0x04);
+                Subtitle sub = subtitles.First(x => x.Offset == 0x180);
 
-                var remainderLength = (int)(input.Length - input.Position);
-                var remainder = input.ReadBytes(remainderLength);
+                output.WriteStringSerialized(sub.Translation, 0x04);
+
+                int remainderLength = (int)(input.Length - input.Position);
+                byte[] remainder = input.ReadBytes(remainderLength);
                 output.Write(remainder);
             }
         }
