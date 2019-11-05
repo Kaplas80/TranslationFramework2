@@ -18,8 +18,7 @@
             if (outputFile.EndsWith(".crn.dds"))
             {
                 // Elimino el .crn para dejar solo el .dds
-                string crnFile = outputFile.Replace(".crn.dds", ".crn");
-                System.IO.File.Delete(crnFile);
+                System.IO.File.Delete(outputFile);
 
                 outputFile = outputFile.Replace(".crn.dds", ".dds");
             }

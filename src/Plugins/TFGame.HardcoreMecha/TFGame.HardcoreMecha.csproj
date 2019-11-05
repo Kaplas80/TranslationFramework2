@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoding.cs" />
-    <Compile Include="Files\CrunchDDS\File.cs" />
     <Compile Include="Files\I2Text\File.cs" />
     <Compile Include="Files\Language\File.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
