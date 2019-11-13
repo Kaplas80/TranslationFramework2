@@ -10,7 +10,7 @@ namespace TFGame.TrailsSky.Files.MSDT
     public class File : BinaryTextFile
     {
         protected virtual byte[] SearchPattern => new byte[] { 0x00, 0x00, 0x00, 0x08 };
-        private System.Text.Encoding customEncoding;
+        private readonly System.Text.Encoding customEncoding;
 
         public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {

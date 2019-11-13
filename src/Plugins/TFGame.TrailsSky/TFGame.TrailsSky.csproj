@@ -116,12 +116,15 @@
     <Compile Include="Files\Images\Argb4444ImageFile.cs" />
     <Compile Include="Files\Images\Argb1555ImageFile.cs" />
     <Compile Include="Files\Images\ImageType3.cs" />
+    <Compile Include="Files\Images\ImageType8.cs" />
+    <Compile Include="Files\Images\ImageType7.cs" />
     <Compile Include="Files\Images\ImageType6.cs" />
     <Compile Include="Files\Images\ImageType5.cs" />
     <Compile Include="Files\Images\ImageType4.cs" />
     <Compile Include="Files\Images\ImageType2.cs" />
     <Compile Include="Files\Images\ImageType1.cs" />
     <Compile Include="Files\Images\AbstractImageFile.cs" />
+    <Compile Include="Files\MNSNOTE2\Encoding.cs" />
     <Compile Include="Files\MNSNOTE2\File.cs" />
     <Compile Include="Files\MSDT\Encoding.cs" />
     <Compile Include="Files\MSDT\File2.cs" />
