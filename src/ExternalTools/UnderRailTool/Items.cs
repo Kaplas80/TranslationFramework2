@@ -4,12 +4,13 @@ namespace UnderRailTool
 {
     public static class Items
     {
+        // "I" class = bqj
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<dpp>(gameFile, true);
+            var model = FileManager.Load<bqj>(gameFile, true);
 
-            var name = model.a2();
-            var description = model.aw();
+            string name = model.aw();
+            string description = model.ax();
 
             var result = new Dictionary<string, string>(2);
             if (!string.IsNullOrEmpty(name))
@@ -25,16 +26,16 @@ namespace UnderRailTool
             return result;
         }
 
-        public static dpp SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static bqj SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<dpp>(gameFile, true);
+            var model = FileManager.Load<bqj>(gameFile, true);
 
-            if (texts.TryGetValue("Name", out var name))
+            if (texts.TryGetValue("Name", out string name))
             {
-                model.j(name);
+                model.f(name);
             }
 
-            if (texts.TryGetValue("Description", out var description))
+            if (texts.TryGetValue("Description", out string description))
             {
                 model.h(description);
             }

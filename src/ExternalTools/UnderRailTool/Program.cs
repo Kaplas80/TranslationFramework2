@@ -5,6 +5,8 @@ using System.Linq;
 
 namespace UnderRailTool
 {
+    using System.Reflection;
+
     class Program
     {
         static void Main(string[] args)
@@ -27,13 +29,15 @@ namespace UnderRailTool
 
         private static void Initialize()
         {
+            // Search for "Initializing assembly resolver" in underrail.exe
             var assemblyResolver = new AssemblyResolver();
             assemblyResolver.b(true);
             assemblyResolver.a(true);
-            assemblyResolver.nt();
+            assemblyResolver.nz();
             assemblyResolver.e();
 
-            var fieldInfo = typeof(co0).GetField("a");
+            // This is the assignment after "Creating data model element type map"
+            FieldInfo fieldInfo = typeof(cp3).GetField("a");
             fieldInfo.SetValue(null, assemblyResolver);
         }
 
@@ -45,35 +49,35 @@ namespace UnderRailTool
             {
                 case ".udlg":
                 {
-                    var texts = Dialogs.GetSubtitles(gameFile);
+                    Dictionary<string, string> texts = Dialogs.GetSubtitles(gameFile);
 
                     WriteTexts(texts, outputFile);
                     break;
                 }
                 case ".k":
                 {
-                    var texts = Knowledge.GetSubtitles(gameFile);
+                    Dictionary<string, string> texts = Knowledge.GetSubtitles(gameFile);
 
                     WriteTexts(texts, outputFile);
                     break;
                 }
                 case ".item":
                 {
-                    var texts = Items.GetSubtitles(gameFile);
+                    Dictionary<string, string> texts = Items.GetSubtitles(gameFile);
 
                     WriteTexts(texts, outputFile);
                     break;
                 }
                 case ".uz":
                 {
-                    var texts = Zone.GetSubtitles(gameFile);
+                    Dictionary<string, string> texts = Zone.GetSubtitles(gameFile);
 
                     WriteTexts(texts, outputFile);
                     break;
                 }
                 case ".uzl":
                 {
-                    var texts = ZoneLayer.GetSubtitles(gameFile);
+                    Dictionary<string, string> texts = ZoneLayer.GetSubtitles(gameFile);
 
                     WriteTexts(texts, outputFile);
                     break;
@@ -102,36 +106,36 @@ namespace UnderRailTool
             {
                 case ".udlg":
                 {
-                    var texts = ReadTexts(textsFile);
-                    var model = Dialogs.SetSubtitles(gameFile, texts);
+                    Dictionary<string, string> texts = ReadTexts(textsFile);
+                    aqq model = Dialogs.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, false);
                     break;
                 }
                 case ".k":
                 {
-                    var texts = ReadTexts(textsFile);
-                    var model = Knowledge.SetSubtitles(gameFile, texts);
+                    Dictionary<string, string> texts = ReadTexts(textsFile);
+                    aj8 model = Knowledge.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
                 case ".item":
                 {
-                    var texts = ReadTexts(textsFile);
-                    var model = Items.SetSubtitles(gameFile, texts);
+                    Dictionary<string, string> texts = ReadTexts(textsFile);
+                    bqj model = Items.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
                 case ".uz":
                 {
-                    var texts = ReadTexts(textsFile);
-                    var model = Zone.SetSubtitles(gameFile, texts);
+                    Dictionary<string, string> texts = ReadTexts(textsFile);
+                    cfs model = Zone.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
                 case ".uzl":
                 {
-                    var texts = ReadTexts(textsFile);
-                    var model = ZoneLayer.SetSubtitles(gameFile, texts);
+                    Dictionary<string, string> texts = ReadTexts(textsFile);
+                    cy3 model = ZoneLayer.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
@@ -140,13 +144,13 @@ namespace UnderRailTool
 
         private static Dictionary<string, string> ReadTexts(string inputFile)
         {
-            var lines = File.ReadAllLines(inputFile);
+            string[] lines = File.ReadAllLines(inputFile);
 
             var result = new Dictionary<string, string>(lines.Length);
 
-            foreach (var line in lines)
+            foreach (string line in lines)
             {
-                var split = line.Split(new[] {"<Split>"}, StringSplitOptions.None);
+                string[] split = line.Split(new[] {"<Split>"}, StringSplitOptions.None);
                 result.Add(split[0], split[1].Replace("\\r", "\r").Replace("\\n", "\n"));
             }
 

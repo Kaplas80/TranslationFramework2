@@ -5,32 +5,34 @@ namespace UnderRailTool
 {
     public static class Zone
     {
+        // "Z" class = cfs
+        // "UEA" class = dsg
+        // "SYJ" class = bwg
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<ces>(gameFile, true);
-
+            var model = FileManager.Load<cfs>(gameFile, true);
             var result = new Dictionary<string, string>();
 
-            foreach (var area in model.Areas)
+            foreach (ama area in model.Areas)
             {
-                foreach (var entity in area.Entities)
+                foreach (bko entity in area.Entities)
                 {
-                    var id = entity.n2().ToString();
-                    var name = entity.nb();
+                    string id = entity.n6().ToString(); // base get "I"
+                    string name = entity.nj(); // base get "N"
                     if (!string.IsNullOrEmpty(name))
                     {
                         result.Add(id, name);
                     }
 
-                    foreach (var aspect in entity.Aspects)
+                    foreach (b4y aspect in entity.Aspects)
                     {
-                        if (!(aspect is dqx dqxAspect))
+                        if (!(aspect is dsg translatableAspect))
                         {
                             continue;
                         }
 
-                        var jobs = dqxAspect.r();
-                        foreach (var text in jobs.OfType<bvz>().Select(job => job.a()).Where(text => !string.IsNullOrEmpty(text)))
+                        List<cd6> jobs = translatableAspect.r();
+                        foreach (string text in jobs.OfType<bwg>().Select(job => job.a()).Where(text => !string.IsNullOrEmpty(text)))
                         {
                             result.Add($"Job-{id}", text);
                         }
@@ -41,38 +43,38 @@ namespace UnderRailTool
             return result;
         }
 
-        public static ces SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static cfs SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<ces>(gameFile, true);
+            var model = FileManager.Load<cfs>(gameFile, true);
 
-            foreach (var area in model.Areas)
+            foreach (ama area in model.Areas)
             {
-                foreach (var entity in area.Entities)
+                foreach (bko entity in area.Entities)
                 {
-                    var id = entity.n2().ToString();
-                    if (texts.TryGetValue(id, out var name))
+                    string id = entity.n6().ToString();
+                    if (texts.TryGetValue(id, out string name))
                     {
                         entity.q(name);
                     }
 
-                    foreach (var aspect in entity.Aspects)
+                    foreach (b4y aspect in entity.Aspects)
                     {
-                        if (!(aspect is dqx dqxAspect))
+                        if (!(aspect is dsg translatableAspect))
                         {
                             continue;
                         }
 
-                        var jobs = dqxAspect.r();
-                        foreach (var job in jobs)
+                        List<cd6> jobs = translatableAspect.r();
+                        foreach (cd6 job in jobs)
                         {
-                            if (!(job is bvz bvzJob))
+                            if (!(job is bwg translatableJob))
                             {
                                 continue;
                             }
 
-                            if (texts.TryGetValue($"Job-{id}", out var text))
+                            if (texts.TryGetValue($"Job-{id}", out string text))
                             {
-                                bvzJob.a(text);
+                                translatableJob.a(text);
                             }
                         }
                     }

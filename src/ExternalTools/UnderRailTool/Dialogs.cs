@@ -4,23 +4,27 @@ namespace UnderRailTool
 {
     public static class Dialogs
     {
+        // "DM" class = aqq
+        // "CE" class = dd2
+        // "Q" class = yz
+        // "SE" class = c74
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<ap0>(gameFile, false);
+            var model = FileManager.Load<aqq>(gameFile, false);
 
             return GetSubtitles(model);
         }
 
-        public static ap0 SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static aqq SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<ap0>(gameFile, false);
+            var model = FileManager.Load<aqq>(gameFile, false);
 
             SetSubtitles(model, texts);
 
             return model;
         }
 
-        private static Dictionary<string, string> GetSubtitles(ap0 model)
+        private static Dictionary<string, string> GetSubtitles(aqq model)
         {
             var result = new Dictionary<string, string>();
 
@@ -31,15 +35,15 @@ namespace UnderRailTool
 
             var processed = new Dictionary<string, bool>();
 
-            var queue = new Queue<dcr>();
+            var queue = new Queue<dd2>();
 
-            var startElement = model.b();
+            dd2 startElement = model.b();
 
             queue.Enqueue(startElement);
 
             while (queue.Count > 0)
             {
-                var current = queue.Dequeue();
+                dd2 current = queue.Dequeue();
                 if (processed.ContainsKey(current.Name))
                 {
                     continue;
@@ -47,30 +51,30 @@ namespace UnderRailTool
 
                 switch (current)
                 {
-                    case cu7 question:
+                    case yz question:
                     {
-                        var dict = question.d(); // LocalizedTexts
+                        Dictionary<string, string> dict = question.d(); // LocalizedTexts
 
                         if (dict.Count > 0 && !result.ContainsKey(question.Name))
                         {
-                            var str = dict["English"];
+                            string str = dict["English"];
                             result.Add(question.Name, str);
                         }
 
-                        foreach (var answer in question.PossibleAnswers)
+                        foreach (dpy answer in question.PossibleAnswers)
                         {
                             queue.Enqueue(answer);
                         }
 
                         break;
                     }
-                    case c6z storyElement:
+                    case c74 storyElement:
                     {
-                        var dict = storyElement.d();
+                        Dictionary<string, string> dict = storyElement.d();
 
                         if (dict.Count > 0 && !result.ContainsKey(storyElement.Name))
                         {
-                            var str = dict["English"];
+                            string str = dict["English"];
                             result.Add(storyElement.Name, str);
                         }
 
@@ -78,7 +82,7 @@ namespace UnderRailTool
                     }
                 }
 
-                foreach (var step in current.PossibleNextSteps)
+                foreach (dd2 step in current.PossibleNextSteps)
                 {
                     queue.Enqueue(step);
                 }
@@ -89,17 +93,17 @@ namespace UnderRailTool
             return result;
         }
 
-        private static void SetSubtitles(ap0 model, Dictionary<string, string> dictionary)
+        private static void SetSubtitles(aqq model, Dictionary<string, string> dictionary)
         {
             var processed = new Dictionary<string, bool>();
-            var queue = new Queue<dcr>();
-            var startElement = model.b();
+            var queue = new Queue<dd2>();
+            dd2 startElement = model.b();
 
             queue.Enqueue(startElement);
 
             while (queue.Count > 0)
             {
-                var current = queue.Dequeue();
+                dd2 current = queue.Dequeue();
                 if (processed.ContainsKey(current.Name))
                 {
                     continue;
@@ -107,30 +111,30 @@ namespace UnderRailTool
 
                 switch (current)
                 {
-                    case cu7 question:
+                    case yz question:
                     {
-                        var dict = question.d();
+                        Dictionary<string, string> dict = question.d();
 
                         if (dictionary.ContainsKey(question.Name))
                         {
-                            var str = dictionary[question.Name];
+                            string str = dictionary[question.Name];
                             dict["English"] = str;
                         }
 
-                        foreach (var answer in question.PossibleAnswers)
+                        foreach (dpy answer in question.PossibleAnswers)
                         {
                             queue.Enqueue(answer);
                         }
 
                         break;
                     }
-                    case c6z storyElement:
+                    case c74 storyElement:
                     {
-                        var dict = storyElement.d();
+                        Dictionary<string, string> dict = storyElement.d();
 
                         if (dictionary.ContainsKey(storyElement.Name))
                         {
-                            var str = dictionary[storyElement.Name];
+                            string str = dictionary[storyElement.Name];
                             dict["English"] = str;
                         }
 
@@ -138,7 +142,7 @@ namespace UnderRailTool
                     }
                 }
 
-                foreach (var step in current.PossibleNextSteps)
+                foreach (dd2 step in current.PossibleNextSteps)
                 {
                     queue.Enqueue(step);
                 }

@@ -3,19 +3,21 @@ using System.IO;
 
 namespace UnderRailTool
 {
-    public class AssemblyResolver : aiu
+    // Search for "Initializing assembly resolver"
+    // I have to make this class because the one in Underrail.exe is internal
+    public class AssemblyResolver : ajl
     {
         public AssemblyResolver() : base(113)
         {
         }
 
-        protected override Dictionary<string, SearchOption> m9()
+        protected override Dictionary<string, SearchOption> anq()
         {
             var dictionary = new Dictionary<string, SearchOption>();
-            var ddi = c0t.e();
-            if (ddi != null)
+            dex dex = c1y.e();
+            if (dex != null)
             {
-                dictionary.Add(ddi.v6(), SearchOption.TopDirectoryOnly);
+                dictionary.Add(dex.vw(), SearchOption.TopDirectoryOnly);
             }
             return dictionary;
         }

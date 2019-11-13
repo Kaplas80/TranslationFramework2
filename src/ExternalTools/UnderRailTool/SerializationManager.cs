@@ -34,12 +34,12 @@ namespace UnderRailTool
 
         public static void Dump(string input, string output, bool tryToRetrieveDataModelVersion = false)
         {
-            using (var fileStream = File.OpenRead(input))
-            using (var fileStream2 = File.OpenWrite(output))
+            using (FileStream fileStream = File.OpenRead(input))
+            using (FileStream fileStream2 = File.OpenWrite(output))
             {
                 if (tryToRetrieveDataModelVersion)
                 {
-                    var dataModelVersion = RetrieveDataModelVersion(fileStream);
+                    long dataModelVersion = RetrieveDataModelVersion(fileStream);
                     EmbedDataModelVersion(fileStream2, dataModelVersion);
                 }
 

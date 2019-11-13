@@ -4,18 +4,19 @@ namespace UnderRailTool
 {
     public static class ZoneLayer
     {
+        // "ZL" class = cy3
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<cx0>(gameFile, true);
+            var model = FileManager.Load<cy3>(gameFile, true);
 
             var result = new Dictionary<string, string>();
 
-            foreach (var area in model.e())
+            foreach (b5t area in model.e()) // _AreaLayers
             {
-                foreach (var entity in area.Entities)
+                foreach (bko entity in area.Entities)
                 {
-                    var id = entity.n2().ToString();
-                    var name = entity.nb();
+                    string id = entity.n6().ToString();
+                    string name = entity.nj();
                     if (!string.IsNullOrEmpty(name))
                     {
                         result.Add(id, name);
@@ -26,16 +27,16 @@ namespace UnderRailTool
             return result;
         }
 
-        public static cx0 SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static cy3 SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<cx0>(gameFile, true);
+            var model = FileManager.Load<cy3>(gameFile, true);
 
-            foreach (var area in model.e())
+            foreach (b5t area in model.e())
             {
-                foreach (var entity in area.Entities)
+                foreach (bko entity in area.Entities)
                 {
-                    var id = entity.n2().ToString();
-                    if (texts.TryGetValue(id, out var name))
+                    string id = entity.n6().ToString();
+                    if (texts.TryGetValue(id, out string name))
                     {
                         entity.q(name);
                     }

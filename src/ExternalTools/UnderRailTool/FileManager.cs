@@ -6,6 +6,7 @@ namespace UnderRailTool
 {
     public static class FileManager
     {
+        // Search for "DeserializeFromBinaryFile" in underrail.exe
         public static T Load<T>(string path, bool isCompressed)
         {
             if (File.Exists(path))
@@ -14,11 +15,11 @@ namespace UnderRailTool
                 {
                     if (!isCompressed)
                     {
-                        return dsj.DeserializeFromBinaryFile<T>(path, co0.a(), true);
+                        return dt2.DeserializeFromBinaryFile<T>(path, cp3.a(), true);
                     }
                     else
                     {
-                        return dsj.DeserializeFromBinaryFileCompressed<T>(path, co0.a(), true);
+                        return dt2.DeserializeFromBinaryFileCompressed<T>(path, cp3.a(), true);
                     }
                 }
                 catch (Exception e)
@@ -32,17 +33,17 @@ namespace UnderRailTool
 
         public static void Save<T>(T model, string path, bool isCompressed)
         {
-            var directory = Path.GetDirectoryName(path);
+            string directory = Path.GetDirectoryName(path);
             Directory.CreateDirectory(directory);
             try
             {
                 if (!isCompressed)
                 {
-                    dsj.SerializeToBinaryFile(path, model, co0.a(), dm3.b(), true);
+                    dt2.SerializeToBinaryFile(path, model, cp3.a(), doe.b(), true);
                 }
                 else
                 {
-                    dsj.SerializeToBinaryFileCompressed(path, model, co0.a(), dm3.b(), true);
+                    dt2.SerializeToBinaryFileCompressed(path, model, cp3.a(), doe.b(), true);
                 }
             }
             catch (Exception e)
@@ -54,7 +55,7 @@ namespace UnderRailTool
 
         public static void Dump(string inputPath, string outputPath)
         {
-            var directory = Path.GetDirectoryName(outputPath);
+            string directory = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(directory);
             if (File.Exists(inputPath))
             {

@@ -43,8 +43,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="underrail">
-      <HintPath>H:\Steam\steamapps\common\Underrail\underrail.exe</HintPath>
+    <Reference Include="underrail, Version=0.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>H:\Games\Underrail\underrail.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
