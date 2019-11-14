@@ -16,22 +16,12 @@ namespace TFGame.TrailsSky.Files.MNSNOTE2
         {
             DecodingReplacements = new List<Tuple<string, string>>
             {
-                //new Tuple<string, string>("\\n", "<LineBreak>"),
-                //new Tuple<string, string>("\u0026", "É"), //&
-                //new Tuple<string, string>("\u0027", "Í"), //'
-                //new Tuple<string, string>("\u003B", "á"), //;
-                //new Tuple<string, string>("\u005C", "é"), //\
-                //new Tuple<string, string>("\u005E", "í"), //^
-                //new Tuple<string, string>("\u005F", "ó"), //_
-                //new Tuple<string, string>("\u0060", "ú"), //`
-                //new Tuple<string, string>("\u007B", "ü"), //{
-                //new Tuple<string, string>("\u007D", "ñ"), //}
-                //new Tuple<string, string>("\u007E", "¡"), //~
-                //new Tuple<string, string>("\u007F", "¿"), //DEL
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
             {
+                new Tuple<string, string>("\\n", "\n"),
+
                 new Tuple<string, string>("É", "\u0026"), //&
                 new Tuple<string, string>("Í", "\u0027"), //'
                 new Tuple<string, string>("á", "\u003B"), //;
@@ -45,7 +35,6 @@ namespace TFGame.TrailsSky.Files.MNSNOTE2
                 new Tuple<string, string>("¿", "\u007F"), //DEL
 
                 new Tuple<string, string>("\u8140", "\u0020"),
-                new Tuple<string, string>("\n", "\\n"),
             };
         }
 
