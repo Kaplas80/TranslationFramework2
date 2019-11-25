@@ -34,7 +34,10 @@ namespace YakuzaGame.Files.StringTbl
                     {
                         var subtitle = ReadSubtitle(input);
                         subtitle.PropertyChanged += SubtitlePropertyChanged;
-                        result.Add(subtitle);
+                        if (subtitle.Offset > 0)
+                        {
+                            result.Add(subtitle);
+                        }
                     }
                     input.Seek(returnPos, SeekOrigin.Begin);
                 }
