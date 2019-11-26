@@ -29,7 +29,10 @@ namespace YakuzaGame.Files.Restaurant
                 {
                     subtitle = ReadSubtitle(input);
                     subtitle.PropertyChanged += SubtitlePropertyChanged;
-                    result.Add(subtitle);
+                    if (subtitle.Offset > 0)
+                    {
+                        result.Add(subtitle);
+                    }
                 }
 
                 input.Seek(0x110, SeekOrigin.Begin);
@@ -45,7 +48,10 @@ namespace YakuzaGame.Files.Restaurant
 
                     subtitle = ReadSubtitle(input, offsets[8], false);
                     subtitle.PropertyChanged += SubtitlePropertyChanged;
-                    result.Add(subtitle);
+                    if (subtitle.Offset > 0)
+                    {
+                        result.Add(subtitle);
+                    }
 
                     input.Seek(returnPos, SeekOrigin.Begin);
                 }
