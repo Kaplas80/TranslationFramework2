@@ -8,6 +8,8 @@ using TFGame.PhoenixWrightTrilogy.Files;
 
 namespace TFGame.PhoenixWrightTrilogy
 {
+    using System.Linq;
+
     public class Game : UnityGame.Game
     {
         public override string Id => "762580b0-6bf3-49df-8d09-d6b8804b79c6";
@@ -65,15 +67,16 @@ namespace TFGame.PhoenixWrightTrilogy
                 SearchPattern = "*.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(DDS2File)
             };
 
             var etc = new GameFileContainerSearch
             {
-                RelativePath = $@"PWAAT_Data\StreamingAssets\{scenario.ToUpper()}\etc",
+                RelativePath = $@"PWAAT_Data\StreamingAssets\{scenario.ToUpper()}",
                 TypeSearch = ContainerType.CompressedFile,
-                RecursiveSearch = false,
-                SearchPattern = "*u.unity3d"
+                RecursiveSearch = true,
+                SearchPattern = "*.unity3d",
+                Exclusions = { "AnimationDictionaries", "Movie", "science", "OtherInclusions", },
             };
 
             etc.FileSearches.Add(ddsSearch);
@@ -121,7 +124,7 @@ namespace TFGame.PhoenixWrightTrilogy
                 SearchPattern = "*.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(DDS2File)
             };
 
             var images = new GameFileContainerSearch
@@ -129,8 +132,8 @@ namespace TFGame.PhoenixWrightTrilogy
                 RelativePath = $@"PWAAT_Data\StreamingAssets",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = true,
-                SearchPattern = "*u.unity3d",
-                Exclusions = { "science" }
+                SearchPattern = "*.unity3d",
+                Exclusions = { "GS1", "GS2", "GS3", "Sound" }
             };
 
             images.FileSearches.Add(ddsSearch);
@@ -149,7 +152,22 @@ namespace TFGame.PhoenixWrightTrilogy
             var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
-            if (extension.StartsWith(".unity3d"))
+            var unencryptedFiles = new[]
+            {
+                "film01_confront.unity3d", 
+                "film02_confront.unity3d",
+            };
+            
+            if (!extension.StartsWith(".unity3d"))
+            {
+                return;
+            }
+
+            if (unencryptedFiles.Contains(fileName))
+            {
+                Unity3DFile.Extract(inputFile, outputPath);
+            }
+            else
             {
                 EncryptedUnity3DFile.Extract(inputFile, outputPath);
             }
@@ -160,7 +178,22 @@ namespace TFGame.PhoenixWrightTrilogy
             var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
-            if (extension.StartsWith(".unity3d"))
+            var unencryptedFiles = new[]
+            {
+                "film01_confront.unity3d", 
+                "film02_confront.unity3d",
+            };
+
+            if (!extension.StartsWith(".unity3d"))
+            {
+                return;
+            }
+
+            if (unencryptedFiles.Contains(fileName))
+            {
+                Unity3DFile.Repack(inputPath, outputFile, compress);
+            }
+            else
             {
                 EncryptedUnity3DFile.Repack(inputPath, outputFile, compress);
             }
