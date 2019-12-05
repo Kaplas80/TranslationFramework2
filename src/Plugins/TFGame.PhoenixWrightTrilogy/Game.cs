@@ -14,7 +14,7 @@ namespace TFGame.PhoenixWrightTrilogy
     {
         public override string Id => "762580b0-6bf3-49df-8d09-d6b8804b79c6";
         public override string Name => "Phoenix Wright: Ace Attorney Trilogy";
-        public override string Description => "Build Id: 3633830";
+        public override string Description => "Build Id: 4185660";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Phoenix-Wright-Ace-Attorney-Trilogy-793438577
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => Encoding.Unicode;
@@ -76,7 +76,7 @@ namespace TFGame.PhoenixWrightTrilogy
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = true,
                 SearchPattern = "*.unity3d",
-                Exclusions = { "AnimationDictionaries", "Movie", "science", "OtherInclusions", },
+                Exclusions = { "3D", "AnimationDictionaries", "Movie", "science", "OtherInclusions", },
             };
 
             etc.FileSearches.Add(ddsSearch);
@@ -133,7 +133,7 @@ namespace TFGame.PhoenixWrightTrilogy
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = true,
                 SearchPattern = "*.unity3d",
-                Exclusions = { "GS1", "GS2", "GS3", "Sound" }
+                Exclusions = { "GS1", "GS2", "GS3", "Sound", "InternationalFiles" }
             };
 
             images.FileSearches.Add(ddsSearch);
