@@ -45,6 +45,7 @@
             if (_currentDDS != null && !_currentDDS.IsDisposed)
             {
                 _currentDDS.Dispose();
+                _currentDDS = null;
             }
         
             _currentDDS = GetScratchImage();
@@ -53,6 +54,9 @@
             Directory.CreateDirectory(directory);
 
             _currentDDS.SaveToDDSFile(DDS_FLAGS.NONE, filename);
+
+            _currentDDS.Dispose();
+            _currentDDS = null;
         }
 
         protected virtual ScratchImage GetScratchImage()

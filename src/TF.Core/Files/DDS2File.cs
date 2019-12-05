@@ -75,6 +75,7 @@
             if (_currentDDS != null && !_currentDDS.IsDisposed)
             {
                 _currentDDS.Dispose();
+                _currentDDS = null;
             }
         
             _currentDDS = GetScratchImage();
@@ -96,6 +97,9 @@
             {
                 _currentDDS.SaveToWICFile(0, WIC_FLAGS.NONE, codec, filename);
             }
+
+            _currentDDS.Dispose();
+            _currentDDS = null;
         }
 
         public override string GetExportFilename()
