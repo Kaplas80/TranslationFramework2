@@ -42,6 +42,8 @@ namespace TFGame.TheMissing.Files.Txt
 
         private readonly Font _cellFont;
 
+        private static object _lock = new object();
+
         public override int SubtitleCount
         {
             get
@@ -241,7 +243,7 @@ namespace TFGame.TheMissing.Files.Txt
         {
             var result = new Dictionary<int, SizeF[]>();
             var file = System.IO.Path.Combine(path, "resources_00001.-13");
-            using (var fs = new FileStream(file, FileMode.Open))
+            using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read))
             using (var input = new ExtendedBinaryReader(fs))
             {
                 input.BaseStream.Seek(0x150, SeekOrigin.Begin);
@@ -337,13 +339,16 @@ namespace TFGame.TheMissing.Files.Txt
                 }
             }
 
-            WriteBoxSizes(System.IO.Path.GetDirectoryName(outputPath), subtitles);
+            lock (_lock)
+            {
+                WriteBoxSizes(System.IO.Path.GetDirectoryName(outputPath), subtitles);
+            }
         }
 
         private static void WriteBoxSizes(string path, IList<Subtitle> subtitles)
         {
             var file = System.IO.Path.Combine(path, "resources_00001.-13");
-            using (var fs = new FileStream(file, FileMode.Open))
+            using (var fs = new FileStream(file, FileMode.Open, FileAccess.ReadWrite))
             using (var input = new ExtendedBinaryReader(fs))
             using (var output = new ExtendedBinaryWriter(fs))
             {
