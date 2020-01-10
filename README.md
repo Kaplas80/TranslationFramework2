@@ -33,7 +33,7 @@ Cuando el usuario termina la traducción, la aplicación reconstruye los fichero
 * [Phoenix Wright: Ace Attorney Trilogy](https://www.youtube.com/watch?v=bk_erh1OcO0)
   - Traducción de textos.
   - Modificación de scripts (no probado)
-  - Reemplazo de texturas. (no funciona correctamente)
+  - Reemplazo de texturas. (no modifica los .sprite, así que las imágenes se cortan)
 * [The Legend of Heroes: Trails in the Sky](http://www.clandlan.net/foros/topic/80576-the-legend-of-heroes-trails-in-the-sky/)
   - Traducción de textos.
   - Reemplazo de texturas.
@@ -50,6 +50,9 @@ Cuando el usuario termina la traducción, la aplicación reconstruye los fichero
 * [Hardcore Mecha](http://www.clandlan.net/foros/topic/80621-nueva-traduccion-hardcore-mecha/)
   - Traducción de textos.
   - Reemplazo de texturas.
+* Love Esquire
+  - Traducción de textos.
+  (NOTA: Para que funcione, hay que modificar previamente los ficheros vntext.sq y Assembly-CSharp.dll)
   
 ## Agradecimientos
 * Malaquito y Hazardous de [ClanDLAN](http://clandlan.net/foros/forum/3-traducciones-academia-de-sundabar/) por atreverse a hacer traducciones con mis herramientas xD

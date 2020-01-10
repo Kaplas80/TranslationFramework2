@@ -33,6 +33,11 @@ namespace TF.Core.TranslationEntities
 
         public int CompareTo(Subtitle other)
         {
+            return CompareToInternal(other);
+        }
+
+        protected virtual int CompareToInternal(Subtitle other)
+        {
             return Offset.CompareTo(other.Offset);
         }
     }
