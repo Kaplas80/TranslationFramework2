@@ -107,11 +107,9 @@
                 // FontData
                 output.Write(input.ReadBytes(0x04));
                 output.Write(input.ReadBytes(0x08));
-                int fontSize = input.ReadInt32();
-                output.Write(fontSize <= 0x00000012 ? 0x00000011 : fontSize);
+                output.Write(input.ReadBytes(0x04)); // FOnt size
                 output.Write(input.ReadBytes(0x04)); // Font style
-                input.ReadBytes(0x04);
-                output.Write(0x00000001); // Best Fit
+                output.Write(input.ReadBytes(0x04)); // Best Fit
                 output.Write(input.ReadBytes(0x04)); // Min size
                 output.Write(input.ReadBytes(0x04)); // Max size
                 output.Write(input.ReadBytes(0x04)); // Alignment
