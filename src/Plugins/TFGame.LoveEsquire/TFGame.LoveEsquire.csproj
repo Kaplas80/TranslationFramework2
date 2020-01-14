@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoding.cs" />
+    <Compile Include="Files\FocusObj\File.cs" />
     <Compile Include="Files\SqlText\File.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
     <Compile Include="Game.cs" />
@@ -77,6 +78,10 @@
     <ProjectReference Include="..\..\TF.Core\TF.Core.csproj">
       <Project>{14bb172a-b3d4-4237-82ab-8fef4e9ab8cd}</Project>
       <Name>TF.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TF.IO\TF.IO.csproj">
+      <Project>{4f0d7226-fa20-4fe3-a523-336702654e02}</Project>
+      <Name>TF.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityGame\UnityGame.csproj">
       <Project>{dd463e12-4f5e-464c-ab30-4531cc9251ab}</Project>

@@ -47,11 +47,10 @@
             var xmlSearch = new GameFileSearch
             {
                 RelativePath = @".",
-                SearchPattern = "*.xml",
+                SearchPattern = "*.xml;*.txt",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TextFile),
-                Exclusions = { "GalleryData.xml", "GirlPreferences.xml", }
             };
 
             var textfiles = new GameFileContainer
@@ -78,6 +77,54 @@
             };
             sqlText.FileSearches.Add(dbSearch);
             result.Add(sqlText);
+
+            var textuiSearch = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "*.Text_00001",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(UnityGame.Files.UnityUIText.File),
+            };
+
+            var focusObjSearch = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "*.ShowFocusObjWithDialogue",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.FocusObj.File),
+            };
+
+            var resources = new GameFileContainer
+            {
+                Path = @"Love Esquire_Data\resources.assets",
+                Type = ContainerType.CompressedFile
+            };
+            resources.FileSearches.Add(textuiSearch);
+            resources.FileSearches.Add(focusObjSearch);
+            result.Add(resources);
+
+            /*
+            var txtSearch = new GameFileSearch
+            {
+                RelativePath = @".",
+                SearchPattern = "*.xml;*.txt",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(TextFile),
+            };
+
+            var vnSearches = new GameFileContainerSearch
+            {
+                RelativePath = @"Love Esquire_Data\StreamingAssets\Windows\vnscenes",
+                RecursiveSearch = false,
+                SearchPattern = "*.",
+                TypeSearch = ContainerType.CompressedFile
+            };
+            vnSearches.FileSearches.Add(txtSearch);
+            result.AddRange(vnSearches.GetContainers(path));
+            */
 
             return result.ToArray();
         }
@@ -107,8 +154,6 @@
         public override void PreprocessContainer(TranslationFileContainer container, string containerPath,
             string extractionPath)
         {
-            var containerFolder = Path.GetDirectoryName(containerPath);
-
             if (container.Type != ContainerType.CompressedFile)
             {
                 return;
@@ -122,6 +167,24 @@
             {
                 string outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
                 File.Copy(file, outputFilePath);
+            }
+
+            if (Directory.Exists(Path.Combine(inputFolder, "Resources")))
+            {
+                files = Directory.EnumerateFiles(inputFolder, "globalgamemanagers.*");
+                foreach (string file in files)
+                {
+                    string outputFilePath = Path.Combine(extractionPath, Path.GetFileName(file));
+                    File.Copy(file, outputFilePath);
+                }
+
+                Directory.CreateDirectory(Path.Combine(extractionPath, "Resources"));
+                files = Directory.EnumerateFiles(Path.Combine(inputFolder, "Resources"), "*.*");
+                foreach (string file in files)
+                {
+                    string outputFilePath = Path.Combine(extractionPath, "Resources", Path.GetFileName(file));
+                    File.Copy(file, outputFilePath);
+                }
             }
         }
 

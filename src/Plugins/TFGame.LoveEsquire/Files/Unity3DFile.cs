@@ -11,14 +11,14 @@ namespace TFGame.LoveEsquire.Files
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
 
-            RunUnityEx("export", "-t -txt,xml", copyPath);
+            RunUnityEx("export", "-mb_new -t txt,xml,-181,-155", copyPath);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
             var copyPath = Path.Combine(inputFolder, Path.GetFileName(outputPath));
 
-            RunUnityEx("import", "", copyPath);
+            RunUnityEx("import", "-mb_new", copyPath);
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
