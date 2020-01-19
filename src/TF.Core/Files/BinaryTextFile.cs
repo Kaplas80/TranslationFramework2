@@ -190,6 +190,8 @@ namespace TF.Core.Files
                 return false;
             }
 
+            List<Subtitle> searchableSubs = _subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList();
+
             int i;
             int rowIndex;
             if (direction == 0)
@@ -199,38 +201,35 @@ namespace TF.Core.Files
             }
             else
             {
-                var (item1, item2) = _view.GetSelectedSubtitle();
-                i = _subtitles.IndexOf(item2) + direction;
+                (int item1, Subtitle item2) = _view.GetSelectedSubtitle();
+                i = searchableSubs.IndexOf(item2) + direction;
                 rowIndex = item1 + direction;
             }
 
-            var step = direction < 0 ? -1 : 1;
+            int step = direction < 0 ? -1 : 1;
 
-            var result = -1;
-            while (i >= 0 && i < _subtitles.Count)
+            int result = -1;
+            while (i >= 0 && i < searchableSubs.Count)
             {
-                var subtitle = _subtitles[i];
-                var original = subtitle.Text;
-                var translation = subtitle.Translation;
+                Subtitle subtitle = searchableSubs[i];
+                string original = subtitle.Text;
+                string translation = subtitle.Translation;
 
-                if (!string.IsNullOrWhiteSpace(original))
+                if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
                 {
-                    if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
-                    {
-                        result = rowIndex;
-                        break;
-                    }
-
-                    rowIndex += step;
+                    result = rowIndex;
+                    break;
                 }
+
+                rowIndex += step;
 
                 i += step;
             }
 
-            var found = i >= 0 && i < _subtitles.Count;
+            bool found = result >= 0;
             if (found)
             {
-                _view.DisplaySubtitle(rowIndex);
+                _view.DisplaySubtitle(result);
             }
 
             return found;
