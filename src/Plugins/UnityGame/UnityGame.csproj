@@ -79,11 +79,15 @@
     <Reference Include="DirectXTexNet, Version=1.0.0.4, Culture=neutral, PublicKeyToken=67e4f5ed452a4f5d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DirectXTexNet.1.0.0-rc4\lib\netstandard2.0\DirectXTexNet.dll</HintPath>
     </Reference>
+    <Reference Include="dnlib, Version=3.3.1.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\dnlib.3.3.1\lib\net45\dnlib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\DotNetExe\File.cs" />
     <Compile Include="Files\I2Text\File.cs" />
     <Compile Include="Files\Texture2D\File.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
@@ -108,6 +112,9 @@
     <Content Include="UnityEX.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

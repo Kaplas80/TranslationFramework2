@@ -12,7 +12,7 @@
     {
         public override string Id => "938fb146-8fca-4ddd-8111-2d60f2bf6239";
         public override string Name => "Love Esquire";
-        public override string Description => "Version: 1.1.1c\r\nNecesita el Assembly-CSharp.dll y el vntext.sq parcheados previamente.";
+        public override string Description => "Version: 1.1.1c\r\nNecesita el vntext.sq parcheado previamente.";
         public override Image Icon => Resources.Icon; 
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -26,6 +26,23 @@
         public override GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
+
+            var dllSearch = new GameFileSearch
+            {
+                RelativePath = @".",
+                SearchPattern = "Assembly-CSharp.dll",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(UnityGame.Files.DotNetExe.File)
+            };
+
+            var managed = new GameFileContainer
+            {
+                Path = @"Love Esquire_Data\Managed",
+                Type = ContainerType.Folder
+            };
+            managed.FileSearches.Add(dllSearch);
+            result.Add(managed);
 
             var subtitleSearch = new GameFileSearch
             {
@@ -105,6 +122,13 @@
             resources.FileSearches.Add(focusObjSearch);
             result.Add(resources);
 
+            var level2 = new GameFileContainer
+            {
+                Path = @"Love Esquire_Data\level2",
+                Type = ContainerType.CompressedFile
+            };
+            level2.FileSearches.Add(textuiSearch);
+            result.Add(level2);
             /*
             var txtSearch = new GameFileSearch
             {

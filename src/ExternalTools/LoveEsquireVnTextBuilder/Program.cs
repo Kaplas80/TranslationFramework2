@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Xml.Serialization;
+    using LoveEsquireVnTextBuilder.XmlClasses;
     using SQLite;
 
     class Program
@@ -20,6 +22,7 @@
 
             string resources = string.Concat(gameFolder, "resources.assets");
             string sharedAssets0 = string.Concat(gameFolder, "sharedassets0.assets");
+            string campaign = string.Concat(gameFolder, @"StreamingAssets\Windows\campaign");
 
             var dbConnection = new SQLiteConnection("vntext.sq");
             List<SQLiteConnection.ColumnInfo> tableInfo = dbConnection.GetTableInfo("localized_texts");
@@ -53,6 +56,13 @@
             File.Copy(sharedAssets0, fileName, true);
             RunUnityEx(fileName);
             ParseSharedAssets0TextFiles(dbConnection);
+            Directory.Delete("Unity_Assets_Files", true);
+            File.Delete(fileName);
+
+            fileName = Path.GetFileName(campaign);
+            File.Copy(campaign, fileName, true);
+            RunUnityEx(fileName);
+            ParseCampaignTextFiles(dbConnection);
             Directory.Delete("Unity_Assets_Files", true);
             File.Delete(fileName);
 
@@ -104,7 +114,7 @@
                         {
                             string token = split[5];
                             string text = split[3];
-                            dbConnection.Execute($"update localized_texts set EN='{text.Replace("'", "''")}' where TOKEN='{token.Replace("'", "''")}'");
+                            InsertData(token, text, dbConnection);
                         }
                     }
                     catch (IndexOutOfRangeException)
@@ -133,7 +143,7 @@
                         {
                             string token = split[3];
                             string text = split[2];
-                            dbConnection.Execute($"update localized_texts set EN='{text.Replace("'", "''")}' where TOKEN='{token.Replace("'", "''")}'");
+                            InsertData(token, text, dbConnection);
                         }
                     }
                     catch (IndexOutOfRangeException)
@@ -163,7 +173,7 @@
                         {
                             string token = split[3];
                             string text = split[2];
-                            dbConnection.Execute($"update localized_texts set EN='{text.Replace("'", "''")}' where TOKEN='{token.Replace("'", "''")}'");
+                            InsertData(token, text, dbConnection);
                         }
                     }
                     catch (IndexOutOfRangeException)
@@ -191,7 +201,7 @@
                         {
                             string token = split[3];
                             string text = split[2];
-                            dbConnection.Execute($"update localized_texts set EN='{text.Replace("'", "''")}' where TOKEN='{token.Replace("'", "''")}'");
+                            InsertData(token, text, dbConnection);
                         }
                     }
                     catch (IndexOutOfRangeException)
@@ -200,6 +210,94 @@
                 }
                 dbConnection.Commit();
             }
+        }
+
+        private static void ParseCampaignTextFiles(SQLiteConnection dbConnection)
+        {
+            string[] files = Directory.GetFiles("Unity_Assets_Files", "BanterData.xml", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                string textData = File.ReadAllText(file);
+                var textReader = new StringReader(textData);
+                var xmlSerializer = new XmlSerializer(typeof(BanterData));
+                var xml = (BanterData)xmlSerializer.Deserialize(textReader);
+
+                dbConnection.BeginTransaction();
+                foreach (BanterGroup dataGroup in xml.banterGroups)
+                {
+                    foreach (Dialogue data in dataGroup.starterDialogues)
+                    {
+                        string token = data.va;
+                        string text = data.line;
+                        InsertData(token, text, dbConnection);
+                    }
+
+                    foreach (Dialogue data in dataGroup.responseDialogues)
+                    {
+                        string token = data.va;
+                        string text = data.line;
+                        InsertData(token, text, dbConnection);
+                    }
+                }
+                dbConnection.Commit();
+            }
+
+            files = Directory.GetFiles("Unity_Assets_Files", "CampaignMapTalkData.xml", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                string textData = File.ReadAllText(file);
+                var textReader = new StringReader(textData);
+                var xmlSerializer = new XmlSerializer(typeof(CampaignMapTalkData));
+                var xml = (CampaignMapTalkData)xmlSerializer.Deserialize(textReader);
+
+                dbConnection.BeginTransaction();
+                foreach (CampaignMapTalkGroup dataGroup in xml.talkGroups)
+                {
+                    foreach (CampaignMapTalk data in dataGroup.campaignMapTalks)
+                    {
+                        string token = data.vaFile;
+                        string text = data.text;
+                        InsertData(token, text, dbConnection);
+                    }
+                }
+                dbConnection.Commit();
+            }
+
+            files = Directory.GetFiles("Unity_Assets_Files", "CampaignS*.xml", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                string textData = File.ReadAllText(file);
+                var textReader = new StringReader(textData);
+                var xmlSerializer = new XmlSerializer(typeof(DialogueData));
+                var xml = (DialogueData)xmlSerializer.Deserialize(textReader);
+
+                dbConnection.BeginTransaction();
+                foreach (DialogueSet dataGroup in xml.dialogueGroups)
+                {
+                    foreach (Dialogue data in dataGroup.dialogues)
+                    {
+                        string token = data.va;
+                        string text = data.line;
+                        InsertData(token, text, dbConnection);
+                    }
+                }
+                dbConnection.Commit();
+            }
+        }
+
+        private static void InsertData(string token, string text, SQLiteConnection dbConnection)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return;
+            }
+
+            string escapedToken = token.Replace("'", "''");
+            string escapedText = text.Replace("'", "''");
+            int count = dbConnection.ExecuteScalar<int>($"select count(*) from localized_texts where TOKEN='{escapedToken}'");
+            dbConnection.Execute(count > 0
+                ? $"update localized_texts set EN='{escapedText}' where TOKEN='{escapedToken}'"
+                : $"insert into localized_texts(TOKEN, EN) values ('{escapedToken}', '{escapedText}')");
         }
     }
 }
