@@ -220,7 +220,7 @@ namespace TF.Core.Views
             e.Handled = true;
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
+        protected virtual void btnExport_Click(object sender, EventArgs e)
         {
             ExportFileDialog.Filter = "Archivos Excel|*.xlsx";
             ExportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");
@@ -267,7 +267,7 @@ namespace TF.Core.Views
             Import(false);
         }
 
-        private void Import(bool useOffset)
+        protected virtual void Import(bool useOffset)
         {
             ImportFileDialog.Filter = "Archivos Excel|*.xlsx";
             ImportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");

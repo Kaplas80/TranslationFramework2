@@ -323,8 +323,8 @@
         private System.Windows.Forms.Button btnSimpleImport;
         private System.Windows.Forms.Button btnOffsetImport;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.SaveFileDialog ExportFileDialog;
-        private System.Windows.Forms.OpenFileDialog ImportFileDialog;
+        protected System.Windows.Forms.SaveFileDialog ExportFileDialog;
+        protected System.Windows.Forms.OpenFileDialog ImportFileDialog;
         private System.Windows.Forms.Label lblChangedLinesCount;
         private System.Windows.Forms.SplitContainer splitContainer2;
         protected TFDataGridView SubtitleGridView;
