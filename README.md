@@ -30,10 +30,12 @@ Cuando el usuario termina la traducción, la aplicación reconstruye los fichero
   - Traducción de textos.
   - Reemplazo de texturas.
   - Reemplazo de fuentes.
-* [Phoenix Wright: Ace Attorney Trilogy](https://www.youtube.com/watch?v=bk_erh1OcO0)
-  - Traducción de textos.
-  - Modificación de scripts (no probado)
-  - Reemplazo de texturas. (no modifica los .sprite, así que las imágenes se cortan)
+* ~~[Phoenix Wright: Ace Attorney Trilogy](https://www.youtube.com/watch?v=bk_erh1OcO0)~~
+  - ~~Traducción de textos.~~
+  - ~~Modificación de scripts (no probado)~~
+  - ~~Reemplazo de texturas. (no modifica los .sprite, así que las imágenes se cortan)~~
+  
+  (NOTA: No funciona correctamente. No usar hasta nuevo aviso.)
 * [The Legend of Heroes: Trails in the Sky](http://www.clandlan.net/foros/topic/80576-the-legend-of-heroes-trails-in-the-sky/)
   - Traducción de textos.
   - Reemplazo de texturas.
