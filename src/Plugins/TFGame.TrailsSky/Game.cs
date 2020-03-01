@@ -14,7 +14,7 @@ namespace TFGame.TrailsSky
         public string Name => "The Legend of Heroes: Trails in the Sky";
         public string Description => "Build Id: 3675355";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-in-the-Sky-Icon-v1-586602301
-        public int Version => 3;
+        public int Version => 4;
         public System.Text.Encoding FileEncoding => new Encoding();
 
         public GameFileContainer[] GetContainers(string path)
@@ -59,7 +59,7 @@ namespace TFGame.TrailsSky
             var imagesT1 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "C_BTN01 ._CH;C_BTN02 ._CH;C_EMOTIO._CH;C_ICON1 ._CH;C_MOUSE ._CH",
+                SearchPattern = "C_BTN01 ._CH;C_BTN02 ._CH;C_EMOTIO._CH;C_ICON1 ._CH;C_MOUSE ._CH;C_STATUS._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType1)
@@ -68,7 +68,7 @@ namespace TFGame.TrailsSky
             var imagesT2 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH;H_EMOTIO._CH;H_ICON1 ._CH;H_MOUSE ._CH",
+                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH;H_EMOTIO._CH;H_ICON1 ._CH;H_MOUSE ._CH;H_STATUS._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType2)
@@ -279,6 +279,15 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.Images.ImageType8),
             };
 
+            var imagesDT04_5 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "C_COOK  ._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType4),
+            };
+
             var dt04 = new GameFileContainer
             {
                 Path = @".\ED6_DT04.dat",
@@ -288,6 +297,7 @@ namespace TFGame.TrailsSky
             dt04.FileSearches.Add(imagesDT04_2);
             dt04.FileSearches.Add(imagesDT04_3);
             dt04.FileSearches.Add(imagesDT04_4);
+            dt04.FileSearches.Add(imagesDT04_5);
 
             var imagesDT0F = new GameFileSearch
             {
