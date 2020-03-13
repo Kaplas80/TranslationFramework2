@@ -227,11 +227,14 @@ namespace TF.Core
                         }
                         else
                         {
-                            string outputFile = Path.Combine(outputFolder, translationFile.RelativePath);
-                            string dir = Path.GetDirectoryName(outputFile);
-                            Directory.CreateDirectory(dir);
+                            if (!Game.ExportOnlyModifiedFiles)
+                            {
+                                string outputFile = Path.Combine(outputFolder, translationFile.RelativePath);
+                                string dir = Path.GetDirectoryName(outputFile);
+                                Directory.CreateDirectory(dir);
 
-                            File.Copy(translationFile.Path, outputFile, true);
+                                File.Copy(translationFile.Path, outputFile, true);
+                            }
                         }
                     }
                 }
@@ -258,6 +261,14 @@ namespace TF.Core
                         if (translationFile.HasChanges || options.ForceRebuild)
                         {
                             translationFile.Rebuild(dest);
+                        }
+                        else
+                        {
+                            if (Game.ExportOnlyModifiedFiles)
+                            {
+                                var file = Path.Combine(dest, translationFile.RelativePath);
+                                File.Delete(file);
+                            }
                         }
                     }
 

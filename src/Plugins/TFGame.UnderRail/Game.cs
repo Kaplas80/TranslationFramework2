@@ -13,7 +13,7 @@ namespace TFGame.UnderRail
         public Image Icon => Resources.Icon; // https://www.deviantart.com/sony33d/art/UnderRail-584195186
         public int Version => 2;
         public System.Text.Encoding FileEncoding => new Encoding();
-
+        public bool ExportOnlyModifiedFiles => false;
         public GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();

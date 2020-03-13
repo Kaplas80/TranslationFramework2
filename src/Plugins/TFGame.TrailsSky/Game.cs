@@ -16,7 +16,7 @@ namespace TFGame.TrailsSky
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-in-the-Sky-Icon-v1-586602301
         public int Version => 4;
         public System.Text.Encoding FileEncoding => new Encoding();
-
+        public bool ExportOnlyModifiedFiles => false;
         public GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();

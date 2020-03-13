@@ -146,10 +146,20 @@
             var level1TextSearch = new GameFileSearch
             {
                 RelativePath = @".",
-                SearchPattern = "Close Button.Text_00001;SetSignatureTutorialText*.Text_00001",
+                SearchPattern = "*.Text;*.Text_00001",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.UnityUIText.File)
+                Exclusions = { "Close Button.Text_00001" },
+                FileType = typeof(UnityGame.Files.UnityUIText.File)
+            };
+
+            var level1TextSearchWithBestFit = new GameFileSearch
+            {
+                RelativePath = @".",
+                SearchPattern = "Close Button.Text_00001",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(UnityGame.Files.UnityUIText.FileWithBestFit)
             };
 
             var level1 = new GameFileContainer
@@ -159,6 +169,7 @@
             };
 
             level1.FileSearches.Add(level1TextSearch);
+            level1.FileSearches.Add(level1TextSearchWithBestFit);
             result.Add(level1);
 
             return result.ToArray();

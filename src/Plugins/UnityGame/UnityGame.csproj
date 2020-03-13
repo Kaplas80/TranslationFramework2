@@ -91,6 +91,7 @@
     <Compile Include="Files\I2Text\File.cs" />
     <Compile Include="Files\Texture2D\File.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
+    <Compile Include="Files\UnityUIText\FileWithBestFit.cs" />
     <Compile Include="Files\UnityUIText\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
