@@ -55,7 +55,10 @@
             var dictionary = new Dictionary<string, SubtitleWithId>(subs.Count);
             foreach (SubtitleWithId subtitle in subs)
             {
-                dictionary.Add(subtitle.Id, subtitle);
+                if (!dictionary.ContainsKey(subtitle.Id))
+                {
+                    dictionary.Add(subtitle.Id, subtitle);
+                }
             }
 
             using (var fs = new FileStream(ChangesFile, FileMode.Open))
