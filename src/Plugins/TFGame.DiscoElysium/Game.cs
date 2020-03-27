@@ -112,7 +112,7 @@
             textureSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "VISCAL-fence.tex.dds;viscal-fencecrash.tex.dds;viscal-footprints-label_8PAIRS.tex.dds;viscal-footprintsl-label-FOOTPRINTS.tex.dds",
+                SearchPattern = "viscal*.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TF.Core.Files.DDS2File),
