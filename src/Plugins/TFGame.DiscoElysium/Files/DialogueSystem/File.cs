@@ -228,8 +228,13 @@
 
                 var translatableFields = new string[]
                 {
-                    "Title", "Description"
-                }; //, "subtask_title_01", "subtask_title_02", "subtask_title_03", "subtask_title_04", "subtask_title_05", "subtask_title_06", "subtask_title_07", "subtask_title_08", "subtask_title_09", "subtask_title_10" };
+                    "Title", "Description",
+                    "subtask_title_01", "subtask_title_02",
+                    "subtask_title_03", "subtask_title_04",
+                    "subtask_title_05", "subtask_title_06",
+                    "subtask_title_07", "subtask_title_08",
+                    "subtask_title_09", "subtask_title_10",
+                };
                 foreach (string translatableField in translatableFields)
                 {
                     if (fields.TryGetValue(translatableField, out Field field))
@@ -606,8 +611,13 @@
 
                 var translatableFields = new string[]
                 {
-                    "Title", "Description"
-                }; //, "subtask_title_01", "subtask_title_02", "subtask_title_03", "subtask_title_04", "subtask_title_05", "subtask_title_06", "subtask_title_07", "subtask_title_08", "subtask_title_09", "subtask_title_10" };
+                    "Title", "Description",
+                    "subtask_title_01", "subtask_title_02",
+                    "subtask_title_03", "subtask_title_04",
+                    "subtask_title_05", "subtask_title_06",
+                    "subtask_title_07", "subtask_title_08",
+                    "subtask_title_09", "subtask_title_10",
+                };
                 foreach (KeyValuePair<string, Field> kvp in fields)
                 {
                     output.WriteStringSerialized(kvp.Value.Title, 0x04);
