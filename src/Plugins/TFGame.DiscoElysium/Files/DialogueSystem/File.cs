@@ -78,7 +78,9 @@
                 }
 
                 input.Skip(0x0C); // portrait
+                input.Skip(0x0C); // spritePortrait
                 input.Skip(0x04); // alternatePortraits
+                input.Skip(0x04); // spritePortraits
             }
 
             int itemCount = input.ReadInt32();
@@ -235,6 +237,7 @@
                     "subtask_title_07", "subtask_title_08",
                     "subtask_title_09", "subtask_title_10",
                 };
+
                 foreach (string translatableField in translatableFields)
                 {
                     if (fields.TryGetValue(translatableField, out Field field))
@@ -365,7 +368,6 @@
 
                     // onExecute
                     input.Skip(0x04);
-                    input.ReadStringSerialized(0x04); // typeName
 
                     input.Skip(0x10); // Canvas rect
                 }
@@ -458,7 +460,9 @@
                 }
 
                 output.Write(input.ReadBytes(0x0C)); // portrait
+                output.Write(input.ReadBytes(0x0C)); // spritePortrait
                 output.Write(input.ReadBytes(0x04)); // alternatePortraits
+                output.Write(input.ReadBytes(0x04)); // spritePortraits
             }
 
             int itemCount = input.ReadInt32();
@@ -740,7 +744,6 @@
 
                     // onExecute
                     output.Write(input.ReadBytes(0x04));
-                    output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04); // typeName
 
                     output.Write(input.ReadBytes(0x10)); // Canvas rect
                 }

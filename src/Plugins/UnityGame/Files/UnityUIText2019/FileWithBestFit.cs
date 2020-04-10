@@ -1,4 +1,4 @@
-﻿namespace TFGame.DiscoElysium.Files.UnityUIText
+﻿namespace UnityGame.Files.UnityUIText2019
 {
     using System.Collections.Generic;
     using System.IO;
@@ -6,9 +6,9 @@
     using TF.Core.TranslationEntities;
     using TF.IO;
 
-    public class File : UnityGame.Files.UnityUIText.File
+    public class FileWithBestFit : File
     {
-        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
+        public FileWithBestFit(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
@@ -41,16 +41,17 @@
                 output.Write(input.ReadBytes(0x04));
 
                 // CullStateChangedEvent
-                output.Write(input.ReadBytes(0x04));
-
-                // PersistentCall
-                output.WriteStringSerialized(input.ReadStringSerialized(0x04), 0x04);
+                int persistentCallCount = input.ReadInt32();
+                output.Write(persistentCallCount);
+                for (int i = 0; i < persistentCallCount; i++)
+                {
+                    // PersistentCall
+                }
 
                 // FontData
                 output.Write(input.ReadBytes(0x04));
                 output.Write(input.ReadBytes(0x08));
-                int fontSize = input.ReadInt32();
-                output.Write(fontSize <= 0x00000012 ? 0x00000011 : fontSize);
+                output.Write(input.ReadBytes(0x04)); // FOnt size
                 output.Write(input.ReadBytes(0x04)); // Font style
                 input.ReadBytes(0x04);
                 output.Write(0x00000001); // Best Fit
