@@ -12,7 +12,7 @@
     {
         static void Main(string[] args)
         {
-            string gameFolder = @"I:\Steam\steamapps\common\Love Esquire\Love Esquire_Data\";
+            string gameFolder = @"Z:\GAMES\Love Esquire\Love Esquire_Data\";
 
             string vntextPath = string.Concat(gameFolder, @"StreamingAssets\SqlText\vntext.sq");
             File.Copy(vntextPath, "vntext.sq", true);

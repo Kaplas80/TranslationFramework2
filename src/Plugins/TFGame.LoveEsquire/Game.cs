@@ -12,7 +12,7 @@
     {
         public override string Id => "938fb146-8fca-4ddd-8111-2d60f2bf6239";
         public override string Name => "Love Esquire";
-        public override string Description => "Version: 1.1.1c\r\nNecesita el vntext.sq parcheado previamente.";
+        public override string Description => "Version: 1.2.4\r\nNecesita el vntext.sq parcheado previamente.";
         public override Image Icon => Resources.Icon; 
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -98,10 +98,10 @@
             var textuiSearch = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "*.Text_00001",
+                SearchPattern = "*.Text;*.Text_00001",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(UnityGame.Files.UnityUIText.File),
+                FileType = typeof(Files.UnityUIText.File),
             };
 
             var focusObjSearch = new GameFileSearch
@@ -129,26 +129,6 @@
             };
             level2.FileSearches.Add(textuiSearch);
             result.Add(level2);
-            /*
-            var txtSearch = new GameFileSearch
-            {
-                RelativePath = @".",
-                SearchPattern = "*.xml;*.txt",
-                IsWildcard = true,
-                RecursiveSearch = true,
-                FileType = typeof(TextFile),
-            };
-
-            var vnSearches = new GameFileContainerSearch
-            {
-                RelativePath = @"Love Esquire_Data\StreamingAssets\Windows\vnscenes",
-                RecursiveSearch = false,
-                SearchPattern = "*.",
-                TypeSearch = ContainerType.CompressedFile
-            };
-            vnSearches.FileSearches.Add(txtSearch);
-            result.AddRange(vnSearches.GetContainers(path));
-            */
 
             return result.ToArray();
         }

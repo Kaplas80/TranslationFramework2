@@ -63,6 +63,7 @@
     <Compile Include="Files\FocusObj\File.cs" />
     <Compile Include="Files\SqlText\File.cs" />
     <Compile Include="Files\Unity3DFile.cs" />
+    <Compile Include="Files\UnityUIText\File.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">

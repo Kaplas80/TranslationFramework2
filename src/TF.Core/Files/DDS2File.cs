@@ -2,7 +2,10 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using DirectXTexNet;
+    using NeoSmart.StreamCompare;
+    using Nito.AsyncEx.Synchronous;
     using Views;
     using WeifenLuo.WinFormsUI.Docking;
 
@@ -38,6 +41,15 @@
                 TexMetadata originalMetadata = originalDds.GetMetadata();
 
                 ScratchImage png = DirectXTexNet.TexHelper.Instance.LoadFromWICFile(filename, WIC_FLAGS.NONE);
+
+                var compareTask = CompareImagesAsync(originalDds, png);
+                var areEqual = compareTask.WaitAndUnwrapException();
+
+                if (areEqual)
+                {
+                    png.Dispose();
+                    return;
+                }
 
                 if (originalMetadata.MipLevels > 1)
                 {
@@ -105,6 +117,34 @@
         public override string GetExportFilename()
         {
             return $"{System.IO.Path.GetFileNameWithoutExtension(Path)}.png";
+        }
+
+        private async System.Threading.Tasks.Task<bool> CompareImagesAsync(ScratchImage dds, ScratchImage png)
+        {
+            Guid codec = DirectXTexNet.TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+            TexMetadata metadata = dds.GetMetadata();
+
+            UnmanagedMemoryStream ddsStream;
+            if (IsCompressed(metadata.Format))
+            {
+                using (ScratchImage decompressed = dds.Decompress(DXGI_FORMAT.UNKNOWN))
+                {
+                    ddsStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+                }
+            }
+            else
+            {
+                ddsStream = dds.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+            }
+
+            UnmanagedMemoryStream pngStream = png.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+
+            var scompare = new StreamCompare();
+            bool result = await scompare.AreEqualAsync(ddsStream, pngStream);
+            ddsStream.Dispose();
+            pngStream.Dispose();
+
+            return result;
         }
     }
 }

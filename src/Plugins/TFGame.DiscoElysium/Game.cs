@@ -11,7 +11,7 @@
     {
         public override string Id => "111967dd-effc-47bc-a8cb-bf3e11d61439";
         public override string Name => "Disco Elysium";
-        public override string Description => "Build Id: 4313083";
+        public override string Description => "Versión: 6d543183";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/m-1618/art/Disco-Elysium-Game-Icon-512x512--748478143
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => new Encoding();
@@ -55,7 +55,7 @@
             var textureSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "buyable?.tex.dds;button*.tex.dds;continue-tight.tex.dds;furies.tex.dds;loading-panel.tex.dds",
+                SearchPattern = "*.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TF.Core.Files.DDS2File),
@@ -84,16 +84,16 @@
             var skillTextSearch = new GameFileSearch
             {
                 RelativePath = @".",
-                SearchPattern = "SkillNameText*.Text",
+                SearchPattern = "*.Text;*.Text_00001",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(Files.UnityUIText.File)
+                FileType = typeof(UnityGame.Files.UnityUIText2019.FileWithBestFit)
             };
 
             textureSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "button_close_small_dark.tex.dds;charsheet_v5.tex.dds;container_back.tex.dds;disco-build-tutorial.tex.dds;F1Screen.tex.dds;INV_equipped.tex.dds;label_church.tex.dds;label_shacks.tex.dds;label_waterfront.tex.dds;map_label.tex.dds;notify-level-up.tex.dds;no-truce-loading-screen.tex.dds;saving-panel.tex.dds;skill_crown.tex.dds;skill_levelup.tex.dds;THC-menu-v6-7-normalfix.tex.dds",
+                SearchPattern = "*.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TF.Core.Files.DDS2File),
@@ -112,19 +112,19 @@
             textureSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "VISCAL-fence.tex.dds;viscal-fencecrash.tex.dds;viscal-footprints-label_8PAIRS.tex.dds;viscal-footprintsl-label-FOOTPRINTS.tex.dds",
+                SearchPattern = "*.tex.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TF.Core.Files.DDS2File),
             };
 
-            var sharedAssets8 = new GameFileContainer
+            var sharedAssets7 = new GameFileContainer
             {
-                Path = @"disco_Data\sharedassets8.assets",
+                Path = @"disco_Data\sharedassets7.assets",
                 Type = ContainerType.CompressedFile
             };
-            sharedAssets8.FileSearches.Add(textureSearch);
-            result.Add(sharedAssets8);
+            sharedAssets7.FileSearches.Add(textureSearch);
+            result.Add(sharedAssets7);
 
             dialogueSearch = new GameFileSearch()
             {
@@ -149,17 +149,17 @@
                 SearchPattern = "*.Text;*.Text_00001",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                Exclusions = { "Close Button.Text_00001" },
-                FileType = typeof(UnityGame.Files.UnityUIText.File)
+                Exclusions = { "Label_000", "Close Button.Text", },
+                FileType = typeof(UnityGame.Files.UnityUIText2019.File)
             };
 
             var level1TextSearchWithBestFit = new GameFileSearch
             {
                 RelativePath = @".",
-                SearchPattern = "Close Button.Text_00001",
-                IsWildcard = false,
+                SearchPattern = "Label_*.Text;Close Button.Text",
+                IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(UnityGame.Files.UnityUIText.FileWithBestFit)
+                FileType = typeof(UnityGame.Files.UnityUIText2019.FileWithBestFit)
             };
 
             var level1 = new GameFileContainer

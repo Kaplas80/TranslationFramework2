@@ -10,8 +10,12 @@ namespace TFGame.DiscoElysium.Files
         {
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
-
-            RunUnityEx("export", "-mb_new -t -2,-49,-53,-439,-440,dds", copyPath);
+            // Tipos:
+            // -2 -> I2Loc LanguageSourceAsset
+            // -63 -> DialogueDatabase_00001
+            // -28 -> UnityUIText
+            // -175 -> level1 Text
+            RunUnityEx("export", "-mb_new -t -2,-63,-28,-175,dds", copyPath);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
