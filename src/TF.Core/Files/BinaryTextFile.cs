@@ -123,7 +123,10 @@ namespace TF.Core.Files
                 var dictionary = new Dictionary<long, Subtitle>(subtitles.Count);
                 foreach (Subtitle subtitle in subtitles)
                 {
-                    dictionary.Add(subtitle.Offset, subtitle);
+                    if (!dictionary.ContainsKey(subtitle.Offset))
+                    {
+                        dictionary.Add(subtitle.Offset, subtitle);
+                    }
                 }
 
                 using (var fs = new FileStream(ChangesFile, FileMode.Open))
