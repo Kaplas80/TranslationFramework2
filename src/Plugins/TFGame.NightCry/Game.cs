@@ -37,10 +37,19 @@
             var textureSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "GoodEnd_*.dds;staff_*.dds;TX_OBJ_Gimmick201_D*.dds;TX_107*.dds;TX_Default_61*.dds;*UI_*.dds;",
+                SearchPattern = "GoodEnd_*.dds;staff_*.dds;TX_OBJ_Gimmick201_D*.dds;TX_107*.dds;TX_Default_61*.dds;*UI_*.dds;kick_font_*.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
                 FileType = typeof(TF.Core.Files.DDS2File),
+            };
+
+            var uiFontSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "Clock Font.UIFont",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.BinaryFile),
             };
 
             var resources = new GameFileContainer
@@ -50,6 +59,7 @@
             };
             resources.FileSearches.Add(textSearch);
             resources.FileSearches.Add(textureSearch);
+            resources.FileSearches.Add(uiFontSearch);
 
             result.Add(resources);
 

@@ -55,6 +55,10 @@ Cuando el usuario termina la traducción, la aplicación reconstruye los fichero
 * Love Esquire
   - Traducción de textos.
   (NOTA: Para que funcione, hay que modificar previamente los ficheros vntext.sq y Assembly-CSharp.dll)
+* NightCry
+  - Traducción de textos.
+  - Reemplazo de texturas.
+  - Reemplazo de fuentes.
   
 ## Agradecimientos
 * Malaquito y Hazardous de [ClanDLAN](http://clandlan.net/foros/forum/3-traducciones-academia-de-sundabar/) por atreverse a hacer traducciones con mis herramientas xD
