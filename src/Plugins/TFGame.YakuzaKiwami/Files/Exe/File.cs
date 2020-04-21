@@ -17,6 +17,7 @@ namespace TFGame.YakuzaKiwami.Files.Exe
             new Tuple<long, long>(0x00C93710, 0x00C93710),
             new Tuple<long, long>(0x00C98B78, 0x00C98B90),
             new Tuple<long, long>(0x00CA2020, 0x00CA2260),
+            new Tuple<long, long>(0x00CA2E00, 0x00CA2E40),
             new Tuple<long, long>(0x00CA37C8, 0x00CA4600),
             new Tuple<long, long>(0x00CA6640, 0x00CA9F90),
             new Tuple<long, long>(0x00D56050, 0x00D560C0),
