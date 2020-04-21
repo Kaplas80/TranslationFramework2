@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TF.Core.Files;
+using TF.Core.TranslationEntities;
 using TF.IO;
 
 namespace YakuzaGame.Files.Scenario
@@ -11,25 +13,25 @@ namespace YakuzaGame.Files.Scenario
         {
         }
 
-        protected override IList<TF.Core.TranslationEntities.Subtitle> GetSubtitles()
+        protected override IList<Subtitle> GetSubtitles()
         {
-            var result = new List<TF.Core.TranslationEntities.Subtitle>();
+            var result = new List<Subtitle>();
 
             using (var fs = new FileStream(Path, FileMode.Open))
             using (var input = new ExtendedBinaryReader(fs, FileEncoding, Endianness.BigEndian))
             {
-                input.Seek(0x38, SeekOrigin.Begin);
-                var offset = input.ReadInt32();
+                input.Skip(0x38);
+                var stringsOffset = input.ReadInt32();
 
-                input.Seek(offset, SeekOrigin.Begin);
-                while (input.BaseStream.Position < input.BaseStream.Length)
+                input.Seek(stringsOffset, SeekOrigin.Begin);
+
+                Subtitle subtitle;
+
+                while (input.Position < input.Length)
                 {
-                    var subtitle = ReadSubtitle(input);
-                    if (subtitle != null)
-                    {
-                        subtitle.PropertyChanged += SubtitlePropertyChanged;
-                        result.Add(subtitle);
-                    }
+                    subtitle = ReadSubtitle(input);
+                    subtitle.PropertyChanged += SubtitlePropertyChanged;
+                    result.Add(subtitle);
                 }
             }
 
@@ -50,17 +52,66 @@ namespace YakuzaGame.Files.Scenario
             using (var fsOutput = new FileStream(outputPath, FileMode.Create))
             using (var output = new ExtendedBinaryWriter(fsOutput, FileEncoding, Endianness.BigEndian))
             {
-                input.Seek(0x38, SeekOrigin.Begin);
-                var offset = input.ReadInt32();
+                input.Skip(0x38);
+                var stringsOffset = input.ReadInt32();
+
                 input.Seek(0, SeekOrigin.Begin);
 
-                output.Write(input.ReadBytes(offset));
+                output.Write(input.ReadBytes(stringsOffset));
 
-                long outputOffset = offset;
-                while (input.BaseStream.Position < input.BaseStream.Length)
+                Subtitle subtitle;
+                var dict = new Dictionary<long, long>(subtitles.Count);
+
+                while (input.Position < input.Length)
                 {
-                    var subtitle = ReadSubtitle(input);
-                    outputOffset = WriteSubtitle(output, subtitles, subtitle.Offset, outputOffset);
+                    subtitle = ReadSubtitle(input);
+
+                    var newSubtitle = subtitles.FirstOrDefault(x => x.Offset == subtitle.Offset);
+                    if (newSubtitle != null)
+                    {
+                        dict.Add(subtitle.Offset, output.Position);
+                        output.WriteString(newSubtitle.Translation);
+                    }
+                }
+
+                input.Seek(0x10, SeekOrigin.Begin);
+                var count1 = input.ReadInt32();
+                var offset1 = input.ReadInt32();
+
+                input.Skip(8);
+
+                var count2 = input.ReadInt32();
+                var offset2 = input.ReadInt32();
+
+                input.Seek(offset1, SeekOrigin.Begin);
+                output.Seek(offset1, SeekOrigin.Begin);
+
+                for (var i = 0; i < count1; i++)
+                {
+                    input.Skip(4);
+                    output.Skip(4);
+
+                    var stringOffset = input.ReadInt32();
+                    output.Write((int)dict[stringOffset]);
+
+                    input.Skip(16);
+                    output.Skip(16);
+                }
+
+                input.Seek(offset2, SeekOrigin.Begin);
+                output.Seek(offset2, SeekOrigin.Begin);
+
+                for (var i = 0; i < count2; i++)
+                {
+                    var stringOffset = input.ReadInt32();
+                    if (dict.ContainsKey(stringOffset))
+                    {
+                        output.Write((int)dict[stringOffset]);
+                    }
+                    else
+                    {
+                        output.Skip(4);
+                    }
                 }
             }
         }
