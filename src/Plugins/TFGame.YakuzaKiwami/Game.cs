@@ -12,7 +12,7 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Build Id: 3645748";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-786854223
-        public override int Version => 3;
+        public override int Version => 4;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -408,6 +408,28 @@ namespace TFGame.YakuzaKiwami
             return reactor;
         }
 
+        private GameFileContainer GetScenario()
+        {
+            var search =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "scenario2.*",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Scenario.File)
+                };
+
+            var scenario = new GameFileContainer
+            {
+                Path = @"media\data\scenario",
+                Type = ContainerType.Folder
+            };
+
+            scenario.FileSearches.Add(search);
+            return scenario;
+        }
+
         private GameFileContainer GetSoundpar()
         {
             var mfpSearch =
@@ -630,6 +652,7 @@ namespace TFGame.YakuzaKiwami
             result.AddRange(GetMinigame());
             result.AddRange(GetPause());
             result.Add(GetReactorpar());
+            result.Add(GetScenario());
             result.Add(GetSoundpar());
             result.Add(GetStage());
             result.Add(GetStaypar());

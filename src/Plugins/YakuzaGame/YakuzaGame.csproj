@@ -172,6 +172,7 @@
     </Compile>
     <Compile Include="Files\Name\File.cs" />
     <Compile Include="Files\PacFile.cs" />
+    <Compile Include="Files\Scenario\File.cs" />
     <Compile Include="Files\UIParFile.cs" />
     <Compile Include="Files\ParFile.cs" />
     <Compile Include="Files\PocketCircuit\File.cs" />
