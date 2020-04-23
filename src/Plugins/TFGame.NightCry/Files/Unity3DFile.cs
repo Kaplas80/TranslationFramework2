@@ -11,7 +11,7 @@ namespace TFGame.NightCry.Files
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
 
-            RunUnityEx("export", "-mb_new -t txt,dds,-4", copyPath);
+            RunUnityEx("export", "-mb_new -t txt,dds,-4,-6,-10,-29", copyPath);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
