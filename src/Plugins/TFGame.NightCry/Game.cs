@@ -13,7 +13,7 @@
         public override string Name => "NightCry";
         public override string Description => "Build Id: 1188829";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/oufai/art/night-cry-Game-icon-605213305
-        public override int Version => 1;
+        public override int Version => 2;
         public override System.Text.Encoding FileEncoding => System.Text.Encoding.GetEncoding("UTF-8");
 
         protected override string[] AllowedExtensions => new[]
@@ -72,15 +72,130 @@
                 FileType = typeof(TF.Core.Files.DDS2File),
             };
 
-            var sharedAssets0 = new GameFileContainer
+            var sharedAssets = new GameFileContainer
             {
                 Path = @"NightCry_Data\sharedassets0.assets",
                 Type = ContainerType.CompressedFile
             };
 
-            sharedAssets0.FileSearches.Add(textureSearch);
+            sharedAssets.FileSearches.Add(textureSearch);
 
-            result.Add(sharedAssets0);
+            result.Add(sharedAssets);
+
+            textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "TX_OB_218_D.tex.dds",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDS2File),
+            };
+
+            sharedAssets = new GameFileContainer
+            {
+                Path = @"NightCry_Data\sharedassets7.assets",
+                Type = ContainerType.CompressedFile
+            };
+
+            sharedAssets.FileSearches.Add(textureSearch);
+
+            result.Add(sharedAssets);
+
+            textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "TX_Gimmick163_D.tex.dds",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDS2File),
+            };
+
+            sharedAssets = new GameFileContainer
+            {
+                Path = @"NightCry_Data\sharedassets12.assets",
+                Type = ContainerType.CompressedFile
+            };
+
+            sharedAssets.FileSearches.Add(textureSearch);
+
+            result.Add(sharedAssets);
+
+            textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "TX_PC_Desktop.tex.dds",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDS2File),
+            };
+
+            sharedAssets = new GameFileContainer
+            {
+                Path = @"NightCry_Data\sharedassets17.assets",
+                Type = ContainerType.CompressedFile
+            };
+
+            sharedAssets.FileSearches.Add(textureSearch);
+
+            result.Add(sharedAssets);
+
+            textureSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "TX_Ending_07_D.tex.dds",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(TF.Core.Files.DDS2File),
+            };
+
+            sharedAssets = new GameFileContainer
+            {
+                Path = @"NightCry_Data\sharedassets26.assets",
+                Type = ContainerType.CompressedFile
+            };
+
+            sharedAssets.FileSearches.Add(textureSearch);
+
+            result.Add(sharedAssets);
+
+            textSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "HistoryCtrl.LanguageChanger",
+                IsWildcard = false,
+                RecursiveSearch = true,
+                FileType = typeof(Files.LanguageChanger.File),
+            };
+            
+            var labelSearch = new GameFileSearch()
+            {
+                RelativePath = @".",
+                SearchPattern = "*.UILabel",
+                IsWildcard = true,
+                RecursiveSearch = true,
+                FileType = typeof(Files.UILabel.File),
+            };
+
+            var level = new GameFileContainer
+            {
+                Path = @"NightCry_Data\level3",
+                Type = ContainerType.CompressedFile
+            };
+
+            level.FileSearches.Add(textSearch);
+            level.FileSearches.Add(labelSearch);
+
+            result.Add(level);
+
+            level = new GameFileContainer
+            {
+                Path = @"NightCry_Data\level4",
+                Type = ContainerType.CompressedFile
+            };
+
+            level.FileSearches.Add(labelSearch);
+
+            result.Add(level);
 
             return result.ToArray();
         }
