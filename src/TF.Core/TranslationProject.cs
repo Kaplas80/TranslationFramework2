@@ -542,7 +542,7 @@ namespace TF.Core
                 {
                     string filePath = Path.Combine(path, container.Path, file.RelativePath);
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
-                    string outputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    string outputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"))));
                     file.ExportPo(outputPath);
                 }
             }
@@ -564,7 +564,7 @@ namespace TF.Core
                 {
                     string filePath = Path.Combine(path, container.Path, file.RelativePath);
                     string fileName = file.GetExportFilename();
-                    string outputPath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
+                    string outputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), fileName)));
                     file.ExportImage(outputPath);
                 }
             }
@@ -586,12 +586,12 @@ namespace TF.Core
                 {
                     string filePath = Path.Combine(path, container.Path, file.RelativePath);
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
-                    string inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                    string inputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"))));
 
                     if (!File.Exists(inputPath))
                     {
                         filePath = Path.Combine(path, file.RelativePath);
-                        inputPath = Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"));
+                        inputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".po"))));
                     }
 
                     if (File.Exists(inputPath))
@@ -601,7 +601,7 @@ namespace TF.Core
                     else
                     {
                         // Comprobamos si el fichero está partido
-                        string directory = Path.GetDirectoryName(Path.Combine(path, container.Path, file.RelativePath));
+                        string directory = string.Concat(@"\\?\", Path.GetFullPath(Path.GetDirectoryName(Path.Combine(path, container.Path, file.RelativePath))));
                         if (Directory.Exists(directory))
                         {
                             string[] files = Directory.GetFiles(directory,
@@ -636,7 +636,7 @@ namespace TF.Core
                 {
                     string filePath = Path.Combine(path, container.Path, file.RelativePath);
                     string fileName = file.GetExportFilename();
-                    string inputPath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
+                    string inputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), fileName)));
 
                     if (File.Exists(inputPath))
                     {
