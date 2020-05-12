@@ -9,14 +9,31 @@ namespace UnderRailTool
         {
             var model = FileManager.Load<aj8>(gameFile, true);
 
-            return model.a;
+            var result = new Dictionary<string, string>();
+            foreach (var kvp in model.a)
+            {
+                result.Add(kvp.Key, kvp.Key);
+                result.Add($"{kvp.Key}_value", kvp.Value);
+            }
+
+            return result;
         }
 
         public static aj8 SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
             var model = FileManager.Load<aj8>(gameFile, true);
 
-            model.a = texts;
+            var rebuilt = new Dictionary<string, string>();
+            foreach (var kvp in texts)
+            {
+                if (!kvp.Key.EndsWith("_value"))
+                {
+                    var value = texts[$"{kvp.Key}_value"];
+                    rebuilt.Add(kvp.Value, value);
+                }
+            }
+
+            model.a = rebuilt;
 
             return model;
         }

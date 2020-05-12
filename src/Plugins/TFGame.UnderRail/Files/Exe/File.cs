@@ -4,6 +4,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using TF.Core.Files;
+using TF.Core.POCO;
 using TF.Core.TranslationEntities;
 using TF.IO;
 
@@ -11,6 +12,14 @@ namespace TFGame.UnderRail.Files.Exe
 {
     public class File : BinaryTextFile
     {
+        public override LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\r\n",
+            ShownLineEnding = "\\r\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.CrLf,
+        };
+
         public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
@@ -31,7 +40,7 @@ namespace TFGame.UnderRail.Files.Exe
                     var length = input.ReadCompressedUInt32();
                     if (length > 0)
                     {
-                        var str = System.Text.Encoding.Unicode.GetString(input.ReadBytes((int) length - 1));
+                        var str = System.Text.Encoding.Unicode.GetString(input.ReadBytes((int) length - 1)).Replace("\r\n", "\\r\\n");
                         input.Skip(1);
 
                         var subtitle = new Subtitle {Text = str, Loaded = str, Translation = str, Offset = offset};
@@ -55,17 +64,52 @@ namespace TFGame.UnderRail.Files.Exe
 
             var subtitles = GetSubtitles();
 
-            var dict = subtitles.Where(subtitle => subtitle.Text != subtitle.Translation).ToDictionary(subtitle => subtitle.Text, subtitle => subtitle.Translation);
+            var dict = subtitles.Where(subtitle => subtitle.Text != subtitle.Translation).ToDictionary(subtitle => subtitle.Text.Replace("\\r\\n", "\r\n"), subtitle => subtitle.Translation.Replace("\\r\\n", "\r\n"));
             var module = ModuleDefMD.Load(Path);
             
             foreach (var t in module.Types)
             {
+                foreach (var a in t.CustomAttributes)
+                {
+                    for (var i = a.ConstructorArguments.Count - 1; i >= 0; i--)
+                    {
+                        var arg = a.ConstructorArguments[i];
+                        if (arg.Type.FullName == "System.String")
+                        {
+                            var str = ((UTF8String)arg.Value).String;
+
+                            if (dict.TryGetValue(str, out var translation))
+                            {
+                                arg.Value = new UTF8String(translation);
+
+                                a.ConstructorArguments.RemoveAt(i);
+                                a.ConstructorArguments.Insert(i, arg);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var f in t.Fields)
+                {
+                    if (f.HasConstant && f.FieldType.FullName == "System.String")
+                    {
+                        var str = (string)f.Constant.Value;
+
+                        if (dict.TryGetValue(str, out var translation))
+                        {
+                            f.Constant.Value = translation;
+                        }
+                    }
+                }
+
                 foreach (var m in t.Methods)
                 {
                     if (!m.HasBody)
                     {
                         continue;
                     }
+
+                    var count = 0;
 
                     foreach (var instr in m.Body.Instructions)
                     {
@@ -74,12 +118,17 @@ namespace TFGame.UnderRail.Files.Exe
                             continue;
                         }
 
-                        var str = (string) instr.Operand;
-
-                        if (dict.TryGetValue(str, out var translation))
+                        if ((t.Name != "d87") || (m.Name != "a") || (m.GetParamCount() != 0) || (count % 3 != 0))
                         {
-                            instr.Operand = translation;
+                            var str = (string)instr.Operand;
+
+                            if (dict.TryGetValue(str, out var translation))
+                            {
+                                instr.Operand = translation;
+                            }
                         }
+
+                        count++;
                     }
                 }
             }

@@ -21,8 +21,8 @@ namespace TFGame.UnderRail
 
             EncodingReplacements = new List<Tuple<string, string>>
             {
-                new Tuple<string, string>("\\r", "\r"),
                 new Tuple<string, string>("\\n", "\n"),
+                new Tuple<string, string>("\\r", "\r"),
             };
 
         }
