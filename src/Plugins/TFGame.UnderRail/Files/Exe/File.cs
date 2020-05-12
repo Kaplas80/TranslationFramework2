@@ -10,7 +10,7 @@ using TF.IO;
 
 namespace TFGame.UnderRail.Files.Exe
 {
-    public class File : BinaryTextFile
+    public class File : BinaryTextFileWithIds
     {
         public override LineEnding LineEnding => new LineEnding
         {
@@ -28,26 +28,59 @@ namespace TFGame.UnderRail.Files.Exe
         {
             var result = new List<Subtitle>();
             var module = ModuleDefMD.Load(Path);
-            var usStream = module.USStream;
-            
-            using (var ms = new MemoryStream(usStream.CreateReader().ToArray()))
-            using (var input = new ExtendedBinaryReader(ms, System.Text.Encoding.Unicode))
-            {
-                input.Skip(1);
-                while (input.Position < input.Length)
-                {
-                    var offset = input.Position;
-                    var length = input.ReadCompressedUInt32();
-                    if (length > 0)
-                    {
-                        var str = System.Text.Encoding.Unicode.GetString(input.ReadBytes((int) length - 1)).Replace("\r\n", "\\r\\n");
-                        input.Skip(1);
 
-                        var subtitle = new Subtitle {Text = str, Loaded = str, Translation = str, Offset = offset};
+            foreach (var t in module.Types)
+            {
+                foreach (var a in t.CustomAttributes)
+                {
+                    for (var i = a.ConstructorArguments.Count - 1; i >= 0; i--)
+                    {
+                        var arg = a.ConstructorArguments[i];
+                        if (arg.Type.FullName == "System.String")
+                        {
+                            var str = ((UTF8String)arg.Value).String.Replace("\r\n", "\\r\\n");
+                            var id = $"{t.Name}_attr_{a.TypeFullName}_arg_{i}";
+                            var subtitle = new SubtitleWithId { Id = id, Text = str, Loaded = str, Translation = str, Offset = 0 };
+                            subtitle.PropertyChanged += SubtitlePropertyChanged;
+                            result.Add(subtitle);
+                        }
+                    }
+                }
+
+                foreach (var f in t.Fields)
+                {
+                    if (f.HasConstant && f.FieldType.FullName == "System.String")
+                    {
+                        var str = ((string)f.Constant.Value).Replace("\r\n", "\\r\\n");
+
+                        var id = $"{t.Name}_field_{f.Name.String}";
+                        var subtitle = new SubtitleWithId { Id = id, Text = str, Loaded = str, Translation = str, Offset = 0 };
                         subtitle.PropertyChanged += SubtitlePropertyChanged;
                         result.Add(subtitle);
                     }
-                    
+                }
+
+                foreach (var m in t.Methods)
+                {
+                    if (!m.HasBody)
+                    {
+                        continue;
+                    }
+
+                    foreach (var instr in m.Body.Instructions)
+                    {
+                        if (instr.OpCode != OpCodes.Ldstr)
+                        {
+                            continue;
+                        }
+
+                        var str = ((string)(instr.Operand)).Replace("\r\n", "\\r\\n");
+
+                        var id = $"{t.Name}_method_{m.Name}_rva_{m.RVA}_{instr.Offset}";
+                        var subtitle = new SubtitleWithId { Id = id, Text = str, Loaded = str, Translation = str, Offset = 0 };
+                        subtitle.PropertyChanged += SubtitlePropertyChanged;
+                        result.Add(subtitle);
+                    }
                 }
             }
 
@@ -64,7 +97,7 @@ namespace TFGame.UnderRail.Files.Exe
 
             var subtitles = GetSubtitles();
 
-            var dict = subtitles.Where(subtitle => subtitle.Text != subtitle.Translation).ToDictionary(subtitle => subtitle.Text.Replace("\\r\\n", "\r\n"), subtitle => subtitle.Translation.Replace("\\r\\n", "\r\n"));
+            var dict = subtitles.Where(subtitle => subtitle.Text != subtitle.Translation).Select(subtitle => subtitle as SubtitleWithId).ToDictionary(subtitle => subtitle.Id, subtitle => subtitle.Translation.Replace("\\r\\n", "\r\n"));
             var module = ModuleDefMD.Load(Path);
             
             foreach (var t in module.Types)
@@ -77,8 +110,8 @@ namespace TFGame.UnderRail.Files.Exe
                         if (arg.Type.FullName == "System.String")
                         {
                             var str = ((UTF8String)arg.Value).String;
-
-                            if (dict.TryGetValue(str, out var translation))
+                            var id = $"{t.Name}_attr_{a.TypeFullName}_arg_{i}";
+                            if (dict.TryGetValue(id, out var translation))
                             {
                                 arg.Value = new UTF8String(translation);
 
@@ -94,8 +127,8 @@ namespace TFGame.UnderRail.Files.Exe
                     if (f.HasConstant && f.FieldType.FullName == "System.String")
                     {
                         var str = (string)f.Constant.Value;
-
-                        if (dict.TryGetValue(str, out var translation))
+                        var id = $"{t.Name}_field_{f.Name.String}";
+                        if (dict.TryGetValue(id, out var translation))
                         {
                             f.Constant.Value = translation;
                         }
@@ -109,8 +142,6 @@ namespace TFGame.UnderRail.Files.Exe
                         continue;
                     }
 
-                    var count = 0;
-
                     foreach (var instr in m.Body.Instructions)
                     {
                         if (instr.OpCode != OpCodes.Ldstr)
@@ -118,17 +149,13 @@ namespace TFGame.UnderRail.Files.Exe
                             continue;
                         }
 
-                        if ((t.Name != "d87") || (m.Name != "a") || (m.GetParamCount() != 0) || (count % 3 != 0))
+                        var id = $"{t.Name}_method_{m.Name}_rva_{m.RVA}_{instr.Offset}";
+                        var str = (string)instr.Operand;
+
+                        if (dict.TryGetValue(id, out var translation))
                         {
-                            var str = (string)instr.Operand;
-
-                            if (dict.TryGetValue(str, out var translation))
-                            {
-                                instr.Operand = translation;
-                            }
+                            instr.Operand = translation;
                         }
-
-                        count++;
                     }
                 }
             }
