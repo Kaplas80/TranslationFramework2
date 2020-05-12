@@ -49,10 +49,18 @@ namespace TFGame.UnderRail.Files.Exe
 
                 foreach (var f in t.Fields)
                 {
+                    var str = string.Empty;
                     if (f.HasConstant && f.FieldType.FullName == "System.String")
                     {
-                        var str = ((string)f.Constant.Value).Replace("\r\n", "\\r\\n");
+                        str = ((string)f.Constant.Value).Replace("\r\n", "\\r\\n");
+                    }
+                    else if (f.HasConstant && f.FieldType.FullName == "TimelapseVertigo.Rules.Combat.DamageType")
+                    {
+                        str = f.Name.String;
+                    }
 
+                    if (!string.IsNullOrEmpty(str))
+                    {
                         var id = $"{t.Name}_field_{f.Name.String}";
                         var subtitle = new SubtitleWithId { Id = id, Text = str, Loaded = str, Translation = str, Offset = 0 };
                         subtitle.PropertyChanged += SubtitlePropertyChanged;
@@ -109,7 +117,6 @@ namespace TFGame.UnderRail.Files.Exe
                         var arg = a.ConstructorArguments[i];
                         if (arg.Type.FullName == "System.String")
                         {
-                            var str = ((UTF8String)arg.Value).String;
                             var id = $"{t.Name}_attr_{a.TypeFullName}_arg_{i}";
                             if (dict.TryGetValue(id, out var translation))
                             {
@@ -124,13 +131,21 @@ namespace TFGame.UnderRail.Files.Exe
 
                 foreach (var f in t.Fields)
                 {
+                    
                     if (f.HasConstant && f.FieldType.FullName == "System.String")
                     {
-                        var str = (string)f.Constant.Value;
                         var id = $"{t.Name}_field_{f.Name.String}";
                         if (dict.TryGetValue(id, out var translation))
                         {
                             f.Constant.Value = translation;
+                        }
+                    }
+                    else if (f.HasConstant && f.FieldType.FullName == "TimelapseVertigo.Rules.Combat.DamageType")
+                    {
+                        var id = $"{t.Name}_field_{f.Name.String}";
+                        if (dict.TryGetValue(id, out var translation))
+                        {
+                            f.Name = new UTF8String(translation);
                         }
                     }
                 }
@@ -150,7 +165,6 @@ namespace TFGame.UnderRail.Files.Exe
                         }
 
                         var id = $"{t.Name}_method_{m.Name}_rva_{m.RVA}_{instr.Offset}";
-                        var str = (string)instr.Operand;
 
                         if (dict.TryGetValue(id, out var translation))
                         {
