@@ -24,6 +24,12 @@ namespace TFGame.UnderRail.Files.Exe
         {
         }
 
+        private string[] translatableEnums = { 
+            "TimelapseVertigo.Rules.Combat.DamageType",
+            "TimelapseVertigo.Rules.Characters.SkillCategory",
+            "TimelapseVertigo.Rules.Characters.SkillEnum"
+        };
+
         protected override IList<Subtitle> GetSubtitles()
         {
             var result = new List<Subtitle>();
@@ -54,7 +60,7 @@ namespace TFGame.UnderRail.Files.Exe
                     {
                         str = ((string)f.Constant.Value).Replace("\r\n", "\\r\\n");
                     }
-                    else if (f.HasConstant && f.FieldType.FullName == "TimelapseVertigo.Rules.Combat.DamageType")
+                    else if (f.HasConstant && translatableEnums.Contains(f.FieldType.FullName))
                     {
                         str = f.Name.String;
                     }
@@ -140,7 +146,7 @@ namespace TFGame.UnderRail.Files.Exe
                             f.Constant.Value = translation;
                         }
                     }
-                    else if (f.HasConstant && f.FieldType.FullName == "TimelapseVertigo.Rules.Combat.DamageType")
+                    else if (f.HasConstant && translatableEnums.Contains(f.FieldType.FullName))
                     {
                         var id = $"{t.Name}_field_{f.Name.String}";
                         if (dict.TryGetValue(id, out var translation))
