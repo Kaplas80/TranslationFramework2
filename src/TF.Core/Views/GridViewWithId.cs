@@ -117,7 +117,7 @@
                 return;
             }
 
-            var strings = new Dictionary<string, string>();
+            var strings = new Dictionary<string, Tuple<string, string>>();
             try
             {
                 using (var stream = File.Open(ImportFileDialog.FileName, FileMode.Open, FileAccess.Read))
@@ -135,21 +135,24 @@
                         for (var i = 0; i < table.Rows.Count; i++)
                         {
                             string key;
-                            string value;
+                            string original;
+                            string trad;
                             if (useOffset)
                             {
                                 key = table.Rows[i][0].ToString();
-                                value = table.Rows[i][2].ToString();
+                                original = table.Rows[i][1].ToString();
+                                trad = table.Rows[i][2].ToString();
                             }
                             else
                             {
                                 key = table.Rows[i][1].ToString();
-                                value = table.Rows[i][2].ToString();
+                                original = table.Rows[i][1].ToString();
+                                trad = table.Rows[i][2].ToString();
                             }
 
                             if (!string.IsNullOrEmpty(key) && !strings.ContainsKey(key))
                             {
-                                strings.Add(key, value);
+                                strings.Add(key, new Tuple<string, string>(original, trad));
                             }
                         }
                     }
@@ -162,7 +165,11 @@
 
                     if (!string.IsNullOrEmpty(key) && strings.ContainsKey(key))
                     {
-                        subtitleWithId.Translation = strings[key];
+                        var value = strings[key];
+                        if (subtitleWithId.Text == value.Item1)
+                        {
+                            subtitleWithId.Translation = value.Item2;
+                        }
                     }
                 }
 
