@@ -341,7 +341,7 @@ namespace TF.Core.Files
             using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
             {
                 var binary = new BinaryFormat(dataStream);
-                var binary2Po = new Yarhl.Media.Text.Po2Binary();
+                var binary2Po = new Yarhl.Media.Text.Binary2Po();
                 Po po = binary2Po.Convert(binary);
 
                 LoadBeforeImport();

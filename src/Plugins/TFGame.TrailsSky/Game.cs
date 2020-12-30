@@ -12,7 +12,7 @@ namespace TFGame.TrailsSky
     {
         public string Id => "307504c9-90f7-45dd-a37f-4e3cd146a826";
         public string Name => "The Legend of Heroes: Trails in the Sky";
-        public string Description => "Build Id: 3675355";
+        public string Description => "Build Id: 4464204";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-in-the-Sky-Icon-v1-586602301
         public int Version => 4;
         public System.Text.Encoding FileEncoding => new Encoding();
