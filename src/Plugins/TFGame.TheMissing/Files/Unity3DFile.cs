@@ -11,14 +11,14 @@ namespace TFGame.TheMissing.Files
             var fileName = Path.GetFileName(inputPath);
             var copyPath = Path.Combine(outputFolder, fileName);
 
-            RunUnityEx("export", copyPath);
+            RunUnityEx("export", "-t -13,dds,txt,ttf", copyPath);
         }
 
         public static void Repack(string inputFolder, string outputPath, bool useCompression)
         {
             var copyPath = Path.Combine(inputFolder, Path.GetFileName(outputPath));
 
-            RunUnityEx("import", copyPath);
+            RunUnityEx("import", string.Empty, copyPath);
 
             var dir = Path.GetDirectoryName(outputPath);
             Directory.CreateDirectory(dir);
@@ -26,7 +26,7 @@ namespace TFGame.TheMissing.Files
             File.Copy(copyPath, outputPath);
         }
 
-        private static void RunUnityEx(string operation, string unityFile)
+        private static void RunUnityEx(string operation, string parameters, string unityFile)
         {
             var unityExPath = Path.Combine(GetExecutingDirectoryName(), "plugins", "UnityEX.exe");
 
@@ -34,46 +34,7 @@ namespace TFGame.TheMissing.Files
             {
                 process.StartInfo.FileName = unityExPath;
                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t -13";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                process.StartInfo.CreateNoWindow = true; //not diplay a windows
-                process.Start();
-                process.WaitForExit();
-            }
-
-            using (var process = new System.Diagnostics.Process())
-            {
-                process.StartInfo.FileName = unityExPath;
-                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t dds";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                process.StartInfo.CreateNoWindow = true; //not diplay a windows
-                process.Start();
-                process.WaitForExit();
-            }
-
-            using (var process = new System.Diagnostics.Process())
-            {
-                process.StartInfo.FileName = unityExPath;
-                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t txt";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                process.StartInfo.CreateNoWindow = true; //not diplay a windows
-                process.Start();
-                process.WaitForExit();
-            }
-
-            using (var process = new System.Diagnostics.Process())
-            {
-                process.StartInfo.FileName = unityExPath;
-                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
-                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" -t ttf";
+                process.StartInfo.Arguments = $"{operation} \"{unityFile}\" {parameters}";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;

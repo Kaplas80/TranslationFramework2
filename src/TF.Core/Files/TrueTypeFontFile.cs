@@ -12,13 +12,13 @@ namespace TF.Core.Files
         
         protected virtual string Filter => "Fuentes (*.ttf)|*.ttf";
 
-        public TrueTypeFontFile(string path, string changesFolder) : base(path, changesFolder, null)
+        public TrueTypeFontFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder, null)
         {
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new FontView(theme);
+            _view = new FontView(System.IO.Path.GetFileName(Path));
             _view.NewFontLoaded += FormOnNewFontLoaded;
             _view.SaveFont += FormOnSaveFont;
             _view.SetFileFilter(Filter);

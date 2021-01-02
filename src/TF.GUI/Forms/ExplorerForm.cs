@@ -103,12 +103,6 @@ namespace TF.GUI.Forms
                 var item = e.Node.Tag as TranslationFile;
                 var result = OnFileChanged(item);
                 e.Cancel = result;
-#if DEBUG
-                if (item != null)
-                {
-                    Clipboard.SetText($"\"{item.Name}\", \n");
-                }
-#endif
             }
         }
 
@@ -129,6 +123,34 @@ namespace TF.GUI.Forms
         protected virtual void OnRestoreItem(object selectedNode)
         {
             RestoreItem?.Invoke(selectedNode);
+        }
+
+        public void SelectPrevious()
+        {
+            var tn = tvGameFiles.SelectedNode;
+            if (tn?.Parent == null)
+            {
+                return;
+            }
+
+            if (tn.Index > 0) 
+            {
+                tvGameFiles.SelectedNode = tn.Parent.Nodes[tn.Index - 1];
+            }
+        }
+
+        public void SelectNext()
+        {
+            var tn = tvGameFiles.SelectedNode;
+            if (tn?.Parent == null)
+            {
+                return;
+            }
+
+            if (tn.Index < tn.Parent.Nodes.Count - 1) 
+            {
+                tvGameFiles.SelectedNode = tn.Parent.Nodes[tn.Index + 1];
+            }
         }
     }
 }

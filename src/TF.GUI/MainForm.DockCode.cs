@@ -64,7 +64,7 @@ namespace TF.GUI
 
                 if (_currentFile != null)
                 {
-                    _currentFile.Open(dockPanel, dockTheme);
+                    _currentFile.Open(dockPanel);
                     _currentFile.FileChanged += SelectedFileChanged;
                 }
 
@@ -121,7 +121,7 @@ namespace TF.GUI
             {
                 if (_currentFile != null)
                 {
-                    _currentFile.Open(dockPanel, dockTheme);
+                    _currentFile.Open(dockPanel);
                     _currentFile.FileChanged += SelectedFileChanged;
                 }
             }

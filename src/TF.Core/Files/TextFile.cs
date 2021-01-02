@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using TF.Core.Entities;
@@ -7,6 +8,8 @@ using TF.Core.TranslationEntities;
 using TF.Core.Views;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
+using Yarhl.IO;
+using Yarhl.Media.Text;
 
 namespace TF.Core.Files
 {
@@ -24,14 +27,14 @@ namespace TF.Core.Files
             }
         }
 
-        public TextFile(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public TextFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new TextView(theme);
+            _view = new TextView();
 
             _text = GetText();
             _view.LoadData(_text);
@@ -59,9 +62,13 @@ namespace TF.Core.Files
             OnFileChanged();
         }
 
-        public override bool Search(string searchString)
+        public override bool Search(string searchString, string path = "")
         {
-            var bytes = File.ReadAllBytes(Path);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path;
+            }
+            var bytes = File.ReadAllBytes(path);
 
             var pattern = FileEncoding.GetBytes(searchString);
 
@@ -140,6 +147,69 @@ namespace TF.Core.Files
             }
 
             return _view.SearchText(searchString, direction);
+        }
+
+        public override void ExportPo(string path)
+        {
+            var directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+
+            var po = new Po()
+            {
+                Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+            };
+
+            var entry = new PoEntry();
+            var text = GetText();
+            var tmp = text.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+            if (string.IsNullOrEmpty(tmp))
+            {
+                tmp = "<!empty>";
+            }
+            entry.Original = tmp;
+
+            if (text.Text != text.Translation)
+            {
+                tmp = text.Translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                if (string.IsNullOrEmpty(tmp))
+                {
+                    tmp = "<!empty>";
+                }
+                entry.Translated = tmp;
+            }
+
+            po.Add(entry);
+            
+            var po2binary = new Yarhl.Media.Text.Po2Binary();
+            var binary = po2binary.Convert(po);
+            
+            binary.Stream.WriteTo(path);
+        }
+
+        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
+        {
+            var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
+            var binary = new BinaryFormat(dataStream);
+            var binary2Po = new Yarhl.Media.Text.Binary2Po();
+            var po = binary2Po.Convert(binary);
+
+            _text = GetText();
+            var tmp = _text.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+            if (string.IsNullOrEmpty(tmp))
+            {
+                tmp = "<!empty>";
+            }
+            var entry = po.FindEntry(tmp);
+
+            if (!string.IsNullOrEmpty(entry.Translated))
+            {
+                _text.Translation = entry.Translated.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+            }
+
+            if (save)
+            {
+                SaveChanges();
+            }
         }
     }
 }

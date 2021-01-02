@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using TF.Core;
 
@@ -95,6 +94,16 @@ namespace TF.GUI
                     SearchText(1);
                 }
             }
+
+            if (e.KeyCode == Keys.F8)
+            {
+                _explorer.SelectPrevious();
+            }
+
+            if (e.KeyCode == Keys.F9)
+            {
+                _explorer.SelectNext();
+            }
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -110,6 +119,36 @@ namespace TF.GUI
                     SearchText(1);
                 }
             }
+
+            if (e.KeyCode == Keys.F8)
+            {
+                _explorer.SelectPrevious();
+            }
+
+            if (e.KeyCode == Keys.F9)
+            {
+                _explorer.SelectNext();
+            }
+        }
+
+        private void mniBulkTextsExport_Click(object sender, EventArgs e)
+        {
+            ExportTexts();
+        }
+
+        private void mniBulkTextsImport_Click(object sender, EventArgs e)
+        {
+            ImportTexts();
+        }
+
+        private void mniBulkImagesExport_Click(object sender, EventArgs e)
+        {
+            ExportImages();
+        }
+
+        private void mniBulkImagesImport_Click(object sender, EventArgs e)
+        {
+            ImportImages();
         }
     }
 }

@@ -8,11 +8,13 @@ using TFGame.PhoenixWrightTrilogy.Files;
 
 namespace TFGame.PhoenixWrightTrilogy
 {
+    using System.Linq;
+
     public class Game : UnityGame.Game
     {
         public override string Id => "762580b0-6bf3-49df-8d09-d6b8804b79c6";
         public override string Name => "Phoenix Wright: Ace Attorney Trilogy";
-        public override string Description => "Build Id: 3633830";
+        public override string Description => "Build Id: 4185660";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Phoenix-Wright-Ace-Attorney-Trilogy-793438577
         public override int Version => 1;
         public override System.Text.Encoding FileEncoding => Encoding.Unicode;
@@ -24,7 +26,7 @@ namespace TFGame.PhoenixWrightTrilogy
             var scenarioSingleLineSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = $"{scenario}_u.cho;{scenario}_sel_u.bin;{scenario}_ba_u.bin;{scenario}_nolb_u.bin;",
+                SearchPattern = $"{scenario}*.cho;{scenario}_sel*.bin;{scenario}_ba*.bin;{scenario}_nolb*.bin;",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.SingleLine.File)
@@ -33,7 +35,7 @@ namespace TFGame.PhoenixWrightTrilogy
             var scenarioMultiLineSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = $"{scenario}_note_u.bin;",
+                SearchPattern = $"{scenario}_note*.bin;",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.MultiLine.File)
@@ -42,7 +44,7 @@ namespace TFGame.PhoenixWrightTrilogy
             var scenarioMdtSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = $"*_u.mdt;",
+                SearchPattern = $"*.mdt;",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Mdt.File)
@@ -65,15 +67,16 @@ namespace TFGame.PhoenixWrightTrilogy
                 SearchPattern = "*.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(DDS2File)
             };
 
             var etc = new GameFileContainerSearch
             {
-                RelativePath = $@"PWAAT_Data\StreamingAssets\{scenario.ToUpper()}\etc",
+                RelativePath = $@"PWAAT_Data\StreamingAssets\{scenario.ToUpper()}",
                 TypeSearch = ContainerType.CompressedFile,
-                RecursiveSearch = false,
-                SearchPattern = "*u.unity3d"
+                RecursiveSearch = true,
+                SearchPattern = "*.unity3d",
+                Exclusions = { "3D", "AnimationDictionaries", "Movie", "science", "OtherInclusions", },
             };
 
             etc.FileSearches.Add(ddsSearch);
@@ -90,7 +93,7 @@ namespace TFGame.PhoenixWrightTrilogy
             var menuMultiLineSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "title_text_u.bin;option_text_u.bin;save_text_u.bin;system_text_u.bin;credit_text.bin",
+                SearchPattern = "title_text*.bin;option_text*.bin;save_text*.bin;system_text*.bin;credit_text.bin",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.MultiLine.File)
@@ -99,7 +102,7 @@ namespace TFGame.PhoenixWrightTrilogy
             var menuSingleLineSearch = new GameFileSearch()
             {
                 RelativePath = @".",
-                SearchPattern = "common_text_u.bin;platform_text_u.bin",
+                SearchPattern = "common_text*.bin;platform_text*.bin",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.SingleLine.File)
@@ -121,7 +124,7 @@ namespace TFGame.PhoenixWrightTrilogy
                 SearchPattern = "*.dds",
                 IsWildcard = true,
                 RecursiveSearch = true,
-                FileType = typeof(DDSFile)
+                FileType = typeof(DDS2File)
             };
 
             var images = new GameFileContainerSearch
@@ -129,8 +132,8 @@ namespace TFGame.PhoenixWrightTrilogy
                 RelativePath = $@"PWAAT_Data\StreamingAssets",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = true,
-                SearchPattern = "*u.unity3d",
-                Exclusions = { "science" }
+                SearchPattern = "*.unity3d",
+                Exclusions = { "GS1", "GS2", "GS3", "Sound", "InternationalFiles" }
             };
 
             images.FileSearches.Add(ddsSearch);
@@ -149,7 +152,22 @@ namespace TFGame.PhoenixWrightTrilogy
             var fileName = Path.GetFileName(inputFile);
             var extension = Path.GetExtension(inputFile);
 
-            if (extension.StartsWith(".unity3d"))
+            var unencryptedFiles = new[]
+            {
+                "film01_confront.unity3d", 
+                "film02_confront.unity3d",
+            };
+            
+            if (!extension.StartsWith(".unity3d"))
+            {
+                return;
+            }
+
+            if (unencryptedFiles.Contains(fileName))
+            {
+                Unity3DFile.Extract(inputFile, outputPath);
+            }
+            else
             {
                 EncryptedUnity3DFile.Extract(inputFile, outputPath);
             }
@@ -160,7 +178,22 @@ namespace TFGame.PhoenixWrightTrilogy
             var fileName = Path.GetFileName(outputFile);
             var extension = Path.GetExtension(outputFile);
 
-            if (extension.StartsWith(".unity3d"))
+            var unencryptedFiles = new[]
+            {
+                "film01_confront.unity3d", 
+                "film02_confront.unity3d",
+            };
+
+            if (!extension.StartsWith(".unity3d"))
+            {
+                return;
+            }
+
+            if (unencryptedFiles.Contains(fileName))
+            {
+                Unity3DFile.Repack(inputPath, outputFile, compress);
+            }
+            else
             {
                 EncryptedUnity3DFile.Repack(inputPath, outputFile, compress);
             }

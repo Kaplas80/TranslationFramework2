@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace TF.Core.Entities
@@ -8,14 +9,14 @@ namespace TF.Core.Entities
         public string Id { get; }
         public string Path { get; }
         public ContainerType Type { get; }
-        public IList<TranslationFile> Files { get; }
+        public ConcurrentBag<TranslationFile> Files { get; }
 
         public TranslationFileContainer(string path, ContainerType type)
         {
             Id = Guid.NewGuid().ToString();
             Path = path;
             Type = type;
-            Files = new List<TranslationFile>();
+            Files = new ConcurrentBag<TranslationFile>();
         }
 
         public TranslationFileContainer(string id, string path, ContainerType type)
@@ -23,7 +24,7 @@ namespace TF.Core.Entities
             Id = id;
             Path = path;
             Type = type;
-            Files = new List<TranslationFile>();
+            Files = new ConcurrentBag<TranslationFile>();
         }
 
         public void AddFile(TranslationFile file)

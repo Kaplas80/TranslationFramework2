@@ -8,30 +8,28 @@ namespace TF.Core.Views
 {
     public partial class ImageView : DockContent
     {
-        public event NewImageLoadedEventHandler NewImageLoaded;
+        public event NewImageLoadedEventHandler ImportImage;
         public delegate void NewImageLoadedEventHandler(string fileName);
-        public event SaveImageEventHandler SaveImage;
+        public event SaveImageEventHandler ExportImage;
         public delegate void SaveImageEventHandler(string fileName);
 
         private Image _image;
 
-        protected ImageView()
+        private string _fileName;
+
+        public ImageView(string fileName)
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 1;
-        }
-
-        public ImageView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
+            _fileName = fileName;
         }
 
         public void SetFileFilter(string filter)
         {
             openFileDialog1.Filter = filter;
+            openFileDialog1.FileName = _fileName;
             saveFileDialog1.Filter = filter;
+            saveFileDialog1.FileName = _fileName;
         }
 
         public void LoadImage(Image image, object properties)
@@ -45,12 +43,12 @@ namespace TF.Core.Views
 
         protected virtual void OnNewImageLoaded(string selectedFile)
         {
-            NewImageLoaded?.Invoke(selectedFile);
+            ImportImage?.Invoke(selectedFile);
         }
 
         protected virtual void OnSaveImage(string selectedFile)
         {
-            SaveImage?.Invoke(selectedFile);
+            ExportImage?.Invoke(selectedFile);
         }
 
         protected virtual void btnExportImage_Click(object sender, EventArgs e)

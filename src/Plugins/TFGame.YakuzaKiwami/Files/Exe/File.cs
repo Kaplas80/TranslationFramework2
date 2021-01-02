@@ -11,12 +11,17 @@ namespace TFGame.YakuzaKiwami.Files.Exe
         protected override string PointerSectionName => ".data\0\0\0";
         protected override string StringsSectionName => ".rdata\0\0";
 
+        protected override int ChangesFileVersion => 2;
         protected override List<Tuple<long, long>> AllowedStringOffsets => new List<Tuple<long, long>>()
         {
             new Tuple<long, long>(0x00C93710, 0x00C93710),
             new Tuple<long, long>(0x00C98B78, 0x00C98B90),
+            new Tuple<long, long>(0x00CA1DD8, 0x00CA1DE8),
             new Tuple<long, long>(0x00CA2020, 0x00CA2260),
+            new Tuple<long, long>(0x00CA2E00, 0x00CA2E40),
             new Tuple<long, long>(0x00CA37C8, 0x00CA4600),
+            new Tuple<long, long>(0x00CA5AB8, 0x00CA5AC8),
+            new Tuple<long, long>(0x00CA5B38, 0x00CA5B50),
             new Tuple<long, long>(0x00CA6640, 0x00CA9F90),
             new Tuple<long, long>(0x00D56050, 0x00D560C0),
             new Tuple<long, long>(0x00D99F90, 0x00D99F90),
@@ -27,6 +32,17 @@ namespace TFGame.YakuzaKiwami.Files.Exe
 
         protected override List<ExePatch> Patches => new List<ExePatch>()
         {
+            new ExePatch
+            {
+                Name = "Usar codificación ISO-8895-1",
+                Description = "Cambia la codificación de los textos a ISO-8895-1 (NO SE REPRESENTARÁN CARACTERES UTF-8)",
+                Enabled = false,
+                Patches = new List<Tuple<long, byte[]>>
+                {
+                    new Tuple<long, byte[]>(0x195007, new byte[] {0xEB, 0x1E, 0x90}),
+                },
+            },
+
             // Buscar el primer "CoInitialize". La cadena está justo antes
             new ExePatch
             {
@@ -40,7 +56,7 @@ namespace TFGame.YakuzaKiwami.Files.Exe
             },
         };
 
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
     }

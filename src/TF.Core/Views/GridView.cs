@@ -8,15 +8,21 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ExcelDataReader;
 using OfficeOpenXml;
+using ScintillaNET;
+using TF.Core.Entities;
+using TF.Core.Helpers;
+using TF.Core.POCO;
 using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
+using Yarhl.IO;
+using Yarhl.Media.Text;
 
 namespace TF.Core.Views
 {
     public partial class GridView : DockContent
     {
         // Con esta clase evito que la flechas izquierda y derecha cambien de celda al editar
-        private class TFDataGridView : DataGridView
+        protected class TFDataGridView : DataGridView
         {
             [SecurityPermission(
                 SecurityAction.LinkDemand, Flags =
@@ -33,23 +39,41 @@ namespace TF.Core.Views
         }
 
         protected IList<Subtitle> _subtitles;
+        protected Subtitle _selectedSubtitle;
+        protected int _selectedSubtitleIndex;
 
-        protected GridView()
+        protected TranslationFile _file;
+
+        public GridView(TranslationFile file)
         {
+            _file = file;
+
             InitializeComponent();
 
+            var font = Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             var cellStyle = new DataGridViewCellStyle();
-            cellStyle.Font = Fonts.FontCollection.GetFont("Noto Sans CJK JP Regular", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            cellStyle.Font = font;
             SubtitleGridView.RowsDefaultCellStyle = cellStyle;
+
+            InitScintilla(scintilla1);
+            InitScintilla(scintilla2);
         }
 
-        public GridView(ThemeBase theme) : this()
+        private void InitScintilla(Scintilla scintilla)
         {
-            dockPanel1.Theme = theme;
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
+            scintilla.StyleResetDefault();
+            scintilla.Styles[Style.Default].Font = "Noto Sans CJK JP Regular";
+            scintilla.Styles[Style.Default].Size = 11;
+            scintilla.StyleClearAll();
+
+            scintilla.Styles[Style.Xml.Tag].ForeColor = Color.Blue;
+            scintilla.Styles[Style.Xml.TagEnd].ForeColor = Color.Blue;
+            scintilla.Lexer = Lexer.Xml;
+
+            scintilla.EolMode = (Eol)_file.LineEnding.ScintillaLineEnding;
         }
 
-        public void LoadData(IList<Subtitle> subtitles)
+        public virtual void LoadData(IList<Subtitle> subtitles)
         {
             _subtitles = subtitles;
 
@@ -85,11 +109,15 @@ namespace TF.Core.Views
                 Name = "colTranslation",
                 HeaderText = "Traducción",
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                ReadOnly = true,
                 SortMode = DataGridViewColumnSortMode.NotSortable,
             };
             SubtitleGridView.Columns.Add(column);
 
             UpdateLabel();
+
+            _selectedSubtitle = null;
+            _selectedSubtitleIndex = -1;
         }
 
         public void DisplaySubtitle(int index)
@@ -101,14 +129,12 @@ namespace TF.Core.Views
 
             SubtitleGridView.ClearSelection();
             SubtitleGridView.Rows[index].Cells["colTranslation"].Selected = true;
-            SubtitleGridView.FirstDisplayedScrollingRowIndex = index;
         }
 
         public Tuple<int, Subtitle> GetSelectedSubtitle()
         {
             var rowIndex = SubtitleGridView.SelectedCells[0].RowIndex;
-            var subtitles = (IList<Subtitle>) SubtitleGridView.DataSource;
-            return new Tuple<int, Subtitle>(rowIndex, subtitles[rowIndex]);
+            return new Tuple<int, Subtitle>(rowIndex, _subtitles[rowIndex]);
         }
 
         protected virtual void SubtitleGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -194,21 +220,10 @@ namespace TF.Core.Views
             e.Handled = true;
         }
 
-        private void SubtitleGridView_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        protected virtual void btnExport_Click(object sender, EventArgs e)
         {
-            SubtitleGridView.BeginEdit(false);
-        }
-
-        private void SubtitleGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            if (e.Control.GetType() == typeof(DataGridViewTextBoxEditingControl))
-            {
-                SendKeys.Send("{RIGHT}");
-            }
-        }
-
-        private void btnExport_Click(object sender, EventArgs e)
-        {
+            ExportFileDialog.Filter = "Archivos Excel|*.xlsx";
+            ExportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");
             var result = ExportFileDialog.ShowDialog(this);
 
             if (result != DialogResult.OK)
@@ -252,8 +267,10 @@ namespace TF.Core.Views
             Import(false);
         }
 
-        private void Import(bool useOffset)
+        protected virtual void Import(bool useOffset)
         {
+            ImportFileDialog.Filter = "Archivos Excel|*.xlsx";
+            ImportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");
             var result = ImportFileDialog.ShowDialog(this);
 
             if (result != DialogResult.OK)
@@ -309,7 +326,9 @@ namespace TF.Core.Views
                     }
                 }
 
+                _selectedSubtitle = null;
                 SubtitleGridView.Invalidate();
+                DisplaySubtitle(_selectedSubtitleIndex);
                 UpdateLabel();
             }
             catch (Exception e)
@@ -318,16 +337,122 @@ namespace TF.Core.Views
             }
         }
 
-        private void SubtitleGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            UpdateLabel();
-        }
-
-        private void UpdateLabel()
+        protected void UpdateLabel()
         {
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
             var totalLines = _subtitles.Count;
             lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines}";
+        }
+
+        private void SubtitleGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                if (scintilla2.Modified)
+                {
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_file.LineEnding.RealLineEnding, _file.LineEnding.ShownLineEnding);
+                }
+            }
+
+            if (SubtitleGridView.SelectedCells.Count != 0)
+            {
+                var (index, subtitle) = GetSelectedSubtitle();
+                _selectedSubtitleIndex = index;
+                _selectedSubtitle = subtitle;
+
+                scintilla1.ReadOnly = false;
+                scintilla1.Text = _selectedSubtitle.Text.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.RealLineEnding);
+                scintilla1.ReadOnly = true;
+                scintilla2.Text = _selectedSubtitle.Translation.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.RealLineEnding);
+                scintilla2.SelectAll();
+            }
+        }
+
+        private void Scintilla2_TextChanged(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                if (scintilla2.Modified)
+                {
+                    _selectedSubtitle.Translation = scintilla2.Text.Replace(_file.LineEnding.RealLineEnding, _file.LineEnding.ShownLineEnding);
+                    SubtitleGridView.Invalidate();
+                    UpdateLabel();
+                }
+            }
+        }
+
+        private void RestaurarTextoOriginalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                scintilla2.Text = scintilla1.Text;
+            }
+        }
+
+        private void DeshacerCambiosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                scintilla2.Text = _selectedSubtitle.Loaded.Replace(_file.LineEnding.ShownLineEnding, _file.LineEnding.RealLineEnding);
+            }
+        }
+
+        private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            preTraducirToolStripMenuItem.Enabled = File.Exists("MicrosoftTranslator.txt");
+        }
+
+        private void PreTraducirToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedSubtitle != null)
+            {
+                scintilla2.Text = AutomaticTranslationHelper.Translate(scintilla1.Text);
+            }
+        }
+
+        private void Scintilla2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.Return)
+            {
+                if (_selectedSubtitleIndex < SubtitleGridView.RowCount)
+                {
+                    e.SuppressKeyPress = true;
+                    DisplaySubtitle(_selectedSubtitleIndex+1);
+                }
+            }
+        }
+
+        private void btnExportPo_Click(object sender, EventArgs e)
+        {
+            ExportFileDialog.Filter = "Archivos Po|*.po";
+            ExportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".po");
+            var result = ExportFileDialog.ShowDialog(this);
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            _file.ExportPo(ExportFileDialog.FileName);
+        }
+
+        private void btnImportPo_Click(object sender, EventArgs e)
+        {
+            ImportFileDialog.Filter = "Archivos Po|*.po";
+            ImportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".po");
+            var result = ImportFileDialog.ShowDialog(this);
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            _file.ImportPo(ImportFileDialog.FileName, false, false);
+
+            _selectedSubtitle = null;
+            SubtitleGridView.Invalidate();
+            DisplaySubtitle(_selectedSubtitleIndex);
+            UpdateLabel();
         }
     }
 }

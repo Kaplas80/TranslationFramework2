@@ -10,9 +10,14 @@ using TF.Core.TranslationEntities;
 using TF.Core.Views;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
+using Yarhl.IO;
+using Yarhl.Media.Text;
 
 namespace TF.Core.Files
 {
+    using System.Collections.Concurrent;
+    using System.Threading.Tasks;
+
     public class BinaryTextFile : TranslationFile
     {
         protected virtual int StartOffset => 0;
@@ -30,14 +35,14 @@ namespace TF.Core.Files
             }
         }
 
-        public BinaryTextFile(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public BinaryTextFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
             Type = FileType.TextFile;
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new GridView(theme);
+            _view = new GridView(this);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());
@@ -66,9 +71,13 @@ namespace TF.Core.Files
             return result;
         }
         
-        public override bool Search(string searchString)
+        public override bool Search(string searchString, string path = "")
         {
-            var bytes = File.ReadAllBytes(Path);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path;
+            }
+            var bytes = File.ReadAllBytes(path);
 
             var pattern = FileEncoding.GetBytes(searchString);
 
@@ -111,6 +120,15 @@ namespace TF.Core.Files
         {
             if (HasChanges)
             {
+                var dictionary = new Dictionary<long, Subtitle>(subtitles.Count);
+                foreach (Subtitle subtitle in subtitles)
+                {
+                    if (!dictionary.ContainsKey(subtitle.Offset))
+                    {
+                        dictionary.Add(subtitle.Offset, subtitle);
+                    }
+                }
+
                 using (var fs = new FileStream(ChangesFile, FileMode.Open))
                 using (var input = new ExtendedBinaryReader(fs, Encoding.Unicode))
                 {
@@ -129,8 +147,7 @@ namespace TF.Core.Files
                         var offset = input.ReadInt64();
                         var text = input.ReadString();
 
-                        var subtitle = subtitles.FirstOrDefault(x => x.Offset == offset);
-                        if (subtitle != null)
+                        if (dictionary.TryGetValue(offset, out Subtitle subtitle))
                         {
                             subtitle.PropertyChanged -= SubtitlePropertyChanged;
                             subtitle.Translation = text;
@@ -176,6 +193,8 @@ namespace TF.Core.Files
                 return false;
             }
 
+            List<Subtitle> searchableSubs = _subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList();
+
             int i;
             int rowIndex;
             if (direction == 0)
@@ -185,40 +204,38 @@ namespace TF.Core.Files
             }
             else
             {
-                var (item1, item2) = _view.GetSelectedSubtitle();
-                i = _subtitles.IndexOf(item2) + direction;
+                (int item1, Subtitle item2) = _view.GetSelectedSubtitle();
+                i = searchableSubs.IndexOf(item2) + direction;
                 rowIndex = item1 + direction;
             }
 
-            var step = direction < 0 ? -1 : 1;
+            int step = direction < 0 ? -1 : 1;
 
-            var result = -1;
-            while (i >= 0  && i < _subtitles.Count)
+            int result = -1;
+            while (i >= 0 && i < searchableSubs.Count)
             {
-                var subtitle = _subtitles[i];
-                var original = subtitle.Text;
-                var translation = subtitle.Translation;
+                Subtitle subtitle = searchableSubs[i];
+                string original = subtitle.Text;
+                string translation = subtitle.Translation;
 
-                if (!string.IsNullOrEmpty(original))
+                if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
                 {
-                    if (original.Contains(searchString) || (!string.IsNullOrEmpty(translation) && translation.Contains(searchString)))
-                    {
-                        result = rowIndex;
-                        break;
-                    }
-
-                    rowIndex += step;
+                    result = rowIndex;
+                    break;
                 }
 
-                i+=step;
+                rowIndex += step;
+
+                i += step;
             }
 
-            if (result != -1)
+            bool found = result >= 0;
+            if (found)
             {
-                _view.DisplaySubtitle(rowIndex);
+                _view.DisplaySubtitle(result);
             }
 
-            return result != -1;
+            return found;
         }
 
         protected virtual void SubtitlePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -277,6 +294,123 @@ namespace TF.Core.Files
             }
 
             return result;
+        }
+
+        public override void ExportPo(string path)
+        {
+            var directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+            
+            var po = new Po()
+            {
+                Header = new PoHeader(GameName, "dummy@dummy.com", "es-ES")
+            };
+
+            var subtitles = GetSubtitles();
+            foreach (var subtitle in subtitles)
+            {
+                var entry = new PoEntry();
+
+                var original = subtitle.Text;
+                var translation = subtitle.Translation;
+                if (string.IsNullOrEmpty(original))
+                {
+                    original = "<!empty>";
+                    translation = "<!empty>";
+                }
+
+                entry.Original = original.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                entry.Context = GetContext(subtitle);
+
+                if (original != translation)
+                {
+                    entry.Translated = translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                }
+
+                po.Add(entry);
+            }
+
+            var po2binary = new Yarhl.Media.Text.Po2Binary();
+            var binary = po2binary.Convert(po);
+            
+            binary.Stream.WriteTo(path);
+        }
+
+        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
+        {
+            using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
+            {
+                var binary = new BinaryFormat(dataStream);
+                var binary2Po = new Yarhl.Media.Text.Binary2Po();
+                Po po = binary2Po.Convert(binary);
+
+                LoadBeforeImport();
+                var dictionary = new ConcurrentDictionary<string, Subtitle>();
+                foreach (Subtitle subtitle in _subtitles)
+                {
+                    dictionary[GetContext(subtitle)] = subtitle;
+                }
+
+                void UpdateSubtitleFromPoEntry(PoEntry entry)
+                {
+                    string context = entry.Context;
+                    if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                    {
+                        return;
+                    }
+
+                    if (entry.Original == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                    {
+                        subtitle.Translation = subtitle.Text;
+                    }
+                    else
+                    {
+                        if (entry.Original.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding) !=
+                            subtitle.Text)
+                        {
+                            // El texto original de la entrada no coincide con el del subtítulo, así que no podemos aplicar la traducción
+                            subtitle.Translation = subtitle.Text;
+                        }
+                        else
+                        {
+                            string translation = entry.Translated;
+                            subtitle.Translation = string.IsNullOrEmpty(translation)
+                                ? subtitle.Text
+                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                        }
+                    }
+                }
+
+                if (parallel)
+                {
+                    Parallel.ForEach(po.Entries, UpdateSubtitleFromPoEntry);
+                }
+                else
+                {
+                    foreach (PoEntry entry in po.Entries)
+                    {
+                        UpdateSubtitleFromPoEntry(entry);
+                    }
+                }
+            }
+
+            if (save && NeedSaving)
+            {
+                SaveChanges();
+            }
+        }
+
+        protected override void LoadBeforeImport()
+        {
+            if (_subtitles == null)
+            {
+                _subtitles = GetSubtitles();
+            }
+        }
+
+        protected override string GetContext(Subtitle subtitle)
+        {
+            return subtitle.Offset.ToString();
         }
     }
 }

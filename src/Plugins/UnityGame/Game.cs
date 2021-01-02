@@ -18,6 +18,8 @@ namespace UnityGame
         public virtual int Version { get; }
         public virtual Encoding FileEncoding { get; }
 
+        public virtual bool ExportOnlyModifiedFiles => true;
+
         protected virtual string[] AllowedExtensions => new[]
         {
             ".unity3d", ".assets"

@@ -107,6 +107,9 @@ namespace DDSViewer
                     var image = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
 
                     imageBox1.Image = System.Drawing.Image.FromStream(image);
+
+                    dds.Dispose();
+                    decompressed.Dispose();
                 }
                 else if (Path.GetExtension(currentFile).ToLowerInvariant() == ".png")
                 {

@@ -8,16 +8,9 @@ namespace YakuzaGame.Files.Exe
 {
     public partial class PatchView : DockContent
     {
-        protected PatchView()
+        public PatchView()
         {
             InitializeComponent();
-        }
-
-        public PatchView(ThemeBase theme) : this()
-        {
-            dockPanel1.Theme = theme;
-
-            dockPanel1.DocumentStyle = DocumentStyle.DockingSdi;
         }
 
         internal void LoadPatches(IList<ExePatch> data)
@@ -32,12 +25,14 @@ namespace YakuzaGame.Files.Exe
                 var chk = new CheckBox
                 {
                     Name = $"chk_{i}",
-                    Text = patch.Name,
                     Checked = patch.Enabled,
                     Location = new Point(x, y),
-                    AutoSize = true,
-                    Tag = patch
+                    Tag = patch,
+                    Text = patch.Name,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Size = new Size(dockPanel1.Width, 25)
                 };
+
                 chk.CheckedChanged += OnCheckedChanged;
                 y += chk.Height + 6;
 

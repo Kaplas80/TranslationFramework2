@@ -10,7 +10,7 @@ namespace YakuzaGame.Files.StringTbl
 {
     public class File : BinaryTextFileWithOffsetTable
     {
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
@@ -34,7 +34,10 @@ namespace YakuzaGame.Files.StringTbl
                     {
                         var subtitle = ReadSubtitle(input);
                         subtitle.PropertyChanged += SubtitlePropertyChanged;
-                        result.Add(subtitle);
+                        if (subtitle.Offset > 0)
+                        {
+                            result.Add(subtitle);
+                        }
                     }
                     input.Seek(returnPos, SeekOrigin.Begin);
                 }

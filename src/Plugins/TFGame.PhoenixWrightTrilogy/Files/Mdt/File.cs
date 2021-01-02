@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TF.Core.POCO;
 using TF.Core.TranslationEntities;
 using TF.IO;
 using TFGame.PhoenixWrightTrilogy.Core;
@@ -20,8 +21,16 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
         }
 
         private readonly Op[] GameOps;
-        
-        public File(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+
+        public override LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\r\n",
+            ShownLineEnding = "\\r\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.CrLf,
+        };
+
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
             GameOps = new Op[128];
 
@@ -260,7 +269,7 @@ namespace TFGame.PhoenixWrightTrilogy.Files.Mdt
             using (var output = new ExtendedBinaryWriter(msOutput, FileEncoding))
             {
                 var outputOffset = 0u;
-                var lines = subtitles.Translation.Split(new [] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+                var lines = subtitles.Translation.Split(new [] {LineEnding.RealLineEnding}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var line in lines)
                 {
                     var pattern1 = "(?<op>\\w+)\\((?<params>.*)\\)\\;";

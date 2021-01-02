@@ -16,18 +16,18 @@ namespace TFGame.TrailsSky
         {
             DecodingReplacements = new List<Tuple<string, string>>
             {
-                new Tuple<string, string>("\\n", "<LineBreak>"),
-                new Tuple<string, string>("\u0026", "É"), //&
+                //new Tuple<string, string>("\\n", "<LineBreak>"),
+                //new Tuple<string, string>("\u0026", "É"), //&
                 //new Tuple<string, string>("\u0027", "Í"), //'
-                new Tuple<string, string>("\u003B", "á"), //;
-                new Tuple<string, string>("\u005C", "é"), //\
-                new Tuple<string, string>("\u005E", "í"), //^
-                new Tuple<string, string>("\u005F", "ó"), //_
-                new Tuple<string, string>("\u0060", "ú"), //`
-                new Tuple<string, string>("\u007B", "ü"), //{
-                new Tuple<string, string>("\u007D", "ñ"), //}
-                new Tuple<string, string>("\u007E", "¡"), //~
-                new Tuple<string, string>("\u007F", "¿"), //DEL
+                //new Tuple<string, string>("\u003B", "á"), //;
+                //new Tuple<string, string>("\u005C", "é"), //\
+                //new Tuple<string, string>("\u005E", "í"), //^
+                //new Tuple<string, string>("\u005F", "ó"), //_
+                //new Tuple<string, string>("\u0060", "ú"), //`
+                //new Tuple<string, string>("\u007B", "ü"), //{
+                //new Tuple<string, string>("\u007D", "ñ"), //}
+                //new Tuple<string, string>("\u007E", "¡"), //~
+                //new Tuple<string, string>("\u007F", "¿"), //DEL
 
                 new Tuple<string, string>("\u0001", "\\n"),
                 new Tuple<string, string>("\u0002", "<Enter>"),
@@ -60,6 +60,7 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("\u001D", "<0x1D>"),
                 new Tuple<string, string>("\u001E", "<0x1E>"),
                 new Tuple<string, string>("\u001F", "<0x1F>"),
+                new Tuple<string, string>("\u3000", "<Space>"),
             };
 
             EncodingReplacements = new List<Tuple<string, string>>
@@ -108,8 +109,8 @@ namespace TFGame.TrailsSky
                 new Tuple<string, string>("¡", "\u007E"), //~
                 new Tuple<string, string>("¿", "\u007F"), //DEL
 
-                new Tuple<string, string>("\u8140", "\u0020"),
-                new Tuple<string, string>("<LineBreak>", "\\n"),
+                new Tuple<string, string>("<Space>", "\u3000"),
+                //new Tuple<string, string>("<LineBreak>", "\\n"),
             };
         }
 

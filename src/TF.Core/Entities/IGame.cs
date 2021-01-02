@@ -11,6 +11,7 @@ namespace TF.Core.Entities
         Image Icon { get; }
         int Version { get; }
         Encoding FileEncoding { get; }
+        bool ExportOnlyModifiedFiles { get; }
 
         GameFileContainer[] GetContainers(string path);
 

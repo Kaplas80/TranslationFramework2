@@ -12,14 +12,14 @@ namespace TFGame.TrailsSky.Files.DT
 {
     public class ShopFile : BinaryTextFileWithOffsetTable
     {
-        public ShopFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        public ShopFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
 
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _view = new View(theme);
+            _view = new View(this);
 
             _subtitles = GetSubtitles();
             _view.LoadData(_subtitles.Where(x => !string.IsNullOrWhiteSpace(x.Text)).ToList());

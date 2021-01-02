@@ -16,6 +16,8 @@ namespace CRIWareGame
         public virtual int Version { get; }
         public virtual Encoding FileEncoding { get; }
 
+        public virtual bool ExportOnlyModifiedFiles => false;
+
         public virtual GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();

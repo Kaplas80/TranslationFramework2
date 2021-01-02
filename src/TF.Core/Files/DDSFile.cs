@@ -1,9 +1,10 @@
-﻿using System;
-using DirectXTexNet;
-using Image = System.Drawing.Image;
-
-namespace TF.Core.Files
+﻿namespace TF.Core.Files
 {
+    using System;
+    using System.IO;
+    using DirectXTexNet;
+    using Image = System.Drawing.Image;
+
     public class DDSFile : ImageFile
     {
         protected class TexMetadataView
@@ -30,46 +31,122 @@ namespace TF.Core.Files
 
         protected ScratchImage _currentDDS;
 
-        public DDSFile(string path, string changesFolder) : base(path, changesFolder)
+        public DDSFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 
-        protected override void FormOnSaveImage(string filename)
+        ~DDSFile()
         {
+            _currentDDS?.Dispose();
+        }
+
+        public override void ExportImage(string filename)
+        {
+            if (_currentDDS != null && !_currentDDS.IsDisposed)
+            {
+                _currentDDS.Dispose();
+                _currentDDS = null;
+            }
+        
+            _currentDDS = GetScratchImage();
+            
+            string directory = System.IO.Path.GetDirectoryName(filename);
+            Directory.CreateDirectory(directory);
+
             _currentDDS.SaveToDDSFile(DDS_FLAGS.NONE, filename);
+
+            _currentDDS.Dispose();
+            _currentDDS = null;
         }
 
-        protected override Tuple<Image, object> GetImage()
+        protected virtual ScratchImage GetScratchImage()
         {
-            var source = HasChanges ? ChangesFile : Path;
-            _currentDDS = TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
+            string source = HasChanges ? ChangesFile : Path;
+            ScratchImage img = TexHelper.Instance.LoadFromDDSFile(source, DDS_FLAGS.NONE);
 
-            var codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+            TexMetadata metadata = img.GetMetadata();
 
-            var metadata = _currentDDS.GetMetadata();
+            if (IsCompressed(metadata.Format))
+            {
+                ScratchImage tmp = img.Decompress(DXGI_FORMAT.UNKNOWN);
+                img.Dispose();
+                img = tmp;
+            }
 
-            ScratchImage decompressed;
+            return img;
+        }
+
+        protected override Image GetDrawingImage()
+        {
+            if (_currentDDS != null && !_currentDDS.IsDisposed)
+            {
+                _currentDDS.Dispose();
+            }
+        
+            _currentDDS = GetScratchImage();
+
             try
             {
-                decompressed = _currentDDS.Decompress(DXGI_FORMAT.UNKNOWN);
+                Guid codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
+
+                UnmanagedMemoryStream imageStream = _currentDDS.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+
+                Image image = Image.FromStream(imageStream);
+
+                imageStream.Close();
+                imageStream?.Dispose();
+
+                return image;
+                
             }
-            catch (ArgumentException e)
+            catch (Exception)
             {
-                decompressed = _currentDDS;
+                return null;
+            }
+        }
+
+        protected override object GetImageProperties(object genericImage)
+        {
+            if (!(genericImage is ScratchImage scratchImage))
+            {
+                return null;
             }
 
-            try
-            {
-                var imageStream = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
-                var image = Image.FromStream(imageStream);
+            TexMetadata metadata = scratchImage.GetMetadata();
+            var properties = new TexMetadataView(metadata);
 
-                var properties = new TexMetadataView(metadata);
+            return properties;
+        }
 
-                return new Tuple<Image, object>(image, properties);
-            }
-            catch (Exception e)
+        protected static bool IsCompressed(DXGI_FORMAT format)
+        {
+            switch (format)
             {
-                return new Tuple<Image, object>(null, null);
+                case DXGI_FORMAT.BC1_TYPELESS:
+                case DXGI_FORMAT.BC1_UNORM:
+                case DXGI_FORMAT.BC1_UNORM_SRGB:
+                case DXGI_FORMAT.BC2_TYPELESS:
+                case DXGI_FORMAT.BC2_UNORM:
+                case DXGI_FORMAT.BC2_UNORM_SRGB:
+                case DXGI_FORMAT.BC3_TYPELESS:
+                case DXGI_FORMAT.BC3_UNORM:
+                case DXGI_FORMAT.BC3_UNORM_SRGB:
+                case DXGI_FORMAT.BC4_TYPELESS:
+                case DXGI_FORMAT.BC4_UNORM:
+                case DXGI_FORMAT.BC4_SNORM:
+                case DXGI_FORMAT.BC5_TYPELESS:
+                case DXGI_FORMAT.BC5_UNORM:
+                case DXGI_FORMAT.BC5_SNORM:
+                case DXGI_FORMAT.BC6H_TYPELESS:
+                case DXGI_FORMAT.BC6H_UF16:
+                case DXGI_FORMAT.BC6H_SF16:
+                case DXGI_FORMAT.BC7_TYPELESS:
+                case DXGI_FORMAT.BC7_UNORM:
+                case DXGI_FORMAT.BC7_UNORM_SRGB:
+                    return true;
+
+                default:
+                    return false;
             }
         }
     }

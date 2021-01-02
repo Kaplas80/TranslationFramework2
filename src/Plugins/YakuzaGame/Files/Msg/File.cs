@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TF.Core.Files;
+using TF.Core.POCO;
 using TF.IO;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -13,15 +14,23 @@ namespace YakuzaGame.Files.Msg
 {
     public class File : BinaryTextFile
     {
-        public File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        public override LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\r\n",
+            ShownLineEnding = "\\r\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.CrLf,
+        };
+
+        public File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
 #if DEBUG
         private View _msgView;
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _msgView = new View(theme);
+            _msgView = new View();
 
             _subtitles = GetSubtitles();
             _msgView.LoadSubtitles(_subtitles.Where(x => !string.IsNullOrEmpty(x.Text)).ToList());

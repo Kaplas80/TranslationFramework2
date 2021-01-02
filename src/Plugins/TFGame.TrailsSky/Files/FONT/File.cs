@@ -7,6 +7,8 @@ using TF.Core.Files;
 
 namespace TFGame.TrailsSky.Files.FONT
 {
+    using System.IO;
+
     public class File : ImageFile
     {
         private byte[] _currentFont;
@@ -14,10 +16,10 @@ namespace TFGame.TrailsSky.Files.FONT
 
         protected override string Filter => "Ficheros de fuente (FONT*._DA)|FONT*._DA";
 
-        public File(string path, string changesFolder) : base(path, changesFolder)
+        public File(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
-            var fileName = System.IO.Path.GetFileNameWithoutExtension(path);
-            var match = Regex.Match(fileName, @"FONT(?<height>[\d]+)");
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
+            Match match = Regex.Match(fileName, @"FONT(?<height>[\d]+)");
 
             if (!match.Success)
             {
@@ -27,29 +29,25 @@ namespace TFGame.TrailsSky.Files.FONT
             _charHeight = int.Parse(match.Groups["height"].Value);
         }
 
-        protected override void FormOnSaveImage(string filename)
+        public override void ExportImage(string path)
         {
-            System.IO.File.WriteAllBytes(filename, _currentFont);
+            string directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
+
+            System.IO.File.WriteAllBytes(path, _currentFont);
         }
 
-        protected override void FormOnNewImageLoaded(string filename)
+        protected override Image GetDrawingImage()
         {
-            System.IO.File.Copy(filename, ChangesFile, true);
-
-            UpdateFormImage();
-        }
-
-        protected override Tuple<Image, object> GetImage()
-        {
-            var source = HasChanges ? ChangesFile : Path;
+            string source = HasChanges ? ChangesFile : Path;
             _currentFont = System.IO.File.ReadAllBytes(source);
 
             var halfSizeWidth = (int)Math.Ceiling(_charHeight / 2.0d);
-            var halfSizeHeight = _charHeight * 0xE0;
+            int halfSizeHeight = _charHeight * 0xE0;
 
-            var bmpHalfSize = GetBitmap(halfSizeWidth, halfSizeHeight, _currentFont, 0);
+            Bitmap bmpHalfSize = GetBitmap(halfSizeWidth, halfSizeHeight, _currentFont, 0);
 
-            return new Tuple<Image, object>(bmpHalfSize, null);
+            return bmpHalfSize;
         }
 
         private static Bitmap GetBitmap(int width, int height, byte[] imageData, int startOffset)
@@ -59,12 +57,12 @@ namespace TFGame.TrailsSky.Files.FONT
                 width++;
             }
             var bmp = new Bitmap(width, height, PixelFormat.Format32bppRgb);
-            var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
-            var size = Math.Abs(bmpData.Stride) * bmp.Height;
+            int size = Math.Abs(bmpData.Stride) * bmp.Height;
             var data = new byte[size];
 
-            var ptr = bmpData.Scan0;
+            IntPtr ptr = bmpData.Scan0;
             var index = 0;
             var pixel = 0;
             for (var y = 0; y < height; y++)

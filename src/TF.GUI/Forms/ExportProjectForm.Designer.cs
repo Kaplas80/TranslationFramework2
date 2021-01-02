@@ -53,7 +53,7 @@
             this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel1.Location = new System.Drawing.Point(0, 0);
             this.dockPanel1.Name = "dockPanel1";
-            this.dockPanel1.Size = new System.Drawing.Size(741, 429);
+            this.dockPanel1.Size = new System.Drawing.Size(909, 429);
             this.dockPanel1.TabIndex = 0;
             this.dockPanel1.Theme = null;
             // 
@@ -63,7 +63,7 @@
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
             this.btnOK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.btnOK.Location = new System.Drawing.Point(573, 394);
+            this.btnOK.Location = new System.Drawing.Point(741, 394);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 10;
@@ -75,7 +75,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.btnCancel.Location = new System.Drawing.Point(654, 394);
+            this.btnCancel.Location = new System.Drawing.Point(822, 394);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 9;
@@ -94,7 +94,7 @@
             this.gbExportItems.Controls.Add(this.lbItems);
             this.gbExportItems.Location = new System.Drawing.Point(12, 12);
             this.gbExportItems.Name = "gbExportItems";
-            this.gbExportItems.Size = new System.Drawing.Size(470, 376);
+            this.gbExportItems.Size = new System.Drawing.Size(638, 376);
             this.gbExportItems.TabIndex = 11;
             this.gbExportItems.TabStop = false;
             this.gbExportItems.Text = "Elementos a exportar";
@@ -154,7 +154,7 @@
             this.lbItems.Location = new System.Drawing.Point(6, 19);
             this.lbItems.Name = "lbItems";
             this.lbItems.ScrollAlwaysVisible = true;
-            this.lbItems.Size = new System.Drawing.Size(458, 320);
+            this.lbItems.Size = new System.Drawing.Size(626, 320);
             this.lbItems.TabIndex = 2;
             this.lbItems.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lbItems_ItemCheck);
             // 
@@ -165,7 +165,7 @@
             this.gbOptions.Controls.Add(this.chkSaveTempFiles);
             this.gbOptions.Controls.Add(this.chkForceRebuild);
             this.gbOptions.Controls.Add(this.chkCompress);
-            this.gbOptions.Location = new System.Drawing.Point(488, 12);
+            this.gbOptions.Location = new System.Drawing.Point(656, 12);
             this.gbOptions.Name = "gbOptions";
             this.gbOptions.Size = new System.Drawing.Size(241, 376);
             this.gbOptions.TabIndex = 12;
@@ -215,7 +215,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(741, 429);
+            this.ClientSize = new System.Drawing.Size(909, 429);
             this.Controls.Add(this.gbOptions);
             this.Controls.Add(this.gbExportItems);
             this.Controls.Add(this.btnOK);

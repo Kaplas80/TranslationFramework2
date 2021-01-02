@@ -7,13 +7,17 @@ namespace TFGame.PhoenixWrightTrilogy.Files
 {
     public class EncryptedBinaryFile : BinaryTextFile
     {
-        protected EncryptedBinaryFile(string path, string changesFolder, System.Text.Encoding encoding) : base(path, changesFolder, encoding)
+        protected EncryptedBinaryFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
-        public override bool Search(string searchString)
+        public override bool Search(string searchString, string path = "")
         {
-            var encryptedBytes = File.ReadAllBytes(Path);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path;
+            }
+            var encryptedBytes = File.ReadAllBytes(path);
             var bytes = EncryptionManager.DecryptData(encryptedBytes);
 
             var pattern = FileEncoding.GetBytes(searchString.ToFullWidthChars());

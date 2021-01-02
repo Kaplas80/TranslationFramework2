@@ -12,11 +12,11 @@ namespace TFGame.TrailsSky
     {
         public string Id => "307504c9-90f7-45dd-a37f-4e3cd146a826";
         public string Name => "The Legend of Heroes: Trails in the Sky";
-        public string Description => "Build Id: 3675355";
+        public string Description => "Build Id: 4464204";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/andonovmarko/art/The-Legend-of-Heroes-Trails-in-the-Sky-Icon-v1-586602301
-        public int Version => 1;
+        public int Version => 4;
         public System.Text.Encoding FileEncoding => new Encoding();
-
+        public bool ExportOnlyModifiedFiles => false;
         public GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();
@@ -59,7 +59,7 @@ namespace TFGame.TrailsSky
             var imagesT1 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "C_BTN01 ._CH;C_BTN02 ._CH;C_EMOTIO._CH;C_ICON1 ._CH;C_MOUSE ._CH",
+                SearchPattern = "C_BTN01 ._CH;C_BTN02 ._CH;C_EMOTIO._CH;C_ICON1 ._CH;C_MOUSE ._CH;C_STATUS._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType1)
@@ -68,7 +68,7 @@ namespace TFGame.TrailsSky
             var imagesT2 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH;H_EMOTIO._CH;H_ICON1 ._CH;H_MOUSE ._CH",
+                SearchPattern = "H_BTN01 ._CH;H_BTN02 ._CH;H_EMOTIO._CH;H_ICON1 ._CH;H_MOUSE ._CH;H_STATUS._CH",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType2)
@@ -221,33 +221,71 @@ namespace TFGame.TrailsSky
             var imagesDT04 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "C_ENCNT1._CH;C_GAMEOV._CH;C_NOTE??._CH;C_VIS018._CH;C_VIS019._CH;C_VIS020._CH;C_VIS021._CH;C_VIS022._CH;C_VIS023._CH;C_VIS024._CH;C_VIS025._CH;C_VIS026._CH;C_VIS027._CH;C_VIS040._CH;C_VIS041._CH;C_VIS042._CH;C_VIS043._CH;C_VIS044._CH;C_VIS045._CH;C_VIS046._CH;C_VIS047._CH;C_VIS048._CH;C_VIS049._CH;",
+                SearchPattern = "C_*._CH;",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType5),
                 Exclusions =
                 {
-                    "C_NOTE01._CH",
-                    "C_NOTE02._CH",
-                    "C_NOTE21._CH",
-                    "C_NOTE22._CH",
+                    "C_BBS02 ._CH",
+                    "C_BOOK  ._CH",
+                    "C_COOK  ._CH",
+                    "C_ORB000._CH",
+                    "C_ORB001._CH",
+                    "C_ORB002._CH",
+                    "C_ORB003._CH",
+                    "C_ORB004._CH",
+                    "C_ORB005._CH",
+                    "C_ORB006._CH",
+                    "C_ORB007._CH",
+                    "C_TUTO20._CH",
+                    "C_VIS014._CH", // ImageType8 1024
                 }
             };
 
             var imagesDT04_2 = new GameFileSearch
             {
                 RelativePath = ".",
-                SearchPattern = "H_ENCNT1._CH;H_GAMEOV._CH;H_NOTE??._CH;H_VIS018._CH;H_VIS019._CH;H_VIS020._CH;H_VIS021._CH;H_VIS022._CH;H_VIS023._CH;H_VIS024._CH;H_VIS025._CH;H_VIS026._CH;H_VIS027._CH;H_VIS040._CH;H_VIS041._CH;H_VIS042._CH;H_VIS043._CH;H_VIS044._CH;H_VIS045._CH;H_VIS046._CH;H_VIS047._CH;H_VIS048._CH;H_VIS049._CH;",
+                SearchPattern = "H_*._CH;",
                 IsWildcard = true,
                 RecursiveSearch = false,
                 FileType = typeof(Files.Images.ImageType6),
+            };
+
+            var imagesDT04_3 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "W_*._CH;",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType7),
                 Exclusions =
                 {
-                    "H_NOTE01._CH",
-                    "H_NOTE02._CH",
-                    "H_NOTE21._CH",
-                    "H_NOTE22._CH",
+                    "W_BACK01._CH",
+                    "W_BACK11._CH",
+                    "W_BACK12._CH",
+                    "W_BACK13._CH",
+                    "W_BACK14._CH",
+                    "W_BACK15._CH",
                 }
+            };
+
+            var imagesDT04_4 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "C_VIS014._CH;W_BACK??._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType8),
+            };
+
+            var imagesDT04_5 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "C_COOK  ._CH",
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.Images.ImageType4),
             };
 
             var dt04 = new GameFileContainer
@@ -257,6 +295,9 @@ namespace TFGame.TrailsSky
             };
             dt04.FileSearches.Add(imagesDT04);
             dt04.FileSearches.Add(imagesDT04_2);
+            dt04.FileSearches.Add(imagesDT04_3);
+            dt04.FileSearches.Add(imagesDT04_4);
+            dt04.FileSearches.Add(imagesDT04_5);
 
             var imagesDT0F = new GameFileSearch
             {
@@ -283,6 +324,34 @@ namespace TFGame.TrailsSky
             };
             dt0F.FileSearches.Add(imagesDT0F);
             dt0F.FileSearches.Add(imagesDT0F_2);
+
+            var msdtDT10 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "MS*._DT",
+                Exclusions = { "MS30100 ._DT" },
+                IsWildcard = true,
+                RecursiveSearch = false,
+                FileType = typeof(Files.MSDT.File)
+            };
+
+            var msdtDT10_2 = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "MS30100 ._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.MSDT.File2)
+            };
+
+            var dt10 = new GameFileContainer
+            {
+                Path = @".\ED6_DT10.dat",
+                Type = ContainerType.CompressedFile
+            };
+            dt10.FileSearches.Add(msdtDT10);
+            dt10.FileSearches.Add(msdtDT10_2);
+            
 
             var imagesDT1C_1 = new GameFileSearch
             {
@@ -311,6 +380,15 @@ namespace TFGame.TrailsSky
                 FileType = typeof(Files.Images.ImageType2)
             };
 
+            var mnsnote = new GameFileSearch
+            {
+                RelativePath = ".",
+                SearchPattern = "MNSNOTE2._DT",
+                IsWildcard = false,
+                RecursiveSearch = false,
+                FileType = typeof(Files.MNSNOTE2.File)
+            };
+
             var dt1C = new GameFileContainer
             {
                 Path = @".\ED6_DT1C.dat",
@@ -320,6 +398,7 @@ namespace TFGame.TrailsSky
             dt1C.FileSearches.Add(imagesDT1C_1);
             dt1C.FileSearches.Add(imagesDT1C_2);
             dt1C.FileSearches.Add(imagesDT1C_3);
+            dt1C.FileSearches.Add(mnsnote);
 
             result.Add(root);
             result.Add(dt00);
@@ -327,6 +406,7 @@ namespace TFGame.TrailsSky
             result.Add(dt02);
             result.Add(dt04);
             result.Add(dt0F);
+            result.Add(dt10);
             result.Add(dt1C);
 
             return result.ToArray();
@@ -334,10 +414,9 @@ namespace TFGame.TrailsSky
 
         public void ExtractFile(string inputFile, string outputPath)
         {
-            var fileName = Path.GetFileName(inputFile);
-            var extension = Path.GetExtension(inputFile);
+            string extension = Path.GetExtension(inputFile);
 
-            if (extension.StartsWith(".dat"))
+            if (!string.IsNullOrEmpty(extension) && extension.StartsWith(".dat"))
             {
                 DatFile.Extract(inputFile, outputPath);
             }
@@ -345,10 +424,9 @@ namespace TFGame.TrailsSky
 
         public void RepackFile(string inputPath, string outputFile, bool compress)
         {
-            var fileName = Path.GetFileName(outputFile);
-            var extension = Path.GetExtension(outputFile);
+            string extension = Path.GetExtension(outputFile);
 
-            if (extension.StartsWith(".dat"))
+            if (!string.IsNullOrEmpty(extension) && extension.StartsWith(".dat"))
             {
                 DatFile.Repack(inputPath, outputFile, compress);
             }

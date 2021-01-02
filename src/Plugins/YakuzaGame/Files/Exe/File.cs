@@ -19,23 +19,23 @@ namespace YakuzaGame.Files.Exe
         protected virtual long FontTableOffset => 0;
         protected virtual List<ExePatch> Patches => new List<ExePatch>();
 
-        protected File(string path, string changesFolder, Encoding encoding) : base(path, changesFolder, encoding)
+        protected File(string gameName, string path, string changesFolder, System.Text.Encoding encoding) : base(gameName, path, changesFolder, encoding)
         {
         }
 
-        public override void Open(DockPanel panel, ThemeBase theme)
+        public override void Open(DockPanel panel)
         {
-            _patchView = new PatchView(theme);
+            _patchView = new PatchView();
             _patches = GetPatches();
             _patchView.LoadPatches(_patches);
             _patchView.Show(panel, DockState.Document);
 
-            _ftView = new FontTableView(theme);
+            _ftView = new FontTableView();
             _data = GetFontTable();
             _ftView.LoadFontTable(_data);
             _ftView.Show(panel, DockState.Document);
 
-            base.Open(panel, theme);
+            base.Open(panel);
         }
 
         protected virtual List<ExePatch> GetPatches()
@@ -308,6 +308,13 @@ namespace YakuzaGame.Files.Exe
                     }
                 }
             }
+        }
+
+        protected override void LoadBeforeImport()
+        {
+            _patches = GetPatches();
+            _data = GetFontTable();
+            base.LoadBeforeImport();
         }
     }
 }

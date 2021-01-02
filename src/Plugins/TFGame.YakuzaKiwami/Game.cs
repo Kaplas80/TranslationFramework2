@@ -12,7 +12,7 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Build Id: 3645748";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-786854223
-        public override int Version => 2;
+        public override int Version => 4;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -332,6 +332,16 @@ namespace TFGame.YakuzaKiwami
 
             chapter.FileSearches.Add(dds1Search);
 
+            var tableSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "extra.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Table.File)
+                };
+
             var dds2Search =
                 new GameFileSearch
                 {
@@ -348,6 +358,7 @@ namespace TFGame.YakuzaKiwami
                 Type = ContainerType.CompressedFile
             };
 
+            pause_c.FileSearches.Add(tableSearch);
             pause_c.FileSearches.Add(dds2Search);
 
             var dds3Search =
@@ -395,6 +406,28 @@ namespace TFGame.YakuzaKiwami
 
             reactor.FileSearches.Add(nameSearch);
             return reactor;
+        }
+
+        private GameFileContainer GetScenario()
+        {
+            var search =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "scenario2.*",
+                    IsWildcard = true,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.Scenario.File)
+                };
+
+            var scenario = new GameFileContainer
+            {
+                Path = @"media\data\scenario",
+                Type = ContainerType.Folder
+            };
+
+            scenario.FileSearches.Add(search);
+            return scenario;
         }
 
         private GameFileContainer GetSoundpar()
@@ -454,13 +487,24 @@ namespace TFGame.YakuzaKiwami
                     FileType = typeof(YakuzaGame.Files.Table.File)
                 };
 
+            var enemyNameSearch =
+                new GameFileSearch
+                {
+                    RelativePath = ".",
+                    SearchPattern = "enemy_name_all.bin_c",
+                    IsWildcard = false,
+                    RecursiveSearch = false,
+                    FileType = typeof(YakuzaGame.Files.EnemyName.File)
+                };
+
             var par = new GameFileContainer
             {
                 Path = @"media\data\staypar\stay.par",
                 Type = ContainerType.CompressedFile
             };
-            
+
             par.FileSearches.Add(tableSearch);
+            par.FileSearches.Add(enemyNameSearch);
             return par;
         }
 
@@ -608,6 +652,7 @@ namespace TFGame.YakuzaKiwami
             result.AddRange(GetMinigame());
             result.AddRange(GetPause());
             result.Add(GetReactorpar());
+            result.Add(GetScenario());
             result.Add(GetSoundpar());
             result.Add(GetStage());
             result.Add(GetStaypar());

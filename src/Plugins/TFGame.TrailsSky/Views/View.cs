@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TF.Core.Entities;
 using TF.Core.Views;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -13,7 +14,7 @@ namespace TFGame.TrailsSky.Views
 {
     public class View : GridView
     {
-        public View(ThemeBase theme) : base(theme)
+        public View(TranslationFile file) : base(file)
         {
         }
 

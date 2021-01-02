@@ -16,7 +16,7 @@ namespace YakuzaGame
         public virtual int Version { get; }
 
         public virtual Encoding FileEncoding => Encoding.UTF8;
-
+        public virtual bool ExportOnlyModifiedFiles => false;
         public virtual GameFileContainer[] GetContainers(string path)
         {
             var result = new List<GameFileContainer>();

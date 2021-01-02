@@ -6,7 +6,7 @@
         protected override int BytesPerPixel => 2;
         protected override string ImageFormat => "ARGB1555";
 
-        protected Argb1555ImageFile(string path, string changesFolder) : base(path, changesFolder)
+        protected Argb1555ImageFile(string gameName, string path, string changesFolder) : base(gameName, path, changesFolder)
         {
         }
 

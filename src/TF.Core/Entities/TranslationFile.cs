@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using ScintillaNET;
+using TF.Core.POCO;
+using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TF.Core.Entities
@@ -42,9 +45,19 @@ namespace TF.Core.Entities
 
         public virtual int SubtitleCount => 0;
 
+        public virtual POCO.LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\n",
+            ShownLineEnding = "\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.Lf
+        };
+
+        public virtual string GameName { get; private set; }
+
         protected readonly Encoding FileEncoding;
 
-        public TranslationFile(string path, string changesFolder, Encoding encoding = null)
+        public TranslationFile(string gameName, string path, string changesFolder, System.Text.Encoding encoding = null)
         {
             _changesFolder = changesFolder;
             Id = Guid.NewGuid().ToString();
@@ -52,12 +65,14 @@ namespace TF.Core.Entities
             Name = System.IO.Path.GetFileName(path);
             Type = FileType.Unknown;
 
+            GameName = gameName;
+
             FileEncoding = encoding;
 
             NeedSaving = false;
         }
 
-        public virtual void Open(DockPanel panel, ThemeBase theme)
+        public virtual void Open(DockPanel panel)
         {
         }
 
@@ -85,7 +100,7 @@ namespace TF.Core.Entities
             OnFileChanged();
         }
 
-        public virtual bool Search(string searchString)
+        public virtual bool Search(string searchString, string path = "")
         {
             return false;
         }
@@ -98,6 +113,41 @@ namespace TF.Core.Entities
         protected virtual void OnFileChanged()
         {
             FileChanged?.Invoke();
+        }
+
+        public virtual void ExportPo(string path)
+        {
+            
+        }
+
+        public virtual void ImportPo(string path, bool save = true, bool parallel = true)
+        {
+
+        }
+
+        public virtual void ExportImage(string path)
+        {
+            
+        }
+
+        public virtual void ImportImage(string path)
+        {
+
+        }
+
+        protected virtual void LoadBeforeImport()
+        {
+            
+        }
+
+        protected virtual string GetContext(Subtitle subtitle)
+        {
+            return string.Empty;
+        }
+
+        public virtual string GetExportFilename()
+        {
+            return System.IO.Path.GetFileName(Path);
         }
     }
 }
