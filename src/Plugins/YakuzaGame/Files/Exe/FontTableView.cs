@@ -140,8 +140,16 @@ namespace YakuzaGame.Files.Exe
                     var dds = TexHelper.Instance.LoadFromDDSFile(font, DDS_FLAGS.NONE);
                     var codec = TexHelper.Instance.GetWICCodec(WICCodecs.PNG);
 
-                    var decompressed = dds.Decompress(DXGI_FORMAT.B8G8R8A8_UNORM);
-                    var image = decompressed.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
+                    TexMetadata metadata = dds.GetMetadata();
+
+                    if (IsCompressed(metadata.Format))
+                    {
+                        ScratchImage tmp = dds.Decompress(DXGI_FORMAT.UNKNOWN);
+                        dds.Dispose();
+                        dds = tmp;
+                    }
+
+                    var image = dds.SaveToWICMemory(0, WIC_FLAGS.NONE, codec);
 
                     var btn = sender as Button;
                     if (btn.Name == "btnLoadOriginalFont")
@@ -628,6 +636,38 @@ namespace YakuzaGame.Files.Exe
             }
 
             return result;
+        }
+
+        private static bool IsCompressed(DXGI_FORMAT format)
+        {
+            switch (format)
+            {
+                case DXGI_FORMAT.BC1_TYPELESS:
+                case DXGI_FORMAT.BC1_UNORM:
+                case DXGI_FORMAT.BC1_UNORM_SRGB:
+                case DXGI_FORMAT.BC2_TYPELESS:
+                case DXGI_FORMAT.BC2_UNORM:
+                case DXGI_FORMAT.BC2_UNORM_SRGB:
+                case DXGI_FORMAT.BC3_TYPELESS:
+                case DXGI_FORMAT.BC3_UNORM:
+                case DXGI_FORMAT.BC3_UNORM_SRGB:
+                case DXGI_FORMAT.BC4_TYPELESS:
+                case DXGI_FORMAT.BC4_UNORM:
+                case DXGI_FORMAT.BC4_SNORM:
+                case DXGI_FORMAT.BC5_TYPELESS:
+                case DXGI_FORMAT.BC5_UNORM:
+                case DXGI_FORMAT.BC5_SNORM:
+                case DXGI_FORMAT.BC6H_TYPELESS:
+                case DXGI_FORMAT.BC6H_UF16:
+                case DXGI_FORMAT.BC6H_SF16:
+                case DXGI_FORMAT.BC7_TYPELESS:
+                case DXGI_FORMAT.BC7_UNORM:
+                case DXGI_FORMAT.BC7_UNORM_SRGB:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
     }
 }
