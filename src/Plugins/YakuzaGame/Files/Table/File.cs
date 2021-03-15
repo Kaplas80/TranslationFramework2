@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -315,7 +315,7 @@ namespace YakuzaGame.Files.Table
         {
             var dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read);
             var binary = new BinaryFormat(dataStream);
-            var binary2Po = new Yarhl.Media.Text.Po2Binary();
+            var binary2Po = new Yarhl.Media.Text.Binary2Po();
             var po = binary2Po.Convert(binary);
 
             LoadBeforeImport();
