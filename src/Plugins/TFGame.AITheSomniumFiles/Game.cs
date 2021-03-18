@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace TFGame.AITheSomniumFiles
         public override string Name => "AI - The Somnium Files";
         public override string Description => "Steam Build Id: 4031380 / Nintendo Switch";
         public override Image Icon => Resources.Icon;
-        public override int Version => 1;
+        public override int Version => 2;
         public override System.Text.Encoding FileEncoding => Encoding.UTF8;
 
         protected override string[] AllowedExtensions => new[]
@@ -114,7 +114,7 @@ namespace TFGame.AITheSomniumFiles
             {
                 RelativePath = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\StandaloneWindows64",
                 SearchPattern =
-                    @"bg_md_bg22_00_common;clue_image;etc;image;image_name_us;item;item_ii006;item_ii011;item_ii027;operation_guide;saveload;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
+                    @"bg_md_bg22_00_common;clue_image;etc;file_image_album;file_image_album_thumbnail;image;image_name_us;item;item_ii006;item_ii011;item_ii027;operation_guide;saveload;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
                 RecursiveSearch = false,
                 TypeSearch = ContainerType.CompressedFile
             };
@@ -128,7 +128,7 @@ namespace TFGame.AITheSomniumFiles
             {
                 RelativePath = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\Switch",
                 SearchPattern =
-                    @"bg_md_bg22_00_common;clue_image;etc;image;image_name_us;item;item_ii006;item_ii011;item_ii027;operation_guide;saveload;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
+                    @"bg_md_bg22_00_common;clue_image;etc;file_image_album;file_image_album_thumbnail;image;image_name_us;item;item_ii006;item_ii011;item_ii027;operation_guide;saveload;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
                 RecursiveSearch = false,
                 TypeSearch = ContainerType.CompressedFile
             };
