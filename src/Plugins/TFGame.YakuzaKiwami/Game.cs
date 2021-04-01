@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Drawing;
 using TF.Core.Entities;
 using TF.Core.Files;
@@ -12,7 +12,7 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Build Id: 3645748";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-786854223
-        public override int Version => 4;
+        public override int Version => 5;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -48,7 +48,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "2d_cf_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var dds2Search =
@@ -58,7 +58,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var sprite_c = new GameFileContainer
@@ -103,7 +103,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "staffroll_d2_??.dds;ifc_jimaku_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var auth_w64_containers = new GameFileContainerSearch
@@ -187,7 +187,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "hd2_hankaku.dds",
                     IsWildcard = false,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var fontpar = new GameFileContainer
@@ -321,7 +321,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "2d_mn_syotitle_??.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var chapter = new GameFileContainer
@@ -349,7 +349,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "2d_mn_rom_continue.dds;2d_*.dds;head_pic_*.dds;kan_?.dds;ifc_jimaku_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var pause_c = new GameFileContainer
@@ -368,7 +368,7 @@ namespace TFGame.YakuzaKiwami
                     SearchPattern = "2d_jm_gp_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var tougijyo = new GameFileContainer
