@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using TF.Core.Entities;
@@ -15,7 +15,7 @@ namespace TFGame.Yakuza0
         public override Image Icon =>
             Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-0-758095741
 
-        public override int Version => 5;
+        public override int Version => 6;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -51,7 +51,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_cf_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var sprite_c = new GameFileContainer
@@ -70,7 +70,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var ui_c = new GameFileContainer
@@ -106,7 +106,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "staffroll*.dds;ycap_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var auth_w64_containers = new GameFileContainerSearch
@@ -190,7 +190,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "hd_hankaku.dds",
                     IsWildcard = false,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var fontpar = new GameFileContainer
@@ -271,7 +271,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "*.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var minigame = new GameFileContainer
@@ -335,7 +335,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_k2_kyaba_cutin_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var cabaretIsland = new GameFileContainer
@@ -353,7 +353,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_mn_syotitle_??.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var chapter = new GameFileContainer
@@ -371,7 +371,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_ci_bu_rep*.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var findArms = new GameFileContainer
@@ -389,7 +389,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "rule_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var minigame = new GameFileContainer
@@ -407,7 +407,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "p??_000.dds;staffroll.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile),
+                    FileType = typeof(DDS2File),
                 };
 
             var movie = new GameFileContainer
@@ -441,7 +441,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "k_a_all.dds;k_master_??.dds;m_a_all.dds;m_master_??.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             pause.FileSearches.Add(tableSearch);
@@ -454,7 +454,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_*.dds;head_pic_*.dds;kan_?.dds;rule_*.dds;ifc_jimaku_*.dds",
                     IsWildcard = true,
                     RecursiveSearch = true,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             pause.FileSearches.Add(ddsSearch);
@@ -472,7 +472,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_ci_item_battery_??.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             pcircuit.FileSearches.Add(ddsSearch);
@@ -484,7 +484,7 @@ namespace TFGame.Yakuza0
                     SearchPattern = "2d_jm_gp_*.dds;2d_yk_tg_style_??.dds",
                     IsWildcard = true,
                     RecursiveSearch = false,
-                    FileType = typeof(DDSFile)
+                    FileType = typeof(DDS2File)
                 };
 
             var tougijyo = new GameFileContainer
