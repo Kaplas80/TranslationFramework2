@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TFGame.TrailsSky.Files.Exe
@@ -18,6 +18,8 @@ namespace TFGame.TrailsSky.Files.Exe
             {0x00516464, new List<int>() {0x004042fb, }}, //    移  動   
             {0x00516474, new List<int>() {0x004043b7, }}, // Attack
             {0x0051647c, new List<int>() {0x004043be, }}, // 　 攻　撃 　
+            {0x0051648c, new List<int>() {0x00406e51, }}, // ATT GUARD
+            {0x00516498, new List<int>() {0x00406f47, }}, // CRITICAL
             {0x005164a4, new List<int>() {0x0043bbd5, }}, // Party was defeated...
             {0x005164bc, new List<int>() {0x0043bbdc, }}, // パーティは全滅しました・・・
             {0x005164dc, new List<int>() {0x0043bbb5, }}, // Enemy fled...
@@ -39,6 +41,24 @@ namespace TFGame.TrailsSky.Files.Exe
             {0x005166b0, new List<int>() {0x0041039d, }}, // %sはアーツを使う準備をしている。\n
             {0x005166d4, new List<int>() {0x004112d7, }}, // %s fled.
             {0x005166e0, new List<int>() {0x004112e3, }}, // %sは逃げ出した。
+            {0x00516890, new List<int>() {0x00416693, 0x00423029, }}, // RESIST
+            {0x00516898, new List<int>() {0x00416ad3, 0x00416d55, }}, // DEF DOWN
+            {0x005168a4, new List<int>() {0x00416c76, }}, // MOV UP
+            {0x005168ac, new List<int>() {0x00416c4d, }}, // ARTS GUARD
+            {0x005168b8, new List<int>() {0x00416c23, }}, // CRAFT GUARD
+            {0x005168c4, new List<int>() {0x00416d0b, }}, // STR DOWN
+            {0x005168d0, new List<int>() {0x00416d36, }}, // STR UP
+            {0x005168d8, new List<int>() {0x00416cde, }}, // DEF UP
+            {0x005168e0, new List<int>() {0x00416de3, }}, // SPD UP
+            {0x005168e8, new List<int>() {0x00416dbd, }}, // SPD DOWN
+            {0x005168f4, new List<int>() {0x00416d97, }}, // DEX UP
+            {0x005168fc, new List<int>() {0x00416e09, }}, // DEX DOWN
+            {0x00516908, new List<int>() {0x00416ec8, }}, // AGL UP
+            {0x00516910, new List<int>() {0x00416ea5, }}, // AGL DOWN
+            {0x0051691c, new List<int>() {0x00416e5d, }}, // MAX GUARD
+            {0x0051698c, new List<int>() {0x00422ac7, 0x00422bd6, 0x00422cc1, }}, // GUARD
+            {0x00516994, new List<int>() {0x0042304d, }}, // AT DELAY
+            {0x005169a0, new List<int>() {0x00423512, }}, // AT ADVANCE
             {0x005169ac, new List<int>() {0x00423798, }}, // %s was destroyed!\n
             {0x005169c0, new List<int>() {0x004237a4, }}, // アイテム「%s」を壊された！\n
             {0x00516a74, new List<int>() {0x0042bfbb, }}, // Battle Order Bar:
@@ -101,6 +121,9 @@ namespace TFGame.TrailsSky.Files.Exe
             {0x00517c8c, new List<int>() {0x0042cbe9, }}, // #0CNPCを守れ！
             {0x00517c9c, new List<int>() {0x0042cc26, }}, // If an NPC's HP reaches 0, the game is over.
             {0x00517cc8, new List<int>() {0x0042cc3d, }}, // #0CNPCのHPが0になるとゲームオーバーになります。
+            {0x00517cf8, new List<int>() {0x00430fe4, 0x00431009, }}, // MISS
+            {0x00517d00, new List<int>() {0x00430fa8, 0x00430fcb, }}, // DEAD
+            {0x00517d08, new List<int>() {0x00430f68, 0x00430f8f, 0x0043615c, 0x0043617f, }}, // LEVEL UP
             {0x0051818c, new List<int>() {0x00435591, }}, // Displays all items.
             {0x005181a0, new List<int>() {0x0043559b, }}, // 全てのアイテムを表示します。
             {0x005181c0, new List<int>() {0x004355be, }}, // Displays weapons.
