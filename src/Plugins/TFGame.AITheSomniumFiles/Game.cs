@@ -17,7 +17,7 @@ namespace TFGame.AITheSomniumFiles
         public override string Description => "Steam Build Id: 4031380 / Nintendo Switch";
         public override Image Icon => Resources.Icon;
         public override int Version => 2;
-        public override System.Text.Encoding FileEncoding => Encoding.UTF8;
+        public override System.Text.Encoding FileEncoding => new UTF8Encoding(false);
 
         protected override string[] AllowedExtensions => new[]
         {

@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
 using TF.Core.Entities;
 using TF.Core.Helpers;
+using TF.Core.POCO;
 using TF.Core.TranslationEntities;
 using TF.Core.Views;
 using TF.IO;
@@ -17,6 +18,14 @@ namespace TF.Core.Files
     {
         protected PlainText _text;
         protected TextView _view;
+
+        public override LineEnding LineEnding => new LineEnding
+        {
+            RealLineEnding = "\r\n",
+            ShownLineEnding = "\\r\\n",
+            PoLineEnding = "\n",
+            ScintillaLineEnding = ScintillaLineEndings.CrLf,
+        };
 
         public override int SubtitleCount
         {
