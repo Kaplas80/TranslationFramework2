@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using TF.Core.Entities;
 using TF.Core.Files;
 using TFGame.AITheSomniumFiles.Files;
@@ -16,8 +15,8 @@ namespace TFGame.AITheSomniumFiles
         public override string Name => "AI - The Somnium Files";
         public override string Description => "Steam Build Id: 4031380 / Nintendo Switch";
         public override Image Icon => Resources.Icon;
-        public override int Version => 2;
-        public override System.Text.Encoding FileEncoding => new UTF8Encoding(false);
+        public override int Version => 3;
+        public override System.Text.Encoding FileEncoding => new Encoding();
 
         protected override string[] AllowedExtensions => new[]
         {
@@ -89,7 +88,7 @@ namespace TFGame.AITheSomniumFiles
                 SearchPattern = "lyrics-us.txt;lyrics-us2.txt",
                 IsWildcard = true,
                 RecursiveSearch = false,
-                FileType = typeof(TextFile)
+                FileType = typeof(Files.Dance.File)
             };
 
             var scene_dance = new GameFileContainer

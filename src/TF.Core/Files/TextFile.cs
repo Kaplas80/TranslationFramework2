@@ -19,14 +19,6 @@ namespace TF.Core.Files
         protected PlainText _text;
         protected TextView _view;
 
-        public override LineEnding LineEnding => new LineEnding
-        {
-            RealLineEnding = "\r\n",
-            ShownLineEnding = "\\r\\n",
-            PoLineEnding = "\n",
-            ScintillaLineEnding = ScintillaLineEndings.CrLf,
-        };
-
         public override int SubtitleCount
         {
             get
@@ -170,7 +162,7 @@ namespace TF.Core.Files
 
             var entry = new PoEntry();
             var text = GetText();
-            var tmp = text.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+            var tmp = text.Text.Replace(LineEnding.RealLineEnding, LineEnding.PoLineEnding);
             if (string.IsNullOrEmpty(tmp))
             {
                 tmp = "<!empty>";
@@ -179,7 +171,7 @@ namespace TF.Core.Files
 
             if (text.Text != text.Translation)
             {
-                tmp = text.Translation.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+                tmp = text.Translation.Replace(LineEnding.RealLineEnding, LineEnding.PoLineEnding);
                 if (string.IsNullOrEmpty(tmp))
                 {
                     tmp = "<!empty>";
@@ -203,7 +195,7 @@ namespace TF.Core.Files
             var po = binary2Po.Convert(binary);
 
             _text = GetText();
-            var tmp = _text.Text.Replace(LineEnding.ShownLineEnding, LineEnding.PoLineEnding);
+            var tmp = _text.Text.Replace(LineEnding.RealLineEnding, LineEnding.PoLineEnding);
             if (string.IsNullOrEmpty(tmp))
             {
                 tmp = "<!empty>";
@@ -212,7 +204,7 @@ namespace TF.Core.Files
 
             if (!string.IsNullOrEmpty(entry.Translated))
             {
-                _text.Translation = entry.Translated.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                _text.Translation = entry.Translated.Replace(LineEnding.PoLineEnding, LineEnding.RealLineEnding);
             }
 
             if (save)

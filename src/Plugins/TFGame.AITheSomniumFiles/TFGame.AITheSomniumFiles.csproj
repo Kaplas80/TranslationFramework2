@@ -40,6 +40,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encoding.cs" />
+    <Compile Include="Files\Dance\File.cs" />
     <Compile Include="Files\LuaText\File.cs" />
     <Compile Include="Files\LuaText\GridView.cs">
       <SubType>Form</SubType>
