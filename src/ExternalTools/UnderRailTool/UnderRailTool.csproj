@@ -44,8 +44,8 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="underrail, Version=0.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>.\underrail.exe</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TF.GUI\bin\Release\plugins\underrail.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace UnderRailTool
 {
     public static class Items
     {
-        // "I" class = bqj
+        // "I" class = bye
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<bqj>(gameFile, true);
+            var model = FileManager.Load<bye>(gameFile, true);
 
-            string name = model.aw();
-            string description = model.ax();
+            string name = model.ax();
+            string description = model.ay();
 
             var result = new Dictionary<string, string>(2);
             if (!string.IsNullOrEmpty(name))
@@ -26,9 +26,9 @@ namespace UnderRailTool
             return result;
         }
 
-        public static bqj SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static bye SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<bqj>(gameFile, true);
+            var model = FileManager.Load<bye>(gameFile, true);
 
             if (texts.TryGetValue("Name", out string name))
             {

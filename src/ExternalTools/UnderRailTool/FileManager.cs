@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -15,11 +15,11 @@ namespace UnderRailTool
                 {
                     if (!isCompressed)
                     {
-                        return dt2.DeserializeFromBinaryFile<T>(path, cp3.a(), true);
+                        return d8s.DeserializeFromBinaryFile<T>(path, c1a.a(), true);
                     }
                     else
                     {
-                        return dt2.DeserializeFromBinaryFileCompressed<T>(path, cp3.a(), true);
+                        return d8s.DeserializeFromBinaryFileCompressed<T>(path, c1a.a(), true);
                     }
                 }
                 catch (Exception e)
@@ -39,11 +39,11 @@ namespace UnderRailTool
             {
                 if (!isCompressed)
                 {
-                    dt2.SerializeToBinaryFile(path, model, cp3.a(), doe.b(), true);
+                    d8s.SerializeToBinaryFile(path, model, c1a.a(), d2q.b(), true);
                 }
                 else
                 {
-                    dt2.SerializeToBinaryFileCompressed(path, model, cp3.a(), doe.b(), true);
+                    d8s.SerializeToBinaryFileCompressed(path, model, c1a.a(), d2q.b(), true);
                 }
             }
             catch (Exception e)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,11 +33,11 @@ namespace UnderRailTool
             var assemblyResolver = new AssemblyResolver();
             assemblyResolver.b(true);
             assemblyResolver.a(true);
-            assemblyResolver.nz();
-            assemblyResolver.e();
+            assemblyResolver.as9();
+            assemblyResolver.d();
 
             // This is the assignment after "Creating data model element type map"
-            FieldInfo fieldInfo = typeof(cp3).GetField("a");
+            FieldInfo fieldInfo = typeof(c1a).GetField("a");
             fieldInfo.SetValue(null, assemblyResolver);
         }
 
@@ -107,35 +107,35 @@ namespace UnderRailTool
                 case ".udlg":
                 {
                     Dictionary<string, string> texts = ReadTexts(textsFile);
-                    aqq model = Dialogs.SetSubtitles(gameFile, texts);
+                    auo model = Dialogs.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, false);
                     break;
                 }
                 case ".k":
                 {
                     Dictionary<string, string> texts = ReadTexts(textsFile);
-                    aj8 model = Knowledge.SetSubtitles(gameFile, texts);
+                    anm model = Knowledge.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
                 case ".item":
                 {
                     Dictionary<string, string> texts = ReadTexts(textsFile);
-                    bqj model = Items.SetSubtitles(gameFile, texts);
+                    bye model = Items.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
                 case ".uz":
                 {
                     Dictionary<string, string> texts = ReadTexts(textsFile);
-                    cfs model = Zone.SetSubtitles(gameFile, texts);
+                    cp0 model = Zone.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }
                 case ".uzl":
                 {
                     Dictionary<string, string> texts = ReadTexts(textsFile);
-                    cy3 model = ZoneLayer.SetSubtitles(gameFile, texts);
+                    da3 model = ZoneLayer.SetSubtitles(gameFile, texts);
                     FileManager.Save(model, outputFile, true);
                     break;
                 }

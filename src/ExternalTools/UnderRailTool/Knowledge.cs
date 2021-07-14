@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace UnderRailTool
 {
     public static class Knowledge
     {
-        // "KI" class = aj8
+        // "KI" class = anm
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<aj8>(gameFile, true);
+            var model = FileManager.Load<anm>(gameFile, true);
 
             var result = new Dictionary<string, string>();
             foreach (var kvp in model.a)
@@ -19,9 +19,9 @@ namespace UnderRailTool
             return result;
         }
 
-        public static aj8 SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static anm SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<aj8>(gameFile, true);
+            var model = FileManager.Load<anm>(gameFile, true);
 
             var rebuilt = new Dictionary<string, string>();
             foreach (var kvp in texts)

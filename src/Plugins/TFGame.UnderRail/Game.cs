@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using TF.Core.Entities;
@@ -9,7 +9,7 @@ namespace TFGame.UnderRail
     {
         public string Id => "ad08639d-0f5b-47fb-aa9d-b412e44ecfcd";
         public string Name => "UnderRail";
-        public string Description => "v1.1.1.3";
+        public string Description => "v1.1.4.3";
         public Image Icon => Resources.Icon; // https://www.deviantart.com/sony33d/art/UnderRail-584195186
         public int Version => 2;
         public System.Text.Encoding FileEncoding => new Encoding();
