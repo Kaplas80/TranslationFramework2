@@ -1,30 +1,30 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace UnderRailTool
 {
     public static class Dialogs
     {
-        // "DM" class = aqq
-        // "CE" class = dd2
-        // "Q" class = yz
-        // "SE" class = c74
+        // "DM" class = auo
+        // "CE" class = dre
+        // "Q" class = abi
+        // "SE" class = dk0
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<aqq>(gameFile, false);
+            var model = FileManager.Load<auo>(gameFile, false);
 
             return GetSubtitles(model);
         }
 
-        public static aqq SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static auo SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<aqq>(gameFile, false);
+            var model = FileManager.Load<auo>(gameFile, false);
 
             SetSubtitles(model, texts);
 
             return model;
         }
 
-        private static Dictionary<string, string> GetSubtitles(aqq model)
+        private static Dictionary<string, string> GetSubtitles(auo model)
         {
             var result = new Dictionary<string, string>();
 
@@ -35,15 +35,15 @@ namespace UnderRailTool
 
             var processed = new Dictionary<string, bool>();
 
-            var queue = new Queue<dd2>();
+            var queue = new Queue<dre>();
 
-            dd2 startElement = model.b();
+            dre startElement = model.b();
 
             queue.Enqueue(startElement);
 
             while (queue.Count > 0)
             {
-                dd2 current = queue.Dequeue();
+                dre current = queue.Dequeue();
                 if (processed.ContainsKey(current.Name))
                 {
                     continue;
@@ -51,7 +51,7 @@ namespace UnderRailTool
 
                 switch (current)
                 {
-                    case yz question:
+                    case abi question:
                     {
                         Dictionary<string, string> dict = question.d(); // LocalizedTexts
 
@@ -61,14 +61,14 @@ namespace UnderRailTool
                             result.Add(question.Name, str);
                         }
 
-                        foreach (dpy answer in question.PossibleAnswers)
+                        foreach (ccc answer in question.PossibleAnswers)
                         {
                             queue.Enqueue(answer);
                         }
 
                         break;
                     }
-                    case c74 storyElement:
+                    case dk0 storyElement:
                     {
                         Dictionary<string, string> dict = storyElement.d();
 
@@ -82,7 +82,7 @@ namespace UnderRailTool
                     }
                 }
 
-                foreach (dd2 step in current.PossibleNextSteps)
+                foreach (dre step in current.PossibleNextSteps)
                 {
                     queue.Enqueue(step);
                 }
@@ -93,17 +93,17 @@ namespace UnderRailTool
             return result;
         }
 
-        private static void SetSubtitles(aqq model, Dictionary<string, string> dictionary)
+        private static void SetSubtitles(auo model, Dictionary<string, string> dictionary)
         {
             var processed = new Dictionary<string, bool>();
-            var queue = new Queue<dd2>();
-            dd2 startElement = model.b();
+            var queue = new Queue<dre>();
+            dre startElement = model.b();
 
             queue.Enqueue(startElement);
 
             while (queue.Count > 0)
             {
-                dd2 current = queue.Dequeue();
+                dre current = queue.Dequeue();
                 if (processed.ContainsKey(current.Name))
                 {
                     continue;
@@ -111,7 +111,7 @@ namespace UnderRailTool
 
                 switch (current)
                 {
-                    case yz question:
+                    case abi question:
                     {
                         Dictionary<string, string> dict = question.d();
 
@@ -121,14 +121,14 @@ namespace UnderRailTool
                             dict["English"] = str;
                         }
 
-                        foreach (dpy answer in question.PossibleAnswers)
+                        foreach (ccc answer in question.PossibleAnswers)
                         {
                             queue.Enqueue(answer);
                         }
 
                         break;
                     }
-                    case c74 storyElement:
+                    case dk0 storyElement:
                     {
                         Dictionary<string, string> dict = storyElement.d();
 
@@ -142,7 +142,7 @@ namespace UnderRailTool
                     }
                 }
 
-                foreach (dd2 step in current.PossibleNextSteps)
+                foreach (dre step in current.PossibleNextSteps)
                 {
                     queue.Enqueue(step);
                 }

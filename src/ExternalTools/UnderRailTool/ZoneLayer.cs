@@ -1,22 +1,22 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace UnderRailTool
 {
     public static class ZoneLayer
     {
-        // "ZL" class = cy3
+        // "ZL" class = da3
         public static Dictionary<string, string> GetSubtitles(string gameFile)
         {
-            var model = FileManager.Load<cy3>(gameFile, true);
+            var model = FileManager.Load<da3>(gameFile, true);
 
             var result = new Dictionary<string, string>();
 
-            foreach (b5t area in model.e()) // _AreaLayers
+            foreach (ce5 area in model.e()) // _AreaLayers
             {
-                foreach (bko entity in area.Entities)
+                foreach (br0 entity in area.Entities)
                 {
-                    string id = entity.n6().ToString();
-                    string name = entity.nj();
+                    string id = entity.o6().ToString(); // base get "I"
+                    string name = entity.w5(); // base get "N"
                     if (!string.IsNullOrEmpty(name))
                     {
                         result.Add(id, name);
@@ -27,15 +27,15 @@ namespace UnderRailTool
             return result;
         }
 
-        public static cy3 SetSubtitles(string gameFile, Dictionary<string, string> texts)
+        public static da3 SetSubtitles(string gameFile, Dictionary<string, string> texts)
         {
-            var model = FileManager.Load<cy3>(gameFile, true);
+            var model = FileManager.Load<da3>(gameFile, true);
 
-            foreach (b5t area in model.e())
+            foreach (ce5 area in model.e())
             {
-                foreach (bko entity in area.Entities)
+                foreach (br0 entity in area.Entities)
                 {
-                    string id = entity.n6().ToString();
+                    string id = entity.o6().ToString();
                     if (texts.TryGetValue(id, out string name))
                     {
                         entity.q(name);
