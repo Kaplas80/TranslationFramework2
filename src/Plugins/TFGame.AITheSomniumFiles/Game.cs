@@ -55,6 +55,16 @@ namespace TFGame.AITheSomniumFiles
 
             result.Add(resources);
 
+            resources = new GameFileContainer
+            {
+                Path = @".\Data\resources.assets",
+                Type = ContainerType.CompressedFile
+            };
+            resources.FileSearches.Add(ttfFonts);
+            resources.FileSearches.Add(textures);
+
+            result.Add(resources);
+
             var textSearch = new GameFileSearch()
             {
                 RelativePath = @"Unity_Assets_Files\luabytecode\CAB-0670e8eb4b419284c6de5d2d82066179\",
@@ -75,7 +85,7 @@ namespace TFGame.AITheSomniumFiles
 
             luaByteCode = new GameFileContainer
             {
-                Path = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\Switch\luabytecode",
+                Path = @".\Data\StreamingAssets\AssetBundles\Switch\luabytecode",
                 Type = ContainerType.CompressedFile
             };
             luaByteCode.FileSearches.Add(textSearch);
@@ -102,7 +112,7 @@ namespace TFGame.AITheSomniumFiles
 
             scene_dance = new GameFileContainer
             {
-                Path = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\Switch\scene_dance",
+                Path = @".\Data\StreamingAssets\AssetBundles\Switch\scene_dance",
                 Type = ContainerType.CompressedFile
             };
             scene_dance.FileSearches.Add(textSearch2);
@@ -125,7 +135,7 @@ namespace TFGame.AITheSomniumFiles
 
             streamingAssets = new GameFileContainerSearch
             {
-                RelativePath = @".\AI_TheSomniumFiles_Data\StreamingAssets\AssetBundles\Switch",
+                RelativePath = @".\Data\StreamingAssets\AssetBundles\Switch",
                 SearchPattern =
                     @"bg_md_bg22_00_common;clue_image;etc;file_image_album;file_image_album_thumbnail;image;image_name_us;item;item_ii006;item_ii011;item_ii027;operation_guide;saveload;scene_a0-open10_m10_00;scene_autosaveguide;scene_fiction;scene_file;scene_flowchart;scene_investigation;scene_languageselect;scene_optionmenu;scene_options;scene_root;scene_save;scene_somnium;scene_title;scene_to-witter;ui_option;",
                 RecursiveSearch = false,
