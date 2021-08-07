@@ -12,7 +12,7 @@ namespace TFGame.YakuzaKiwami
         public override string Name => "Yakuza Kiwami";
         public override string Description => "Build Id: 3645748";
         public override Image Icon => Resources.Icon; // https://www.deviantart.com/clarence1996/art/Yakuza-Kiwami-786854223
-        public override int Version => 5;
+        public override int Version => 6;
         public override System.Text.Encoding FileEncoding => new Encoding();
 
         private GameFileContainer GetRoot()
@@ -241,7 +241,7 @@ namespace TFGame.YakuzaKiwami
                 RelativePath = @"media\data\map_par",
                 TypeSearch = ContainerType.CompressedFile,
                 RecursiveSearch = false,
-                SearchPattern = "st_kamuro.par_c;st_kawara_street.par_c"
+                SearchPattern = "st_kamuro.par_c;st_kawara_street.par_c;map_cmn.par_c"
             };
             map_par_containers.FileSearches.Add(imbSearch);
 

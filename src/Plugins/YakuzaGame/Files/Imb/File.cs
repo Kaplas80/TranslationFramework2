@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using TF.Core.Files;
@@ -62,18 +62,19 @@ namespace YakuzaGame.Files.Imb
                 output.Write(input.ReadBytes(24));
 
                 var dds = ReadSubtitle(input);
-                WriteString(output, dds, outputOffset);
+                outputOffset = WriteString(output, dds, outputOffset);
 
                 output.Write(input.ReadBytes(firstString - (int)input.Position));
 
+                output.Seek(outputOffset, SeekOrigin.Begin);
                 output.WritePadding(16);
             }
         }
 
-        private void WriteString(ExtendedBinaryWriter output, Subtitle dds, long offset)
+        private long WriteString(ExtendedBinaryWriter output, Subtitle dds, long offset)
         {
             var pos = output.Position;
-
+            long result = offset;
             if (dds == null || dds.Offset == 0)
             {
                 output.Write(0);
@@ -82,9 +83,11 @@ namespace YakuzaGame.Files.Imb
             {
                 output.Write((int)offset);
                 base.WriteSubtitle(output, dds, offset, false);
+                result = output.Position;
             }
 
             output.Seek(pos + 4, SeekOrigin.Begin);
+            return result;
         }
     }
 }
