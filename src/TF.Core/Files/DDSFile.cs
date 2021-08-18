@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Files
+namespace TF.Core.Files
 {
     using System;
     using System.IO;
@@ -66,7 +66,7 @@
 
             TexMetadata metadata = img.GetMetadata();
 
-            if (IsCompressed(metadata.Format))
+            if (TexHelper.Instance.IsCompressed(metadata.Format))
             {
                 ScratchImage tmp = img.Decompress(DXGI_FORMAT.UNKNOWN);
                 img.Dispose();
@@ -116,38 +116,6 @@
             var properties = new TexMetadataView(metadata);
 
             return properties;
-        }
-
-        protected static bool IsCompressed(DXGI_FORMAT format)
-        {
-            switch (format)
-            {
-                case DXGI_FORMAT.BC1_TYPELESS:
-                case DXGI_FORMAT.BC1_UNORM:
-                case DXGI_FORMAT.BC1_UNORM_SRGB:
-                case DXGI_FORMAT.BC2_TYPELESS:
-                case DXGI_FORMAT.BC2_UNORM:
-                case DXGI_FORMAT.BC2_UNORM_SRGB:
-                case DXGI_FORMAT.BC3_TYPELESS:
-                case DXGI_FORMAT.BC3_UNORM:
-                case DXGI_FORMAT.BC3_UNORM_SRGB:
-                case DXGI_FORMAT.BC4_TYPELESS:
-                case DXGI_FORMAT.BC4_UNORM:
-                case DXGI_FORMAT.BC4_SNORM:
-                case DXGI_FORMAT.BC5_TYPELESS:
-                case DXGI_FORMAT.BC5_UNORM:
-                case DXGI_FORMAT.BC5_SNORM:
-                case DXGI_FORMAT.BC6H_TYPELESS:
-                case DXGI_FORMAT.BC6H_UF16:
-                case DXGI_FORMAT.BC6H_SF16:
-                case DXGI_FORMAT.BC7_TYPELESS:
-                case DXGI_FORMAT.BC7_UNORM:
-                case DXGI_FORMAT.BC7_UNORM_SRGB:
-                    return true;
-
-                default:
-                    return false;
-            }
         }
     }
 }
