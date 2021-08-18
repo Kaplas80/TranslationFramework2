@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
@@ -27,7 +27,7 @@ namespace TF.Core.Fonts
                     _fontDictionary["Noto Sans CJK JP Regular"] = _fonts.Families[0];
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show(
                     "No se ha podido encontrar la fuente \"Noto Sans CJK JP Regular\". Puede que los textos no se muestren correctamente.");

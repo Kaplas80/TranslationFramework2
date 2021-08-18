@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -78,7 +78,7 @@ namespace TF.GUI
                     project.ReadTranslationFiles(worker);
                     worker.ReportProgress(-1, "FINALIZADO");
                 }
-                catch (UserCancelException e)
+                catch (UserCancelException)
                 {
                     args.Cancel = true;
                     worker.ReportProgress(-1, "Eliminando ficheros...");
@@ -143,7 +143,7 @@ namespace TF.GUI
                     {
                         project = TranslationProject.Load(LoadFileDialog.FileName, _pluginManager, worker);
                     }
-                    catch (UserCancelException e)
+                    catch (UserCancelException)
                     {
                         args.Cancel = true;
                     }
@@ -236,7 +236,7 @@ namespace TF.GUI
                         worker.ReportProgress(-1, string.Empty);
                         worker.ReportProgress(-1, $"Los ficheros exportados están en {_project.ExportFolder}");
                     }
-                    catch (UserCancelException e)
+                    catch (UserCancelException)
                     {
                         args.Cancel = true;
                     }
@@ -278,7 +278,7 @@ namespace TF.GUI
 
                         worker.ReportProgress(-1, "FINALIZADO");
                     }
-                    catch (UserCancelException e)
+                    catch (UserCancelException)
                     {
                         args.Cancel = true;
                     }
@@ -529,7 +529,7 @@ namespace TF.GUI
                         worker.ReportProgress(-1, "FINALIZADO");
                         worker.ReportProgress(-1, string.Empty);
                     }
-                    catch (UserCancelException e)
+                    catch (UserCancelException)
                     {
                         args.Cancel = true;
                     }
@@ -597,7 +597,7 @@ namespace TF.GUI
                         worker.ReportProgress(-1, "FINALIZADO");
                         worker.ReportProgress(-1, string.Empty);
                     }
-                    catch (UserCancelException e)
+                    catch (UserCancelException)
                     {
                         args.Cancel = true;
                     }

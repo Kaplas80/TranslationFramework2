@@ -1,4 +1,4 @@
-﻿namespace TFGame.TrailsSky.Files.Exe
+namespace TFGame.TrailsSky.Files.Exe
 {
     partial class FontTableView
     {
@@ -34,7 +34,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.FontCharsGridView = new System.Windows.Forms.DataGridView();
             this.btnAuto = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -113,7 +112,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FontTableView";
             this.Text = "Fuente";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

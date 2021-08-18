@@ -1,4 +1,4 @@
-﻿namespace TF.GUI.Forms
+namespace TF.GUI.Forms
 {
     partial class WorkingForm
     {
@@ -33,7 +33,6 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btnClose = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -110,7 +109,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WorkingForm";
             this.Shown += new System.EventHandler(this.WorkingForm_Shown);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

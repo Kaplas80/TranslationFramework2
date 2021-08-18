@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -90,7 +90,7 @@ namespace TF.Core.Helpers
 
                 return results.Result[0].Translations[0].Text;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return text;
             }

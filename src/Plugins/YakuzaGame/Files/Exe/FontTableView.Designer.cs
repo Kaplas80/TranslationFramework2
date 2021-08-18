@@ -1,4 +1,4 @@
-﻿namespace YakuzaGame.Files.Exe
+namespace YakuzaGame.Files.Exe
 {
     partial class FontTableView
     {
@@ -40,7 +40,6 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.btnLoadOriginalFont = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -136,7 +135,7 @@
             // 
             this.imgBoxNewChar.AllowFreePan = false;
             this.imgBoxNewChar.AllowZoom = false;
-            this.imgBoxNewChar.AutoPan = false;
+            this.imgBoxNewChar.PanMode = Cyotek.Windows.Forms.ImageBoxPanMode.None;
             this.imgBoxNewChar.BackColor = System.Drawing.Color.Black;
             this.imgBoxNewChar.GridDisplayMode = Cyotek.Windows.Forms.ImageBoxGridDisplayMode.None;
             this.imgBoxNewChar.Location = new System.Drawing.Point(393, 41);
@@ -164,7 +163,7 @@
             // 
             this.imgBoxOriginalChar.AllowFreePan = false;
             this.imgBoxOriginalChar.AllowZoom = false;
-            this.imgBoxOriginalChar.AutoPan = false;
+            this.imgBoxNewChar.PanMode = Cyotek.Windows.Forms.ImageBoxPanMode.None;
             this.imgBoxOriginalChar.BackColor = System.Drawing.Color.Black;
             this.imgBoxOriginalChar.GridDisplayMode = Cyotek.Windows.Forms.ImageBoxGridDisplayMode.None;
             this.imgBoxOriginalChar.Location = new System.Drawing.Point(3, 41);
@@ -214,7 +213,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FontTableView";
             this.Text = "Fuente";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();

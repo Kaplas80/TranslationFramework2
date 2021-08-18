@@ -1,4 +1,4 @@
-﻿namespace TF.GUI
+namespace TF.GUI
 {
     partial class MainForm
     {
@@ -67,7 +67,6 @@
             this.mniBulkImagesImport = new System.Windows.Forms.ToolStripMenuItem();
             this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tlsMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel)).BeginInit();
             this.mnuMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -335,7 +334,6 @@
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.MainForm_PreviewKeyDown);
             this.tlsMain.ResumeLayout(false);
             this.tlsMain.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel)).EndInit();
             this.mnuMain.ResumeLayout(false);
             this.mnuMain.PerformLayout();
             this.ResumeLayout(false);

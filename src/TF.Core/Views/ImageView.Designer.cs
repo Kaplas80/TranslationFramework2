@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Views
+namespace TF.Core.Views
 {
     partial class ImageView
     {
@@ -36,7 +36,6 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btnExportImage = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -120,7 +119,6 @@
             this.Name = "ImageView";
             this.Text = "View";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ImageView_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
 
         }

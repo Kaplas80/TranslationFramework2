@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -80,7 +80,7 @@ namespace TFGame.TrailsSky.Files
                             File.WriteAllBytes(outputFile, data2);
                             log.Write(1); // Para saber si estaba comprimido o no
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             File.WriteAllBytes(outputFile, data);
                             log.Write(0);

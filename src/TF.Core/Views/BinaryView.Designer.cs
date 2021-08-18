@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Views
+namespace TF.Core.Views
 {
     partial class BinaryView
     {
@@ -34,7 +34,6 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btnExportFile = new System.Windows.Forms.Button();
             this.hexBox1 = new Be.Windows.Forms.HexBox();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -105,7 +104,6 @@
             this.Name = "BinaryView";
             this.Text = "View";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BinaryView_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
 
         }
