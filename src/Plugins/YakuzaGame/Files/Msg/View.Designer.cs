@@ -1,4 +1,4 @@
-﻿namespace YakuzaGame.Files.Msg
+namespace YakuzaGame.Files.Msg
 {
     partial class View
     {
@@ -34,7 +34,6 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.hexBox2 = new Be.Windows.Forms.HexBox();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -144,7 +143,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "View";
             this.Text = "CmnBinView";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

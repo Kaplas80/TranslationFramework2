@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Views
+namespace TF.Core.Views
 {
     partial class GridView
     {
@@ -50,7 +50,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ExportFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ImportFileDialog = new System.Windows.Forms.OpenFileDialog();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -298,7 +297,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "GridView";
             this.Text = "Subtítulos";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();

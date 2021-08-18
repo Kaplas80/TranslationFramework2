@@ -1,4 +1,4 @@
-﻿namespace YakuzaGame.Files.Exe
+namespace YakuzaGame.Files.Exe
 {
     partial class PatchView
     {
@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -51,7 +50,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "PatchView";
             this.Text = "Parches";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
 
         }

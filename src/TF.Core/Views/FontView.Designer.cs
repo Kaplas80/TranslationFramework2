@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Views
+namespace TF.Core.Views
 {
     partial class FontView
     {
@@ -36,7 +36,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -127,7 +126,6 @@
             this.Name = "FontView";
             this.Text = "FontView";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FontView_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

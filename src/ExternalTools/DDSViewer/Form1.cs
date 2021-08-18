@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -99,7 +99,7 @@ namespace DDSViewer
                     {
                         decompressed = dds.Decompress(DXGI_FORMAT.UNKNOWN);
                     }
-                    catch (ArgumentException e)
+                    catch (ArgumentException)
                     {
                         decompressed = dds;
                     }
@@ -120,7 +120,7 @@ namespace DDSViewer
                     imageBox1.Image = null;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 imageBox1.Image = null;
             }

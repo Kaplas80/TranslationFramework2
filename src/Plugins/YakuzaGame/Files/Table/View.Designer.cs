@@ -1,4 +1,4 @@
-﻿namespace YakuzaGame.Files.Table
+namespace YakuzaGame.Files.Table
 {
     partial class View
     {
@@ -38,7 +38,6 @@
             this.ExportFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ImportFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -148,7 +147,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "View";
             this.Text = "CmnBinView";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

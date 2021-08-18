@@ -1,4 +1,4 @@
-﻿namespace TF.GUI.Forms
+namespace TF.GUI.Forms
 {
     partial class SearchTextForm
     {
@@ -37,7 +37,6 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
             this.imlGame = new System.Windows.Forms.ImageList(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -94,7 +93,6 @@
             this.Name = "SearchTextForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

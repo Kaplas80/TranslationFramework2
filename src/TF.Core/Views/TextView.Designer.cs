@@ -1,4 +1,4 @@
-﻿namespace TF.Core.Views
+namespace TF.Core.Views
 {
     partial class TextView
     {
@@ -30,7 +30,6 @@
         {
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.scintillaTranslation = new ScintillaNET.Scintilla();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -61,7 +60,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "TextView";
             this.Text = "Texto";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
 
         }

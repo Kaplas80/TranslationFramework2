@@ -1,4 +1,4 @@
-﻿namespace TF.GUI.Forms
+namespace TF.GUI.Forms
 {
     partial class ExportProjectForm
     {
@@ -43,7 +43,6 @@
             this.chkForceRebuild = new System.Windows.Forms.CheckBox();
             this.chkCompress = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.gbExportItems.SuspendLayout();
             this.gbOptions.SuspendLayout();
             this.SuspendLayout();
@@ -225,7 +224,6 @@
             this.Name = "ExportProjectForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Exportar Traducción";
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.gbExportItems.ResumeLayout(false);
             this.gbOptions.ResumeLayout(false);
             this.gbOptions.PerformLayout();
