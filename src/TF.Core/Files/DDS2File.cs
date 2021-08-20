@@ -33,33 +33,40 @@ namespace TF.Core.Files
         static DDS2File()
         {
             device = null;
-            if (!CreateDXGIFactory1(out Factory).Failure)
+            try
             {
-                IDXGIAdapter1 adapter = GetHardwareAdapter();
-                if (adapter != null)
+                if (!CreateDXGIFactory1(out Factory).Failure)
                 {
-                    DeviceCreationFlags creationFlags = DeviceCreationFlags.BgraSupport;
-
-                    if (D3D11CreateDevice(
-                        adapter,
-                        DriverType.Unknown,
-                        creationFlags,
-                        s_featureLevels,
-                        out device, out FeatureLevel, out ID3D11DeviceContext tempContext).Failure)
+                    IDXGIAdapter1 adapter = GetHardwareAdapter();
+                    if (adapter != null)
                     {
-                        // If the initialization fails, fall back to the WARP device.
-                        // For more information on WARP, see:
-                        // http://go.microsoft.com/fwlink/?LinkId=286690
-                        D3D11CreateDevice(
-                            null,
-                            DriverType.Warp,
+                        DeviceCreationFlags creationFlags = DeviceCreationFlags.BgraSupport;
+
+                        if (D3D11CreateDevice(
+                            adapter,
+                            DriverType.Unknown,
                             creationFlags,
                             s_featureLevels,
-                            out device, out FeatureLevel, out tempContext).CheckError();
-                    }
+                            out device, out FeatureLevel, out ID3D11DeviceContext tempContext).Failure)
+                        {
+                            // If the initialization fails, fall back to the WARP device.
+                            // For more information on WARP, see:
+                            // http://go.microsoft.com/fwlink/?LinkId=286690
+                            D3D11CreateDevice(
+                                null,
+                                DriverType.Warp,
+                                creationFlags,
+                                s_featureLevels,
+                                out device, out FeatureLevel, out tempContext).CheckError();
+                        }
 
-                    adapter.Dispose();
+                        adapter.Dispose();
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                device = null;
             }
         }
 
@@ -118,7 +125,7 @@ namespace TF.Core.Files
                             flags |= TEX_COMPRESS_FLAGS.SRGB;
                         }
 
-                        if (device == null)
+                        if (device == null || !IsDirectComputeCompatible(format))
                         {
                             using (ScratchImage newDds = png.Compress(format, flags, 0.5f))
                             {
@@ -127,9 +134,19 @@ namespace TF.Core.Files
                         }
                         else
                         {
-                            using (ScratchImage newDds = png.Compress(device.NativePointer, format, flags, 1.0f))
+                            try
                             {
-                                newDds.SaveToDDSFile(DDS_FLAGS.NONE, ChangesFile);
+                                using (ScratchImage newDds = png.Compress(device.NativePointer, format, flags, 1.0f))
+                                {
+                                    newDds.SaveToDDSFile(DDS_FLAGS.NONE, ChangesFile);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                using (ScratchImage newDds = png.Compress(format, flags, 0.5f))
+                                {
+                                    newDds.SaveToDDSFile(DDS_FLAGS.NONE, ChangesFile);
+                                }
                             }
                         }
                     }
@@ -276,6 +293,22 @@ namespace TF.Core.Files
             }
 
             return adapter;
+        }
+
+        private static bool IsDirectComputeCompatible(DXGI_FORMAT format)
+        {
+            switch (format)
+            {
+                case DXGI_FORMAT.BC6H_TYPELESS:
+                case DXGI_FORMAT.BC6H_UF16:
+                case DXGI_FORMAT.BC6H_SF16:
+                case DXGI_FORMAT.BC7_TYPELESS:
+                case DXGI_FORMAT.BC7_UNORM:
+                case DXGI_FORMAT.BC7_UNORM_SRGB:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }
