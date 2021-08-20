@@ -1,4 +1,4 @@
-﻿namespace TFGame.ShiningResonance.Files.Htx
+namespace TFGame.ShiningResonance.Files.Htx
 {
     using System;
     using System.IO;
@@ -38,7 +38,7 @@
 
             TexMetadata metadata = img.GetMetadata();
 
-            if (IsCompressed(metadata.Format))
+            if (TexHelper.Instance.IsCompressed(metadata.Format))
             {
                 ScratchImage tmp = img.Decompress(DXGI_FORMAT.UNKNOWN);
                 img.Dispose();
