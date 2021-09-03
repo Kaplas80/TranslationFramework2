@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -58,7 +58,7 @@ namespace TFGame.TheMissing.Files.Txt
             Type = FileType.TextFile;
 
             _fontCollection = new PrivateFontCollection();
-            var fontFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), "mplus-1m-regular.ttf");
+            var fontFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), "Fonts", "mplus-1m-regular.ttf");
             var font = System.IO.File.ReadAllBytes(fontFile);
             var fontPtr = Marshal.AllocCoTaskMem(font.Length);
             Marshal.Copy(font, 0, fontPtr, font.Length);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -36,9 +36,9 @@ namespace TFGame.TheMissing.Files
                 process.StartInfo.WorkingDirectory = Path.GetDirectoryName(unityExPath);
                 process.StartInfo.Arguments = $"{operation} \"{unityFile}\" {parameters}";
                 process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                process.StartInfo.CreateNoWindow = true; //not diplay a windows
+                //process.StartInfo.RedirectStandardOutput = true;
+                //process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                //process.StartInfo.CreateNoWindow = true; //not diplay a windows
                 process.Start();
                 process.WaitForExit();
             }
