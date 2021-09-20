@@ -43,12 +43,14 @@
             this.lvGame = new System.Windows.Forms.ListView();
             this.imlGame = new System.Windows.Forms.ImageList(this.components);
             this.txtGameDescription = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // dockPanel1
             // 
             resources.ApplyResources(this.dockPanel1, "dockPanel1");
             this.dockPanel1.Name = "dockPanel1";
+            this.dockPanel1.Theme = null;
             // 
             // txtWorkFolder
             // 
@@ -79,6 +81,7 @@
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Name = "btnOK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnSearchWorkFolder
             // 
@@ -102,7 +105,7 @@
             this.txtInstallFolder.Name = "txtInstallFolder";
             this.txtInstallFolder.TextChanged += new System.EventHandler(this.txtInstallFolder_TextChanged);
             // 
-            // lvProjectType
+            // lvGame
             // 
             resources.ApplyResources(this.lvGame, "lvGame");
             this.lvGame.HideSelection = false;
@@ -112,13 +115,13 @@
             this.lvGame.UseCompatibleStateImageBehavior = false;
             this.lvGame.SelectedIndexChanged += new System.EventHandler(this.lvGame_SelectedIndexChanged);
             // 
-            // imlProjectType
+            // imlGame
             // 
             this.imlGame.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             resources.ApplyResources(this.imlGame, "imlGame");
             this.imlGame.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // txtProjectDescription
+            // txtGameDescription
             // 
             resources.ApplyResources(this.txtGameDescription, "txtGameDescription");
             this.txtGameDescription.Name = "txtGameDescription";
@@ -147,6 +150,7 @@
             this.Name = "NewProjectSettings";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
+            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

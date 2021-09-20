@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using ScintillaNET;
@@ -120,7 +121,17 @@ namespace TF.Core.Entities
             
         }
 
+        public virtual void ExportExcel(string path)
+        {
+            
+        }
+
         public virtual void ImportPo(string path, bool save = true, bool parallel = true)
+        {
+
+        }
+
+        public virtual void ImportExcel(string path, BackgroundWorker worker, int porcentagem, bool save = true)
         {
 
         }

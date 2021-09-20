@@ -293,7 +293,6 @@ namespace YakuzaGame.Files.Table
                     //  - OpenXml Excel files (2007 format; *.xlsx)
                     using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
-
                         var content = reader.AsDataSet();
 
                         var table = content.Tables[0];

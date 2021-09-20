@@ -242,7 +242,7 @@ namespace TF.Core.Views
             this.lblChangedLinesCount.Name = "lblChangedLinesCount";
             this.lblChangedLinesCount.Size = new System.Drawing.Size(124, 13);
             this.lblChangedLinesCount.TabIndex = 6;
-            this.lblChangedLinesCount.Text = "Líneas modificadas: X/Y";
+            this.lblChangedLinesCount.Text = "Líneas modificadas: X/Y | Progreso: Z%";
             // 
             // btnSimpleImport
             // 

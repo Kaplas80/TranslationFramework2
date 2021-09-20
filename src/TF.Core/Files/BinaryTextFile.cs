@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ExcelDataReader;
+using OfficeOpenXml;
 using TF.Core.Entities;
 using TF.Core.Helpers;
 using TF.Core.TranslationEntities;
@@ -70,7 +72,7 @@ namespace TF.Core.Files
             
             return result;
         }
-        
+
         public override bool Search(string searchString, string path = "")
         {
             if (string.IsNullOrEmpty(path))
@@ -261,7 +263,10 @@ namespace TF.Core.Files
 
             var subtitle = new Subtitle
             {
-                Offset = offset, Text = text, Translation = text, Loaded = text,
+                Offset = offset,
+                Text = text,
+                Translation = text,
+                Loaded = text,
             };
 
             if (returnToPos)
@@ -336,62 +341,163 @@ namespace TF.Core.Files
             binary.Stream.WriteTo(path);
         }
 
-        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
+        public override void ExportExcel(string path)
         {
-            using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
-            {
-                var binary = new BinaryFormat(dataStream);
-                var binary2Po = new Yarhl.Media.Text.Binary2Po();
-                Po po = binary2Po.Convert(binary);
+            var directory = System.IO.Path.GetDirectoryName(path);
+            Directory.CreateDirectory(directory);
 
-                LoadBeforeImport();
-                var dictionary = new ConcurrentDictionary<string, Subtitle>();
-                foreach (Subtitle subtitle in _subtitles)
+            using (var excel = new ExcelPackage())
+            {
+                var sheet = excel.Workbook.Worksheets.Add("Hoja 1");
+
+                var header = new List<string[]>
                 {
-                    dictionary[GetContext(subtitle)] = subtitle;
+                    new[] {"OFFSET", "ORIGINAL", "TRADUCCIÓN" }
+                };
+
+                sheet.Cells["A1:C1"].LoadFromArrays(header);
+
+                var row = 2;
+                
+                var subtitles = GetSubtitles();
+                foreach (var subtitle in subtitles)
+                {
+                    if (string.IsNullOrEmpty(subtitle.Text)) continue;
+
+                    sheet.Cells[row, 1].Value = subtitle.Offset;
+                    sheet.Cells[row, 2].Value = subtitle.Text;
+                    sheet.Cells[row, 3].Value = subtitle.Translation;
+
+                    row++;
                 }
 
-                void UpdateSubtitleFromPoEntry(PoEntry entry)
+                var excelFile = new FileInfo(path);
+                excel.SaveAs(excelFile);
+            }
+        }
+
+        public override void ImportPo(string inputFile, bool save = true, bool parallel = true)
+        {
+            try 
+            { 
+                using (DataStream dataStream = DataStreamFactory.FromFile(inputFile, FileOpenMode.Read))
                 {
-                    string context = entry.Context;
-                    if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                    var binary = new BinaryFormat(dataStream);
+                    var binary2Po = new Yarhl.Media.Text.Binary2Po();
+                    Po po = binary2Po.Convert(binary);
+
+                    LoadBeforeImport();
+                    var dictionary = new ConcurrentDictionary<string, Subtitle>();
+                    foreach (Subtitle subtitle in _subtitles)
                     {
-                        return;
+                        dictionary[GetContext(subtitle)] = subtitle;
                     }
 
-                    if (entry.Original == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                    void UpdateSubtitleFromPoEntry(PoEntry entry)
                     {
-                        subtitle.Translation = subtitle.Text;
-                    }
-                    else
-                    {
-                        if (entry.Original.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding) !=
-                            subtitle.Text)
+                        string context = entry.Context;
+                        if (!dictionary.TryGetValue(context, out Subtitle subtitle))
                         {
-                            // El texto original de la entrada no coincide con el del subtítulo, así que no podemos aplicar la traducción
+                            return;
+                        }
+
+                        if (entry.Original == "<!empty>" || string.IsNullOrEmpty(subtitle.Text))
+                        {
                             subtitle.Translation = subtitle.Text;
                         }
                         else
                         {
-                            string translation = entry.Translated;
-                            subtitle.Translation = string.IsNullOrEmpty(translation)
-                                ? subtitle.Text
-                                : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                            if (entry.Original.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding) !=
+                                subtitle.Text)
+                            {
+                                // El texto original de la entrada no coincide con el del subtítulo, así que no podemos aplicar la traducción
+                                subtitle.Translation = subtitle.Text;
+                            }
+                            else
+                            {
+                                string translation = entry.Translated;
+                                subtitle.Translation = string.IsNullOrEmpty(translation)
+                                    ? subtitle.Text
+                                    : translation.Replace(LineEnding.PoLineEnding, LineEnding.ShownLineEnding);
+                            }
+                        }
+                    }
+
+                    if (parallel)
+                    {
+                        Parallel.ForEach(po.Entries, UpdateSubtitleFromPoEntry);
+                    }
+                    else
+                    {
+                        foreach (PoEntry entry in po.Entries)
+                        {
+                            UpdateSubtitleFromPoEntry(entry);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                // Ignora o erro
+            }
+
+            if (save && NeedSaving)
+            {
+                SaveChanges();
+            }
+        }
+
+        public override void ImportExcel(string inputFile, BackgroundWorker worker, int porcentagem, bool save = true)
+        {
+            if (!GameName.Contains("Yakuza"))
+            {
+                worker.ReportProgress(porcentagem, "O importador automático não está programado para esse jogo!");
+                return;
+            }
+
+            var strings = new Dictionary<string, string>();
+
+            try
+            {
+                using (var stream = File.Open(inputFile, FileMode.Open, FileAccess.Read))
+                {
+                    LoadBeforeImport();
+
+                    // Auto-detect format, supports:
+                    //  - Binary Excel files (2.0-2003 format; *.xls)
+                    //  - OpenXml Excel files (2007 format; *.xlsx)
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        var content = reader.AsDataSet();
+
+                        var table = content.Tables[0];
+
+                        for (var i = 0; i < table.Rows.Count; i++)
+                        {
+                            var key = table.Rows[i][0].ToString();
+                            var value = table.Rows[i][2].ToString();
+
+                            if (!string.IsNullOrEmpty(key) && !strings.ContainsKey(key))
+                            {
+                                strings.Add(key, value);
+                            }
                         }
                     }
                 }
 
-                if (parallel)
+                foreach (var subtitle in _subtitles)
                 {
-                    Parallel.ForEach(po.Entries, UpdateSubtitleFromPoEntry);
+                    var key = subtitle.Offset.ToString();
+
+                    if (string.IsNullOrEmpty(key) || !strings.ContainsKey(key)) continue;
+
+                    var values = strings[key].Split('\t');
+                    subtitle.Translation = values[0];
                 }
-                else
-                {
-                    foreach (PoEntry entry in po.Entries)
-                    {
-                        UpdateSubtitleFromPoEntry(entry);
-                    }
-                }
+            }
+            catch (Exception)
+            {
+                worker.ReportProgress(porcentagem, $"Erro ao processar o arquivo: {inputFile}");
             }
 
             if (save && NeedSaving)

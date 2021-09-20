@@ -114,8 +114,15 @@ namespace TF.GUI
             tsbSearchInFiles.Enabled = true;
             mniEditSearchInFiles.Enabled = true;
 
-            mniBulkTextsExport.Enabled = true;
-            mniBulkTextsImport.Enabled = true;
+            // Po
+            mniBulkTextsExportPo.Enabled = true;
+            mniBulkTextsImportPo.Enabled = true;
+
+            // Excel
+            mniBulkTextsExportExcel.Enabled = true;
+            mniBulkTextsImportExcel.Enabled = true;
+
+            // Images
             mniBulkImagesExport.Enabled = true;
             mniBulkImagesImport.Enabled = true;
         }
@@ -174,8 +181,15 @@ namespace TF.GUI
                 tsbSearchInFiles.Enabled = true;
                 mniEditSearchInFiles.Enabled = true;
 
-                mniBulkTextsExport.Enabled = true;
-                mniBulkTextsImport.Enabled = true;
+                // Po
+                mniBulkTextsExportPo.Enabled = true;
+                mniBulkTextsImportPo.Enabled = true;
+
+                // Excel
+                mniBulkTextsExportExcel.Enabled = true;
+                mniBulkTextsImportExcel.Enabled = true;
+
+                // Images
                 mniBulkImagesExport.Enabled = true;
                 mniBulkImagesImport.Enabled = true;
             }
@@ -345,7 +359,7 @@ namespace TF.GUI
             }
         }
 
-        private void ExportTexts()
+        private void ExportTextsPo()
         {
             if (_project != null)
             {
@@ -410,6 +424,72 @@ namespace TF.GUI
 
                 workForm.ShowDialog(this);
             }
+        }
+
+        private void ExportTextsExcel()
+        {
+            if (_project == null) return;
+
+            if (_currentFile != null)
+            {
+                if (_currentFile.NeedSaving)
+                {
+                    var result = MessageBox.Show(
+                        "Es necesario guardar los cambios antes de continuar.\n¿Quieres guardarlos?",
+                        "Guardar cambios", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result != DialogResult.No)
+                    {
+                        if (result == DialogResult.Yes)
+                        {
+                            _currentFile.SaveChanges();
+                        }
+                    }
+                    else
+                        return;
+                }
+            }
+
+            FolderBrowserDialog.Description = "Selecciona la carpeta en la que se guardarán los ficheros Excel";
+            FolderBrowserDialog.ShowNewFolderButton = true;
+
+            var formResult = FolderBrowserDialog.ShowDialog(this);
+
+            if (formResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            var workForm = new WorkingForm(dockTheme, "Exportar a Excel");
+
+            workForm.DoWork += (sender, args) =>
+            {
+                var worker = sender as BackgroundWorker;
+
+#if !DEBUG
+                try
+                {
+#endif
+                    _project.ExportExcel(FolderBrowserDialog.SelectedPath, worker);
+
+                    worker.ReportProgress(-1, "FINALIZADO");
+                    worker.ReportProgress(-1, string.Empty);
+                    worker.ReportProgress(-1, $"Los ficheros exportados están en {FolderBrowserDialog.SelectedPath}");
+#if !DEBUG
+                }
+                catch (UserCancelException e)
+                {
+                    args.Cancel = true;
+                }
+
+                catch (Exception e)
+                {
+                    worker.ReportProgress(0, $"ERROR: {e.Message}");
+                }
+#endif
+            };
+
+            workForm.ShowDialog(this);
         }
 
         private void ExportImages()
@@ -515,7 +595,7 @@ namespace TF.GUI
 
                 var openFile = _currentFile;
                 ExplorerOnFileChanged(null);
-                
+
                 var workForm = new WorkingForm(dockTheme, "Importar Po");
 
                 workForm.DoWork += (sender, args) =>
@@ -530,6 +610,74 @@ namespace TF.GUI
                         worker.ReportProgress(-1, string.Empty);
                     }
                     catch (UserCancelException)
+                    {
+                        args.Cancel = true;
+                    }
+#if !DEBUG
+                    catch (Exception e)
+                    {
+                        worker.ReportProgress(0, $"ERROR: {e.Message}");
+                    }
+#endif
+                };
+
+                workForm.ShowDialog(this);
+
+                ExplorerOnFileChanged(openFile);
+            }
+        }
+
+        private void ImportTextsExcel()
+        {
+            if (_project != null)
+            {
+                if (_currentFile != null)
+                {
+                    if (_currentFile.NeedSaving)
+                    {
+                        var result = MessageBox.Show(
+                            "Es necesario guardar los cambios antes de continuar.\n¿Quieres guardarlos?",
+                            "Guardar cambios", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (result == DialogResult.No)
+                        {
+                            return;
+                        }
+
+                        if (result == DialogResult.Yes)
+                        {
+                            _currentFile.SaveChanges();
+                        }
+                    }
+                }
+
+                FolderBrowserDialog.Description = "Selecciona la carpeta raiz con los ficheros Excel";
+                FolderBrowserDialog.ShowNewFolderButton = false;
+
+                var formResult = FolderBrowserDialog.ShowDialog(this);
+
+                if (formResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                var openFile = _currentFile;
+                ExplorerOnFileChanged(null);
+
+                var workForm = new WorkingForm(dockTheme, "Importar Excel");
+
+                workForm.DoWork += (sender, args) =>
+                {
+                    var worker = sender as BackgroundWorker;
+
+                    try
+                    {
+                        _project.ImportExcel(FolderBrowserDialog.SelectedPath, worker);
+
+                        worker.ReportProgress(-1, "FINALIZADO");
+                        worker.ReportProgress(-1, string.Empty);
+                    }
+                    catch (UserCancelException e)
                     {
                         args.Cancel = true;
                     }

@@ -341,7 +341,9 @@ namespace TF.Core.Views
         {
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
             var totalLines = _subtitles.Count;
-            lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines}";
+            var percentChangedCount = (changedLines * 100) / totalLines;
+
+            lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines} | Progreso: {percentChangedCount}%";
         }
 
         private void SubtitleGridView_SelectionChanged(object sender, EventArgs e)

@@ -116,5 +116,15 @@ namespace TF.GUI.Forms
                 lbItems.SetItemChecked(i, isChecked);
             }
         }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

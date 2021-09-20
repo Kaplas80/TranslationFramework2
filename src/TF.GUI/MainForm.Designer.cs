@@ -60,8 +60,11 @@ namespace TF.GUI
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.mniBulk = new System.Windows.Forms.ToolStripMenuItem();
             this.mniBulkTexts = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniBulkTextsExport = new System.Windows.Forms.ToolStripMenuItem();
-            this.mniBulkTextsImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkTextsExportPo = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkTextsImportPo = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.mniBulkTextsExportExcel = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniBulkTextsImportExcel = new System.Windows.Forms.ToolStripMenuItem();
             this.mniBulkImages = new System.Windows.Forms.ToolStripMenuItem();
             this.mniBulkImagesExport = new System.Windows.Forms.ToolStripMenuItem();
             this.mniBulkImagesImport = new System.Windows.Forms.ToolStripMenuItem();
@@ -280,22 +283,42 @@ namespace TF.GUI
             // mniBulkTexts
             // 
             this.mniBulkTexts.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mniBulkTextsExport,
-            this.mniBulkTextsImport});
+            this.mniBulkTextsExportPo,
+            this.mniBulkTextsImportPo,
+            this.toolStripSeparator4,
+            this.mniBulkTextsExportExcel,
+            this.mniBulkTextsImportExcel});
             this.mniBulkTexts.Name = "mniBulkTexts";
             resources.ApplyResources(this.mniBulkTexts, "mniBulkTexts");
             // 
-            // mniBulkTextsExport
+            // mniBulkTextsExportPo
             // 
-            resources.ApplyResources(this.mniBulkTextsExport, "mniBulkTextsExport");
-            this.mniBulkTextsExport.Name = "mniBulkTextsExport";
-            this.mniBulkTextsExport.Click += new System.EventHandler(this.mniBulkTextsExport_Click);
+            resources.ApplyResources(this.mniBulkTextsExportPo, "mniBulkTextsExportPo");
+            this.mniBulkTextsExportPo.Name = "mniBulkTextsExportPo";
+            this.mniBulkTextsExportPo.Click += new System.EventHandler(this.mniBulkTextsExportPo_Click);
             // 
-            // mniBulkTextsImport
+            // mniBulkTextsImportPo
             // 
-            resources.ApplyResources(this.mniBulkTextsImport, "mniBulkTextsImport");
-            this.mniBulkTextsImport.Name = "mniBulkTextsImport";
-            this.mniBulkTextsImport.Click += new System.EventHandler(this.mniBulkTextsImport_Click);
+            resources.ApplyResources(this.mniBulkTextsImportPo, "mniBulkTextsImportPo");
+            this.mniBulkTextsImportPo.Name = "mniBulkTextsImportPo";
+            this.mniBulkTextsImportPo.Click += new System.EventHandler(this.mniBulkTextsImportPo_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
+            // 
+            // mniBulkTextsExportExcel
+            // 
+            resources.ApplyResources(this.mniBulkTextsExportExcel, "mniBulkTextsExportExcel");
+            this.mniBulkTextsExportExcel.Name = "mniBulkTextsExportExcel";
+            this.mniBulkTextsExportExcel.Click += new System.EventHandler(this.mniBulkTextsExportExcel_Click);
+            // 
+            // mniBulkTextsImportExcel
+            // 
+            resources.ApplyResources(this.mniBulkTextsImportExcel, "mniBulkTextsImportExcel");
+            this.mniBulkTextsImportExcel.Name = "mniBulkTextsImportExcel";
+            this.mniBulkTextsImportExcel.Click += new System.EventHandler(this.mniBulkTextsImportExcel_Click);
             // 
             // mniBulkImages
             // 
@@ -373,11 +396,14 @@ namespace TF.GUI
         private System.Windows.Forms.ToolStripMenuItem mniBulk;
         private System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog;
         private System.Windows.Forms.ToolStripMenuItem mniBulkTexts;
-        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsExport;
-        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsImport;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsExportPo;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsImportExcel;
         private System.Windows.Forms.ToolStripMenuItem mniBulkImages;
         private System.Windows.Forms.ToolStripMenuItem mniBulkImagesExport;
         private System.Windows.Forms.ToolStripMenuItem mniBulkImagesImport;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsImportPo;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem mniBulkTextsExportExcel;
     }
 }
 

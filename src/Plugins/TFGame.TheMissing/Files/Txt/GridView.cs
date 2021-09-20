@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using DataGridViewNumericUpDownElements;
 using ExcelDataReader;
 using OfficeOpenXml;
+using TF.Core.Entities;
 using TF.Core.TranslationEntities;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -38,8 +39,12 @@ namespace TFGame.TheMissing.Files.Txt
 
         protected IList<Subtitle> _subtitles;
 
-        public GridView()
+        protected TranslationFile _file;
+
+        public GridView(TranslationFile file)
         {
+            _file = file;
+
             InitializeComponent();
 
             var cellStyle = new DataGridViewCellStyle();
@@ -310,6 +315,8 @@ namespace TFGame.TheMissing.Files.Txt
 
         private void Import(bool useOffset)
         {
+            ImportFileDialog.Filter = "Archivos Excel|*.xlsx";
+            ImportFileDialog.FileName = string.Concat(Path.GetFileNameWithoutExtension(_file.Path), ".xlsx");
             var result = ImportFileDialog.ShowDialog(this);
 
             if (result != DialogResult.OK)
@@ -377,7 +384,9 @@ namespace TFGame.TheMissing.Files.Txt
         {
             var changedLines = _subtitles.Count(x => x.Text != x.Translation);
             var totalLines = _subtitles.Count;
-            lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines}";
+            var percentChangedCount = (changedLines * 100) / totalLines;
+
+            lblChangedLinesCount.Text = $"Líneas modificadas: {changedLines}/{totalLines} | Progreso: {percentChangedCount}%";
         }
 
         private void SubtitleGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)

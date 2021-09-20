@@ -548,6 +548,31 @@ namespace TF.Core
             }
         }
 
+        public void ExportExcel(string path, BackgroundWorker worker)
+        {
+            worker.ReportProgress(0, "Solo se exportarán los archivos que tengan hasta 3 columnas.");
+            worker.ReportProgress(0, "Los demás deberán exportarse manualmente.");
+
+            foreach (TranslationFileContainer container in FileContainers)
+            {
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(0, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                worker.ReportProgress(0, $"Procesando {container.Path}...");
+
+                foreach (TranslationFile file in container.Files)
+                {
+                    string filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string outputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".xlsx"))));
+                    file.ExportExcel(outputPath);
+                }
+            }
+        }
+
         public void ExportImages(string path, BackgroundWorker worker)
         {
             foreach (TranslationFileContainer container in FileContainers)
@@ -569,7 +594,63 @@ namespace TF.Core
                 }
             }
         }
-        
+
+        public void ImportExcel(string path, BackgroundWorker worker)
+        {
+            var arquivosProcessados = 0;
+
+            foreach (TranslationFileContainer container in FileContainers)
+            {
+                var porcentagem = (arquivosProcessados * 100) / FileContainers.Count;
+
+                if (worker.CancellationPending)
+                {
+                    worker.ReportProgress(porcentagem, "CANCELADO");
+                    throw new UserCancelException();
+                }
+
+                worker.ReportProgress(porcentagem, $"Procesando {container.Path}...");
+
+                foreach (TranslationFile file in container.Files)
+                {
+                    string filePath = Path.Combine(path, container.Path, file.RelativePath);
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string inputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".xlsx"))));
+
+                    if (!File.Exists(inputPath))
+                    {
+                        filePath = Path.Combine(path, file.RelativePath);
+                        inputPath = string.Concat(@"\\?\", Path.GetFullPath(Path.Combine(Path.GetDirectoryName(filePath), string.Concat(fileName, ".xlsx"))));
+                    }
+
+                    if (File.Exists(inputPath))
+                    {
+                        file.ImportExcel(inputPath, worker, porcentagem);
+                    }
+                    else
+                    {
+                        // Comprobamos si el fichero está partido
+                        string directory = string.Concat(@"\\?\", Path.GetFullPath(Path.GetDirectoryName(Path.Combine(path, container.Path, file.RelativePath))));
+                        if (Directory.Exists(directory))
+                        {
+                            string[] files = Directory.GetFiles(directory,
+                                string.Concat(fileName, ".*.xlsx"));
+
+                            if (files.Length > 0)
+                            {
+                                foreach (string s in files)
+                                {
+                                    file.ImportExcel(s, worker, porcentagem);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                arquivosProcessados += 1;
+            }
+        }
+
         public void ImportPo(string path, BackgroundWorker worker)
         {
             foreach (TranslationFileContainer container in FileContainers)

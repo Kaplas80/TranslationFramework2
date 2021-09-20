@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using ExcelDataReader;
 using TF.Core.Entities;
 using TF.Core.Helpers;
 using TF.IO;
@@ -352,6 +354,60 @@ namespace YakuzaGame.Files.Table
 
                     dataColumn.SetUniqueValues(newValues, true);
                 }
+            }
+
+            if (save && NeedSaving)
+            {
+                SaveChanges();
+            }
+        }
+
+        public override void ImportExcel(string inputFile, BackgroundWorker worker, int porcentagem, bool save = true)
+        {
+            if (!GameName.Contains("Yakuza"))
+            {
+                worker.ReportProgress(porcentagem, "O importador automático não está programado para esse jogo!");
+                return;
+            }
+
+            var strings = new Dictionary<string, string>();
+
+            try
+            {
+                LoadBeforeImport();
+
+                using (var stream = System.IO.File.Open(inputFile, FileMode.Open, FileAccess.Read))
+                {
+                    // Auto-detect format, supports:
+                    //  - Binary Excel files (2.0-2003 format; *.xls)
+                    //  - OpenXml Excel files (2007 format; *.xlsx)
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        var content = reader.AsDataSet();
+
+                        var table = content.Tables[0];
+
+                        for (var i = 0; i < table.Rows.Count; i++)
+                        {
+                            var key = string.Concat(table.Rows[i][0].ToString(), "|", table.Rows[i][1].ToString());
+                            var value = table.Rows[i][3].ToString();
+
+                            if (!string.IsNullOrEmpty(key) && !strings.ContainsKey(key))
+                            {
+                                strings.Add(key, value);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var column in _data.Columns)
+                {
+                    column.SetUniqueValues(strings, true);
+                }
+            }
+            catch (Exception)
+            {
+                worker.ReportProgress(porcentagem, $"Erro ao processar o arquivo: {inputFile}");
             }
 
             if (save && NeedSaving)

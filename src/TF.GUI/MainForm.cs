@@ -130,16 +130,40 @@ namespace TF.GUI
                 _explorer.SelectNext();
             }
         }
+        
+        #region Textos
 
-        private void mniBulkTextsExport_Click(object sender, EventArgs e)
+        #region Po
+
+        private void mniBulkTextsExportPo_Click(object sender, EventArgs e)
         {
-            ExportTexts();
+            ExportTextsPo();
         }
 
-        private void mniBulkTextsImport_Click(object sender, EventArgs e)
+        private void mniBulkTextsImportPo_Click(object sender, EventArgs e)
         {
             ImportTexts();
         }
+
+        #endregion Po
+
+        #region Excel
+
+        private void mniBulkTextsImportExcel_Click(object sender, EventArgs e)
+        {
+            ImportTextsExcel();
+        }
+
+        private void mniBulkTextsExportExcel_Click(object sender, EventArgs e)
+        {
+            ExportTextsExcel();
+        }
+
+        #endregion Excel
+
+        #endregion Textos
+
+        #region Images
 
         private void mniBulkImagesExport_Click(object sender, EventArgs e)
         {
@@ -150,5 +174,7 @@ namespace TF.GUI
         {
             ImportImages();
         }
+
+        #endregion Images
     }
 }

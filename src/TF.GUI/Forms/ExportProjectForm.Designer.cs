@@ -68,6 +68,7 @@ namespace TF.GUI.Forms
             this.btnOK.TabIndex = 10;
             this.btnOK.Text = "Aceptar";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 
@@ -80,6 +81,7 @@ namespace TF.GUI.Forms
             this.btnCancel.TabIndex = 9;
             this.btnCancel.Text = "Cancelar";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // gbExportItems
             // 
