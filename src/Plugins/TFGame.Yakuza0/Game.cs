@@ -334,7 +334,7 @@ namespace TFGame.Yakuza0
                     RelativePath = ".",
                     SearchPattern = "2d_k2_kyaba_cutin_*.dds",
                     IsWildcard = true,
-                    RecursiveSearch = false,
+                    RecursiveSearch = true,
                     FileType = typeof(DDS2File),
                 };
 
@@ -580,7 +580,7 @@ namespace TFGame.Yakuza0
                 {
                     RelativePath = ".",
                     SearchPattern =
-                        "activity_list.bin_c;battle_result.bin_c;caba_cast_info.bin_c;cabaret_island_area.bin_c;cabaret_island_shop.bin_c;controller_explain.bin_c;correlation_person.bin_c;money_island_shop.bin_c;money_island_tarent.bin_c;search_arms_agent.bin_c;search_arms_kind.bin_c;search_arms_location.bin_c;search_arms_result_picture.bin_c;tougijyo_realtime_quest.bin_c;tutorial.bin_c;ultimate.bin_c;virtue_shop.bin_c;",
+                        "activity_list.bin_c;battle_result.bin_c;caba_cast_info.bin_c;cabaret_island_area.bin_c;cabaret_island_shop.bin_c;controller_explain.bin_c;correlation_person.bin_c;money_island_shop.bin_c;money_island_tarent.bin_c;search_arms_agent.bin_c;search_arms_kind.bin_c;search_arms_location.bin_c;search_arms_result_picture.bin_c;tougijyo_realtime_quest.bin_c;tougijyo_regulationset.bin_c;tutorial.bin_c;ultimate.bin_c;virtue_shop.bin_c;",
                     IsWildcard = true,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Table.File)
