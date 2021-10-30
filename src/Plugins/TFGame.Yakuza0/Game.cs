@@ -428,7 +428,7 @@ namespace TFGame.Yakuza0
                 new GameFileSearch
                 {
                     RelativePath = ".",
-                    SearchPattern = "extra.bin_c",
+                    SearchPattern = "extra.bin_c;tougijyo_mode.bin_c;tougijyo_participant.bin_c;tougijyo_string.bin_c",
                     IsWildcard = false,
                     RecursiveSearch = false,
                     FileType = typeof(YakuzaGame.Files.Table.File)
