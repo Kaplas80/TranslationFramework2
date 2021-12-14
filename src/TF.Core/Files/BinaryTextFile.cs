@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -354,7 +354,7 @@ namespace TF.Core.Files
                 void UpdateSubtitleFromPoEntry(PoEntry entry)
                 {
                     string context = entry.Context;
-                    if (!dictionary.TryGetValue(context, out Subtitle subtitle))
+                    if (string.IsNullOrEmpty(context) || !dictionary.TryGetValue(context, out Subtitle subtitle))
                     {
                         return;
                     }
